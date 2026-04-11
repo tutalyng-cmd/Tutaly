@@ -15,6 +15,21 @@ export enum WorkMode {
   ONSITE = 'onsite',
 }
 
+export enum ExperienceLevel {
+  ENTRY = 'entry',
+  MID = 'mid',
+  SENIOR = 'senior',
+  LEAD = 'lead',
+}
+
+export enum JobType {
+  FULL_TIME = 'full-time',
+  PART_TIME = 'part-time',
+  CONTRACT = 'contract',
+  FREELANCE = 'freelance',
+  INTERNSHIP = 'internship',
+}
+
 @Entity('jobs')
 export class Job extends BaseEntity {
   @Column()
@@ -31,8 +46,28 @@ export class Job extends BaseEntity {
   @Column()
   role: string;
 
-  @Column()
-  salaryType: string;
+  @Column({
+    type: 'enum',
+    enum: JobType,
+    default: JobType.FULL_TIME,
+  })
+  jobType: JobType;
+
+  @Column({
+    type: 'enum',
+    enum: ExperienceLevel,
+    default: ExperienceLevel.MID,
+  })
+  experienceLevel: ExperienceLevel;
+
+  @Column({ type: 'int', nullable: true })
+  minSalary: number;
+
+  @Column({ type: 'int', nullable: true })
+  maxSalary: number;
+
+  @Column({ default: 'USD' })
+  currency: string;
 
   @Column()
   location: string;
@@ -100,4 +135,29 @@ export class SavedJob extends BaseEntity {
 
   @ManyToOne(() => User)
   seeker: User;
+}
+
+export enum ReportStatus {
+  PENDING = 'pending',
+  REVIEWED = 'reviewed',
+  DISMISSED = 'dismissed',
+}
+
+@Entity('reported_jobs')
+export class ReportedJob extends BaseEntity {
+  @ManyToOne(() => Job)
+  job: Job;
+
+  @ManyToOne(() => User)
+  reporter: User;
+
+  @Column('text')
+  reason: string;
+
+  @Column({
+    type: 'enum',
+    enum: ReportStatus,
+    default: ReportStatus.PENDING,
+  })
+  status: ReportStatus;
 }

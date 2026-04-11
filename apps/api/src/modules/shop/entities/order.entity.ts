@@ -1,6 +1,6 @@
 import { Entity, Column, ManyToOne, OneToOne, JoinColumn } from 'typeorm';
-import { BaseEntity } from './base.entity';
-import { User } from './user.entity';
+import { BaseEntity } from '../../../common/entities/base.entity';
+import { User } from '../../user/entities/user.entity';
 import { ShopProduct } from './shop.entity';
 
 export enum OrderStatus {

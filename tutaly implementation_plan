@@ -1,0 +1,240 @@
+# Week 1: Tutaly — Environment, Database & Infrastructure
+
+## Goal
+Get the entire development environment running: monorepo structure, Docker-based PostgreSQL + Redis, full database schema with migrations, NestJS API scaffold, Next.js 14 frontend scaffold, and a CI/CD pipeline ready for VPS deployment.
+
+---
+
+## User Review Required
+
+> [!IMPORTANT]
+> **Monorepo vs. Separate Repos:** I recommend a **monorepo** structure (`tutaly/apps/api` + `tutaly/apps/web`) using npm workspaces. This keeps everything in one place, simplifies Docker Compose, and makes CI/CD easier. If you prefer separate repos, let me know.
+
+> [!IMPORTANT]
+> **TypeORM vs. Prisma:** The architecture doc mentions TypeORM. I'll proceed with TypeORM, but Prisma is also a strong option with better DX and type-safety. Your call — TypeORM is fine for this project.
+
+> [!WARNING]
+> **Docker Desktop Required:** You'll need Docker Desktop installed on your Windows machine for the local PostgreSQL + Redis setup. If you don't have it, I'll provide install instructions.
+
+---
+
+## Proposed Changes
+
+### Project Root Structure
+
+```
+c:\Users\HELLO\Desktop\Tutaly\
+├── apps/
+│   ├── api/          # NestJS backend
+│   └── web/          # Next.js 14 frontend
+├── docker/
+│   └── postgres/
+│       └── init.sql  # Initial schema seed
+├── .github/
+│   └── workflows/
+│       └── deploy.yml  # CI/CD pipeline
+├── docker-compose.yml  # PostgreSQL + Redis + API (local dev)
+├── .env.example        # Environment variable template
+├── .gitignore
+├── package.json        # Root workspace config
+└── README.md
+```
+
+---
+
+### Component 1: Docker Infrastructure
+
+#### [NEW] [docker-compose.yml](file:///c:/Users/HELLO/Desktop/Tutaly/docker-compose.yml)
+- PostgreSQL 16 container (port 5432, volume-mounted for data persistence)
+- Redis 7 container (port 6379)
+- Environment variables for DB credentials
+- Health checks on both services
+- Named volumes for data persistence across restarts
+
+#### [NEW] [.env.example](file:///c:/Users/HELLO/Desktop/Tutaly/.env.example)
+- All environment variables documented: DB host/port/user/pass, Redis URL, JWT secrets, Flutterwave keys, S3 config, SendGrid key
+
+---
+
+### Component 2: NestJS Backend API (`apps/api`)
+
+#### [NEW] NestJS Project Scaffold
+Initialized with `@nestjs/cli`. TypeScript strict mode enabled.
+
+**Module Structure:**
+```
+apps/api/src/
+├── main.ts
+├── app.module.ts
+├── config/               # Environment config validation (Joi)
+│   └── config.module.ts
+├── database/
+│   ├── database.module.ts
+│   ├── migrations/       # TypeORM migrations
+│   └── entities/         # All 20+ entity files
+├── common/
+│   ├── guards/           # JwtAuthGuard, RolesGuard
+│   ├── decorators/       # @Roles(), @CurrentUser()
+│   ├── filters/          # HttpExceptionFilter
+│   ├── interceptors/     # TransformInterceptor (wraps responses)
+│   └── dto/              # Shared DTOs
+├── modules/
+│   ├── auth/             # AuthModule (register, login, JWT, verify, reset)
+│   ├── users/            # UserModule (profiles, seeker, employer)
+│   ├── jobs/             # JobModule (CRUD, search, applications, saved)
+│   ├── reviews/          # ReviewModule (company reviews, moderation)
+│   ├── salaries/         # SalaryModule (submission, aggregation)
+│   ├── connect/          # ConnectModule (posts, feed, follow, DM)
+│   ├── shop/             # ShopModule (products, cart, checkout, escrow)
+│   ├── quotes/           # QuoteModule (request-a-quote flow)
+│   ├── admin/            # AdminModule (moderation, analytics, legal)
+│   ├── notifications/    # NotificationModule (in-app + email triggers)
+│   └── ads/              # AdsModule (banner, featured, sponsored)
+└── Dockerfile
+```
+
+**Key files created:**
+- `main.ts` — Bootstrap with CORS, Helmet, ValidationPipe, global prefix `/api/v1`
+- `app.module.ts` — Root module importing all feature modules
+- `config/` — Joi-validated environment config
+- `database/database.module.ts` — TypeORM connection config
+- `common/guards/` — JWT + Role-based access guards
+- `common/interceptors/` — Standard `{ success, data, meta }` response wrapper
+
+---
+
+### Component 3: Database Schema & TypeORM Entities
+
+All 20+ tables from the Architecture Document Section 5, implemented as TypeORM entities with proper relationships, indexes, and constraints.
+
+#### Entity Files (each in `apps/api/src/database/entities/`)
+
+| Entity File | Table | Key Features |
+|---|---|---|
+| `user.entity.ts` | `users` | UUID PK, role enum, status enum, email unique index, bcrypt hash |
+| `seeker-profile.entity.ts` | `seeker_profiles` | 1:1 with users, CASCADE delete, TEXT[] skills array |
+| `employer-profile.entity.ts` | `employer_profiles` | 1:1 with users, JSONB social_links |
+| `job.entity.ts` | `jobs` | Full-text index on title+description, 6 enums, employer FK |
+| `application.entity.ts` | `applications` | UNIQUE(job_id, seeker_id), status pipeline enum |
+| `saved-job.entity.ts` | `saved_jobs` | UNIQUE(job_id, seeker_id) |
+| `company-review.entity.ts` | `company_reviews` | 5 rating dimensions, submitter_hash, nullable user_id |
+| `salary-review.entity.ts` | `salary_reviews` | No user_id (anonymous), NUMERIC(12,2), period enum |
+| `shop-product.entity.ts` | `shop_products` | listing_type + pricing_type enums, S3 key (never exposed) |
+| `order.entity.ts` | `orders` | 7-state status enum, commission/earnings split, escrow timestamps |
+| `quote-request.entity.ts` | `quote_requests` | 5-state status, 7-day expiry, checkout_link flag |
+| `order-dispute.entity.ts` | `order_disputes` | UNIQUE on order_id, evidence_urls TEXT[], resolution tracking |
+| `post.entity.ts` | `posts` | Denormalized likes/comments count |
+| `post-like.entity.ts` | `post_likes` | UNIQUE(post_id, user_id) |
+| `post-comment.entity.ts` | `post_comments` | author FK, body TEXT |
+| `follow.entity.ts` | `follows` | UNIQUE(follower_id, followee_id), status enum |
+| `message.entity.ts` | `messages` | Composite index (sender, receiver), read_at nullable |
+| `report.entity.ts` | `reports` | Polymorphic: target_type enum + target_id UUID |
+| `email-verification.entity.ts` | `email_verifications` | 24h expiry, used_at tracking |
+| `password-reset.entity.ts` | `password_resets` | 1h expiry, used_at tracking |
+| `notification.entity.ts` | `notifications` | type, message, is_read, link |
+| `legal-page.entity.ts` | `legal_pages` | slug unique, WYSIWYG content, updated_by FK |
+| `ad.entity.ts` | `ads` | type enum, placement, date range, status |
+| `newsletter-send.entity.ts` | `newsletter_sends` | audience enum, recipient_count |
+| `product-rating.entity.ts` | `product_ratings` | UNIQUE(product_id, buyer_id), verified buyers only |
+| `seller-application.entity.ts` | `seller_applications` | status enum, reviewed_by FK |
+
+#### [NEW] Initial Migration
+- Auto-generated from entities via `typeorm migration:generate`
+- Includes all indexes: email, company_name, industry, role, full-text on jobs
+- All ENUM types created as PostgreSQL custom types
+- All UNIQUE constraints and foreign keys with CASCADE rules
+
+---
+
+### Component 4: Next.js 14 Frontend (`apps/web`)
+
+#### [NEW] Next.js Project Scaffold
+Initialized with `create-next-app` using App Router + Tailwind CSS + TypeScript.
+
+**Structure:**
+```
+apps/web/
+├── src/
+│   ├── app/
+│   │   ├── layout.tsx          # Root layout with nav + footer
+│   │   ├── page.tsx            # Home page
+│   │   ├── jobs/               # Jobs pages
+│   │   ├── reviews/            # Company reviews pages
+│   │   ├── salaries/           # Salary review pages
+│   │   ├── shop/               # Marketplace pages
+│   │   ├── connect/            # Networking pages
+│   │   ├── auth/               # Sign in / Sign up
+│   │   ├── dashboard/          # Seeker + Employer dashboards
+│   │   ├── admin/              # Admin dashboard
+│   │   └── legal/              # Legal pages (dynamic [slug])
+│   ├── components/
+│   │   ├── ui/                 # Design system primitives
+│   │   ├── layout/             # Nav, Footer, Sidebar
+│   │   └── shared/             # Reusable feature components
+│   ├── lib/
+│   │   ├── api.ts              # API client (fetch wrapper)
+│   │   └── auth.ts             # Auth context / token management
+│   └── styles/
+│       └── globals.css         # Tailwind + design tokens
+├── tailwind.config.ts
+├── next.config.ts
+└── Dockerfile
+```
+
+**Design System Tokens (in Tailwind config):**
+- Primary: Deep Navy `#0D1B2A`
+- Accent: Teal `#1D9E75`
+- Background: White `#FFFFFF`
+- Typography: Inter (Google Fonts), 16px base
+- Spacing: 8px grid system
+- Moderation states: Amber (pending), Green (approved), Red (rejected)
+- Border radius, shadows, and transition tokens
+
+---
+
+### Component 5: CI/CD Pipeline
+
+#### [NEW] [.github/workflows/deploy.yml](file:///c:/Users/HELLO/Desktop/Tutaly/.github/workflows/deploy.yml)
+- **Trigger:** Push to `main` branch
+- **Steps:**
+  1. Checkout code
+  2. Run `npm ci` and TypeScript compile check
+  3. Run unit tests (if any)
+  4. Build Docker images for API and Web
+  5. SSH into VPS, pull latest images, restart containers
+- **Staging:** Push to `develop` branch deploys to staging environment
+
+---
+
+### Component 6: Git Configuration
+
+#### [NEW] [.gitignore](file:///c:/Users/HELLO/Desktop/Tutaly/.gitignore)
+- node_modules, dist, .env, .next, Docker volumes, OS files
+
+#### [NEW] [README.md](file:///c:/Users/HELLO/Desktop/Tutaly/README.md)
+- Project overview, tech stack, setup instructions, environment variables reference
+
+---
+
+## Open Questions
+
+> [!IMPORTANT]
+> 1. **Do you have Docker Desktop installed on your Windows machine?** If not, I'll guide you through the install first.
+> 2. **Do you have a GitHub account ready?** I'll need you to create the repo and push the initial code.
+> 3. **VPS Provider:** Have you already purchased a VPS? If so, what provider and specs? (This doesn't block Week 1 work — we'll run everything locally first.)
+
+---
+
+## Verification Plan
+
+### Automated Tests
+1. `docker-compose up` — PostgreSQL and Redis containers start with health checks passing
+2. `npm run start:dev` in `apps/api` — NestJS boots without errors, connects to PostgreSQL and Redis
+3. `npm run dev` in `apps/web` — Next.js dev server starts, home page renders with design tokens applied
+4. `npm run migration:run` — All 20+ tables created successfully in PostgreSQL
+5. Connect to PostgreSQL via a client and verify all tables, indexes, enums, and constraints exist
+
+### Manual Verification
+- Open `http://localhost:3000` — Next.js frontend loads with Tutaly branding
+- Open `http://localhost:3001/api/v1` — NestJS API returns a health check response
+- Run `docker exec` into PostgreSQL container and run `\dt` to list all tables

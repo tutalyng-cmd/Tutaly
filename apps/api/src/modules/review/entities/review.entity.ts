@@ -1,6 +1,6 @@
 import { Entity, Column, ManyToOne, Index } from 'typeorm';
-import { BaseEntity } from './base.entity';
-import { User } from './user.entity';
+import { BaseEntity } from '../../../common/entities/base.entity';
+import { User } from '../../user/entities/user.entity';
 
 export enum ReviewStatus {
   PENDING = 'pending',

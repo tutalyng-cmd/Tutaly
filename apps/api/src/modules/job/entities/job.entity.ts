@@ -33,11 +33,9 @@ export enum JobType {
 @Entity('jobs')
 export class Job extends BaseEntity {
   @Column()
-  @Index({ fulltext: true })
   title: string;
 
   @Column('text')
-  @Index({ fulltext: true })
   description: string;
 
   @Column()
@@ -69,7 +67,17 @@ export class Job extends BaseEntity {
   @Column({ default: 'USD' })
   currency: string;
 
-  @Column()
+  @Column({ default: 'Nigeria' })
+  country: string;
+
+  @Column({ nullable: true })
+  state: string;
+
+  @Column({ nullable: true })
+  area: string;
+
+  // Keeping original location string just in case, but marking optional
+  @Column({ nullable: true })
   location: string;
 
   @Column({

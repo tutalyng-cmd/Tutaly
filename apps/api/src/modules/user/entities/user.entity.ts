@@ -34,6 +34,9 @@ export class User extends BaseEntity {
   @Column({ default: true })
   isActive: boolean;
 
+  @Column({ default: false })
+  isMfaEnabled: boolean;
+
   @OneToOne('SeekerProfile', 'user')
   seekerProfile: any;
 

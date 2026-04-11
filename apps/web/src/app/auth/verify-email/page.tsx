@@ -52,10 +52,13 @@ function VerifyEmailContent() {
             <CheckCircle2 className="h-10 w-10 text-[#1D9E75]" />
           </div>
           <h2 className="text-2xl font-bold text-white mb-2">Email Verified!</h2>
-          <p className="text-gray-400 mb-8">{message}</p>
+          <p className="text-gray-400 mb-2">{message}</p>
+          <p className="text-sm text-teal-500/80 mb-8 font-medium">
+            Next: Sign in to receive your secure login code.
+          </p>
           <Link
             href="/auth/signin"
-            className="w-full inline-flex justify-center py-3 px-4 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-[#1D9E75] to-[#147a59] focus:outline-none"
+            className="w-full inline-flex justify-center py-3 px-4 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-[#1D9E75] to-[#147a59] hover:from-[#147a59] hover:to-[#0f5c43] transition-all shadow-lg shadow-teal-500/20"
           >
             Go to Sign In
           </Link>

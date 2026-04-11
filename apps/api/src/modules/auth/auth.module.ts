@@ -16,6 +16,6 @@ import { EmployerProfile } from '../user/entities/employer-profile.entity';
   ],
   controllers: [AuthController],
   providers: [AuthService, MailService, TokenService],
-  exports: [AuthService, JwtModule],
+  exports: [AuthService, JwtModule, MailService, TokenService],
 })
 export class AuthModule {}

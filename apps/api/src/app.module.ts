@@ -12,6 +12,8 @@ import { ReviewModule } from './modules/review/review.module';
 import { SalaryModule } from './modules/salary/salary.module';
 import { SupportModule } from './modules/support/support.module';
 import { AdminModule } from './modules/admin/admin.module';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -29,8 +31,26 @@ import { AdminModule } from './modules/admin/admin.module';
     SalaryModule,
     SupportModule,
     AdminModule,
+    ThrottlerModule.forRoot([
+      {
+        name: 'short',
+        ttl: 1000,
+        limit: 3,
+      },
+      {
+        name: 'medium',
+        ttl: 60000,
+        limit: 100,
+      },
+    ]),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}

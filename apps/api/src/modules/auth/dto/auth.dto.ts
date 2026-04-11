@@ -57,3 +57,18 @@ export class ResetPasswordDto {
   @MinLength(8)
   newPassword: string;
 }
+
+export class VerifyMfaDto {
+  @IsString()
+  @IsNotEmpty()
+  userId: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(6)
+  code: string;
+
+  @IsString()
+  @IsNotEmpty()
+  mfaToken: string;
+}

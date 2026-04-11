@@ -22,6 +22,15 @@ export default function SignIn() {
     try {
       const response = await api.post('/auth/login', { email, password });
       
+      if (response.data.mfaRequired) {
+        // Important: Keep loading true while redirecting
+        const params = new URLSearchParams();
+        params.set('uid', response.data.userId);
+        params.set('mfa', response.data.mfaToken);
+        router.push(`/auth/mfa?${params.toString()}`);
+        return;
+      }
+
       // Store token in localStorage (refresh token is handled by HttpOnly cookie)
       localStorage.setItem('accessToken', response.data.accessToken);
       localStorage.setItem('user', JSON.stringify(response.data.user));

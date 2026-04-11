@@ -16,6 +16,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         ssl: {
           rejectUnauthorized: false, // Required for Supabase in some environments
         },
+        retryAttempts: 3,
+        retryDelay: 3000,
+        extra: {
+          // Supabase transaction pooler compatibility
+          options: '-c search_path=public',
+        },
       }),
     }),
   ],

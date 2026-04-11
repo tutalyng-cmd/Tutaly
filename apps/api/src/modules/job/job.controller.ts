@@ -1,6 +1,23 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Req } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  UseGuards,
+  Req,
+} from '@nestjs/common';
 import { JobService } from './job.service';
-import { CreateJobDto, UpdateJobDto, JobQueryDto, ApplyJobDto, UpdateApplicationStatusDto } from './dto/job.dto';
+import {
+  CreateJobDto,
+  UpdateJobDto,
+  JobQueryDto,
+  ApplyJobDto,
+  UpdateApplicationStatusDto,
+} from './dto/job.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
@@ -28,7 +45,11 @@ export class JobController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.SEEKER)
   @Post(':id/apply')
-  async apply(@Param('id') id: string, @Req() req: Request, @Body() dto: ApplyJobDto) {
+  async apply(
+    @Param('id') id: string,
+    @Req() req: Request,
+    @Body() dto: ApplyJobDto,
+  ) {
     const userId = (req as any).user.sub;
     return this.jobService.apply(id, userId, dto);
   }
@@ -66,7 +87,7 @@ export class JobController {
     @Param('id') id: string,
     @Param('appId') appId: string,
     @Body() dto: UpdateApplicationStatusDto,
-    @Req() req: Request
+    @Req() req: Request,
   ) {
     const userId = (req as any).user.sub;
     return this.jobService.updateApplicationStatus(appId, dto, userId);
@@ -77,7 +98,11 @@ export class JobController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.EMPLOYER, UserRole.ADMIN)
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateJobDto: UpdateJobDto, @Req() req: Request) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateJobDto: UpdateJobDto,
+    @Req() req: Request,
+  ) {
     const userId = (req as any).user.sub;
     const role = (req as any).user.role;
     return this.jobService.update(id, updateJobDto, userId, role);

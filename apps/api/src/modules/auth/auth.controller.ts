@@ -1,8 +1,23 @@
-import { Controller, Post, Body, Get, Query, Res, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Query,
+  Res,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import type { Response, Request } from 'express';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
-import { RegisterDto, LoginDto, ForgotPasswordDto, ResetPasswordDto, VerifyMfaDto } from './dto/auth.dto';
+import {
+  RegisterDto,
+  LoginDto,
+  ForgotPasswordDto,
+  ResetPasswordDto,
+  VerifyMfaDto,
+} from './dto/auth.dto';
 import { Throttle } from '@nestjs/throttler';
 
 @Controller('auth')
@@ -17,7 +32,10 @@ export class AuthController {
 
   @Post('login')
   @Throttle({ short: { limit: 5, ttl: 60000 } }) // Limit login attempts
-  async login(@Body() dto: LoginDto, @Res({ passthrough: true }) res: Response) {
+  async login(
+    @Body() dto: LoginDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     const result = await this.authService.login(dto);
 
     // Only set refresh token cookie if it was issued (non-MFA flow)
@@ -42,7 +60,10 @@ export class AuthController {
 
   @Post('verify-mfa')
   @Throttle({ short: { limit: 5, ttl: 60000 } })
-  async verifyMfa(@Body() dto: VerifyMfaDto, @Res({ passthrough: true }) res: Response) {
+  async verifyMfa(
+    @Body() dto: VerifyMfaDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     const result = await this.authService.verifyMfa(dto);
 
     // Set refresh token as HttpOnly cookie (7 days)
@@ -61,7 +82,10 @@ export class AuthController {
   }
 
   @Post('refresh')
-  async refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+  async refresh(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     const refreshToken = req.cookies?.refreshToken;
     if (!refreshToken) {
       return res.status(401).json({ message: 'No refresh token provided.' });

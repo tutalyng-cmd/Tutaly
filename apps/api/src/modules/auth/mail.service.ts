@@ -113,7 +113,11 @@ export class MailService {
     });
   }
 
-  async sendJobApprovedEmail(to: string, jobTitle: string, jobId: string): Promise<void> {
+  async sendJobApprovedEmail(
+    to: string,
+    jobTitle: string,
+    jobId: string,
+  ): Promise<void> {
     const jobUrl = `http://localhost:3000/jobs/${jobId}`;
     await this.transporter.sendMail({
       from: `"Tutaly Support" <${this.fromEmail}>`,

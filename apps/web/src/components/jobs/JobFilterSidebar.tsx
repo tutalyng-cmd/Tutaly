@@ -53,14 +53,16 @@ export default function JobFilterSidebar() {
   }, [country, state, locations]);
 
   // Reset child dropdowns when parent changes
-  useEffect(() => {
+  const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setCountry(e.target.value);
     setState('');
     setArea('');
-  }, [country]);
+  };
 
-  useEffect(() => {
+  const handleStateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setState(e.target.value);
     setArea('');
-  }, [state]);
+  };
 
   const handleApply = () => {
     const params = new URLSearchParams();
@@ -137,7 +139,7 @@ export default function JobFilterSidebar() {
             {/* 2. Country */}
             <div className="mb-3">
               <label className={labelClass}>Country</label>
-              <select value={country} onChange={(e) => setCountry(e.target.value)} className={selectClass}>
+              <select value={country} onChange={handleCountryChange} className={selectClass}>
                 <option value="">All Countries</option>
                 {countries.map((c) => (
                   <option key={c} value={c}>{c}</option>
@@ -150,7 +152,7 @@ export default function JobFilterSidebar() {
               <label className={labelClass}>State</label>
               <select
                 value={state}
-                onChange={(e) => setState(e.target.value)}
+                onChange={handleStateChange}
                 className={selectClass}
                 disabled={states.length === 0}
               >

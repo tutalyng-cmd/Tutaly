@@ -1,8 +1,25 @@
-import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
-import { Job, Application, SavedJob, JobStatus, ApplicationStatus } from './entities/job.entity';
-import { CreateJobDto, UpdateJobDto, JobQueryDto, ApplyJobDto, UpdateApplicationStatusDto } from './dto/job.dto';
+import {
+  Job,
+  Application,
+  SavedJob,
+  JobStatus,
+  ApplicationStatus,
+} from './entities/job.entity';
+import {
+  CreateJobDto,
+  UpdateJobDto,
+  JobQueryDto,
+  ApplyJobDto,
+  UpdateApplicationStatusDto,
+} from './dto/job.dto';
 import { TokenService } from '../auth/token.service';
 import { MailService } from '../auth/mail.service';
 import { User, UserRole } from '../user/entities/user.entity';
@@ -65,32 +82,39 @@ export class JobService {
       if (cached) return JSON.parse(cached);
     }
 
-    const qb = this.jobRepo.createQueryBuilder('job')
+    const qb = this.jobRepo
+      .createQueryBuilder('job')
       .leftJoinAndSelect('job.employer', 'employer')
       .where('job.status = :status', { status });
 
     if (country) qb.andWhere('job.country ILIKE :country', { country });
     if (state) qb.andWhere('job.state ILIKE :state', { state });
     if (area) qb.andWhere('job.area ILIKE :area', { area });
-    
+
     if (industry) qb.andWhere('job.industry = :industry', { industry });
     if (role) qb.andWhere('job.role = :role', { role });
     if (jobType) qb.andWhere('job.jobType = :jobType', { jobType });
-    if (experienceLevel) qb.andWhere('job.experienceLevel = :experienceLevel', { experienceLevel });
+    if (experienceLevel)
+      qb.andWhere('job.experienceLevel = :experienceLevel', {
+        experienceLevel,
+      });
     if (workMode) qb.andWhere('job.workMode = :workMode', { workMode });
-    if (isFeatured !== undefined) qb.andWhere('job.isFeatured = :isFeatured', { isFeatured });
+    if (isFeatured !== undefined)
+      qb.andWhere('job.isFeatured = :isFeatured', { isFeatured });
 
     if (minSalary) qb.andWhere('job.minSalary >= :minSalary', { minSalary });
     if (maxSalary) qb.andWhere('job.maxSalary <= :maxSalary', { maxSalary });
 
     if (keyword) {
       // Use the raw search_vector from DB
-      qb.andWhere(
-        "job.search_vector @@ plainto_tsquery('english', :keyword)",
-        { keyword }
-      );
+      qb.andWhere("job.search_vector @@ plainto_tsquery('english', :keyword)", {
+        keyword,
+      });
       // Order by rank
-      qb.orderBy("ts_rank(job.search_vector, plainto_tsquery('english', :keyword))", "DESC");
+      qb.orderBy(
+        "ts_rank(job.search_vector, plainto_tsquery('english', :keyword))",
+        'DESC',
+      );
     } else {
       qb.orderBy('job.createdAt', 'DESC');
     }
@@ -111,7 +135,11 @@ export class JobService {
     };
 
     if (status === JobStatus.ACTIVE) {
-      await this.tokenService.setJobCache(cacheKey, JSON.stringify(result), 300); // 5 mins
+      await this.tokenService.setJobCache(
+        cacheKey,
+        JSON.stringify(result),
+        300,
+      ); // 5 mins
     }
 
     return result;
@@ -136,7 +164,10 @@ export class JobService {
   }
 
   async update(id: string, dto: UpdateJobDto, userId: string, role: string) {
-    const job = await this.jobRepo.findOne({ where: { id }, relations: ['employer'] });
+    const job = await this.jobRepo.findOne({
+      where: { id },
+      relations: ['employer'],
+    });
     if (!job) throw new NotFoundException('Job not found');
 
     if (role !== UserRole.ADMIN && job.employer?.id !== userId) {
@@ -144,7 +175,7 @@ export class JobService {
     }
 
     Object.assign(job, dto);
-    
+
     // If employer updates a job, it should go back to pending review (security measure)
     if (role === UserRole.EMPLOYER) {
       job.status = JobStatus.PENDING_REVIEW;
@@ -156,7 +187,10 @@ export class JobService {
   }
 
   async remove(id: string, userId: string, role: string) {
-    const job = await this.jobRepo.findOne({ where: { id }, relations: ['employer'] });
+    const job = await this.jobRepo.findOne({
+      where: { id },
+      relations: ['employer'],
+    });
     if (!job) throw new NotFoundException('Job not found');
 
     if (role !== UserRole.ADMIN && job.employer?.id !== userId) {
@@ -170,7 +204,10 @@ export class JobService {
 
   // ─── ADMIN APPROVAL ──────────────────────────────────────
   async approveJob(id: string) {
-    const job = await this.jobRepo.findOne({ where: { id }, relations: ['employer'] });
+    const job = await this.jobRepo.findOne({
+      where: { id },
+      relations: ['employer'],
+    });
     if (!job) throw new NotFoundException('Job not found');
 
     job.status = JobStatus.ACTIVE;
@@ -181,7 +218,11 @@ export class JobService {
 
     // 2. Notify employer via email
     if (job.employer && job.employer.email) {
-      await this.mailService.sendJobApprovedEmail(job.employer.email, job.title, job.id);
+      await this.mailService.sendJobApprovedEmail(
+        job.employer.email,
+        job.title,
+        job.id,
+      );
     }
 
     return this.sanitizeJob(job);
@@ -197,9 +238,13 @@ export class JobService {
     const seeker = await this.userRepo.findOne({ where: { id: userId } });
     if (!seeker) throw new NotFoundException('User not found');
 
-    const profile = await this.seekerProfileRepo.findOne({ where: { user: { id: userId } } });
+    const profile = await this.seekerProfileRepo.findOne({
+      where: { user: { id: userId } },
+    });
     if (!profile || !profile.resumeUrl) {
-      throw new BadRequestException('You must upload a CV to your profile before applying to jobs.');
+      throw new BadRequestException(
+        'You must upload a CV to your profile before applying to jobs.',
+      );
     }
 
     const existingApplication = await this.applicationRepo.findOne({
@@ -221,27 +266,38 @@ export class JobService {
   }
 
   async getJobApplicants(jobId: string, employerId: string) {
-    const job = await this.jobRepo.findOne({ where: { id: jobId }, relations: ['employer'] });
+    const job = await this.jobRepo.findOne({
+      where: { id: jobId },
+      relations: ['employer'],
+    });
     if (!job || job.employer?.id !== employerId) {
-      throw new ForbiddenException('You can only view applicants for your own jobs.');
+      throw new ForbiddenException(
+        'You can only view applicants for your own jobs.',
+      );
     }
 
     // Including seeker profile and user data
     return this.applicationRepo.find({
       where: { job: { id: jobId } },
       relations: ['seeker', 'seeker.seekerProfile'],
-      order: { createdAt: 'DESC' }
+      order: { createdAt: 'DESC' },
     });
   }
 
-  async updateApplicationStatus(appId: string, dto: UpdateApplicationStatusDto, employerId: string) {
+  async updateApplicationStatus(
+    appId: string,
+    dto: UpdateApplicationStatusDto,
+    employerId: string,
+  ) {
     const application = await this.applicationRepo.findOne({
       where: { id: appId },
-      relations: ['job', 'job.employer']
+      relations: ['job', 'job.employer'],
     });
 
     if (!application || application.job?.employer?.id !== employerId) {
-      throw new ForbiddenException('Invalid application or you do not have permission.');
+      throw new ForbiddenException(
+        'Invalid application or you do not have permission.',
+      );
     }
 
     application.status = dto.status;
@@ -250,7 +306,7 @@ export class JobService {
   }
 
   // ─── UTILS ───────────────────────────────────────────────
-  
+
   // Sanitizes job response to avoid leaking employer sensitive info like password hashes
   private sanitizeJob(job: Job) {
     const { employer, ...jobData } = job;

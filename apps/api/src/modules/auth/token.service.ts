@@ -84,7 +84,11 @@ export class TokenService {
     return this.redisClient.get(key);
   }
 
-  async setJobCache(key: string, data: string, ttlSeconds: number = 300): Promise<void> {
+  async setJobCache(
+    key: string,
+    data: string,
+    ttlSeconds: number = 300,
+  ): Promise<void> {
     await this.redisClient.set(key, data, 'EX', ttlSeconds);
   }
 

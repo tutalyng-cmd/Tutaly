@@ -4,6 +4,6 @@ import { ConnectService } from './connect.service';
 
 @Module({
   controllers: [ConnectController],
-  providers: [ConnectService]
+  providers: [ConnectService],
 })
 export class ConnectModule {}

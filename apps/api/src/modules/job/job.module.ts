@@ -10,7 +10,14 @@ import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Job, Application, SavedJob, ReportedJob, User, SeekerProfile]),
+    TypeOrmModule.forFeature([
+      Job,
+      Application,
+      SavedJob,
+      ReportedJob,
+      User,
+      SeekerProfile,
+    ]),
     AuthModule,
   ],
   controllers: [JobController],

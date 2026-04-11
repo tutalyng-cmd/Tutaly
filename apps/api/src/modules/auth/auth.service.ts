@@ -1,4 +1,10 @@
-import { Injectable, UnauthorizedException, BadRequestException, ConflictException, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  BadRequestException,
+  ConflictException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -10,7 +16,13 @@ import { SeekerProfile } from '../user/entities/seeker-profile.entity';
 import { EmployerProfile } from '../user/entities/employer-profile.entity';
 import { MailService } from './mail.service';
 import { TokenService } from './token.service';
-import { RegisterDto, LoginDto, ForgotPasswordDto, ResetPasswordDto, VerifyMfaDto } from './dto/auth.dto';
+import {
+  RegisterDto,
+  LoginDto,
+  ForgotPasswordDto,
+  ResetPasswordDto,
+  VerifyMfaDto,
+} from './dto/auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -30,19 +42,30 @@ export class AuthService {
   // ─── REGISTER ──────────────────────────────────────
   async register(dto: RegisterDto) {
     try {
-      console.log('[Auth] Register attempt:', { email: dto.email, role: dto.role });
+      console.log('[Auth] Register attempt:', {
+        email: dto.email,
+        role: dto.role,
+      });
 
       // 1. Age 18+ check
       const dob = new Date(dto.dateOfBirth);
-      const age = Math.floor((Date.now() - dob.getTime()) / (365.25 * 24 * 60 * 60 * 1000));
+      const age = Math.floor(
+        (Date.now() - dob.getTime()) / (365.25 * 24 * 60 * 60 * 1000),
+      );
       if (age < 18) {
-        throw new BadRequestException('You must be at least 18 years old to register.');
+        throw new BadRequestException(
+          'You must be at least 18 years old to register.',
+        );
       }
 
       // 2. Check duplicate email
-      const existing = await this.userRepo.findOne({ where: { email: dto.email } });
+      const existing = await this.userRepo.findOne({
+        where: { email: dto.email },
+      });
       if (existing) {
-        throw new ConflictException('An account with this email already exists.');
+        throw new ConflictException(
+          'An account with this email already exists.',
+        );
       }
 
       // 3. Hash password
@@ -81,16 +104,22 @@ export class AuthService {
       await this.mailService.sendVerificationEmail(user.email, verifyToken);
 
       return {
-        message: 'Registration successful. Please check your email to verify your account.',
+        message:
+          'Registration successful. Please check your email to verify your account.',
         userId: user.id,
       };
     } catch (error) {
       console.error('[Auth] Registration failed:', error);
       // Re-throw to allow NestJS to handle standard exceptions
-      if (error instanceof BadRequestException || error instanceof ConflictException) {
+      if (
+        error instanceof BadRequestException ||
+        error instanceof ConflictException
+      ) {
         throw error;
       }
-      throw new InternalServerErrorException(error.message || 'Registration failed unexpectedly');
+      throw new InternalServerErrorException(
+        error.message || 'Registration failed unexpectedly',
+      );
     }
   }
 
@@ -98,7 +127,15 @@ export class AuthService {
   async login(dto: LoginDto) {
     const user = await this.userRepo.findOne({
       where: { email: dto.email },
-      select: ['id', 'email', 'password', 'role', 'isEmailVerified', 'isActive', 'isMfaEnabled'],
+      select: [
+        'id',
+        'email',
+        'password',
+        'role',
+        'isEmailVerified',
+        'isActive',
+        'isMfaEnabled',
+      ],
     });
 
     if (!user) {
@@ -119,8 +156,8 @@ export class AuthService {
       const otp = await this.tokenService.generateMfaEntry(user.id);
       const mfaToken = crypto.randomBytes(32).toString('hex');
       await this.tokenService.storeMfaSession(user.id, mfaToken);
-      
-      await this.mailService.sendMfaEmail(user.email, otp); 
+
+      await this.mailService.sendMfaEmail(user.email, otp);
 
       return {
         mfaRequired: true,
@@ -161,13 +198,21 @@ export class AuthService {
     }
 
     // 1. Validate temporary MFA session
-    const isSessionValid = await this.tokenService.validateMfaSession(user.id, dto.mfaToken);
+    const isSessionValid = await this.tokenService.validateMfaSession(
+      user.id,
+      dto.mfaToken,
+    );
     if (!isSessionValid) {
-      throw new UnauthorizedException('MFA session expired or invalid. Please login again.');
+      throw new UnauthorizedException(
+        'MFA session expired or invalid. Please login again.',
+      );
     }
 
     // 2. Validate OTP
-    const isOtpValid = await this.tokenService.validateMfaOtp(user.id, dto.code);
+    const isOtpValid = await this.tokenService.validateMfaOtp(
+      user.id,
+      dto.code,
+    );
     if (!isOtpValid) {
       throw new UnauthorizedException('Invalid OTP code.');
     }
@@ -228,7 +273,10 @@ export class AuthService {
       }
 
       // Check against Redis
-      const isValid = await this.tokenService.validateRefreshToken(user.id, refreshToken);
+      const isValid = await this.tokenService.validateRefreshToken(
+        user.id,
+        refreshToken,
+      );
       if (!isValid) {
         throw new UnauthorizedException('Refresh token is revoked or invalid.');
       }
@@ -259,7 +307,10 @@ export class AuthService {
 
     // Always return success to prevent email enumeration
     if (!user) {
-      return { message: 'If an account exists with that email, a reset link has been sent.' };
+      return {
+        message:
+          'If an account exists with that email, a reset link has been sent.',
+      };
     }
 
     const resetToken = this.jwtService.sign(
@@ -272,7 +323,10 @@ export class AuthService {
 
     await this.mailService.sendPasswordResetEmail(user.email, resetToken);
 
-    return { message: 'If an account exists with that email, a reset link has been sent.' };
+    return {
+      message:
+        'If an account exists with that email, a reset link has been sent.',
+    };
   }
 
   // ─── RESET PASSWORD ────────────────────────────────

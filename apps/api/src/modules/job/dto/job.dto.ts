@@ -13,7 +13,13 @@ import {
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { PartialType } from '@nestjs/mapped-types';
-import { JobType, ExperienceLevel, WorkMode, ApplicationStatus, JobStatus } from '../entities/job.entity';
+import {
+  JobType,
+  ExperienceLevel,
+  WorkMode,
+  ApplicationStatus,
+  JobStatus,
+} from '../entities/job.entity';
 
 export class CreateJobDto {
   @IsString()
@@ -127,7 +133,7 @@ export class JobQueryDto {
   @IsNumber()
   @Min(0)
   maxSalary?: number;
-  
+
   @IsOptional()
   @IsEnum(JobStatus)
   status?: JobStatus;

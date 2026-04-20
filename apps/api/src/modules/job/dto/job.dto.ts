@@ -154,16 +154,90 @@ export class JobQueryDto {
   @Min(1)
   @Max(100)
   limit?: number = 20;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(1)
+  datePosted?: number; // Days ago (1 = last 24h, 7 = last week, 30 = last month)
 }
 
 export class ApplyJobDto {
+  // ─── Personal Info ──────────────────────────────────
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(100)
+  fullName: string;
+
+  @IsString()
+  @IsNotEmpty()
+  email: string;
+
   @IsOptional()
   @IsString()
-  @MaxLength(1000)
-  coverNote?: string;
+  @MaxLength(20)
+  phone?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(200)
+  location?: string;
+
+  // ─── Professional Background ────────────────────────
+  @IsOptional()
+  @IsString()
+  @MaxLength(2000)
+  education?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(3000)
+  experience?: string;
+
+  @IsOptional()
+  skills?: string[];
+
+  // ─── Links ──────────────────────────────────────────
+  @IsOptional()
+  @IsString()
+  linkedinUrl?: string;
+
+  @IsOptional()
+  @IsString()
+  portfolioUrl?: string;
+
+  @IsOptional()
+  @IsString()
+  githubUrl?: string;
+
+  // ─── Expectations ───────────────────────────────────
+  @IsOptional()
+  @IsString()
+  expectedSalary?: string;
+
+  @IsOptional()
+  @IsString()
+  noticePeriod?: string;
+
+  @IsOptional()
+  @IsString()
+  availableFrom?: string;
+
+  // ─── Cover Letter ───────────────────────────────────
+  @IsOptional()
+  @IsString()
+  @MaxLength(5000)
+  coverLetter?: string;
 }
 
 export class UpdateApplicationStatusDto {
   @IsEnum(ApplicationStatus)
   status: ApplicationStatus;
+}
+
+export class ReportJobDto {
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(1000)
+  reason: string;
 }

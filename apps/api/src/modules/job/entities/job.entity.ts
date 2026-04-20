@@ -131,8 +131,56 @@ export class Application extends BaseEntity {
   })
   status: ApplicationStatus;
 
+  // ─── Personal Info ──────────────────────────────────
+  @Column({ nullable: true })
+  fullName: string;
+
+  @Column({ nullable: true })
+  email: string;
+
+  @Column({ nullable: true })
+  phone: string;
+
+  @Column({ nullable: true })
+  location: string;
+
+  // ─── Professional Background ────────────────────────
   @Column('text', { nullable: true })
-  coverNote: string;
+  education: string;
+
+  @Column('text', { nullable: true })
+  experience: string;
+
+  @Column('text', { array: true, nullable: true })
+  skills: string[];
+
+  // ─── Links ──────────────────────────────────────────
+  @Column({ nullable: true })
+  linkedinUrl: string;
+
+  @Column({ nullable: true })
+  portfolioUrl: string;
+
+  @Column({ nullable: true })
+  githubUrl: string;
+
+  // ─── Expectations ───────────────────────────────────
+  @Column({ nullable: true })
+  expectedSalary: string;
+
+  @Column({ nullable: true })
+  noticePeriod: string;
+
+  @Column({ nullable: true })
+  availableFrom: string;
+
+  // ─── Cover Letter / Note ────────────────────────────
+  @Column('text', { nullable: true })
+  coverLetter: string;
+
+  // ─── Extensible metadata (for custom employer questions) ─
+  @Column({ type: 'jsonb', nullable: true })
+  applicationMeta: Record<string, any>;
 }
 
 @Entity('saved_jobs')

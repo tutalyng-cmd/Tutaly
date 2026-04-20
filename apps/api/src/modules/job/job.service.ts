@@ -10,6 +10,7 @@ import {
   Job,
   Application,
   SavedJob,
+  ReportedJob,
   JobStatus,
   ApplicationStatus,
 } from './entities/job.entity';
@@ -19,6 +20,7 @@ import {
   JobQueryDto,
   ApplyJobDto,
   UpdateApplicationStatusDto,
+  ReportJobDto,
 } from './dto/job.dto';
 import { TokenService } from '../auth/token.service';
 import { MailService } from '../auth/mail.service';
@@ -34,6 +36,8 @@ export class JobService {
     private readonly applicationRepo: Repository<Application>,
     @InjectRepository(SavedJob)
     private readonly savedJobRepo: Repository<SavedJob>,
+    @InjectRepository(ReportedJob)
+    private readonly reportedJobRepo: Repository<ReportedJob>,
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
     @InjectRepository(SeekerProfile)
@@ -49,7 +53,7 @@ export class JobService {
     const job = this.jobRepo.create({
       ...dto,
       employer: user,
-      status: JobStatus.PENDING_REVIEW, // Enforce pending status
+      status: JobStatus.ACTIVE, // Temporarily bypassed PENDING_REVIEW for local testing
     });
 
     await this.jobRepo.save(job);
@@ -71,6 +75,7 @@ export class JobService {
       maxSalary,
       status = JobStatus.ACTIVE, // By default, only show ACTIVE jobs to public
       isFeatured,
+      datePosted,
       page = 1,
       limit = 20,
     } = query;
@@ -117,6 +122,13 @@ export class JobService {
       );
     } else {
       qb.orderBy('job.createdAt', 'DESC');
+    }
+
+    // Date posted filter
+    if (datePosted) {
+      qb.andWhere('job.createdAt >= NOW() - :interval::interval', {
+        interval: `${datePosted} days`,
+      });
     }
 
     const skip = (page - 1) * limit;
@@ -257,12 +269,45 @@ export class JobService {
     const application = this.applicationRepo.create({
       job,
       seeker,
-      coverNote: dto.coverNote,
       status: ApplicationStatus.APPLIED,
+      // Personal Info
+      fullName: dto.fullName,
+      email: dto.email,
+      phone: dto.phone,
+      location: dto.location,
+      // Professional Background
+      education: dto.education,
+      experience: dto.experience,
+      skills: dto.skills,
+      // Links
+      linkedinUrl: dto.linkedinUrl,
+      portfolioUrl: dto.portfolioUrl,
+      githubUrl: dto.githubUrl,
+      // Expectations
+      expectedSalary: dto.expectedSalary,
+      noticePeriod: dto.noticePeriod,
+      availableFrom: dto.availableFrom,
+      // Cover Letter
+      coverLetter: dto.coverLetter,
     });
 
     await this.applicationRepo.save(application);
     return application;
+  }
+
+  async getSeekerApplications(userId: string) {
+    // Fetch all applications for a specific candidate with relations to the job & employer
+    const applications = await this.applicationRepo.find({
+      where: { seeker: { id: userId } },
+      relations: ['job', 'job.employer'],
+      order: { createdAt: 'DESC' },
+    });
+    
+    // Sanitize job payload
+    return applications.map(app => ({
+      ...app,
+      job: this.sanitizeJob(app.job)
+    }));
   }
 
   async getJobApplicants(jobId: string, employerId: string) {
@@ -314,5 +359,68 @@ export class JobService {
       ...jobData,
       employer: employer ? { id: employer.id, email: employer.email } : null,
     };
+  }
+
+  // ─── SAVED JOBS ─────────────────────────────────────────
+
+  async saveJob(jobId: string, userId: string) {
+    const job = await this.jobRepo.findOne({ where: { id: jobId } });
+    if (!job) throw new NotFoundException('Job not found');
+
+    const user = await this.userRepo.findOne({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+
+    const existing = await this.savedJobRepo.findOne({
+      where: { job: { id: jobId }, seeker: { id: userId } },
+    });
+    if (existing) {
+      throw new BadRequestException('Job already saved.');
+    }
+
+    const savedJob = this.savedJobRepo.create({ job, seeker: user });
+    await this.savedJobRepo.save(savedJob);
+    return { success: true, message: 'Job saved.' };
+  }
+
+  async unsaveJob(jobId: string, userId: string) {
+    const savedJob = await this.savedJobRepo.findOne({
+      where: { job: { id: jobId }, seeker: { id: userId } },
+    });
+    if (!savedJob) throw new NotFoundException('Saved job not found.');
+
+    await this.savedJobRepo.remove(savedJob);
+    return { success: true, message: 'Job unsaved.' };
+  }
+
+  async getSavedJobs(userId: string) {
+    const savedJobs = await this.savedJobRepo.find({
+      where: { seeker: { id: userId } },
+      relations: ['job', 'job.employer'],
+      order: { createdAt: 'DESC' },
+    });
+    return savedJobs.map((sj) => ({
+      id: sj.id,
+      savedAt: sj.createdAt,
+      job: this.sanitizeJob(sj.job),
+    }));
+  }
+
+  // ─── REPORTED JOBS ──────────────────────────────────────
+
+  async reportJob(jobId: string, userId: string, dto: ReportJobDto) {
+    const job = await this.jobRepo.findOne({ where: { id: jobId } });
+    if (!job) throw new NotFoundException('Job not found');
+
+    const user = await this.userRepo.findOne({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+
+    const report = this.reportedJobRepo.create({
+      job,
+      reporter: user,
+      reason: dto.reason,
+    });
+
+    await this.reportedJobRepo.save(report);
+    return { success: true, message: 'Report submitted. Thank you.' };
   }
 }

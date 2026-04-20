@@ -1,6 +1,23 @@
+'use client';
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function Navbar() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    // Check local storage for auth stat on client side mount
+    const checkAuth = () => {
+      const token = localStorage.getItem('access_token');
+      setIsAuthenticated(!!token);
+    };
+    
+    checkAuth();
+    // Recheck on focus in case they logged in on another tab
+    window.addEventListener('focus', checkAuth);
+    return () => window.removeEventListener('focus', checkAuth);
+  }, []);
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -32,15 +49,26 @@ export default function Navbar() {
 
         {/* CTAs */}
         <div className="flex items-center space-x-4">
-          <Link href="/auth/signin" className="text-sm font-medium text-gray-700 hover:text-primary">
-            Sign In
-          </Link>
-          <Link
-            href="/jobs/post"
-            className="rounded-full bg-accent-teal px-6 py-2 text-sm font-semibold text-white transition-all hover:bg-opacity-90 active:scale-95"
-          >
-            Post a Job
-          </Link>
+          {isAuthenticated ? (
+            <Link
+              href="/dashboard"
+              className="rounded-full bg-primary px-6 py-2 text-sm font-semibold text-white transition-all hover:bg-opacity-90 active:scale-95"
+            >
+              Dashboard
+            </Link>
+          ) : (
+            <>
+              <Link href="/auth/signin" className="text-sm font-medium text-gray-700 hover:text-primary">
+                Sign In
+              </Link>
+              <Link
+                href="/employer/jobs/create"
+                className="rounded-full bg-accent-teal px-6 py-2 text-sm font-semibold text-white transition-all hover:bg-opacity-90 active:scale-95"
+              >
+                Post a Job
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </nav>

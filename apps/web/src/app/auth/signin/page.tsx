@@ -32,7 +32,7 @@ export default function SignIn() {
       }
 
       // Store token in localStorage (refresh token is handled by HttpOnly cookie)
-      localStorage.setItem('accessToken', response.data.accessToken);
+      localStorage.setItem('access_token', response.data.accessToken);
       localStorage.setItem('user', JSON.stringify(response.data.user));
 
       router.push('/dashboard');

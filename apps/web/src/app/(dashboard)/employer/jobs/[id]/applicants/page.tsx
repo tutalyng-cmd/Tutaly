@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { apiAuth } from '@/lib/api';
-import { ArrowLeft, User, FileText, Check, X, Clock } from 'lucide-react';
+import { ArrowLeft, User, FileText, Check, X, Clock, Eye } from 'lucide-react';
 
 interface Applicant {
   id: string;
@@ -14,10 +14,21 @@ interface Applicant {
   seeker: {
     email: string;
     seekerProfile?: {
+      firstName?: string;
+      lastName?: string;
       resumeUrl?: string;
     };
   };
 }
+
+// Map backend enum values to display labels
+const STATUS_LABELS: Record<string, { label: string; bg: string; text: string }> = {
+  applied: { label: 'Applied', bg: 'bg-blue-50', text: 'text-blue-700' },
+  reviewing: { label: 'Reviewing', bg: 'bg-yellow-50', text: 'text-yellow-700' },
+  shortlisted: { label: 'Shortlisted', bg: 'bg-green-50', text: 'text-green-700' },
+  rejected: { label: 'Rejected', bg: 'bg-red-50', text: 'text-red-700' },
+  offered: { label: 'Offered', bg: 'bg-purple-50', text: 'text-purple-700' },
+};
 
 export default function ApplicantsPage() {
   const { id: jobId } = useParams();
@@ -47,9 +58,17 @@ export default function ApplicantsPage() {
       await apiAuth.withToken(token).patch(`/jobs/${jobId}/applicants/${appId}`, { status });
       // Optimistic UI update
       setApplicants(prev => prev.map(app => app.id === appId ? { ...app, status } : app));
-    } catch (err) {
+    } catch {
       alert('Failed to update status');
     }
+  };
+
+  const getApplicantName = (app: Applicant) => {
+    const profile = app.seeker?.seekerProfile;
+    if (profile?.firstName && profile?.lastName) {
+      return `${profile.firstName} ${profile.lastName}`;
+    }
+    return app.seeker?.email || 'Unknown';
   };
 
   return (
@@ -73,68 +92,96 @@ export default function ApplicantsPage() {
           </div>
         ) : (
           <ul className="divide-y divide-gray-200">
-            {applicants.map((app) => (
-              <li key={app.id} className="p-6 hover:bg-gray-50 transition">
-                <div className="flex items-start justify-between">
-                  <div className="flex gap-4">
-                    <div className="h-12 w-12 rounded-full bg-teal-100 flex items-center justify-center text-teal-800 font-bold text-xl">
-                      {app.seeker?.email?.charAt(0).toUpperCase() || 'U'}
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-medium text-gray-900">{app.seeker?.email}</h3>
-                      <p className="text-sm text-gray-500 mt-1 max-w-2xl">{app.coverNote || 'No cover note provided.'}</p>
-                      
-                      <div className="mt-4 flex gap-4 text-sm">
-                        {app.seeker?.seekerProfile?.resumeUrl && (
-                          <a href={app.seeker.seekerProfile.resumeUrl} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-teal-600 hover:text-teal-800 font-medium">
-                            <FileText className="w-4 h-4" /> View Resume
-                          </a>
+            {applicants.map((app) => {
+              const statusInfo = STATUS_LABELS[app.status] || { label: app.status, bg: 'bg-gray-50', text: 'text-gray-700' };
+
+              return (
+                <li key={app.id} className="p-6 hover:bg-gray-50 transition">
+                  <div className="flex items-start justify-between">
+                    <div className="flex gap-4">
+                      <div className="h-12 w-12 rounded-full bg-teal-100 flex items-center justify-center text-teal-800 font-bold text-xl shrink-0">
+                        {getApplicantName(app).charAt(0).toUpperCase()}
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-medium text-gray-900">{getApplicantName(app)}</h3>
+                        <p className="text-sm text-gray-500">{app.seeker?.email}</p>
+                        {app.coverNote && (
+                          <p className="text-sm text-gray-500 mt-2 max-w-2xl italic">&ldquo;{app.coverNote}&rdquo;</p>
                         )}
-                        <span className="text-gray-400">|</span>
-                        <span className="text-gray-500">Applied {new Date(app.createdAt).toLocaleDateString()}</span>
+
+                        <div className="mt-3 flex gap-4 text-sm">
+                          {app.seeker?.seekerProfile?.resumeUrl && (
+                            <a href={app.seeker.seekerProfile.resumeUrl} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-teal-600 hover:text-teal-800 font-medium">
+                              <FileText className="w-4 h-4" /> View Resume
+                            </a>
+                          )}
+                          <span className="text-gray-400">|</span>
+                          <span className="text-gray-500">Applied {new Date(app.createdAt).toLocaleDateString()}</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  
-                  <div className="flex flex-col items-end gap-2">
-                    <div className="text-sm font-medium text-gray-500 mb-2">
-                      Status: <span className="text-gray-900">{app.status.replace('_', ' ')}</span>
+
+                    <div className="flex flex-col items-end gap-3 shrink-0">
+                      <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${statusInfo.bg} ${statusInfo.text}`}>
+                        {statusInfo.label}
+                      </span>
+
+                      {/* Action buttons based on current status */}
+                      {(app.status === 'applied') && (
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => updateStatus(app.id, 'reviewing')}
+                            className="flex items-center gap-1 bg-blue-50 text-blue-700 px-3 py-1.5 rounded-md text-sm font-medium hover:bg-blue-100 transition"
+                          >
+                            <Eye className="w-4 h-4" /> Review
+                          </button>
+                          <button
+                            onClick={() => updateStatus(app.id, 'rejected')}
+                            className="flex items-center gap-1 bg-red-50 text-red-700 px-3 py-1.5 rounded-md text-sm font-medium hover:bg-red-100 transition"
+                          >
+                            <X className="w-4 h-4" /> Reject
+                          </button>
+                        </div>
+                      )}
+
+                      {app.status === 'reviewing' && (
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => updateStatus(app.id, 'shortlisted')}
+                            className="flex items-center gap-1 bg-green-50 text-green-700 px-3 py-1.5 rounded-md text-sm font-medium hover:bg-green-100 transition"
+                          >
+                            <Check className="w-4 h-4" /> Shortlist
+                          </button>
+                          <button
+                            onClick={() => updateStatus(app.id, 'rejected')}
+                            className="flex items-center gap-1 bg-red-50 text-red-700 px-3 py-1.5 rounded-md text-sm font-medium hover:bg-red-100 transition"
+                          >
+                            <X className="w-4 h-4" /> Reject
+                          </button>
+                        </div>
+                      )}
+
+                      {app.status === 'shortlisted' && (
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => updateStatus(app.id, 'offered')}
+                            className="flex items-center gap-1 bg-purple-50 text-purple-700 px-3 py-1.5 rounded-md text-sm font-medium hover:bg-purple-100 transition"
+                          >
+                            <Clock className="w-4 h-4" /> Offer
+                          </button>
+                          <button
+                            onClick={() => updateStatus(app.id, 'rejected')}
+                            className="flex items-center gap-1 bg-red-50 text-red-700 px-3 py-1.5 rounded-md text-sm font-medium hover:bg-red-100 transition"
+                          >
+                            <X className="w-4 h-4" /> Reject
+                          </button>
+                        </div>
+                      )}
                     </div>
-                    {app.status === 'APPLIED' || app.status === 'REVIEWING' ? (
-                      <div className="flex gap-2">
-                        <button 
-                          onClick={() => updateStatus(app.id, 'INTERVIEWING')}
-                          className="flex items-center gap-1 bg-blue-50 text-blue-700 px-3 py-1.5 rounded-md text-sm font-medium hover:bg-blue-100 transition"
-                        >
-                          <Clock className="w-4 h-4" /> Invite
-                        </button>
-                        <button 
-                          onClick={() => updateStatus(app.id, 'REJECTED')}
-                          className="flex items-center gap-1 bg-red-50 text-red-700 px-3 py-1.5 rounded-md text-sm font-medium hover:bg-red-100 transition"
-                        >
-                          <X className="w-4 h-4" /> Reject
-                        </button>
-                      </div>
-                    ) : app.status === 'INTERVIEWING' ? (
-                       <div className="flex gap-2">
-                        <button 
-                          onClick={() => updateStatus(app.id, 'ACCEPTED')}
-                          className="flex items-center gap-1 bg-green-50 text-green-700 px-3 py-1.5 rounded-md text-sm font-medium hover:bg-green-100 transition"
-                        >
-                          <Check className="w-4 h-4" /> Hire
-                        </button>
-                        <button 
-                          onClick={() => updateStatus(app.id, 'REJECTED')}
-                          className="flex items-center gap-1 bg-red-50 text-red-700 px-3 py-1.5 rounded-md text-sm font-medium hover:bg-red-100 transition"
-                        >
-                          <X className="w-4 h-4" /> Reject
-                        </button>
-                      </div>
-                    ) : null}
                   </div>
-                </div>
-              </li>
-            ))}
+                </li>
+              );
+            })}
           </ul>
         )}
       </div>

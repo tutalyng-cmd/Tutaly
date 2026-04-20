@@ -317,7 +317,7 @@ export class AuthService {
       { sub: user.id, type: 'password-reset' },
       {
         secret: this.configService.get<string>('JWT_SECRET'),
-        expiresIn: '1h',
+        expiresIn: '5m',
       },
     );
 
@@ -360,7 +360,7 @@ export class AuthService {
       { sub: user.id, email: user.email, role: user.role },
       {
         secret: this.configService.get<string>('JWT_SECRET'),
-        expiresIn: '15m',
+        expiresIn: '7d', // Extended for dev. Production should be 15m with refresh interceptor.
       },
     );
   }

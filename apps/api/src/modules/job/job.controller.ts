@@ -17,6 +17,7 @@ import {
   JobQueryDto,
   ApplyJobDto,
   UpdateApplicationStatusDto,
+  ReportJobDto,
 } from './dto/job.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
@@ -42,12 +43,39 @@ export class JobController {
     return this.jobService.findAll(query);
   }
 
+  // ─── SPECIFIC ROUTES (must come BEFORE :id) ──────────────
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.EMPLOYER)
+  @Get('employer/me')
+  async getEmployerJobs(@NestRequest() req: AuthorizedRequest) {
+    const userId = req.user.sub;
+    return this.jobService.findEmployerJobs(userId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('saved')
+  async getSavedJobs(@NestRequest() req: AuthorizedRequest) {
+    const userId = req.user.sub;
+    return this.jobService.getSavedJobs(userId);
+  }
+
+  // ─── PARAMETERIZED ROUTES ────────────────────────────────
+
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.jobService.findOne(id);
   }
 
   // ─── SEEKER ENDPOINTS ────────────────────────────────────
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.SEEKER)
+  @Get('seeker/applications')
+  async getSeekerApplications(@NestRequest() req: AuthorizedRequest) {
+    const userId = req.user.sub;
+    return this.jobService.getSeekerApplications(userId);
+  }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.SEEKER)
@@ -59,6 +87,37 @@ export class JobController {
   ) {
     const userId = req.user.sub;
     return this.jobService.apply(id, userId, dto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post(':id/save')
+  async saveJob(
+    @Param('id') id: string,
+    @NestRequest() req: AuthorizedRequest,
+  ) {
+    const userId = req.user.sub;
+    return this.jobService.saveJob(id, userId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id/save')
+  async unsaveJob(
+    @Param('id') id: string,
+    @NestRequest() req: AuthorizedRequest,
+  ) {
+    const userId = req.user.sub;
+    return this.jobService.unsaveJob(id, userId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post(':id/report')
+  async reportJob(
+    @Param('id') id: string,
+    @NestRequest() req: AuthorizedRequest,
+    @Body() dto: ReportJobDto,
+  ) {
+    const userId = req.user.sub;
+    return this.jobService.reportJob(id, userId, dto);
   }
 
   // ─── EMPLOYER ENDPOINTS ──────────────────────────────────
@@ -76,14 +135,6 @@ export class JobController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.EMPLOYER)
-  @Get('employer/me')
-  async getEmployerJobs(@NestRequest() req: AuthorizedRequest) {
-    const userId = req.user.sub;
-    return this.jobService.findEmployerJobs(userId);
-  }
-
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.EMPLOYER)
   @Get(':id/applicants')
   async getApplicants(
     @Param('id') id: string,
@@ -97,7 +148,6 @@ export class JobController {
   @Roles(UserRole.EMPLOYER)
   @Patch(':id/applicants/:appId')
   async updateApplicationStatus(
-    @Param('id') id: string,
     @Param('appId') appId: string,
     @Body() dto: UpdateApplicationStatusDto,
     @NestRequest() req: AuthorizedRequest,

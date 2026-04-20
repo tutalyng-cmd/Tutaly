@@ -1,18 +1,29 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class InitialSchema1775952082088 implements MigrationInterface {
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    // Enums
+    await queryRunner.query(
+      `CREATE TYPE "public"."users_role_enum" AS ENUM('seeker', 'employer', 'admin')`,
+    );
+    await queryRunner.query(
+      `CREATE TYPE "public"."jobs_jobtype_enum" AS ENUM('full-time', 'part-time', 'contract', 'freelance', 'internship')`,
+    );
+    await queryRunner.query(
+      `CREATE TYPE "public"."jobs_experiencelevel_enum" AS ENUM('entry', 'mid', 'senior', 'lead')`,
+    );
+    await queryRunner.query(
+      `CREATE TYPE "public"."jobs_workmode_enum" AS ENUM('remote', 'hybrid', 'onsite')`,
+    );
+    await queryRunner.query(
+      `CREATE TYPE "public"."jobs_status_enum" AS ENUM('pending_review', 'active', 'expired', 'removed')`,
+    );
+    await queryRunner.query(
+      `CREATE TYPE "public"."applications_status_enum" AS ENUM('applied', 'reviewing', 'shortlisted', 'rejected', 'offered')`,
+    );
 
-    public async up(queryRunner: QueryRunner): Promise<void> {
-        // Enums
-        await queryRunner.query(`CREATE TYPE "public"."users_role_enum" AS ENUM('seeker', 'employer', 'admin')`);
-        await queryRunner.query(`CREATE TYPE "public"."jobs_jobtype_enum" AS ENUM('full-time', 'part-time', 'contract', 'freelance', 'internship')`);
-        await queryRunner.query(`CREATE TYPE "public"."jobs_experiencelevel_enum" AS ENUM('entry', 'mid', 'senior', 'lead')`);
-        await queryRunner.query(`CREATE TYPE "public"."jobs_workmode_enum" AS ENUM('remote', 'hybrid', 'onsite')`);
-        await queryRunner.query(`CREATE TYPE "public"."jobs_status_enum" AS ENUM('pending_review', 'active', 'expired', 'removed')`);
-        await queryRunner.query(`CREATE TYPE "public"."applications_status_enum" AS ENUM('applied', 'reviewing', 'shortlisted', 'rejected', 'offered')`);
-
-        // Users table
-        await queryRunner.query(`
+    // Users table
+    await queryRunner.query(`
             CREATE TABLE "users" (
                 "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
                 "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
@@ -30,8 +41,8 @@ export class InitialSchema1775952082088 implements MigrationInterface {
             )
         `);
 
-        // Seeker Profiles
-        await queryRunner.query(`
+    // Seeker Profiles
+    await queryRunner.query(`
             CREATE TABLE "seeker_profiles" (
                 "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
                 "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
@@ -49,8 +60,8 @@ export class InitialSchema1775952082088 implements MigrationInterface {
             )
         `);
 
-        // Employer Profiles
-        await queryRunner.query(`
+    // Employer Profiles
+    await queryRunner.query(`
             CREATE TABLE "employer_profiles" (
                 "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
                 "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
@@ -62,8 +73,8 @@ export class InitialSchema1775952082088 implements MigrationInterface {
             )
         `);
 
-        // Jobs table
-        await queryRunner.query(`
+    // Jobs table
+    await queryRunner.query(`
             CREATE TABLE "jobs" (
                 "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
                 "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
@@ -91,8 +102,8 @@ export class InitialSchema1775952082088 implements MigrationInterface {
             )
         `);
 
-        // Applications
-        await queryRunner.query(`
+    // Applications
+    await queryRunner.query(`
             CREATE TABLE "applications" (
                 "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
                 "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
@@ -106,31 +117,50 @@ export class InitialSchema1775952082088 implements MigrationInterface {
             )
         `);
 
-        // Foreign Keys
-        await queryRunner.query(`ALTER TABLE "seeker_profiles" ADD CONSTRAINT "FK_7459ef7ac657512ca4f9d0ed2a9" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "employer_profiles" ADD CONSTRAINT "FK_1d8d9b15b7c7e5a87b7a6d9e8b9" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "jobs" ADD CONSTRAINT "FK_0846ec568b2f9fa5591c071d0d9" FOREIGN KEY ("employerId") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "applications" ADD CONSTRAINT "FK_1c8413693fb5f5280ae69752f9c" FOREIGN KEY ("jobId") REFERENCES "jobs"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "applications" ADD CONSTRAINT "FK_6d9b9c9f0c6c6c6c6c6c6c6c6c6" FOREIGN KEY ("seekerId") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-    }
+    // Foreign Keys
+    await queryRunner.query(
+      `ALTER TABLE "seeker_profiles" ADD CONSTRAINT "FK_7459ef7ac657512ca4f9d0ed2a9" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "employer_profiles" ADD CONSTRAINT "FK_1d8d9b15b7c7e5a87b7a6d9e8b9" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "jobs" ADD CONSTRAINT "FK_0846ec568b2f9fa5591c071d0d9" FOREIGN KEY ("employerId") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "applications" ADD CONSTRAINT "FK_1c8413693fb5f5280ae69752f9c" FOREIGN KEY ("jobId") REFERENCES "jobs"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "applications" ADD CONSTRAINT "FK_6d9b9c9f0c6c6c6c6c6c6c6c6c6" FOREIGN KEY ("seekerId") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+  }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`ALTER TABLE "applications" DROP CONSTRAINT "FK_6d9b9c9f0c6c6c6c6c6c6c6c6c6"`);
-        await queryRunner.query(`ALTER TABLE "applications" DROP CONSTRAINT "FK_1c8413693fb5f5280ae69752f9c"`);
-        await queryRunner.query(`ALTER TABLE "jobs" DROP CONSTRAINT "FK_0846ec568b2f9fa5591c071d0d9"`);
-        await queryRunner.query(`ALTER TABLE "employer_profiles" DROP CONSTRAINT "FK_1d8d9b15b7c7e5a87b7a6d9e8b9"`);
-        await queryRunner.query(`ALTER TABLE "seeker_profiles" DROP CONSTRAINT "FK_7459ef7ac657512ca4f9d0ed2a9"`);
-        await queryRunner.query(`DROP TABLE "applications"`);
-        await queryRunner.query(`DROP TABLE "jobs"`);
-        await queryRunner.query(`DROP TABLE "employer_profiles"`);
-        await queryRunner.query(`DROP TABLE "seeker_profiles"`);
-        await queryRunner.query(`DROP TABLE "users"`);
-        await queryRunner.query(`DROP TYPE "public"."applications_status_enum"`);
-        await queryRunner.query(`DROP TYPE "public"."jobs_status_enum"`);
-        await queryRunner.query(`DROP TYPE "public"."jobs_workmode_enum"`);
-        await queryRunner.query(`DROP TYPE "public"."jobs_experiencelevel_enum"`);
-        await queryRunner.query(`DROP TYPE "public"."jobs_jobtype_enum"`);
-        await queryRunner.query(`DROP TYPE "public"."users_role_enum"`);
-    }
-
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      `ALTER TABLE "applications" DROP CONSTRAINT "FK_6d9b9c9f0c6c6c6c6c6c6c6c6c6"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "applications" DROP CONSTRAINT "FK_1c8413693fb5f5280ae69752f9c"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "jobs" DROP CONSTRAINT "FK_0846ec568b2f9fa5591c071d0d9"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "employer_profiles" DROP CONSTRAINT "FK_1d8d9b15b7c7e5a87b7a6d9e8b9"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "seeker_profiles" DROP CONSTRAINT "FK_7459ef7ac657512ca4f9d0ed2a9"`,
+    );
+    await queryRunner.query(`DROP TABLE "applications"`);
+    await queryRunner.query(`DROP TABLE "jobs"`);
+    await queryRunner.query(`DROP TABLE "employer_profiles"`);
+    await queryRunner.query(`DROP TABLE "seeker_profiles"`);
+    await queryRunner.query(`DROP TABLE "users"`);
+    await queryRunner.query(`DROP TYPE "public"."applications_status_enum"`);
+    await queryRunner.query(`DROP TYPE "public"."jobs_status_enum"`);
+    await queryRunner.query(`DROP TYPE "public"."jobs_workmode_enum"`);
+    await queryRunner.query(`DROP TYPE "public"."jobs_experiencelevel_enum"`);
+    await queryRunner.query(`DROP TYPE "public"."jobs_jobtype_enum"`);
+    await queryRunner.query(`DROP TYPE "public"."users_role_enum"`);
+  }
 }

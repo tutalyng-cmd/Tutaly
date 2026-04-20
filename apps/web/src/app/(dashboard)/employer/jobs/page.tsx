@@ -84,13 +84,17 @@ export default function EmployerJobsPage() {
                       {job.area ? `${job.area}, ` : ''}{job.state}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      {job.status === 'ACTIVE' ? (
+                      {job.status === 'active' ? (
                         <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
                           <CheckCircle className="w-3 h-3" /> Active
                         </span>
-                      ) : job.status === 'PENDING_REVIEW' ? (
+                      ) : job.status === 'pending_review' ? (
                         <span className="inline-flex items-center gap-1 rounded-full bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">
                           <Clock className="w-3 h-3" /> Pending Review
+                        </span>
+                      ) : job.status === 'expired' ? (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
+                          Expired
                         </span>
                       ) : (
                         <span className="inline-flex items-center gap-1 rounded-full bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">

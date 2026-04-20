@@ -37,7 +37,7 @@ function MfaContent() {
       });
 
       // Store tokens and user locally
-      localStorage.setItem('accessToken', response.data.accessToken);
+      localStorage.setItem('access_token', response.data.accessToken);
       localStorage.setItem('user', JSON.stringify(response.data.user));
 
       router.push('/dashboard');

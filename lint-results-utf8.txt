@@ -1,0 +1,46 @@
+﻿Scope: 2 of 3 workspace projects
+apps/api lint$ eslint "{src,apps,libs,test}/**/*.ts" --fix
+apps/web lint$ eslint
+apps/web lint: C:\Users\jerry\OneDrive\Desktop\tutaly\Tutaly\apps\web\src\app\(dashboard)\seeker\applications\page.tsx
+apps/web lint:   42:19  error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+apps/web lint:   95:62  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+apps/web lint: C:\Users\jerry\OneDrive\Desktop\tutaly\Tutaly\apps\web\src\app\(dashboard)\seeker\profile\page.tsx
+apps/web lint:    66:14  warning  'err' is defined but never used           @typescript-eslint/no-unused-vars
+apps/web lint:   110:19  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint: C:\Users\jerry\OneDrive\Desktop\tutaly\Tutaly\apps\web\src\app\(public)\page.tsx
+apps/web lint:   14:12  warning  'err' is defined but never used           @typescript-eslint/no-unused-vars
+apps/web lint:   47:63  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint: C:\Users\jerry\OneDrive\Desktop\tutaly\Tutaly\apps\web\src\app\auth\mfa\page.tsx
+apps/web lint:   6:44  warning  'Mail' is defined but never used  @typescript-eslint/no-unused-vars
+apps/web lint: C:\Users\jerry\OneDrive\Desktop\tutaly\Tutaly\apps\web\src\app\auth\reset-password\page.tsx
+apps/web lint:   11:9  warning  'router' is assigned a value but never used  @typescript-eslint/no-unused-vars
+apps/web lint: C:\Users\jerry\OneDrive\Desktop\tutaly\Tutaly\apps\web\src\app\auth\signup\page.tsx
+apps/web lint:     7:49  warning  'ArrowRight' is defined but never used                           @typescript-eslint/no-unused-vars
+apps/web lint:     7:61  warning  'ArrowLeft' is defined but never used                            @typescript-eslint/no-unused-vars
+apps/web lint:    13:9   warning  'router' is assigned a value but never used                      @typescript-eslint/no-unused-vars
+apps/web lint:    71:15  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+apps/web lint:   105:67  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+apps/web lint:   116:67  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+apps/web lint: C:\Users\jerry\OneDrive\Desktop\tutaly\Tutaly\apps\web\src\app\auth\verify-email\page.tsx
+apps/web lint:   11:9  warning  'router' is assigned a value but never used  @typescript-eslint/no-unused-vars
+apps/web lint: C:\Users\jerry\OneDrive\Desktop\tutaly\Tutaly\apps\web\src\components\jobs\ApplyModal.tsx
+apps/web lint:   306:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint: C:\Users\jerry\OneDrive\Desktop\tutaly\Tutaly\apps\web\src\components\jobs\JobResultsWithDetail.tsx
+apps/web lint:   71:9  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+apps/web lint: Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+apps/web lint: * Update external systems with the latest state from React.
+apps/web lint: * Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+apps/web lint: Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+apps/web lint: C:\Users\jerry\OneDrive\Desktop\tutaly\Tutaly\apps\web\src\components\jobs\JobResultsWithDetail.tsx:71:9
+apps/web lint:   69 |       const found = jobs.find((j) => j.id === jobId);
+apps/web lint:   70 |       if (found) {
+apps/web lint: > 71 |         setSelectedJob(found);
+apps/web lint:      |         ^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+apps/web lint:   72 |         setMobileDetailOpen(true);
+apps/web lint:   73 |       } else {
+apps/web lint:   74 |         // Fetch from API  react-hooks/set-state-in-effect
+apps/web lint: Γ£û 17 problems (5 errors, 12 warnings)
+apps/web lint: Failed
+C:\Users\jerry\OneDrive\Desktop\tutaly\Tutaly\apps\web:
+ΓÇëERR_PNPM_RECURSIVE_RUN_FIRST_FAILΓÇë web@0.1.0 lint: `eslint`
+Exit status 1

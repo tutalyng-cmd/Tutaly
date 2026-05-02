@@ -5,6 +5,26 @@ import { useRouter } from 'next/navigation';
 import { ShieldCheck, Loader2 } from 'lucide-react';
 import { api } from '@/lib/api';
 
+const RatingSelect = ({ name, label, value, onChange }: { name: string, label: string, value: number, onChange: React.ChangeEventHandler<HTMLSelectElement> }) => (
+  <div>
+    <label className="block text-sm font-medium text-black-700 mb-1">{label}</label>
+    <select
+      name={name}
+      value={value}
+      onChange={onChange}
+      className="w-full rounded-lg border-gray-300 focus:border-teal-500 focus:ring-teal-500 shadow-sm text-gray-900"
+      required={name === 'ratingOverall'}
+    >
+      <option value={0} disabled>Select Rating</option>
+      <option value={5}>5 - Excellent</option>
+      <option value={4}>4 - Good</option>
+      <option value={3}>3 - Average</option>
+      <option value={2}>2 - Poor</option>
+      <option value={1}>1 - Terrible</option>
+    </select>
+  </div>
+);
+
 export default function WriteReviewPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -69,25 +89,7 @@ export default function WriteReviewPage() {
     }
   };
 
-  const RatingSelect = ({ name, label }: { name: string, label: string }) => (
-    <div>
-      <label className="block text-sm font-medium text-black-700 mb-1">{label}</label>
-      <select
-        name={name}
-        value={(formData as any)[name]}
-        onChange={handleChange}
-        className="w-full rounded-lg border-gray-300 focus:border-teal-500 focus:ring-teal-500 shadow-sm text-gray-900"
-        required={name === 'ratingOverall'}
-      >
-        <option value={0} disabled>Select Rating</option>
-        <option value={5}>5 - Excellent</option>
-        <option value={4}>4 - Good</option>
-        <option value={3}>3 - Average</option>
-        <option value={2}>2 - Poor</option>
-        <option value={1}>1 - Terrible</option>
-      </select>
-    </div>
-  );
+
 
   if (success) {
     return (
@@ -162,11 +164,11 @@ export default function WriteReviewPage() {
             <div>
               <h3 className="text-lg font-semibold text-black border-b pb-2 mb-4">Ratings</h3>
               <div className="grid grid-cols-1 text-black gap-6 sm:grid-cols-2">
-                <RatingSelect name="ratingOverall" label="Overall Rating *" />
-                <RatingSelect name="ratingWorkLife" label="Work-Life Balance" />
-                <RatingSelect name="ratingPay" label="Pay & Benefits" />
-                <RatingSelect name="ratingManagement" label="Management" />
-                <RatingSelect name="ratingCulture" label="Culture & Values" />
+                <RatingSelect name="ratingOverall" label="Overall Rating *" value={formData.ratingOverall} onChange={handleChange} />
+                <RatingSelect name="ratingWorkLife" label="Work-Life Balance" value={formData.ratingWorkLife} onChange={handleChange} />
+                <RatingSelect name="ratingPay" label="Pay & Benefits" value={formData.ratingPay} onChange={handleChange} />
+                <RatingSelect name="ratingManagement" label="Management" value={formData.ratingManagement} onChange={handleChange} />
+                <RatingSelect name="ratingCulture" label="Culture & Values" value={formData.ratingCulture} onChange={handleChange} />
               </div>
             </div>
 

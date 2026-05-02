@@ -1,7 +1,7 @@
 import { Entity, Column, ManyToOne, OneToOne, JoinColumn } from 'typeorm';
 import { BaseEntity } from '../../../common/entities/base.entity';
 import { User } from '../../user/entities/user.entity';
-import { ShopProduct } from './shop.entity';
+import { ShopProduct, Currency } from './shop.entity';
 
 export enum OrderStatus {
   PENDING_PAYMENT = 'pending_payment',
@@ -11,6 +11,11 @@ export enum OrderStatus {
   AUTO_COMPLETE = 'auto_complete',
   DISPUTED = 'disputed',
   REFUNDED = 'refunded',
+}
+
+export enum PaymentGateway {
+  FLUTTERWAVE = 'flutterwave',
+  PAYSTACK = 'paystack',
 }
 
 @Entity('orders')
@@ -32,6 +37,12 @@ export class Order extends BaseEntity {
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   sellerEarnings: number; // 80%
+
+  @Column({ type: 'enum', enum: Currency, default: Currency.NGN })
+  currency: Currency;
+
+  @Column({ type: 'enum', enum: PaymentGateway, default: PaymentGateway.FLUTTERWAVE })
+  paymentGateway: PaymentGateway;
 
   @Column({ unique: true, nullable: true })
   paymentRef: string;

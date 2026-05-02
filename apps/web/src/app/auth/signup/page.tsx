@@ -1,16 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Briefcase, Mail, Lock, Calendar, ArrowRight, ArrowLeft, Loader2, CheckCircle2 } from 'lucide-react';
+import { User, Briefcase, Mail, Lock, Calendar, Loader2, CheckCircle2 } from 'lucide-react';
 import { api } from '@/lib/api';
 
 type Role = 'seeker' | 'employer' | '';
 
 export default function SignUp() {
-  const router = useRouter();
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -68,7 +66,7 @@ export default function SignUp() {
           </div>
           <h3 className="text-2xl font-bold text-white mb-2">Check your email</h3>
           <p className="text-gray-400 mb-8">
-            We've sent a verification link to <span className="text-white font-medium">{email}</span>.
+            We&apos;ve sent a verification link to <span className="text-white font-medium">{email}</span>.
           </p>
           <Link
             href="/auth/signin"
@@ -102,7 +100,7 @@ export default function SignUp() {
                 }`}
               >
                 <User className={`h-8 w-8 mb-3 ${role === 'seeker' ? 'text-[#1D9E75]' : 'text-gray-400'}`} />
-                <h3 className="text-lg font-semibold text-white">I'm a Job Seeker</h3>
+                <h3 className="text-lg font-semibold text-white">I&apos;m a Job Seeker</h3>
                 <p className="text-sm text-gray-400 mt-2">Looking for flexible or full-time opportunities.</p>
               </div>
 
@@ -113,7 +111,7 @@ export default function SignUp() {
                 }`}
               >
                 <Briefcase className={`h-8 w-8 mb-3 ${role === 'employer' ? 'text-[#1D9E75]' : 'text-gray-400'}`} />
-                <h3 className="text-lg font-semibold text-white">I'm an Employer</h3>
+                <h3 className="text-lg font-semibold text-white">I&apos;m an Employer</h3>
                 <p className="text-sm text-gray-400 mt-2">Looking to hire talented professionals.</p>
               </div>
             </div>

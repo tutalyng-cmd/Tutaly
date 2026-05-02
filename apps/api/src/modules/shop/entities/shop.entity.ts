@@ -31,6 +31,12 @@ export enum PricingType {
   REQUEST_QUOTE = 'request_quote',
 }
 
+export enum Currency {
+  NGN = 'NGN',
+  USD = 'USD',
+  EUR = 'EUR',
+}
+
 @Entity('shop_products')
 export class ShopProduct extends BaseEntity {
   @ManyToOne(() => User)
@@ -54,6 +60,9 @@ export class ShopProduct extends BaseEntity {
   @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
   price: number;
 
+  @Column({ type: 'enum', enum: Currency, default: Currency.NGN })
+  currency: Currency;
+
   @Column({ nullable: true })
   priceUnit: string;
 
@@ -65,6 +74,12 @@ export class ShopProduct extends BaseEntity {
 
   @Column({ nullable: true })
   fileS3Key: string;
+
+  @Column('text', { array: true, nullable: true })
+  imageUrls: string[];
+
+  @Column({ default: 0 })
+  downloadCount: number;
 
   @Column({ default: true })
   isActive: boolean;

@@ -26,9 +26,12 @@ import { TokenService } from '../auth/token.service';
 import { MailService } from '../auth/mail.service';
 import { User, UserRole } from '../user/entities/user.entity';
 import { SeekerProfile } from '../user/entities/seeker-profile.entity';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 @Injectable()
 export class JobService {
+  private supabase: SupabaseClient;
+
   constructor(
     @InjectRepository(Job)
     private readonly jobRepo: Repository<Job>,
@@ -44,7 +47,12 @@ export class JobService {
     private readonly seekerProfileRepo: Repository<SeekerProfile>,
     private readonly tokenService: TokenService,
     private readonly mailService: MailService,
-  ) {}
+  ) {
+    this.supabase = createClient(
+      process.env.SUPABASE_URL || '',
+      process.env.SUPABASE_SERVICE_KEY || '',
+    );
+  }
 
   async create(dto: CreateJobDto, userId: string) {
     const user = await this.userRepo.findOne({ where: { id: userId } });
@@ -53,7 +61,7 @@ export class JobService {
     const job = this.jobRepo.create({
       ...dto,
       employer: user,
-      status: JobStatus.ACTIVE, // Temporarily bypassed PENDING_REVIEW for local testing
+      status: JobStatus.PENDING_REVIEW,
     });
 
     await this.jobRepo.save(job);
@@ -302,11 +310,11 @@ export class JobService {
       relations: ['job', 'job.employer'],
       order: { createdAt: 'DESC' },
     });
-    
+
     // Sanitize job payload
-    return applications.map(app => ({
+    return applications.map((app) => ({
       ...app,
-      job: this.sanitizeJob(app.job)
+      job: this.sanitizeJob(app.job),
     }));
   }
 
@@ -348,6 +356,87 @@ export class JobService {
     application.status = dto.status;
     await this.applicationRepo.save(application);
     return application;
+  }
+
+  // ─── EMPLOYER DASHBOARD STATS ────────────────────────────
+  async getEmployerDashboardStats(employerId: string) {
+    const jobs = await this.jobRepo.find({
+      where: { employer: { id: employerId } },
+    });
+
+    const jobIds = jobs.map((j) => j.id);
+
+    let totalApplicants = 0;
+    if (jobIds.length > 0) {
+      totalApplicants = await this.applicationRepo
+        .createQueryBuilder('app')
+        .innerJoin('app.job', 'job')
+        .where('job.employerId = :employerId', { employerId })
+        .getCount();
+    }
+
+    const activeJobs = jobs.filter(
+      (j) => j.status === JobStatus.ACTIVE,
+    ).length;
+    const pendingJobs = jobs.filter(
+      (j) => j.status === JobStatus.PENDING_REVIEW,
+    ).length;
+
+    return {
+      activeJobs,
+      totalApplicants,
+      pendingJobs,
+      totalJobs: jobs.length,
+    };
+  }
+
+  // ─── SINGLE APPLICATION DETAIL ──────────────────────────
+  async getApplicationDetail(
+    appId: string,
+    jobId: string,
+    employerId: string,
+  ) {
+    const job = await this.jobRepo.findOne({
+      where: { id: jobId },
+      relations: ['employer'],
+    });
+    if (!job || job.employer?.id !== employerId) {
+      throw new ForbiddenException(
+        'You can only view applicants for your own jobs.',
+      );
+    }
+
+    const application = await this.applicationRepo.findOne({
+      where: { id: appId, job: { id: jobId } },
+      relations: ['seeker', 'seeker.seekerProfile', 'job'],
+    });
+
+    if (!application) {
+      throw new NotFoundException('Application not found');
+    }
+
+    // Generate signed resume URL if seeker has one
+    let resumeSignedUrl: string | null = null;
+    if (application.seeker?.seekerProfile?.resumeUrl) {
+      // We'll return the raw path; the frontend can request a signed URL separately
+      resumeSignedUrl = application.seeker.seekerProfile.resumeUrl;
+    }
+
+    return {
+      ...application,
+      seeker: {
+        id: application.seeker.id,
+        email: application.seeker.email,
+        role: application.seeker.role,
+        seekerProfile: application.seeker.seekerProfile
+          ? {
+              ...application.seeker.seekerProfile,
+              resumeSignedUrl,
+            }
+          : null,
+      },
+      job: this.sanitizeJob(application.job),
+    };
   }
 
   // ─── UTILS ───────────────────────────────────────────────
@@ -422,5 +511,53 @@ export class JobService {
 
     await this.reportedJobRepo.save(report);
     return { success: true, message: 'Report submitted. Thank you.' };
+  }
+
+  // ─── RESUME SIGNED URL ─────────────────────────────────
+  async getApplicantResumeUrl(
+    jobId: string,
+    appId: string,
+    employerId: string,
+  ) {
+    // Verify employer owns the job
+    const job = await this.jobRepo.findOne({
+      where: { id: jobId },
+      relations: ['employer'],
+    });
+    if (!job || job.employer?.id !== employerId) {
+      throw new ForbiddenException(
+        'You can only access resumes for your own job applicants.',
+      );
+    }
+
+    // Find the application and get the seeker's resume
+    const application = await this.applicationRepo.findOne({
+      where: { id: appId, job: { id: jobId } },
+      relations: ['seeker', 'seeker.seekerProfile'],
+    });
+
+    if (!application) {
+      throw new NotFoundException('Application not found');
+    }
+
+    const resumePath = application.seeker?.seekerProfile?.resumeUrl;
+    if (!resumePath) {
+      throw new NotFoundException(
+        'This applicant has not uploaded a resume.',
+      );
+    }
+
+    // Generate signed URL from Supabase Storage
+    const { data, error } = await this.supabase.storage
+      .from('resumes')
+      .createSignedUrl(resumePath, 3600); // 1 hour expiry
+
+    if (error || !data?.signedUrl) {
+      throw new BadRequestException(
+        `Failed to generate resume URL: ${error?.message || 'Unknown error'}`,
+      );
+    }
+
+    return { signedUrl: data.signedUrl };
   }
 }

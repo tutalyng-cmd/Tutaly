@@ -9,6 +9,13 @@ export enum UserRole {
   ADMIN = 'admin',
 }
 
+export enum SellerStatus {
+  NONE = 'none',
+  PENDING = 'pending',
+  APPROVED = 'approved',
+  REJECTED = 'rejected',
+}
+
 @Entity('users')
 export class User extends BaseEntity {
   @Column({ unique: true })
@@ -38,6 +45,9 @@ export class User extends BaseEntity {
 
   @Column({ default: false })
   isMfaEnabled: boolean;
+
+  @Column({ type: 'enum', enum: SellerStatus, default: SellerStatus.NONE })
+  sellerStatus: SellerStatus;
 
   @OneToOne(() => SeekerProfile, (profile) => profile.user)
   seekerProfile: SeekerProfile;

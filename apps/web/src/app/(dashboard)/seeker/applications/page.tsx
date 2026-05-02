@@ -39,8 +39,8 @@ export default function SeekerApplicationsPage() {
 
       const { data } = await apiAuth.withToken(token).get('/jobs/seeker/applications');
       setApplications(data);
-    } catch (err: any) {
-      setError(err.message || 'Failed to fetch your applications');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch your applications');
     } finally {
       setLoading(false);
     }
@@ -50,8 +50,8 @@ export default function SeekerApplicationsPage() {
     switch (status.toUpperCase()) {
       case 'APPLIED':
         return <span className="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-bold rounded-full border border-blue-200">APPLIED</span>;
-      case 'REVIEWED':
-        return <span className="px-3 py-1 bg-purple-50 text-purple-700 text-xs font-bold rounded-full border border-purple-200">REVIEWED</span>;
+      case 'REVIEWING':
+        return <span className="px-3 py-1 bg-purple-50 text-purple-700 text-xs font-bold rounded-full border border-purple-200">REVIEWING</span>;
       case 'SHORTLISTED':
         return <span className="px-3 py-1 bg-teal-50 text-teal-700 text-xs font-bold rounded-full border border-teal-200">SHORTLISTED</span>;
       case 'OFFERED':
@@ -92,7 +92,7 @@ export default function SeekerApplicationsPage() {
         <div className="bg-white p-12 rounded-xl border border-gray-100 text-center shadow-sm">
           <Briefcase className="w-12 h-12 mx-auto mb-4 text-gray-200" />
           <h3 className="text-lg font-bold text-gray-900 mb-2">No applications yet</h3>
-          <p className="text-gray-500 text-sm mb-6">You haven't applied to any jobs. Explore active listings to find your next role.</p>
+          <p className="text-gray-500 text-sm mb-6">You haven&apos;t applied to any jobs. Explore active listings to find your next role.</p>
           <Link href="/jobs" className="inline-flex bg-gray-900 text-white font-bold py-2.5 px-6 rounded-xl hover:bg-black transition">
             Explore Jobs
           </Link>

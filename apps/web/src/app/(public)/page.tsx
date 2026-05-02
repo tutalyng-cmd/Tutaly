@@ -11,7 +11,7 @@ async function fetchFeaturedJobs() {
     if (!res.ok) return [];
     const data = await res.json();
     return data.items || [];
-  } catch (err) {
+  } catch {
     return [];
   }
 }
@@ -44,7 +44,7 @@ export default async function Home() {
           </div>
           
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {featuredJobs.length > 0 ? featuredJobs.map((job: any) => (
+            {featuredJobs.length > 0 ? featuredJobs.map((job: { id: string; title: string; employer?: { email: string }; state?: string; country?: string; currency?: string; minSalary?: number }) => (
                <Link href={`/jobs?jobId=${job.id}`} key={job.id} className="bg-white p-6 rounded-2xl border border-gray-100 hover:shadow-xl transition-shadow group flex flex-col">
                   <div className="flex justify-between items-start mb-4">
                      <div className="bg-blue-50 w-12 h-12 rounded-xl flex items-center justify-center">

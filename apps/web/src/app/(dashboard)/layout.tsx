@@ -10,7 +10,9 @@ import {
   LogOut,
   User,
   Heart,
-  FileText
+  FileText,
+  ShoppingBag,
+  Store
 } from 'lucide-react';
 
 export default function DashboardLayout({
@@ -28,11 +30,13 @@ export default function DashboardLayout({
 
   const isEmployer = pathname.startsWith('/employer');
   const isSeeker = pathname.startsWith('/seeker');
+  const isSeller = pathname.startsWith('/seller');
 
   const employerLinks = [
     { name: 'Overview', href: '/employer', icon: Building2 },
     { name: 'My Jobs', href: '/employer/jobs', icon: Briefcase },
     { name: 'Post a Job', href: '/employer/jobs/create', icon: FileText },
+    { name: 'Seller Dashboard', href: '/seller', icon: Store },
     { name: 'Settings', href: '/employer/settings', icon: Settings },
   ];
 
@@ -40,10 +44,17 @@ export default function DashboardLayout({
     { name: 'My Profile', href: '/seeker', icon: User },
     { name: 'Applications', href: '/seeker/applications', icon: Briefcase },
     { name: 'Saved Jobs', href: '/seeker/saved', icon: Heart },
+    { name: 'My Orders', href: '/seeker/orders', icon: ShoppingBag },
+    { name: 'Seller Dashboard', href: '/seller', icon: Store },
     { name: 'Settings', href: '/seeker/settings', icon: Settings },
   ];
 
-  const links = isEmployer ? employerLinks : isSeeker ? seekerLinks : [];
+  const sellerLinks = [
+    { name: 'Dashboard', href: '/seller', icon: Store },
+    { name: 'Add Product', href: '/seller/create', icon: FileText },
+  ];
+
+  const links = isSeller ? sellerLinks : isEmployer ? employerLinks : isSeeker ? seekerLinks : [];
 
   const handleLogout = () => {
     localStorage.removeItem('access_token');
@@ -57,7 +68,7 @@ export default function DashboardLayout({
       <aside className="w-64 border-r border-gray-200 bg-white flex flex-col hidden lg:flex shrink-0">
         <div className="p-4 border-b border-gray-100 mb-2">
           <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">
-            {isEmployer ? 'Employer Workspace' : isSeeker ? 'Professional Profile' : 'Dashboard'}
+            {isSeller ? 'Seller Dashboard' : isEmployer ? 'Employer Workspace' : isSeeker ? 'Professional Profile' : 'Dashboard'}
           </p>
         </div>
 

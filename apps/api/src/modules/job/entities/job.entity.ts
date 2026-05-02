@@ -180,7 +180,7 @@ export class Application extends BaseEntity {
 
   // ─── Extensible metadata (for custom employer questions) ─
   @Column({ type: 'jsonb', nullable: true })
-  applicationMeta: Record<string, any>;
+  applicationMeta: Record<string, unknown>;
 }
 
 @Entity('saved_jobs')

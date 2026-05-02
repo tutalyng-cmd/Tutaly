@@ -28,4 +28,7 @@ export class SeekerProfile extends BaseEntity {
 
   @Column({ nullable: true })
   location: string;
+
+  @Column({ nullable: true })
+  avatarUrl: string;
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Briefcase, MapPin, Clock, ArrowLeft } from 'lucide-react';
@@ -59,36 +59,44 @@ export default function JobResultsWithDetail({
   searchParams: Record<string, string>;
 }) {
   const urlSearchParams = useSearchParams();
-  const [selectedJob, setSelectedJob] = useState<Job | null>(initialSelectedJob);
-  const [mobileDetailOpen, setMobileDetailOpen] = useState(!!initialSelectedJob);
+  const [fetchedJob, setFetchedJob] = useState<Job | null>(null);
+  const [manualMobileOpen, setManualMobileOpen] = useState(false);
 
-  // Sync when URL changes
+  // Derive selected job from URL without setState in effect
+  const jobId = urlSearchParams.get('jobId');
+  const selectedJob = useMemo(() => {
+    if (!jobId) return null;
+    const found = jobs.find((j) => j.id === jobId);
+    if (found) return found;
+    if (fetchedJob?.id === jobId) return fetchedJob;
+    return initialSelectedJob?.id === jobId ? initialSelectedJob : null;
+  }, [jobId, jobs, fetchedJob, initialSelectedJob]);
+
+  // Derive mobile detail open from URL or manual override
+  const mobileDetailOpen = !!jobId || manualMobileOpen;
+
+  // Only use effect for async API fetch when job not in local list
+  const fetchJob = useCallback((id: string) => {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api'}/jobs/${id}`)
+      .then((res) => res.json())
+      .then((data: Job) => {
+        setFetchedJob(data);
+      })
+      .catch(() => {});
+  }, []);
+
   useEffect(() => {
-    const jobId = urlSearchParams.get('jobId');
     if (jobId) {
       const found = jobs.find((j) => j.id === jobId);
-      if (found) {
-        setSelectedJob(found);
-        setMobileDetailOpen(true);
-      } else {
-        // Fetch from API
-        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api'}/jobs/${jobId}`)
-          .then((res) => res.json())
-          .then((data) => {
-            setSelectedJob(data);
-            setMobileDetailOpen(true);
-          })
-          .catch(() => {});
+      if (!found && fetchedJob?.id !== jobId) {
+        fetchJob(jobId);
       }
-    } else {
-      setSelectedJob(null);
-      setMobileDetailOpen(false);
     }
-  }, [urlSearchParams, jobs]);
+  }, [jobId, jobs, fetchedJob, fetchJob]);
 
   const handleJobClick = (job: Job) => {
-    setSelectedJob(job);
-    setMobileDetailOpen(true);
+    setFetchedJob(job);
+    setManualMobileOpen(true);
   };
 
   const buildJobUrl = (jobId: string) => {
@@ -113,7 +121,7 @@ export default function JobResultsWithDetail({
           <div className="sticky top-0 bg-white border-b border-gray-200 px-4 py-3 flex items-center gap-3 z-10">
             <button
               onClick={() => {
-                setMobileDetailOpen(false);
+                setManualMobileOpen(false);
                 // Update URL to remove jobId
                 const params = new URLSearchParams(initialSearchParams);
                 params.delete('jobId');

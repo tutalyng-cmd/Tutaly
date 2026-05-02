@@ -8,9 +8,14 @@ export default function SeekerProfilePage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const [message, setMessage] = useState<{type: 'success'|'error', text: string} | null>(null);
 
   const [profile, setProfile] = useState({
+    firstName: '',
+    lastName: '',
+    headline: '',
+    location: '',
     bio: '',
     skills: [] as string[],
     socialLinks: { linkedin: '', portfolio: '' },
@@ -30,6 +35,10 @@ export default function SeekerProfilePage() {
 
       const { data } = await apiAuth.withToken(token).get('/user/seeker/profile');
       setProfile({
+        firstName: data.firstName || '',
+        lastName: data.lastName || '',
+        headline: data.headline || '',
+        location: data.location || '',
         bio: data.bio || '',
         skills: data.skills || [],
         socialLinks: data.socialLinks || { linkedin: '', portfolio: '' },
@@ -56,23 +65,24 @@ export default function SeekerProfilePage() {
         .filter(s => s.length > 0);
 
       await apiAuth.withToken(token!).patch('/user/seeker/profile', {
+        firstName: profile.firstName,
+        lastName: profile.lastName,
+        headline: profile.headline,
+        location: profile.location,
         bio: profile.bio,
         skills: skillsArray,
         socialLinks: profile.socialLinks
       });
       
       setMessage({ type: 'success', text: 'Profile updated successfully.' });
-    } catch (err) {
+    } catch {
       setMessage({ type: 'error', text: 'Failed to update profile.' });
     } finally {
       setSaving(false);
     }
   };
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
+  const uploadFile = async (file: File) => {
     if (file.type !== 'application/pdf') {
        setMessage({ type: 'error', text: 'Only PDF resumes are supported.' });
        return;
@@ -109,11 +119,33 @@ export default function SeekerProfilePage() {
       
       // Refresh the profile to get the new signed URL
       fetchProfile();
-    } catch (err: any) {
-      setMessage({ type: 'error', text: err.message || 'Failed to upload resume' });
+    } catch (err: unknown) {
+      setMessage({ type: 'error', text: err instanceof Error ? err.message : 'Failed to upload resume' });
     } finally {
       setUploading(false);
     }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) uploadFile(file);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) uploadFile(file);
   };
 
   if (loading) {
@@ -166,17 +198,28 @@ export default function SeekerProfilePage() {
             )}
 
             <div className="mt-6 border-t border-gray-100 pt-6">
-               <label className="block w-full">
-                 <span className="sr-only">Choose profile photo</span>
+              <label 
+                className={`block w-full border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors ${isDragging ? 'border-teal-500 bg-teal-50' : 'border-gray-300 hover:border-gray-400 bg-gray-50'}`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+              >
+                 <UploadCloud className={`w-8 h-8 mx-auto mb-3 ${isDragging ? 'text-teal-500' : 'text-gray-400'}`} />
+                 <span className="block text-sm font-medium text-gray-700 mb-1">
+                   {isDragging ? 'Drop PDF here' : 'Click to upload or drag and drop'}
+                 </span>
+                 <span className="block text-xs text-gray-500">
+                   PDF (max. 5MB)
+                 </span>
                  <input 
                     type="file" 
                     accept="application/pdf"
-                    onChange={handleFileUpload}
+                    onChange={handleFileChange}
                     disabled={uploading}
-                    className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer disabled:opacity-50"
+                    className="hidden"
                   />
                </label>
-               {uploading && <p className="text-xs text-blue-600 font-medium mt-3">Uploading to Supabase Storage...</p>}
+               {uploading && <p className="text-xs text-blue-600 font-medium mt-3 text-center">Uploading to Supabase Storage...</p>}
             </div>
           </div>
         </div>
@@ -190,6 +233,48 @@ export default function SeekerProfilePage() {
             </h3>
 
             <form onSubmit={handleSaveProfile} className="space-y-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                  <input 
+                    type="text"
+                    value={profile.firstName}
+                    onChange={(e) => setProfile({ ...profile, firstName: e.target.value })}
+                    className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm text-black focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                  <input 
+                    type="text"
+                    value={profile.lastName}
+                    onChange={(e) => setProfile({ ...profile, lastName: e.target.value })}
+                    className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm text-black focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Professional Headline</label>
+                <input 
+                  type="text"
+                  value={profile.headline}
+                  onChange={(e) => setProfile({ ...profile, headline: e.target.value })}
+                  placeholder="e.g. Senior Software Engineer"
+                  className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm text-black focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                <input 
+                  type="text"
+                  value={profile.location}
+                  onChange={(e) => setProfile({ ...profile, location: e.target.value })}
+                  placeholder="e.g. Lagos, Nigeria"
+                  className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm text-black focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition"
+                />
+              </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Professional Bio</label>
                 <textarea 
@@ -197,7 +282,7 @@ export default function SeekerProfilePage() {
                   value={profile.bio}
                   onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
                   placeholder="Tell employers about your experience..."
-                  className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition"
+                  className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm text-black focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition"
                 />
               </div>
 
@@ -208,7 +293,7 @@ export default function SeekerProfilePage() {
                   value={skillsInput}
                   onChange={(e) => setSkillsInput(e.target.value)}
                   placeholder="React, Node.js, Project Management"
-                  className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition"
+                  className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm text-black focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition"
                 />
               </div>
 
@@ -220,7 +305,7 @@ export default function SeekerProfilePage() {
                     value={profile.socialLinks.linkedin}
                     onChange={(e) => setProfile({ ...profile, socialLinks: { ...profile.socialLinks, linkedin: e.target.value } })}
                     placeholder="https://linkedin.com/in/..."
-                    className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition"
+                    className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm text-black focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition"
                   />
                 </div>
                 <div>
@@ -230,7 +315,7 @@ export default function SeekerProfilePage() {
                     value={profile.socialLinks.portfolio}
                     onChange={(e) => setProfile({ ...profile, socialLinks: { ...profile.socialLinks, portfolio: e.target.value } })}
                     placeholder="https://yourwebsite.com"
-                    className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition"
+                    className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm text-black focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition"
                   />
                 </div>
               </div>

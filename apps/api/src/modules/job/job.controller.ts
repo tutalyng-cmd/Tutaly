@@ -53,6 +53,14 @@ export class JobController {
     return this.jobService.findEmployerJobs(userId);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.EMPLOYER)
+  @Get('employer/stats')
+  async getEmployerStats(@NestRequest() req: AuthorizedRequest) {
+    const userId = req.user.sub;
+    return this.jobService.getEmployerDashboardStats(userId);
+  }
+
   @UseGuards(JwtAuthGuard)
   @Get('saved')
   async getSavedJobs(@NestRequest() req: AuthorizedRequest) {
@@ -154,6 +162,30 @@ export class JobController {
   ) {
     const userId = req.user.sub;
     return this.jobService.updateApplicationStatus(appId, dto, userId);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.EMPLOYER)
+  @Get(':id/applicants/:appId')
+  async getApplicationDetail(
+    @Param('id') jobId: string,
+    @Param('appId') appId: string,
+    @NestRequest() req: AuthorizedRequest,
+  ) {
+    const userId = req.user.sub;
+    return this.jobService.getApplicationDetail(appId, jobId, userId);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.EMPLOYER)
+  @Get(':id/applicants/:appId/resume')
+  async getApplicantResume(
+    @Param('id') jobId: string,
+    @Param('appId') appId: string,
+    @NestRequest() req: AuthorizedRequest,
+  ) {
+    const userId = req.user.sub;
+    return this.jobService.getApplicantResumeUrl(jobId, appId, userId);
   }
 
   // ─── EMPLOYER / ADMIN ENDPOINTS ──────────────────────────

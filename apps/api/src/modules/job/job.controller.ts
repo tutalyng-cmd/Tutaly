@@ -24,7 +24,7 @@ import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { UserRole } from '../user/entities/user.entity';
-import { AuthenticatedRequest } from '../../common/types/request';
+import type { AuthenticatedRequest } from '../../common/types/request';
 
 @Controller('jobs')
 export class JobController {

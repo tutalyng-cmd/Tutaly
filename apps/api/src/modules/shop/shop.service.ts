@@ -446,7 +446,7 @@ export class ShopService {
       const result = await response.json();
 
       if (result.status === 'success') {
-        this.cartStore.delete(userId);
+        await this.tokenService.setJobCache(this.cartKey(userId), '[]', 1);
         return {
           success: true,
           gateway: 'flutterwave',

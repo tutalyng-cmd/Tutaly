@@ -24,7 +24,7 @@ export default function Hero() {
         <div className="text-center">
           <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-6xl">
             Empowering Careers, <br />
-            <span className="text-accent-teal uppercase">Connecting Nigeria.</span>
+            <span className="text-accent-teal uppercase">Connecting Globally.</span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-300">
             The #1 platform for jobs, company reviews, salary insights, and professional networking.

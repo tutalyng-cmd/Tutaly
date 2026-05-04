@@ -23,12 +23,25 @@ async function bootstrap() {
   app.use(cookieParser());
   app.use(helmet());
 
-  const allowedOrigins = process.env.ALLOWED_ORIGINS 
+  const rawOrigins = process.env.ALLOWED_ORIGINS 
     ? process.env.ALLOWED_ORIGINS.split(',') 
     : [process.env.WEB_URL || 'http://localhost:3001'];
 
+  const allowedOrigins = rawOrigins.map(o => o.trim().replace(/\/$/, ''));
+
   app.enableCors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        // Also allow Vercel preview domains temporarily for testing
+        if (origin.endsWith('.vercel.app')) {
+          callback(null, true);
+        } else {
+          callback(new Error(`Origin ${origin} not allowed by CORS`));
+        }
+      }
+    },
     credentials: true,
   });
 

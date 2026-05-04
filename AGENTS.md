@@ -21,7 +21,7 @@ You are working on **Tutaly** — a Nigeria-first professional platform combinin
 
 ### User Roles
 - `seeker` — can apply to jobs, purchase from shop, use Connect.
-- `employer` — can post jobs, sell in shop, respond to applications. Requires MFA.
+- `employer` — can post jobs, sell in shop, respond to applications.
 - `admin` — moderate platform.
 
 ### Jobs & Location System
@@ -29,7 +29,7 @@ You are working on **Tutaly** — a Nigeria-first professional platform combinin
 - **Approval Workflow:** Jobs default to `PENDING_REVIEW`. Admin must approve every job to make it `ACTIVE` and visible in public search. When approved, an email is sent to the employer and Redis jobs cache is purged.
 
 ### Security
-- Employers and Admins must use MFA.
+- Admins must use MFA. Employers can optionally enable it.
 - Refresh tokens are HttpOnly and SameSite Strict.
 
 ## PROJECT STRUCTURE

@@ -31,4 +31,7 @@ export class SeekerProfile extends BaseEntity {
 
   @Column({ nullable: true })
   avatarUrl: string;
+
+  @Column('jsonb', { nullable: true, default: {} })
+  socialLinks: { linkedin?: string; portfolio?: string };
 }

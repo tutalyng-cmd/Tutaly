@@ -75,7 +75,7 @@ export default function DashboardLayout({
   };
 
   return (
-    <div className="flex h-[calc(100vh-64px)] overflow-hidden bg-gray-50">
+    <div className="flex h-[calc(100dvh-64px)] overflow-hidden bg-gray-50 relative">
       {/* Sidebar */}
       <aside className="w-64 border-r border-gray-200 bg-white flex flex-col hidden lg:flex shrink-0">
         <div className="p-4 border-b border-gray-100 mb-2">
@@ -131,7 +131,7 @@ export default function DashboardLayout({
       </main>
 
       {/* Mobile Bottom Navigation */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+      <nav className="lg:hidden absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] pb-safe">
         <div className="flex overflow-x-auto justify-start items-center h-16 px-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
           {links.map((item) => {
             const isActive = pathname === item.href;

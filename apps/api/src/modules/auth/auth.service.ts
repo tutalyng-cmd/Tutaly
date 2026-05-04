@@ -92,7 +92,7 @@ export class AuthService {
         role: dto.role === 'admin' ? UserRole.SEEKER : dto.role, // prevent admin registration
         dateOfBirth: dob,
         tosAgreedAt: new Date(),
-        isMfaEnabled: dto.role === UserRole.EMPLOYER, // Mandatory for employers
+        isMfaEnabled: false, // MFA no longer mandatory for employers by default
       });
       await this.userRepo.save(user);
 

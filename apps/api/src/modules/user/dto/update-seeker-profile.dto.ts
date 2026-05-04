@@ -1,6 +1,14 @@
-import { IsOptional, IsString, IsArray, MaxLength } from 'class-validator';
+import { IsOptional, IsString, IsArray, MaxLength, IsObject } from 'class-validator';
 
 export class UpdateSeekerProfileDto {
+  @IsOptional()
+  @IsString()
+  firstName?: string;
+
+  @IsOptional()
+  @IsString()
+  lastName?: string;
+
   @IsOptional()
   @IsString()
   @MaxLength(2000)
@@ -20,5 +28,6 @@ export class UpdateSeekerProfileDto {
   location?: string;
 
   @IsOptional()
+  @IsObject()
   socialLinks?: { linkedin?: string; portfolio?: string };
 }

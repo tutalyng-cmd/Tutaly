@@ -690,7 +690,8 @@ export class ShopService {
     };
   }
 
-  async reportIssue(orderId: string, buyerId: string, reason: string) {
+  // TODO: store reason once flagReason column is added to Order entity
+  async reportIssue(orderId: string, buyerId: string, _reason: string) {
     const order = await this.orderRepo.findOne({
       where: { id: orderId },
       relations: ['buyer'],

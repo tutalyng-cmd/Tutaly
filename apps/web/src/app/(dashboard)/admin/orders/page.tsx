@@ -27,7 +27,7 @@ export default function AdminOrdersPage() {
         router.push('/auth/signin');
         return;
       }
-      setError(err.message || 'Error loading flagged orders');
+      setError(err.response?.data?.message || err.message || 'Error loading flagged orders');
     } finally {
       setLoading(false);
     }

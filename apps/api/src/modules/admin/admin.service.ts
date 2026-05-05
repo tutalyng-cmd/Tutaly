@@ -127,7 +127,7 @@ export class AdminService {
       relations: ['buyer', 'seller', 'product'],
       skip: (page - 1) * limit,
       take: limit,
-      order: { updatedAt: 'DESC' },
+      order: { createdAt: 'DESC' },
     });
 
     return {

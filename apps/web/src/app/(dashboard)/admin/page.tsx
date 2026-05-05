@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { 
   Users, 
   Briefcase, 
@@ -68,13 +69,25 @@ export default function AdminDashboardPage() {
           </div>
           <ul className="list-disc list-inside text-orange-700 text-sm space-y-1 ml-1">
             {stats.pendingJobsCount > 0 && (
-              <li>{stats.pendingJobsCount} job(s) pending approval</li>
+              <li>
+                <Link href="/admin/jobs" className="hover:underline">
+                  {stats.pendingJobsCount} job(s) pending approval
+                </Link>
+              </li>
             )}
             {stats.pendingSellersCount > 0 && (
-              <li>{stats.pendingSellersCount} seller application(s) pending review</li>
+              <li>
+                <Link href="/admin/sellers" className="hover:underline">
+                  {stats.pendingSellersCount} seller application(s) pending review
+                </Link>
+              </li>
             )}
             {stats.flaggedOrdersCount > 0 && (
-              <li>{stats.flaggedOrdersCount} flagged order(s) requiring resolution</li>
+              <li>
+                <Link href="/admin/orders" className="hover:underline">
+                  {stats.flaggedOrdersCount} flagged order(s) requiring resolution
+                </Link>
+              </li>
             )}
           </ul>
         </div>
@@ -82,7 +95,7 @@ export default function AdminDashboardPage() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <Link href="/admin/users" className="block bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md hover:border-gray-300 transition-all cursor-pointer">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-500">Total Users</p>
@@ -92,9 +105,9 @@ export default function AdminDashboardPage() {
               <Users className="h-6 w-6 text-blue-600" />
             </div>
           </div>
-        </div>
+        </Link>
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <Link href="/admin/jobs" className="block bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md hover:border-gray-300 transition-all cursor-pointer">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-500">Active Jobs</p>
@@ -104,9 +117,9 @@ export default function AdminDashboardPage() {
               <Briefcase className="h-6 w-6 text-green-600" />
             </div>
           </div>
-        </div>
+        </Link>
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <Link href="/admin/orders" className="block bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md hover:border-gray-300 transition-all cursor-pointer">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-500">Total Revenue (NGN)</p>
@@ -118,9 +131,9 @@ export default function AdminDashboardPage() {
               <TrendingUp className="h-6 w-6 text-teal-600" />
             </div>
           </div>
-        </div>
+        </Link>
         
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <Link href="/admin/orders" className="block bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md hover:border-gray-300 transition-all cursor-pointer">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-500">Total Commission Earned</p>
@@ -132,7 +145,7 @@ export default function AdminDashboardPage() {
               <DollarSign className="h-6 w-6 text-purple-600" />
             </div>
           </div>
-        </div>
+        </Link>
       </div>
     </div>
   );

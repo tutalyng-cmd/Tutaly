@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { CheckCircle, XCircle } from 'lucide-react';
+import { CheckCircle, XCircle, Eye } from 'lucide-react';
 import { apiAuth } from '@/lib/api';
 
 export default function AdminSellersPage() {
@@ -11,6 +11,8 @@ export default function AdminSellersPage() {
   const [sellers, setSellers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [selectedApp, setSelectedApp] = useState<any | null>(null);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
     fetchSellers();
@@ -36,16 +38,23 @@ export default function AdminSellersPage() {
   const handleUpdateStatus = async (id: string, status: 'approved' | 'rejected') => {
     if (!confirm(`Are you sure you want to ${status} this application?`)) return;
     try {
+      setIsUpdating(true);
       const token = localStorage.getItem('access_token');
       await apiAuth.withToken(token || undefined).patch(`/shop/admin/seller/${id}`, { status });
       // Refresh list
-      fetchSellers();
+      await fetchSellers();
+      if (selectedApp?.id === id) {
+        setSelectedApp(null);
+      }
     } catch (err: any) {
       alert(err.response?.data?.message || err.message);
+      console.error('Update failed:', err);
+    } finally {
+      setIsUpdating(false);
     }
   };
 
-  if (loading) {
+  if (loading && sellers.length === 0) {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
@@ -102,15 +111,24 @@ export default function AdminSellersPage() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <button
+                      onClick={() => setSelectedApp(app)}
+                      className="text-blue-600 hover:text-blue-900 bg-blue-50 px-3 py-1 rounded-md inline-flex items-center mr-2"
+                    >
+                      <Eye className="h-4 w-4 mr-1" />
+                      View
+                    </button>
+                    <button
                       onClick={() => handleUpdateStatus(app.id, 'approved')}
-                      className="text-green-600 hover:text-green-900 bg-green-50 px-3 py-1 rounded-md inline-flex items-center mr-2"
+                      disabled={isUpdating}
+                      className="text-green-600 hover:text-green-900 bg-green-50 px-3 py-1 rounded-md inline-flex items-center mr-2 disabled:opacity-50"
                     >
                       <CheckCircle className="h-4 w-4 mr-1" />
                       Approve
                     </button>
                     <button
                       onClick={() => handleUpdateStatus(app.id, 'rejected')}
-                      className="text-red-600 hover:text-red-900 bg-red-50 px-3 py-1 rounded-md inline-flex items-center"
+                      disabled={isUpdating}
+                      className="text-red-600 hover:text-red-900 bg-red-50 px-3 py-1 rounded-md inline-flex items-center disabled:opacity-50"
                     >
                       <XCircle className="h-4 w-4 mr-1" />
                       Reject
@@ -122,6 +140,68 @@ export default function AdminSellersPage() {
           </table>
         )}
       </div>
+
+      {/* View Details Modal */}
+      {selectedApp && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6">
+            <div className="flex justify-between items-start mb-4">
+              <h2 className="text-xl font-bold text-gray-900">Application Details</h2>
+              <button onClick={() => setSelectedApp(null)} className="text-gray-400 hover:text-gray-600">
+                <XCircle className="h-6 w-6" />
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-sm font-medium text-gray-500">Applicant Email</h3>
+                <p className="mt-1 text-base text-gray-900">{selectedApp.user?.email || 'N/A'}</p>
+              </div>
+              
+              <div>
+                <h3 className="text-sm font-medium text-gray-500">Category Focus</h3>
+                <span className="mt-1 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                  {selectedApp.categoryFocus}
+                </span>
+              </div>
+              
+              <div>
+                <h3 className="text-sm font-medium text-gray-500">Date Submitted</h3>
+                <p className="mt-1 text-base text-gray-900">{new Date(selectedApp.createdAt).toLocaleString()}</p>
+              </div>
+
+              <div>
+                <h3 className="text-sm font-medium text-gray-500">Bio & Experience</h3>
+                <div className="mt-1 text-base text-gray-900 bg-gray-50 p-4 rounded-lg whitespace-pre-wrap">
+                  {selectedApp.bio}
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 flex justify-end space-x-3 border-t pt-4">
+              <button
+                onClick={() => {
+                  handleUpdateStatus(selectedApp.id, 'rejected');
+                }}
+                disabled={isUpdating}
+                className="px-4 py-2 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 font-medium disabled:opacity-50"
+              >
+                Reject
+              </button>
+              <button
+                onClick={() => {
+                  handleUpdateStatus(selectedApp.id, 'approved');
+                }}
+                disabled={isUpdating}
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium disabled:opacity-50"
+              >
+                Approve Application
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+

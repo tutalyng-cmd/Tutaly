@@ -27,7 +27,7 @@ export default function AdminJobsPage() {
         router.push('/auth/signin');
         return;
       }
-      setError(err.message || 'Error loading jobs');
+      setError(err.response?.data?.message || err.message || 'Error loading jobs');
     } finally {
       setLoading(false);
     }

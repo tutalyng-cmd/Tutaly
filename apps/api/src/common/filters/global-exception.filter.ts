@@ -40,10 +40,8 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       statusCode: status,
       timestamp: new Date().toISOString(),
       path: request.url,
-      message:
-        typeof message === 'object' && message !== null && 'message' in message
-          ? message['message']
-          : message,
+      message: exception instanceof Error ? exception.message : message,
+      stack: exception instanceof Error ? exception.stack : undefined,
     });
   }
 }

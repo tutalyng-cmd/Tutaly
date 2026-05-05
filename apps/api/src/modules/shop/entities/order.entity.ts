@@ -5,11 +5,10 @@ import { ShopProduct, Currency } from './shop.entity';
 
 export enum OrderStatus {
   PENDING_PAYMENT = 'pending_payment',
-  PAID_ESCROW = 'paid_escrow',
+  PAID = 'paid',
   DELIVERED = 'delivered',
-  COMPLETE = 'complete',
-  AUTO_COMPLETE = 'auto_complete',
-  DISPUTED = 'disputed',
+  COMPLETED = 'completed',
+  FLAGGED = 'flagged',
   REFUNDED = 'refunded',
 }
 
@@ -59,13 +58,16 @@ export class Order extends BaseEntity {
   status: OrderStatus;
 
   @Column({ type: 'timestamp', nullable: true })
-  escrowReleaseAt: Date;
+  escrowReleaseAt: Date | null;
 
   @Column({ type: 'timestamp', nullable: true })
-  deliveryConfirmedAt: Date;
+  deliveryConfirmedAt: Date | null;
 
   @Column({ type: 'timestamp', nullable: true })
-  deliveredAt: Date;
+  deliveredAt: Date | null;
+
+  @Column({ type: 'timestamp', nullable: true })
+  earningsReleasedAt: Date | null;
 
   @Column({ default: 0 })
   downloadCount: number;

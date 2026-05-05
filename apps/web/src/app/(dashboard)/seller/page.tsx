@@ -10,11 +10,10 @@ import {
 
 const STATUS_MAP: Record<string, { label: string; color: string }> = {
   pending_payment: { label: 'Awaiting Payment', color: 'bg-yellow-100 text-yellow-700' },
-  paid_escrow: { label: 'In Escrow', color: 'bg-blue-100 text-blue-700' },
+  paid: { label: 'Paid', color: 'bg-blue-100 text-blue-700' },
   delivered: { label: 'Delivered', color: 'bg-indigo-100 text-indigo-700' },
-  complete: { label: 'Complete', color: 'bg-green-100 text-green-700' },
-  auto_complete: { label: 'Auto-completed', color: 'bg-green-100 text-green-700' },
-  disputed: { label: 'Disputed', color: 'bg-red-100 text-red-700' },
+  completed: { label: 'Completed', color: 'bg-green-100 text-green-700' },
+  flagged: { label: 'Flagged (Review)', color: 'bg-red-100 text-red-700' },
   refunded: { label: 'Refunded', color: 'bg-gray-100 text-gray-700' },
 };
 
@@ -132,9 +131,9 @@ export default function SellerShopPage() {
 
   // Approved seller — show dashboard
   const totalRevenue = orders
-    .filter((o: any) => ['complete', 'auto_complete'].includes(o.status))
+    .filter((o: any) => o.status === 'completed')
     .reduce((sum: number, o: any) => sum + Number(o.sellerEarnings || 0), 0);
-  const pendingOrders = orders.filter((o: any) => o.status === 'paid_escrow').length;
+  const pendingOrders = orders.filter((o: any) => o.status === 'paid').length;
 
   return (
     <div className="p-8 pb-16">
@@ -212,7 +211,7 @@ export default function SellerShopPage() {
                           </span>
                         </td>
                         <td className="p-4">
-                          {order.status === 'paid_escrow' && (
+                          {order.status === 'paid' && (
                             <button
                               onClick={() => handleMarkDelivered(order.id)}
                               disabled={deliveringId === order.id}

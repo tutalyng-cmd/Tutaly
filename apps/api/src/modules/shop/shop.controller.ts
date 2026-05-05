@@ -280,6 +280,16 @@ export class ShopController {
     return this.shopService.confirmDelivery(id, req.user.sub);
   }
 
+  @Post('orders/:id/report')
+  @UseGuards(JwtAuthGuard)
+  async reportIssue(
+    @Param('id') id: string,
+    @NestRequest() req: AuthenticatedRequest,
+    @Body('reason') reason: string,
+  ) {
+    return this.shopService.reportIssue(id, req.user.sub, reason);
+  }
+
   @Get('orders/:id/download')
   @UseGuards(JwtAuthGuard)
   async getDownloadUrl(

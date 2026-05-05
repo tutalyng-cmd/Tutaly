@@ -13,6 +13,7 @@ import {
   ShopCategory,
   ShopSubcategory,
   Currency,
+  ListingType,
 } from './entities/shop.entity';
 import { Order, OrderStatus, PaymentGateway } from './entities/order.entity';
 import { User, SellerStatus } from '../user/entities/user.entity';
@@ -615,13 +616,22 @@ export class ShopService {
           relations: ['product'],
         });
         if (o && o.status === OrderStatus.PENDING_PAYMENT) {
-          o.status = OrderStatus.PAID_ESCROW;
+          if (o.product.listingType === ListingType.DIGITAL) {
+            o.status = OrderStatus.COMPLETED;
+            o.earningsReleasedAt = new Date();
+          } else {
+            o.status = OrderStatus.PAID;
+          }
           await this.orderRepo.save(o);
         }
       }
     } else if (order.status === OrderStatus.PENDING_PAYMENT) {
-      // Idempotency check — only process if still pending
-      order.status = OrderStatus.PAID_ESCROW;
+      if (order.product.listingType === ListingType.DIGITAL) {
+        order.status = OrderStatus.COMPLETED;
+        order.earningsReleasedAt = new Date();
+      } else {
+        order.status = OrderStatus.PAID;
+      }
       await this.orderRepo.save(order);
     }
   }
@@ -636,24 +646,24 @@ export class ShopService {
     if (!order) throw new NotFoundException('Order not found');
     if (order.seller.id !== sellerId)
       throw new ForbiddenException('Not your order.');
-    if (order.status !== OrderStatus.PAID_ESCROW) {
+    if (order.status !== OrderStatus.PAID) {
       throw new BadRequestException(
-        'Order must be in escrow to mark as delivered.',
+        'Order must be paid to mark as delivered.',
       );
     }
 
     order.status = OrderStatus.DELIVERED;
     order.deliveredAt = new Date();
-    // Auto-release window: 3 days from delivery
+    // Auto-release window: 48 hours from delivery
     const releaseDate = new Date();
-    releaseDate.setDate(releaseDate.getDate() + 3);
+    releaseDate.setHours(releaseDate.getHours() + 48);
     order.escrowReleaseAt = releaseDate;
 
     await this.orderRepo.save(order);
     return {
       success: true,
       message:
-        'Order marked as delivered. Buyer has 3 days to confirm or dispute.',
+        'Order marked as delivered. Buyer has 48 hours to confirm or report an issue.',
     };
   }
 
@@ -669,8 +679,9 @@ export class ShopService {
       throw new BadRequestException('Order must be delivered to confirm.');
     }
 
-    order.status = OrderStatus.COMPLETE;
+    order.status = OrderStatus.COMPLETED;
     order.deliveryConfirmedAt = new Date();
+    order.earningsReleasedAt = new Date();
     await this.orderRepo.save(order);
 
     return {
@@ -679,17 +690,46 @@ export class ShopService {
     };
   }
 
+  async reportIssue(orderId: string, buyerId: string, reason: string) {
+    const order = await this.orderRepo.findOne({
+      where: { id: orderId },
+      relations: ['buyer'],
+    });
+    if (!order) throw new NotFoundException('Order not found');
+    if (order.buyer.id !== buyerId)
+      throw new ForbiddenException('Not your order.');
+    
+    // Can only report if paid or delivered, and not already completed/flagged
+    if (![OrderStatus.PAID, OrderStatus.DELIVERED].includes(order.status)) {
+      throw new BadRequestException('Order status does not allow reporting at this stage.');
+    }
+
+    order.status = OrderStatus.FLAGGED;
+    // Pausing release by clearing the release date or just status check in cron
+    order.escrowReleaseAt = null;
+    await this.orderRepo.save(order);
+
+    return {
+      success: true,
+      message: 'Issue reported. Order flagged for admin review and auto-release paused.',
+    };
+  }
+
   // Called by Bull cron job
   async autoReleaseExpiredEscrows() {
     const now = new Date();
     const expiredOrders = await this.orderRepo
       .createQueryBuilder('order')
-      .where('order.status = :status', { status: OrderStatus.DELIVERED })
+      .leftJoinAndSelect('order.product', 'product')
+      .where('order.status IN (:...statuses)', { 
+        statuses: [OrderStatus.PAID, OrderStatus.DELIVERED] 
+      })
       .andWhere('order.escrowReleaseAt <= :now', { now })
       .getMany();
 
     for (const order of expiredOrders) {
-      order.status = OrderStatus.AUTO_COMPLETE;
+      order.status = OrderStatus.COMPLETED;
+      order.earningsReleasedAt = new Date();
       await this.orderRepo.save(order);
     }
 
@@ -709,10 +749,9 @@ export class ShopService {
 
     if (
       ![
-        OrderStatus.PAID_ESCROW,
+        OrderStatus.PAID,
         OrderStatus.DELIVERED,
-        OrderStatus.COMPLETE,
-        OrderStatus.AUTO_COMPLETE,
+        OrderStatus.COMPLETED,
       ].includes(order.status)
     ) {
       throw new BadRequestException(

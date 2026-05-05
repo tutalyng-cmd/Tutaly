@@ -10,11 +10,10 @@ import {
 
 const STATUS_MAP: Record<string, { label: string; color: string; icon: any }> = {
   pending_payment: { label: 'Pending Payment', color: 'bg-yellow-100 text-yellow-700', icon: Clock },
-  paid_escrow: { label: 'In Escrow', color: 'bg-blue-100 text-blue-700', icon: ShieldCheck },
+  paid: { label: 'Paid', color: 'bg-blue-100 text-blue-700', icon: ShieldCheck },
   delivered: { label: 'Delivered', color: 'bg-indigo-100 text-indigo-700', icon: Package },
-  complete: { label: 'Complete', color: 'bg-green-100 text-green-700', icon: CheckCircle2 },
-  auto_complete: { label: 'Auto-completed', color: 'bg-green-100 text-green-700', icon: CheckCircle2 },
-  disputed: { label: 'Disputed', color: 'bg-red-100 text-red-700', icon: AlertCircle },
+  completed: { label: 'Completed', color: 'bg-green-100 text-green-700', icon: CheckCircle2 },
+  flagged: { label: 'Flagged (Review)', color: 'bg-red-100 text-red-700', icon: AlertCircle },
   refunded: { label: 'Refunded', color: 'bg-gray-100 text-gray-700', icon: AlertCircle },
 };
 
@@ -69,6 +68,20 @@ export default function BuyerOrdersPage() {
       alert(err.response?.data?.message || 'Confirmation failed');
     } finally {
       setConfirming(null);
+    }
+  };
+
+  const handleReportIssue = async (orderId: string) => {
+    const reason = prompt('Please describe the issue with your order:');
+    if (!reason) return;
+    
+    try {
+      const token = localStorage.getItem('access_token');
+      if (!token) return;
+      await apiAuth.withToken(token).post(`/shop/orders/${orderId}/report`, { reason });
+      fetchOrders();
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Failed to report issue');
     }
   };
 
@@ -135,7 +148,7 @@ export default function BuyerOrdersPage() {
                 {/* Action Buttons */}
                 <div className="mt-4 pt-4 border-t border-gray-100 flex flex-wrap gap-2">
                   {/* Download for digital */}
-                  {order.product?.fileS3Key && ['paid_escrow', 'delivered', 'complete', 'auto_complete'].includes(order.status) && (
+                  {order.product?.fileS3Key && ['paid', 'delivered', 'completed'].includes(order.status) && (
                     <button
                       onClick={() => handleDownload(order.id)}
                       disabled={downloading === order.id}
@@ -155,6 +168,17 @@ export default function BuyerOrdersPage() {
                     >
                       {confirming === order.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
                       Confirm Delivery
+                    </button>
+                  )}
+
+                  {/* Report Issue */}
+                  {['paid', 'delivered'].includes(order.status) && (
+                    <button
+                      onClick={() => handleReportIssue(order.id)}
+                      className="inline-flex items-center gap-1.5 border border-red-200 text-red-600 hover:bg-red-50 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                    >
+                      <AlertCircle className="w-4 h-4" />
+                      Report Issue
                     </button>
                   )}
                 </div>

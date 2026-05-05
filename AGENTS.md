@@ -32,6 +32,14 @@ You are working on **Tutaly** — a Nigeria-first professional platform combinin
 - Admins must use MFA. Employers can optionally enable it.
 - Refresh tokens are HttpOnly and SameSite Strict.
 
+### Shop & Escrow System
+- **24–48 Hour Auto-Release:** All orders follow a simplified escrow model.
+- **Digital Products:** Earnings released immediately after payment confirmation.
+- **Physical/Services:** 48-hour auto-release timer starts after seller marks as `delivered`.
+- **Commission:** Tutaly takes a flat 20% commission on all shop transactions.
+- **Reporting:** Buyers can "Report an Issue" within the 48-hour window, which flags the order and pauses auto-release for admin review.
+- **Order Statuses:** `pending_payment` -> `paid` -> `delivered` -> `completed` -> `flagged` -> `refunded`.
+
 ## PROJECT STRUCTURE
 This is a pnpm monorepo. Never use npm or yarn.
 `apps/api` contains the NestJS API.

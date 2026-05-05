@@ -6,9 +6,13 @@ import { User } from '../user/entities/user.entity';
 import { Job } from '../job/entities/job.entity';
 import { Order } from '../shop/entities/order.entity';
 import { SellerApplication } from '../support/entities/support.entity';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Job, Order, SellerApplication])],
+  imports: [
+    TypeOrmModule.forFeature([User, Job, Order, SellerApplication]),
+    AuthModule
+  ],
   controllers: [AdminController],
   providers: [AdminService],
 })

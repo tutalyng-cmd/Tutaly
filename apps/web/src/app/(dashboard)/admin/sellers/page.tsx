@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { CheckCircle, XCircle } from 'lucide-react';
+import { apiAuth } from '@/lib/api';
 
 export default function AdminSellersPage() {
   const router = useRouter();
@@ -19,23 +20,13 @@ export default function AdminSellersPage() {
     try {
       setLoading(true);
       const token = localStorage.getItem('access_token');
-      if (!token) {
-        router.push('/sign-in');
-        return;
-      }
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/shop/admin/seller/pending`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      if (res.status === 401 || res.status === 403) {
-        router.push('/sign-in');
-        return;
-      }
-      if (!res.ok) throw new Error('Failed to fetch seller applications');
-      const data = await res.json();
-      setSellers(data.items || []);
+      const res = await apiAuth.withToken(token || undefined).get('/shop/admin/seller/pending');
+      setSellers(res.data.items || []);
     } catch (err: any) {
+      if (err.response?.status === 401 || err.response?.status === 403) {
+        router.push('/auth/signin');
+        return;
+      }
       setError(err.message || 'Error loading seller applications');
     } finally {
       setLoading(false);
@@ -46,19 +37,11 @@ export default function AdminSellersPage() {
     if (!confirm(`Are you sure you want to ${status} this application?`)) return;
     try {
       const token = localStorage.getItem('access_token');
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/shop/admin/seller/${id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({ status })
-      });
-      if (!res.ok) throw new Error(`Failed to ${status} application`);
+      await apiAuth.withToken(token || undefined).patch(`/shop/admin/seller/${id}`, { status });
       // Refresh list
       fetchSellers();
     } catch (err: any) {
-      alert(err.message);
+      alert(err.response?.data?.message || err.message);
     }
   };
 

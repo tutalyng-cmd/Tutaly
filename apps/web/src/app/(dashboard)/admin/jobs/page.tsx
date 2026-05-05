@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { CheckCircle, XCircle } from 'lucide-react';
+import { apiAuth } from '@/lib/api';
 
 export default function AdminJobsPage() {
   const router = useRouter();
@@ -19,23 +20,13 @@ export default function AdminJobsPage() {
     try {
       setLoading(true);
       const token = localStorage.getItem('access_token');
-      if (!token) {
-        router.push('/sign-in');
-        return;
-      }
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/admin/jobs/pending`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      if (res.status === 401 || res.status === 403) {
-        router.push('/sign-in');
-        return;
-      }
-      if (!res.ok) throw new Error('Failed to fetch jobs');
-      const data = await res.json();
-      setJobs(data.items || []);
+      const res = await apiAuth.withToken(token || undefined).get('/admin/jobs/pending');
+      setJobs(res.data.items || []);
     } catch (err: any) {
+      if (err.response?.status === 401 || err.response?.status === 403) {
+        router.push('/auth/signin');
+        return;
+      }
       setError(err.message || 'Error loading jobs');
     } finally {
       setLoading(false);
@@ -46,17 +37,11 @@ export default function AdminJobsPage() {
     if (!confirm('Approve this job?')) return;
     try {
       const token = localStorage.getItem('access_token');
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/jobs/${jobId}/approve`, {
-        method: 'PATCH',
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      if (!res.ok) throw new Error('Failed to approve job');
+      await apiAuth.withToken(token || undefined).patch(`/jobs/${jobId}/approve`);
       // Refresh list
       fetchJobs();
     } catch (err: any) {
-      alert(err.message);
+      alert(err.response?.data?.message || err.message);
     }
   };
 

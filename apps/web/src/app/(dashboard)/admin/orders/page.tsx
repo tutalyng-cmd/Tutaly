@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { CheckCircle, AlertCircle, RefreshCw } from 'lucide-react';
+import { apiAuth } from '@/lib/api';
 
 export default function AdminOrdersPage() {
   const router = useRouter();
@@ -19,23 +20,13 @@ export default function AdminOrdersPage() {
     try {
       setLoading(true);
       const token = localStorage.getItem('access_token');
-      if (!token) {
-        router.push('/sign-in');
-        return;
-      }
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/admin/orders/flagged`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      if (res.status === 401 || res.status === 403) {
-        router.push('/sign-in');
-        return;
-      }
-      if (!res.ok) throw new Error('Failed to fetch flagged orders');
-      const data = await res.json();
-      setOrders(data.items || []);
+      const res = await apiAuth.withToken(token || undefined).get('/admin/orders/flagged');
+      setOrders(res.data.items || []);
     } catch (err: any) {
+      if (err.response?.status === 401 || err.response?.status === 403) {
+        router.push('/auth/signin');
+        return;
+      }
       setError(err.message || 'Error loading flagged orders');
     } finally {
       setLoading(false);
@@ -48,19 +39,11 @@ export default function AdminOrdersPage() {
 
     try {
       const token = localStorage.getItem('access_token');
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/admin/orders/${id}/resolve`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({ resolution, adminNotes: note })
-      });
-      if (!res.ok) throw new Error(`Failed to resolve order as ${resolution}`);
+      await apiAuth.withToken(token || undefined).patch(`/admin/orders/${id}/resolve`, { resolution, adminNotes: note });
       // Refresh list
       fetchOrders();
     } catch (err: any) {
-      alert(err.message);
+      alert(err.response?.data?.message || err.message);
     }
   };
 

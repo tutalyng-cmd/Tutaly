@@ -3,6 +3,7 @@ import {
   NotFoundException,
   BadRequestException,
   ForbiddenException,
+  Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -28,6 +29,7 @@ import { TokenService } from '../auth/token.service';
 @Injectable()
 export class ShopService {
   private supabase: SupabaseClient;
+  private readonly logger = new Logger(ShopService.name);
 
   constructor(
     @InjectRepository(ShopProduct)
@@ -690,8 +692,7 @@ export class ShopService {
     };
   }
 
-  // TODO: store reason once flagReason column is added to Order entity
-  async reportIssue(orderId: string, buyerId: string, _reason: string) {
+  async reportIssue(orderId: string, buyerId: string, reason: string) {
     const order = await this.orderRepo.findOne({
       where: { id: orderId },
       relations: ['buyer'],
@@ -706,9 +707,13 @@ export class ShopService {
     }
 
     order.status = OrderStatus.FLAGGED;
-    // Pausing release by clearing the release date or just status check in cron
+    // Pausing release by clearing the release date
     order.escrowReleaseAt = null;
     await this.orderRepo.save(order);
+
+    this.logger.warn(
+      `Order ${orderId} flagged by buyer ${buyerId}. Reason: ${reason}`,
+    );
 
     return {
       success: true,

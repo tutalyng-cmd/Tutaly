@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { apiAuth, api } from '@/lib/api';
 import {
-  ArrowLeft, Upload, Save, Loader2, Cpu, Package, Wrench,
+  ArrowLeft, Upload, Save, Loader2, Cpu, Package, Wrench, ImagePlus, X,
 } from 'lucide-react';
 
 export default function CreateProductPage() {
@@ -31,6 +31,8 @@ export default function CreateProductPage() {
   });
 
   const [digitalFile, setDigitalFile] = useState<File | null>(null);
+  const [productImages, setProductImages] = useState<File[]>([]);
+  const [imagePreviewUrls, setImagePreviewUrls] = useState<string[]>([]);
 
   useEffect(() => {
     checkSellerStatus();
@@ -74,6 +76,31 @@ export default function CreateProductPage() {
     setSubcategories(cat?.subcategories || []);
   };
 
+  const handleAddImages = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    const remaining = 5 - productImages.length;
+    const toAdd = files.slice(0, remaining);
+
+    setProductImages(prev => [...prev, ...toAdd]);
+
+    // Generate preview URLs
+    toAdd.forEach(file => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreviewUrls(prev => [...prev, reader.result as string]);
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Reset input value so the same file can be selected again
+    e.target.value = '';
+  };
+
+  const handleRemoveImage = (index: number) => {
+    setProductImages(prev => prev.filter((_, i) => i !== index));
+    setImagePreviewUrls(prev => prev.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.isWorkRelatedConfirmed) {
@@ -95,18 +122,34 @@ export default function CreateProductPage() {
       const res = await apiAuth.withToken(token).post('/shop/products', payload);
       const product = res.data?.data;
 
-      // 2. Upload digital file if needed
-      if (form.listingType === 'digital' && digitalFile && product?.id) {
-        const formData = new FormData();
-        formData.append('file', digitalFile);
+      if (product?.id) {
+        // 2. Upload digital file if digital listing
+        if (form.listingType === 'digital' && digitalFile) {
+          const formData = new FormData();
+          formData.append('file', digitalFile);
 
-        await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/shop/products/${product.id}/upload`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-          body: formData,
-        });
+          await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api'}/shop/products/${product.id}/upload`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            },
+            body: formData,
+          });
+        }
+
+        // 3. Upload product images (for all listing types)
+        for (const imageFile of productImages) {
+          const formData = new FormData();
+          formData.append('image', imageFile);
+
+          await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api'}/shop/products/${product.id}/images`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            },
+            body: formData,
+          });
+        }
       }
 
       router.push('/seller');
@@ -126,7 +169,7 @@ export default function CreateProductPage() {
   }
 
   return (
-    <div className="p-8 pb-16 max-w-3xl">
+    <div className="px-4 py-6 sm:p-8 pb-16 max-w-3xl mx-auto">
       <Link href="/seller" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-teal-600 mb-8 font-medium">
         <ArrowLeft className="w-4 h-4" /> Back to Dashboard
       </Link>
@@ -136,7 +179,7 @@ export default function CreateProductPage() {
         <p className="text-gray-500 mt-1">Add a new template, tool, or professional service.</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 space-y-8">
+      <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-8 space-y-6 sm:space-y-8">
         {/* Type Selection */}
         <div>
           <label className="block text-sm font-bold text-gray-900 mb-3">Listing Type</label>
@@ -196,7 +239,7 @@ export default function CreateProductPage() {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
               <select
@@ -249,7 +292,7 @@ export default function CreateProductPage() {
           </div>
 
           {form.pricingType === 'per_unit' && (
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Price</label>
                 <div className="flex gap-2">
@@ -287,7 +330,56 @@ export default function CreateProductPage() {
           )}
         </div>
 
-        {/* Digital Upload */}
+        {/* Product Images — Available for ALL listing types */}
+        <div className="border-t border-gray-100 pt-8">
+          <label className="block text-sm font-bold text-gray-900 mb-2">
+            Product Images
+          </label>
+          <p className="text-sm text-gray-500 mb-4">
+            Upload up to 5 images to showcase your {form.listingType === 'digital' ? 'product preview' : form.listingType === 'service' ? 'service portfolio' : 'product'}. JPEG, PNG, WebP or GIF, max 5MB each.
+          </p>
+
+          {/* Preview Grid */}
+          {imagePreviewUrls.length > 0 && (
+            <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3 mb-4">
+              {imagePreviewUrls.map((url, index) => (
+                <div key={index} className="relative group aspect-square rounded-lg overflow-hidden border border-gray-200">
+                  <img src={url} alt={`Preview ${index + 1}`} className="w-full h-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveImage(index)}
+                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {productImages.length < 5 && (
+            <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:bg-gray-50 transition-colors">
+              <ImagePlus className="w-8 h-8 text-gray-400 mx-auto mb-3" />
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/gif"
+                onChange={handleAddImages}
+                className="hidden"
+                id="product-images-upload"
+                multiple
+              />
+              <label htmlFor="product-images-upload" className="cursor-pointer">
+                <span className="font-bold text-teal-600 hover:text-teal-500">Click to upload images</span>
+                <span className="text-gray-500"> or drag and drop</span>
+              </label>
+              <p className="text-xs text-gray-400 mt-2">
+                {productImages.length}/5 images added
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Digital File Upload — Only for digital listings */}
         {form.listingType === 'digital' && (
           <div className="border-t border-gray-100 pt-8">
             <label className="block text-sm font-bold text-gray-900 mb-2">Digital File</label>

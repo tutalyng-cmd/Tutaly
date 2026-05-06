@@ -301,6 +301,56 @@ export class ShopService {
     };
   }
 
+  // ─── Product Image Upload ─────────────────────────────────────────
+
+  async uploadProductImage(
+    productId: string,
+    userId: string,
+    fileBuffer: Buffer,
+    originalName: string,
+    mimetype: string,
+  ) {
+    const product = await this.productRepo.findOne({
+      where: { id: productId },
+      relations: ['seller'],
+    });
+    if (!product) throw new NotFoundException('Product not found');
+    if (product.seller.id !== userId)
+      throw new ForbiddenException('Not your product.');
+
+    const ext = originalName.split('.').pop() || 'jpg';
+    const key = `product-images/${productId}/${Date.now()}.${ext}`;
+
+    const { data, error } = await this.supabase.storage
+      .from('product-images')
+      .upload(key, fileBuffer, {
+        contentType: mimetype,
+        upsert: false,
+      });
+
+    if (error) throw new BadRequestException(`Upload failed: ${error.message}`);
+
+    // Get the public URL for the uploaded image
+    const { data: urlData } = this.supabase.storage
+      .from('product-images')
+      .getPublicUrl(data.path);
+
+    const imageUrl = urlData.publicUrl;
+
+    // Append to existing images array
+    if (!product.imageUrls) {
+      product.imageUrls = [];
+    }
+    product.imageUrls.push(imageUrl);
+    await this.productRepo.save(product);
+
+    return {
+      success: true,
+      imageUrl,
+      message: 'Product image uploaded successfully.',
+    };
+  }
+
   // ─── Cart (Redis-backed) ──────────────────────────────────────────
 
   private cartKey(userId: string) {

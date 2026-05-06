@@ -168,6 +168,33 @@ export class ShopController {
     );
   }
 
+  // ─── Product Image Upload ───────────────────────────────────
+
+  @Post('products/:id/images')
+  @UseGuards(JwtAuthGuard, SellerGuard)
+  @UseInterceptors(FileInterceptor('image'))
+  async uploadProductImage(
+    @Param('id') id: string,
+    @NestRequest() req: AuthenticatedRequest,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    if (!file) throw new BadRequestException('No image uploaded');
+    if (file.size > 5 * 1024 * 1024) {
+      throw new BadRequestException('Image size must not exceed 5MB');
+    }
+    const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    if (!allowed.includes(file.mimetype)) {
+      throw new BadRequestException('Only JPEG, PNG, WebP, and GIF images are accepted');
+    }
+    return this.shopService.uploadProductImage(
+      id,
+      req.user.sub,
+      file.buffer,
+      file.originalname,
+      file.mimetype,
+    );
+  }
+
   // ─── Cart ─────────────────────────────────────────────────────
 
   @Get('cart')

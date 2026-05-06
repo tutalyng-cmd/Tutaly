@@ -2,26 +2,55 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { CheckCircle, XCircle } from 'lucide-react';
+import { CheckCircle, XCircle, Eye, Briefcase, Clock, ShieldCheck } from 'lucide-react';
 import { apiAuth } from '@/lib/api';
+
+type TabStatus = 'pending_review' | 'active' | 'all';
+
+const TABS: { key: TabStatus; label: string; icon: React.ReactNode }[] = [
+  { key: 'pending_review', label: 'Pending', icon: <Clock className="w-4 h-4" /> },
+  { key: 'active', label: 'Approved', icon: <ShieldCheck className="w-4 h-4" /> },
+  { key: 'all', label: 'All Jobs', icon: <Briefcase className="w-4 h-4" /> },
+];
+
+const STATUS_BADGES: Record<string, { bg: string; text: string; label: string }> = {
+  pending_review: { bg: 'bg-yellow-100', text: 'text-yellow-800', label: 'Pending' },
+  active: { bg: 'bg-green-100', text: 'text-green-800', label: 'Active' },
+  expired: { bg: 'bg-gray-100', text: 'text-gray-600', label: 'Expired' },
+  removed: { bg: 'bg-red-100', text: 'text-red-800', label: 'Removed' },
+};
 
 export default function AdminJobsPage() {
   const router = useRouter();
-  
+
   const [jobs, setJobs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [activeTab, setActiveTab] = useState<TabStatus>('pending_review');
+  const [selectedJob, setSelectedJob] = useState<any | null>(null);
 
   useEffect(() => {
     fetchJobs();
-  }, []);
+  }, [activeTab]);
 
   const fetchJobs = async () => {
     try {
       setLoading(true);
+      setError('');
       const token = localStorage.getItem('access_token');
-      const res = await apiAuth.withToken(token || undefined).get('/admin/jobs/pending');
-      setJobs(res.data.items || []);
+
+      let url: string;
+      if (activeTab === 'pending_review') {
+        url = '/admin/jobs/pending';
+      } else if (activeTab === 'all') {
+        url = '/admin/jobs';
+      } else {
+        url = `/admin/jobs?status=${activeTab}`;
+      }
+
+      const res = await apiAuth.withToken(token || undefined).get(url);
+      const payload = res.data;
+      setJobs(payload.items || payload.data?.items || (Array.isArray(payload) ? payload : []));
     } catch (err: any) {
       if (err.response?.status === 401 || err.response?.status === 403) {
         router.push('/auth/signin');
@@ -38,82 +67,215 @@ export default function AdminJobsPage() {
     try {
       const token = localStorage.getItem('access_token');
       await apiAuth.withToken(token || undefined).patch(`/jobs/${jobId}/approve`);
-      // Refresh list
       fetchJobs();
     } catch (err: any) {
       alert(err.response?.data?.message || err.message);
     }
   };
 
-  if (loading) {
+  const badge = (status: string) => {
+    const b = STATUS_BADGES[status] || { bg: 'bg-gray-100', text: 'text-gray-600', label: status };
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
-      </div>
+      <span className={`px-2 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full ${b.bg} ${b.text}`}>
+        {b.label}
+      </span>
     );
-  }
+  };
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
+    <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6 px-4 sm:px-0">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Approve Jobs</h1>
-        <p className="text-gray-500 mt-1">Review and approve pending job listings</p>
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Manage Jobs</h1>
+        <p className="text-gray-500 mt-1 text-sm">Review, approve, and manage all job listings</p>
       </div>
 
-      {error && <div className="text-red-500 bg-red-50 p-4 rounded-lg">{error}</div>}
+      {/* Tabs — scrollable on mobile */}
+      <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+        <div className="flex gap-1 bg-gray-100 p-1 rounded-xl w-fit min-w-max">
+          {TABS.map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={`flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
+                activeTab === tab.key
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              {tab.icon}
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {error && <div className="text-red-500 bg-red-50 p-3 sm:p-4 rounded-lg text-sm">{error}</div>}
 
       <div className="bg-white shadow-sm border border-gray-200 rounded-lg overflow-hidden">
-        {jobs.length === 0 ? (
-          <div className="p-8 text-center text-gray-500">
-            No pending jobs require approval.
+        {loading ? (
+          <div className="flex justify-center items-center h-40">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
+          </div>
+        ) : jobs.length === 0 ? (
+          <div className="p-6 sm:p-8 text-center text-gray-500 text-sm">
+            {activeTab === 'pending_review'
+              ? 'No pending jobs require approval.'
+              : activeTab === 'active'
+              ? 'No approved jobs found.'
+              : 'No jobs found.'}
           </div>
         ) : (
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Job Details
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Employer
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Date Submitted
-                </th>
-                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+          <>
+            {/* Desktop Table — hidden on mobile */}
+            <div className="hidden md:block">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Job Details</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employer</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                    <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {jobs.map((job) => (
+                    <tr key={job.id} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-6 py-4">
+                        <div className="text-sm font-medium text-gray-900">{job.title}</div>
+                        <div className="text-sm text-gray-500">{job.employmentType || job.jobType}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">{job.employer?.email || 'N/A'}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">{badge(job.status)}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {new Date(job.createdAt).toLocaleDateString()}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+                        <button onClick={() => setSelectedJob(job)} className="text-blue-600 hover:text-blue-900 bg-blue-50 px-3 py-1 rounded-md inline-flex items-center">
+                          <Eye className="h-4 w-4 mr-1" />View
+                        </button>
+                        {job.status === 'pending_review' && (
+                          <button onClick={() => handleApprove(job.id)} className="text-green-600 hover:text-green-900 bg-green-50 px-3 py-1 rounded-md inline-flex items-center">
+                            <CheckCircle className="h-4 w-4 mr-1" />Approve
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Cards — visible only on mobile */}
+            <div className="md:hidden divide-y divide-gray-200">
               {jobs.map((job) => (
-                <tr key={job.id}>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">{job.title}</div>
-                    <div className="text-sm text-gray-500">{job.employmentType}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{job.employer?.email || 'N/A'}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(job.createdAt).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button
-                      onClick={() => handleApprove(job.id)}
-                      className="text-green-600 hover:text-green-900 bg-green-50 px-3 py-1 rounded-md inline-flex items-center"
-                    >
-                      <CheckCircle className="h-4 w-4 mr-1" />
-                      Approve
+                <div key={job.id} className="p-4 space-y-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0 flex-1">
+                      <h3 className="text-sm font-semibold text-gray-900 truncate">{job.title}</h3>
+                      <p className="text-xs text-gray-500 mt-0.5">{job.employer?.email || 'N/A'}</p>
+                    </div>
+                    {badge(job.status)}
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-gray-500">
+                      {job.employmentType || job.jobType} · {new Date(job.createdAt).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <div className="flex gap-2">
+                    <button onClick={() => setSelectedJob(job)} className="text-blue-600 bg-blue-50 px-3 py-1.5 rounded-md inline-flex items-center text-xs font-medium">
+                      <Eye className="h-3.5 w-3.5 mr-1" />View
                     </button>
-                    {/* Add reject button here if endpoint exists later */}
-                  </td>
-                </tr>
+                    {job.status === 'pending_review' && (
+                      <button onClick={() => handleApprove(job.id)} className="text-green-600 bg-green-50 px-3 py-1.5 rounded-md inline-flex items-center text-xs font-medium">
+                        <CheckCircle className="h-3.5 w-3.5 mr-1" />Approve
+                      </button>
+                    )}
+                  </div>
+                </div>
               ))}
-            </tbody>
-          </table>
+            </div>
+          </>
         )}
       </div>
+
+      {/* View Details Modal */}
+      {selectedJob && (
+        <div className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50 p-0 sm:p-4">
+          <div className="bg-white rounded-t-2xl sm:rounded-xl shadow-xl w-full sm:max-w-2xl max-h-[90vh] overflow-y-auto p-4 sm:p-6">
+            <div className="flex justify-between items-start mb-4">
+              <h2 className="text-lg sm:text-xl font-bold text-gray-900">Job Details</h2>
+              <button onClick={() => setSelectedJob(null)} className="text-gray-400 hover:text-gray-600">
+                <XCircle className="h-6 w-6" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex flex-wrap items-center gap-2">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-900">{selectedJob.title}</h3>
+                {badge(selectedJob.status)}
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                <div>
+                  <h4 className="text-xs sm:text-sm font-medium text-gray-500">Employer</h4>
+                  <p className="mt-0.5 text-sm text-gray-900">{selectedJob.employer?.email || 'N/A'}</p>
+                </div>
+                <div>
+                  <h4 className="text-xs sm:text-sm font-medium text-gray-500">Job Type</h4>
+                  <p className="mt-0.5 text-sm text-gray-900">{selectedJob.jobType || selectedJob.employmentType}</p>
+                </div>
+                <div>
+                  <h4 className="text-xs sm:text-sm font-medium text-gray-500">Work Mode</h4>
+                  <p className="mt-0.5 text-sm text-gray-900">{selectedJob.workMode || 'N/A'}</p>
+                </div>
+                <div>
+                  <h4 className="text-xs sm:text-sm font-medium text-gray-500">Location</h4>
+                  <p className="mt-0.5 text-sm text-gray-900">
+                    {[selectedJob.area, selectedJob.state, selectedJob.country].filter(Boolean).join(', ') || selectedJob.location || 'N/A'}
+                  </p>
+                </div>
+                <div>
+                  <h4 className="text-xs sm:text-sm font-medium text-gray-500">Salary Range</h4>
+                  <p className="mt-0.5 text-sm text-gray-900">
+                    {selectedJob.minSalary || selectedJob.maxSalary
+                      ? `${selectedJob.currency || ''} ${selectedJob.minSalary || '?'} – ${selectedJob.maxSalary || '?'}`
+                      : 'Not specified'}
+                  </p>
+                </div>
+                <div>
+                  <h4 className="text-xs sm:text-sm font-medium text-gray-500">Submitted</h4>
+                  <p className="mt-0.5 text-sm text-gray-900">{new Date(selectedJob.createdAt).toLocaleString()}</p>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="text-xs sm:text-sm font-medium text-gray-500">Description</h4>
+                <div className="mt-1 text-sm text-gray-900 bg-gray-50 p-3 sm:p-4 rounded-lg whitespace-pre-wrap max-h-48 sm:max-h-60 overflow-y-auto">
+                  {selectedJob.description}
+                </div>
+              </div>
+            </div>
+
+            {selectedJob.status === 'pending_review' && (
+              <div className="mt-6 sm:mt-8 flex justify-end border-t pt-4">
+                <button
+                  onClick={() => {
+                    handleApprove(selectedJob.id);
+                    setSelectedJob(null);
+                  }}
+                  className="w-full sm:w-auto px-4 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium inline-flex items-center justify-center gap-2"
+                >
+                  <CheckCircle className="w-4 h-4" />
+                  Approve Job
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

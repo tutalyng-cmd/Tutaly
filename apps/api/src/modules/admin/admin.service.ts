@@ -121,6 +121,56 @@ export class AdminService {
     };
   }
 
+  async getAllJobs(page = 1, limit = 20, status?: string) {
+    const where: any = {};
+    if (status) {
+      where.status = status;
+    }
+
+    const [jobs, total] = await this.jobRepo.findAndCount({
+      where,
+      relations: ['employer'],
+      skip: (page - 1) * limit,
+      take: limit,
+      order: { createdAt: 'DESC' },
+    });
+
+    return {
+      items: jobs,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
+
+  async getAllSellerApplications(page = 1, limit = 20, status?: string) {
+    const where: any = {};
+    if (status) {
+      where.status = status;
+    }
+
+    const [data, total] = await this.sellerAppRepo.findAndCount({
+      where,
+      relations: ['user', 'reviewedBy'],
+      skip: (page - 1) * limit,
+      take: limit,
+      order: { createdAt: 'DESC' },
+    });
+
+    return {
+      items: data,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
+
   async getFlaggedOrders(page = 1, limit = 20) {
     const [orders, total] = await this.orderRepo.findAndCount({
       where: { status: OrderStatus.FLAGGED },

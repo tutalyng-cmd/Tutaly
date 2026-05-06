@@ -56,6 +56,32 @@ export class AdminController {
     );
   }
 
+  @Get('jobs')
+  async getAllJobs(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('status') status?: string,
+  ) {
+    return this.adminService.getAllJobs(
+      parseInt(page || '1', 10),
+      parseInt(limit || '20', 10),
+      status,
+    );
+  }
+
+  @Get('sellers')
+  async getAllSellerApplications(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('status') status?: string,
+  ) {
+    return this.adminService.getAllSellerApplications(
+      parseInt(page || '1', 10),
+      parseInt(limit || '20', 10),
+      status,
+    );
+  }
+
   @Get('orders/flagged')
   async getFlaggedOrders(
     @Query('page') page?: string,

@@ -23,7 +23,9 @@ export default function AdminSellersPage() {
       setLoading(true);
       const token = localStorage.getItem('access_token');
       const res = await apiAuth.withToken(token || undefined).get('/shop/admin/seller/pending');
-      setSellers(res.data.items || []);
+      const payload = res.data;
+      const extractedSellers = payload.items || payload.data?.items || (Array.isArray(payload) ? payload : (Array.isArray(payload.data) ? payload.data : []));
+      setSellers(extractedSellers);
     } catch (err: any) {
       if (err.response?.status === 401 || err.response?.status === 403) {
         router.push('/auth/signin');

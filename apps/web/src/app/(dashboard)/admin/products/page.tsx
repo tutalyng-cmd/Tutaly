@@ -2,15 +2,12 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Image from 'next/image';
 import { 
   Package, 
-  Search, 
-  Filter, 
-  ChevronRight, 
   AlertCircle,
   CheckCircle2,
   XCircle,
-  Tag,
   Store,
   ExternalLink
 } from 'lucide-react';
@@ -30,13 +27,8 @@ export default function AdminProductsPage() {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [meta, setMeta] = useState<any>(null);
 
-  useEffect(() => {
-    fetchProducts();
-  }, [currentActive]);
-
-  const fetchProducts = async () => {
+  const fetchProducts = React.useCallback(async () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('access_token');
@@ -44,7 +36,6 @@ export default function AdminProductsPage() {
         params: { isActive: currentActive || undefined }
       });
       setProducts(res.data.items || []);
-      setMeta(res.data.meta);
     } catch (err: any) {
       if (err.response?.status === 401 || err.response?.status === 403) {
         router.push('/auth/signin');
@@ -54,14 +45,15 @@ export default function AdminProductsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentActive, router]);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
   const toggleProductStatus = async (id: string, currentStatus: boolean) => {
     try {
       const token = localStorage.getItem('access_token');
-      // Note: Assuming there's a generic product update or specific toggle endpoint.
-      // For now, we'll assume the admin can toggle isActive.
-      // If endpoint doesn't exist, this will need a backend update.
       await apiAuth.withToken(token || undefined).patch(`/shop/products/${id}`, { isActive: !currentStatus });
       fetchProducts();
     } catch (err: any) {
@@ -131,9 +123,15 @@ export default function AdminProductsPage() {
                   <tr key={product.id} className="hover:bg-gray-50/50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-gray-100 rounded-xl overflow-hidden shrink-0 border border-gray-100">
+                        <div className="w-12 h-12 bg-gray-100 rounded-xl overflow-hidden shrink-0 border border-gray-100 relative">
                           {product.imageUrls?.[0] ? (
-                            <img src={product.imageUrls[0]} alt={product.title} className="w-full h-full object-cover" />
+                            <Image 
+                              src={product.imageUrls[0]} 
+                              alt={product.title} 
+                              width={48}
+                              height={48}
+                              className="w-full h-full object-cover" 
+                            />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-gray-300">
                               <Package className="w-6 h-6" />

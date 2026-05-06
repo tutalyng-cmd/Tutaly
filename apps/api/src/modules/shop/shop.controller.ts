@@ -22,8 +22,6 @@ import { Roles } from '../../common/decorators/roles.decorator';
 import { RawBody } from '../../common/decorators/raw-body.decorator';
 import { UserRole } from '../user/entities/user.entity';
 import { SellerGuard } from './guards/seller.guard';
-import { ListingType } from './entities/shop.entity';
-import { OrderStatus } from './entities/order.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ApplySellerDto } from './dto/apply-seller.dto';

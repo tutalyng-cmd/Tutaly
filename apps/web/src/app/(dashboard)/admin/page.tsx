@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { 
   Users, 
   Briefcase, 
-  Store, 
   AlertTriangle,
   TrendingUp,
   DollarSign,

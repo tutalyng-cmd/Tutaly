@@ -7,12 +7,7 @@ import {
   AlertCircle, 
   RefreshCw, 
   Package, 
-  User, 
-  Clock, 
   ChevronRight,
-  Filter,
-  Search,
-  ArrowRight
 } from 'lucide-react';
 import { apiAuth } from '@/lib/api';
 
@@ -36,11 +31,7 @@ export default function AdminOrdersPage() {
   const [error, setError] = useState('');
   const [meta, setMeta] = useState<any>(null);
 
-  useEffect(() => {
-    fetchOrders();
-  }, [currentStatus]);
-
-  const fetchOrders = async () => {
+  const fetchOrders = React.useCallback(async () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('access_token');
@@ -58,7 +49,11 @@ export default function AdminOrdersPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentStatus, router]);
+
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
 
   const handleResolve = async (id: string, resolution: 'completed' | 'refunded') => {
     const note = prompt(`Enter optional admin notes for resolving as ${resolution}:`);

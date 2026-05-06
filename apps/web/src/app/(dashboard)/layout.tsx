@@ -12,7 +12,8 @@ import {
   Heart,
   FileText,
   ShoppingBag,
-  Store
+  Store,
+  Package
 } from 'lucide-react';
 
 export default function DashboardLayout({

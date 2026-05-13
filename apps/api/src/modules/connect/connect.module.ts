@@ -7,6 +7,7 @@ import { FeedProcessor } from './feed.processor';
 import { Post, PostLike, PostComment, Follow, Message, Report } from './entities/connect.entity';
 import { User } from '../user/entities/user.entity';
 import { SupportModule } from '../support/support.module';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { SupportModule } from '../support/support.module';
       name: 'feed-fanout',
     }),
     SupportModule,
+    AuthModule,
   ],
   controllers: [ConnectController],
   providers: [ConnectService, FeedProcessor],

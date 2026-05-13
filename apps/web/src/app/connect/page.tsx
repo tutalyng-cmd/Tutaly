@@ -19,6 +19,7 @@ export default function FeedPage() {
   const [loading, setLoading] = useState(true);
   const [newPost, setNewPost] = useState('');
   const [posting, setPosting] = useState(false);
+  const [postError, setPostError] = useState('');
   const [page, setPage] = useState(1);
   const [currentUserId, setCurrentUserId] = useState('');
 
@@ -48,14 +49,16 @@ export default function FeedPage() {
   const handleCreatePost = async () => {
     if (!newPost.trim()) return;
     setPosting(true);
+    setPostError('');
     try {
       const token = localStorage.getItem('access_token');
       if (!token) return;
       await apiAuth.withToken(token).post('/connect/posts', { content: newPost });
       setNewPost('');
       fetchFeed();
-    } catch (err) {
+    } catch (err: any) {
       console.error('Failed to create post', err);
+      setPostError(err?.response?.data?.message || 'Failed to create post. Please try again.');
     } finally {
       setPosting(false);
     }
@@ -131,6 +134,12 @@ export default function FeedPage() {
           </div>
         </div>
       </div>
+
+      {postError && (
+        <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3">
+          {postError}
+        </div>
+      )}
 
       {/* Feed */}
       {loading ? (

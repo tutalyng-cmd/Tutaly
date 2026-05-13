@@ -41,9 +41,7 @@ export default function AdminSellersPage() {
       const token = localStorage.getItem('access_token');
 
       let url: string;
-      if (activeTab === 'pending') {
-        url = '/shop/admin/seller/pending';
-      } else if (activeTab === 'all') {
+      if (activeTab === 'all') {
         url = '/admin/sellers';
       } else {
         url = `/admin/sellers?status=${activeTab}`;
@@ -69,7 +67,7 @@ export default function AdminSellersPage() {
     try {
       setIsUpdating(true);
       const token = localStorage.getItem('access_token');
-      await apiAuth.withToken(token || undefined).patch(`/shop/admin/seller/${id}`, { status });
+      await apiAuth.withToken(token || undefined).patch(`/admin/sellers/${id}/status`, { status });
       await fetchSellers();
       if (selectedApp?.id === id) {
         setSelectedApp(null);
@@ -92,41 +90,42 @@ export default function AdminSellersPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6 px-4 sm:px-0">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       <div>
-        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Manage Sellers</h1>
-        <p className="text-gray-500 mt-1 text-sm">Review, approve, and manage all seller applications</p>
+        <h1 className="text-3xl font-black text-gray-900">Manage Sellers</h1>
+        <p className="text-gray-500 mt-1">Review, approve, and manage all seller applications.</p>
       </div>
 
-      {/* Tabs — scrollable on mobile */}
-      <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-        <div className="flex gap-1 bg-gray-100 p-1 rounded-xl w-fit min-w-max">
-          {TABS.map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
-              className={`flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
-                activeTab === tab.key
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              {tab.icon}
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {/* Tabs */}
+      <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+        {TABS.map((tab) => (
+          <button
+            key={tab.key}
+            onClick={() => setActiveTab(tab.key)}
+            className={`px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all flex items-center gap-2 ${
+              activeTab === tab.key
+                ? 'bg-teal-600 text-white shadow-lg shadow-teal-600/20'
+                : 'bg-white text-gray-600 border border-gray-100 hover:border-teal-200'
+            }`}
+          >
+            {tab.icon}
+            {tab.label}
+          </button>
+        ))}
       </div>
 
       {error && <div className="text-red-500 bg-red-50 p-3 sm:p-4 rounded-lg text-sm">{error}</div>}
 
-      <div className="bg-white shadow-sm border border-gray-200 rounded-lg overflow-hidden">
+      <div className="bg-white shadow-sm border border-gray-100 rounded-3xl overflow-hidden">
         {loading ? (
-          <div className="flex justify-center items-center h-40">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-teal-600"></div>
           </div>
         ) : sellers.length === 0 ? (
-          <div className="p-6 sm:p-8 text-center text-gray-500 text-sm">
+          <div className="p-16 text-center text-gray-500">
+            <Users className="w-16 h-16 text-gray-200 mx-auto mb-4" />
+            <h3 className="text-xl font-bold text-gray-900 mb-1">No applications found</h3>
+            <p className="text-gray-500">
             {activeTab === 'pending'
               ? 'No pending seller applications require review.'
               : activeTab === 'approved'
@@ -134,19 +133,20 @@ export default function AdminSellersPage() {
               : activeTab === 'rejected'
               ? 'No rejected applications.'
               : 'No seller applications found.'}
+            </p>
           </div>
         ) : (
           <>
             {/* Desktop Table */}
-            <div className="hidden md:block">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+            <div className="hidden md:block overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-100">
+                <thead className="bg-gray-50/50">
                   <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User Details</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category Focus</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                    <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    <th scope="col" className="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider">User Details</th>
+                    <th scope="col" className="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider">Category Focus</th>
+                    <th scope="col" className="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider">Status</th>
+                    <th scope="col" className="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider">Date</th>
+                    <th scope="col" className="px-6 py-4 text-right text-xs font-black text-gray-500 uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -165,20 +165,22 @@ export default function AdminSellersPage() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {new Date(app.createdAt).toLocaleDateString()}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                        <button onClick={() => setSelectedApp(app)} className="text-blue-600 hover:text-blue-900 bg-blue-50 px-3 py-1 rounded-md inline-flex items-center">
-                          <Eye className="h-4 w-4 mr-1" />View
-                        </button>
-                        {app.status === 'pending' && (
-                          <>
-                            <button onClick={() => handleUpdateStatus(app.id, 'approved')} disabled={isUpdating} className="text-green-600 hover:text-green-900 bg-green-50 px-3 py-1 rounded-md inline-flex items-center disabled:opacity-50">
-                              <CheckCircle className="h-4 w-4 mr-1" />Approve
-                            </button>
-                            <button onClick={() => handleUpdateStatus(app.id, 'rejected')} disabled={isUpdating} className="text-red-600 hover:text-red-900 bg-red-50 px-3 py-1 rounded-md inline-flex items-center disabled:opacity-50">
-                              <XCircle className="h-4 w-4 mr-1" />Reject
-                            </button>
-                          </>
-                        )}
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <div className="flex justify-end gap-2">
+                          <button onClick={() => setSelectedApp(app)} className="bg-blue-50 text-blue-700 hover:bg-blue-100 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center transition-colors">
+                            <Eye className="h-4 w-4 mr-1" />View
+                          </button>
+                          {app.status === 'pending' && (
+                            <>
+                              <button onClick={() => handleUpdateStatus(app.id, 'approved')} disabled={isUpdating} className="bg-green-50 text-green-700 hover:bg-green-100 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center transition-colors disabled:opacity-50">
+                                <CheckCircle className="h-4 w-4 mr-1" />Approve
+                              </button>
+                              <button onClick={() => handleUpdateStatus(app.id, 'rejected')} disabled={isUpdating} className="bg-red-50 text-red-700 hover:bg-red-100 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center transition-colors disabled:opacity-50">
+                                <XCircle className="h-4 w-4 mr-1" />Reject
+                              </button>
+                            </>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -228,8 +230,8 @@ export default function AdminSellersPage() {
 
       {/* View Details Modal — bottom sheet on mobile */}
       {selectedApp && (
-        <div className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50 p-0 sm:p-4">
-          <div className="bg-white rounded-t-2xl sm:rounded-xl shadow-xl w-full sm:max-w-2xl max-h-[90vh] overflow-y-auto p-4 sm:p-6">
+        <div className="fixed inset-0 bg-gray-900/60 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 p-0 sm:p-4">
+          <div className="bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl w-full sm:max-w-2xl max-h-[90vh] overflow-y-auto p-6 sm:p-8">
             <div className="flex justify-between items-start mb-4">
               <div className="flex flex-wrap items-center gap-2">
                 <h2 className="text-lg sm:text-xl font-bold text-gray-900">Application Details</h2>
@@ -275,18 +277,18 @@ export default function AdminSellersPage() {
             </div>
 
             {selectedApp.status === 'pending' && (
-              <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row justify-end gap-2 sm:gap-3 border-t pt-4">
+              <div className="mt-8 flex flex-col sm:flex-row justify-end gap-3 border-t border-gray-100 pt-6">
                 <button
                   onClick={() => handleUpdateStatus(selectedApp.id, 'rejected')}
                   disabled={isUpdating}
-                  className="px-4 py-2.5 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 font-medium disabled:opacity-50 w-full sm:w-auto text-center"
+                  className="px-6 py-3 bg-red-50 text-red-700 rounded-xl hover:bg-red-100 font-bold disabled:opacity-50 w-full sm:w-auto transition-colors"
                 >
                   Reject
                 </button>
                 <button
                   onClick={() => handleUpdateStatus(selectedApp.id, 'approved')}
                   disabled={isUpdating}
-                  className="px-4 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium disabled:opacity-50 w-full sm:w-auto text-center"
+                  className="px-6 py-3 bg-green-600 text-white rounded-xl shadow-lg shadow-green-600/20 hover:bg-green-700 font-bold disabled:opacity-50 w-full sm:w-auto transition-colors"
                 >
                   Approve Application
                 </button>

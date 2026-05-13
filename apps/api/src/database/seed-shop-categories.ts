@@ -12,34 +12,31 @@ const categoriesData = {
     "Career Coaching",
     "Profile Optimization",
     "Job Search Support",
-    "Other Career Services (Work-related only)"
+    "Other Career Services"
   ],
   "Professional Services": [
-    "Business, Admin & Support Services",
     "Human Resources Services",
     "Customer Support Services",
     "Virtual Assistance",
     "Office & Administrative Support",
-    "Finance & Legal Services",
     "Bookkeeping",
     "Financial Advisory",
     "Tax Support",
     "Payroll Services",
     "Contract Drafting",
     "Legal Advisory",
-    "Creative & Communication Services",
     "Graphic Design",
     "Branding",
     "Video Editing",
     "Copywriting",
     "Technical Writing",
     "Editing & Proofreading",
-    "Other Professional Services (Work-related only)"
+    "Other Professional Services"
   ],
-  "Health & Wellness Services": [
+  "Health & Wellness": [
     "Therapy / Counselling",
     "Workplace Wellness",
-    "Other Health & Wellness Services (Work-related only)"
+    "Other Health & Wellness"
   ],
   "Technology & Digital Services": [
     "Web Development",
@@ -49,7 +46,7 @@ const categoriesData = {
     "Cybersecurity",
     "IT Support",
     "CCTV & Security Installation",
-    "Other Technology & Digital Services (Work-related only)"
+    "Other Technology Services"
   ],
   "Workplace & Facility Services": [
     "Cleaning & Maintenance",
@@ -57,163 +54,142 @@ const categoriesData = {
     "Office Setup & Installation",
     "Construction & Fittings",
     "Technical Installations",
-    "Office Setup & Interior Services",
-    "Other Workplace & Facility Services (Work-related only)"
+    "Interior Office Setup",
+    "Other Workplace Services"
   ],
   "Food & Office Meals": [
-    "Office Meals & Catering (Services)",
-    "Meals (Bulk Orders Only)",
-    "Snacks & Pastries (Bulk Orders Only)",
+    "Office Catering Services",
+    "Bulk Meals",
+    "Snacks & Pastries (Bulk)",
     "Beverages & Drinks",
-    "Tea, Coffee & Drink Supplies",
-    "Disposable Plates, Cups & Cutlery",
-    "Other Food & Office Meal Listings (Work-related only)"
+    "Tea, Coffee & Supplies",
+    "Disposable Dining Supplies",
+    "Other Food Listings"
   ],
   "Courses & Training": [
     "Career Development",
-    "Technology & Digital Skills",
+    "Tech & Digital Skills",
     "Business & Finance",
     "Creative Skills",
     "Professional Certifications",
     "HSE / Safety Training",
-    "Other Courses & Training"
+    "Other Training Programs"
   ],
   "Digital Resources": [
-    "Templates",
     "CV Templates",
     "Business Templates",
     "Design Templates",
-    "Documents",
     "Policies",
     "SOPs",
     "Contracts",
-    "Guides & E-books",
-    "Career guides",
-    "Business guides",
-    "Industry guides",
-    "Toolkits & Packs",
-    "HR toolkits",
-    "Business startup packs",
-    "Marketing kits",
-    "Career toolkits",
-    "90-Day Plans",
-    "Career growth plans",
-    "Business launch plans",
-    "Skill development plans",
-    "Other Digital Resources (Work-related only)"
+    "Career Guides",
+    "Business Guides",
+    "Industry Guides",
+    "HR Toolkits",
+    "Business Startup Packs",
+    "Marketing Kits",
+    "Career Toolkits",
+    "90-Day Career Plans",
+    "Business Launch Plans",
+    "Skill Development Plans",
+    "Other Digital Resources"
   ],
   "Office Supplies & Stationery": [
-    "Paper, notebooks, notepads",
-    "Pens, pencils, markers",
-    "Files, folders, binders",
-    "Desk tools (staplers, clips, etc.)",
-    "Desk organizers",
-    "Other Office Supplies & Stationery"
+    "Paper Products",
+    "Writing Tools",
+    "Files & Folders",
+    "Desk Tools",
+    "Desk Organizers"
   ],
   "Office Equipment & Machines": [
     "Printers",
     "Scanners",
     "Photocopiers",
     "Shredders",
-    "Laminating machines",
-    "Binding machines",
+    "Laminating Machines",
+    "Binding Machines",
     "Projectors",
-    "Office telephones",
-    "Other Office Equipment & Machines"
+    "Office Telephones"
   ],
   "IT, Security & Connectivity": [
     "Routers",
-    "Networking devices",
-    "CCTV systems",
-    "Biometric systems",
-    "Computer accessories",
-    "Other IT, Security & Connectivity"
+    "Networking Devices",
+    "CCTV Systems",
+    "Biometric Systems",
+    "Computer Accessories"
   ],
   "Office Furniture": [
     "Desks",
     "Chairs",
     "Workstations",
     "Cabinets",
-    "Shelves",
-    "Other Office Furniture (Work-related only)"
+    "Shelves"
   ],
-  "Interior, Décor & Office Setup": [
-    "Curtains & blinds",
-    "Partition materials",
-    "Glass fittings",
-    "Wall art",
-    "Plants",
-    "Aquariums",
-    "Other Interior, Décor & Office Setup (Work-related only)"
+  "Interior, Décor & Setup": [
+    "Curtains & Blinds",
+    "Partitions",
+    "Glass Fittings",
+    "Wall Art",
+    "Plants & Aquariums"
   ],
   "Lighting & Electrical": [
-    "Lights & bulbs",
-    "Electrical fittings",
-    "Extension boxes",
-    "Other Lighting & Electrical (Work-related only)"
+    "Lights & Bulbs",
+    "Electrical Fittings",
+    "Extension Boxes"
   ],
   "Workplace Appliances": [
-    "Air conditioners",
+    "Air Conditioners",
     "Fans",
     "Refrigerators",
     "Microwaves",
-    "Water dispensers",
-    "Coffee machines",
-    "Other Workplace Appliances"
+    "Water Dispensers",
+    "Coffee Machines"
   ],
-  "Toiletries, Cleaning & Janitorial": [
-    "Tissue paper",
-    "Hand wash & sanitizers",
-    "Cleaning tools & chemicals",
-    "Air fresheners",
-    "Other Toiletries, Cleaning & Janitorial"
+  "Cleaning & Janitorial": [
+    "Tissue Paper",
+    "Sanitizers & Hand Wash",
+    "Cleaning Tools & Chemicals",
+    "Air Fresheners"
   ],
   "Safety, Medical & Emergency": [
-    "First aid kits",
-    "Fire extinguishers",
-    "PPE (helmets, boots, gloves, etc.)",
-    "Other Safety, Medical & Emergency"
+    "First Aid Kits",
+    "Fire Extinguishers",
+    "PPE"
   ],
   "Professional Wear & Uniforms": [
-    "Corporate wear",
-    "Industry uniforms",
-    "Safety wear",
-    "Other Professional Wear & Uniforms"
+    "Corporate Wear",
+    "Industry Uniforms",
+    "Safety Wear"
   ],
   "Business Security & Storage": [
-    "Office safes",
-    "Lock boxes",
-    "Other Business Security & Storage"
+    "Office Safes",
+    "Lock Boxes"
   ],
   "Learning Materials": [
     "Books",
-    "Study guides",
-    "Training manuals",
-    "Other Learning Materials"
+    "Study Guides",
+    "Training Manuals"
   ],
-  "Professional Bags & Carriers": [
-    "Laptop bags",
+  "Professional Bags": [
+    "Laptop Bags",
     "Briefcases",
-    "Backpacks",
-    "Other Professional Bags & Carriers"
+    "Backpacks"
   ],
   "Starter Kits & Bundles": [
-    "Job seeker kits",
-    "Office setup kits",
-    "Remote work kits",
-    "Other Starter Kits & Bundles"
+    "Job Seeker Kits",
+    "Office Setup Kits",
+    "Remote Work Kits"
   ],
-  "Industrial, Oil & Gas, Drilling & Mud Engineering": [
-    "PPE & safety gear",
-    "Drilling chemicals",
-    "Mud engineering tools",
-    "Solids control equipment",
-    "Industrial measuring tools",
-    "Other"
+  "Industrial & Oil/Gas": [
+    "PPE & Safety Gear",
+    "Drilling Chemicals",
+    "Mud Engineering Tools",
+    "Solids Control Equipment",
+    "Industrial Measuring Tools"
   ],
   "Other / Uncategorized": [
-    "Miscellaneous Services (Work-related only)",
-    "Miscellaneous Products (Work/Office-related only)"
+    "Miscellaneous Services",
+    "Miscellaneous Products"
   ]
 };
 
@@ -230,15 +206,15 @@ async function main() {
     // Begin transaction
     await client.query('BEGIN');
 
-    // Clear existing categories and subcategories (optional, if you want a clean slate)
-    // Be careful, if there are products attached, this will fail due to foreign key constraints
-    // If you want to merge, you should insert only missing.
-    // Let's do an upsert or ignore instead.
-
+    // Soft delete strategy for old categories not in the new list (or you could just ignore them)
+    // We'll just upsert and merge here.
+    
+    // In production, we'd want to be careful with deleting categories that have products.
+    // For this seed script, we just ensure all new categories/subcategories exist.
+    
     for (const [categoryName, subcategories] of Object.entries(categoriesData)) {
-      // Find or create category
       let categoryRes = await client.query(
-        `SELECT id FROM shop_categories WHERE name = $1`,
+        'SELECT id FROM shop_categories WHERE name = $1',
         [categoryName]
       );
       
@@ -246,7 +222,7 @@ async function main() {
       if (categoryRes.rowCount === 0) {
         categoryId = crypto.randomUUID();
         await client.query(
-          `INSERT INTO shop_categories (id, name, "createdAt", "updatedAt") VALUES ($1, $2, NOW(), NOW())`,
+          'INSERT INTO shop_categories (id, name, "createdAt", "updatedAt") VALUES ($1, $2, NOW(), NOW())',
           [categoryId, categoryName]
         );
         console.log(`Created category: ${categoryName}`);
@@ -256,14 +232,14 @@ async function main() {
 
       for (const subName of subcategories) {
         let subRes = await client.query(
-          `SELECT id FROM shop_subcategories WHERE name = $1 AND "categoryId" = $2`,
+          'SELECT id FROM shop_subcategories WHERE name = $1 AND "categoryId" = $2',
           [subName, categoryId]
         );
 
         if (subRes.rowCount === 0) {
           const subId = crypto.randomUUID();
           await client.query(
-            `INSERT INTO shop_subcategories (id, name, "categoryId", "createdAt", "updatedAt") VALUES ($1, $2, $3, NOW(), NOW())`,
+            'INSERT INTO shop_subcategories (id, name, "categoryId", "createdAt", "updatedAt") VALUES ($1, $2, $3, NOW(), NOW())',
             [subId, subName, categoryId]
           );
           console.log(`  Created subcategory: ${subName}`);
@@ -272,7 +248,7 @@ async function main() {
     }
 
     await client.query('COMMIT');
-    console.log('Successfully seeded shop categories!');
+    console.log('Successfully seeded shop categories with refined structure!');
     process.exit(0);
   } catch (error) {
     await client.query('ROLLBACK');

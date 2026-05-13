@@ -13,7 +13,9 @@ import {
   FileText,
   ShoppingBag,
   Store,
-  Package
+  Package,
+  AlertTriangle,
+  MessageSquare,
 } from 'lucide-react';
 
 export default function DashboardLayout({
@@ -62,6 +64,8 @@ export default function DashboardLayout({
     { name: 'Approve Sellers', href: '/admin/sellers', icon: Store },
     { name: 'Marketplace Catalog', href: '/admin/products', icon: Package },
     { name: 'Shop Orders', href: '/admin/orders', icon: ShoppingBag },
+    { name: 'Disputes', href: '/admin/disputes', icon: AlertTriangle },
+    { name: 'Reviews', href: '/admin/reviews', icon: MessageSquare },
     { name: 'Manage Users', href: '/admin/users', icon: User },
   ];
 

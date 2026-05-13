@@ -26,6 +26,9 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ApplySellerDto } from './dto/apply-seller.dto';
 import { AddToCartDto } from './dto/add-to-cart.dto';
+import { CreateQuoteRequestDto } from './dto/create-quote.dto';
+import { RespondQuoteDto } from './dto/respond-quote.dto';
+import { CreateDisputeDto } from './dto/create-dispute.dto';
 import { SellerApplicationStatus } from '../support/entities/support.entity';
 
 interface AuthenticatedRequest {
@@ -51,34 +54,6 @@ export class ShopController {
   @UseGuards(JwtAuthGuard)
   async getSellerStatus(@NestRequest() req: AuthenticatedRequest) {
     return this.shopService.getSellerStatus(req.user.sub);
-  }
-
-  @Patch('admin/seller/:id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN)
-  async adminUpdateSeller(
-    @Param('id') id: string,
-    @Body('status') status: SellerApplicationStatus,
-    @NestRequest() req: AuthenticatedRequest,
-  ) {
-    return this.shopService.adminUpdateSellerApplication(
-      id,
-      status,
-      req.user.sub,
-    );
-  }
-
-  @Get('admin/seller/pending')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN)
-  async getPendingSellerApps(
-    @Query('page') page?: string,
-    @Query('limit') limit?: string,
-  ) {
-    return this.shopService.getPendingSellerApplications(
-      parseInt(page || '1', 10),
-      parseInt(limit || '10', 10),
-    );
   }
 
   // ─── Products ──────────────────────────────────────────────────
@@ -276,7 +251,6 @@ export class ShopController {
       parseInt(limit || '10', 10),
     );
   }
-
   @Get('seller/orders')
   @UseGuards(JwtAuthGuard, SellerGuard)
   async getSellerOrders(
@@ -285,6 +259,55 @@ export class ShopController {
     @Query('limit') limit?: string,
   ) {
     return this.shopService.getSellerOrders(
+      req.user.sub,
+      parseInt(page || '1', 10),
+      parseInt(limit || '10', 10),
+    );
+  }
+
+  // ─── Quotes ───────────────────────────────────────────────────
+
+  @Post('quotes')
+  @UseGuards(JwtAuthGuard)
+  async requestQuote(
+    @NestRequest() req: AuthenticatedRequest,
+    @Body() dto: CreateQuoteRequestDto,
+  ) {
+    return this.shopService.requestQuote(req.user.sub, dto);
+  }
+
+  @Patch('quotes/:id/respond')
+  @UseGuards(JwtAuthGuard, SellerGuard)
+  async respondQuote(
+    @Param('id') id: string,
+    @NestRequest() req: AuthenticatedRequest,
+    @Body() dto: RespondQuoteDto,
+  ) {
+    return this.shopService.respondQuote(req.user.sub, id, dto);
+  }
+
+  @Get('quotes/buyer')
+  @UseGuards(JwtAuthGuard)
+  async getBuyerQuotes(
+    @NestRequest() req: AuthenticatedRequest,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
+    return this.shopService.getBuyerQuotes(
+      req.user.sub,
+      parseInt(page || '1', 10),
+      parseInt(limit || '10', 10),
+    );
+  }
+
+  @Get('quotes/seller')
+  @UseGuards(JwtAuthGuard, SellerGuard)
+  async getSellerQuotes(
+    @NestRequest() req: AuthenticatedRequest,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
+    return this.shopService.getSellerQuotes(
       req.user.sub,
       parseInt(page || '1', 10),
       parseInt(limit || '10', 10),
@@ -316,9 +339,9 @@ export class ShopController {
   async reportIssue(
     @Param('id') id: string,
     @NestRequest() req: AuthenticatedRequest,
-    @Body('reason') reason: string,
+    @Body() dto: CreateDisputeDto,
   ) {
-    return this.shopService.reportIssue(id, req.user.sub, reason);
+    return this.shopService.reportIssue(id, req.user.sub, dto);
   }
 
   @Get('orders/:id/download')

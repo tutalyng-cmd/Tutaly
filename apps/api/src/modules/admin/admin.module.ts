@@ -4,14 +4,15 @@ import { AdminController } from './admin.controller';
 import { AdminService } from './admin.service';
 import { User } from '../user/entities/user.entity';
 import { Job } from '../job/entities/job.entity';
-import { Order } from '../shop/entities/order.entity';
+import { Order, OrderDispute } from '../shop/entities/order.entity';
 import { SellerApplication } from '../support/entities/support.entity';
 import { ShopProduct } from '../shop/entities/shop.entity';
+import { CompanyReview } from '../review/entities/review.entity';
 import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Job, Order, SellerApplication, ShopProduct]),
+    TypeOrmModule.forFeature([User, Job, Order, OrderDispute, SellerApplication, ShopProduct, CompanyReview]),
     AuthModule
   ],
   controllers: [AdminController],

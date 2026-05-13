@@ -83,62 +83,64 @@ export default function AdminJobsPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6 px-4 sm:px-0">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       <div>
-        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Manage Jobs</h1>
-        <p className="text-gray-500 mt-1 text-sm">Review, approve, and manage all job listings</p>
+        <h1 className="text-3xl font-black text-gray-900">Manage Jobs</h1>
+        <p className="text-gray-500 mt-1">Review, approve, and manage all job listings.</p>
       </div>
 
-      {/* Tabs — scrollable on mobile */}
-      <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-        <div className="flex gap-1 bg-gray-100 p-1 rounded-xl w-fit min-w-max">
-          {TABS.map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
-              className={`flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
-                activeTab === tab.key
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              {tab.icon}
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {/* Tabs */}
+      <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+        {TABS.map((tab) => (
+          <button
+            key={tab.key}
+            onClick={() => setActiveTab(tab.key)}
+            className={`px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all flex items-center gap-2 ${
+              activeTab === tab.key
+                ? 'bg-teal-600 text-white shadow-lg shadow-teal-600/20'
+                : 'bg-white text-gray-600 border border-gray-100 hover:border-teal-200'
+            }`}
+          >
+            {tab.icon}
+            {tab.label}
+          </button>
+        ))}
       </div>
 
       {error && <div className="text-red-500 bg-red-50 p-3 sm:p-4 rounded-lg text-sm">{error}</div>}
 
-      <div className="bg-white shadow-sm border border-gray-200 rounded-lg overflow-hidden">
+      <div className="bg-white shadow-sm border border-gray-100 rounded-3xl overflow-hidden">
         {loading ? (
-          <div className="flex justify-center items-center h-40">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-teal-600"></div>
           </div>
         ) : jobs.length === 0 ? (
-          <div className="p-6 sm:p-8 text-center text-gray-500 text-sm">
+          <div className="p-16 text-center text-gray-500">
+            <Briefcase className="w-16 h-16 text-gray-200 mx-auto mb-4" />
+            <h3 className="text-xl font-bold text-gray-900 mb-1">No jobs found</h3>
+            <p className="text-gray-500">
             {activeTab === 'pending_review'
               ? 'No pending jobs require approval.'
               : activeTab === 'active'
               ? 'No approved jobs found.'
               : 'No jobs found.'}
+            </p>
           </div>
         ) : (
           <>
-            {/* Desktop Table — hidden on mobile */}
-            <div className="hidden md:block">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+            {/* Desktop Table */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-100">
+                <thead className="bg-gray-50/50">
                   <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Job Details</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employer</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                    <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    <th scope="col" className="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider">Job Details</th>
+                    <th scope="col" className="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider">Employer</th>
+                    <th scope="col" className="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider">Status</th>
+                    <th scope="col" className="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider">Date</th>
+                    <th scope="col" className="px-6 py-4 text-right text-xs font-black text-gray-500 uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-white divide-y divide-gray-50">
                   {jobs.map((job) => (
                     <tr key={job.id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-6 py-4">
@@ -152,15 +154,17 @@ export default function AdminJobsPage() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {new Date(job.createdAt).toLocaleDateString()}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                        <button onClick={() => setSelectedJob(job)} className="text-blue-600 hover:text-blue-900 bg-blue-50 px-3 py-1 rounded-md inline-flex items-center">
-                          <Eye className="h-4 w-4 mr-1" />View
-                        </button>
-                        {job.status === 'pending_review' && (
-                          <button onClick={() => handleApprove(job.id)} className="text-green-600 hover:text-green-900 bg-green-50 px-3 py-1 rounded-md inline-flex items-center">
-                            <CheckCircle className="h-4 w-4 mr-1" />Approve
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <div className="flex justify-end gap-2">
+                          <button onClick={() => setSelectedJob(job)} className="bg-blue-50 text-blue-700 hover:bg-blue-100 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center transition-colors">
+                            <Eye className="h-4 w-4 mr-1" />View
                           </button>
-                        )}
+                          {job.status === 'pending_review' && (
+                            <button onClick={() => handleApprove(job.id)} className="bg-green-50 text-green-700 hover:bg-green-100 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center transition-colors">
+                              <CheckCircle className="h-4 w-4 mr-1" />Approve
+                            </button>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -203,10 +207,10 @@ export default function AdminJobsPage() {
 
       {/* View Details Modal */}
       {selectedJob && (
-        <div className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50 p-0 sm:p-4">
-          <div className="bg-white rounded-t-2xl sm:rounded-xl shadow-xl w-full sm:max-w-2xl max-h-[90vh] overflow-y-auto p-4 sm:p-6">
+        <div className="fixed inset-0 bg-gray-900/60 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 p-0 sm:p-4">
+          <div className="bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl w-full sm:max-w-2xl max-h-[90vh] overflow-y-auto p-6 sm:p-8">
             <div className="flex justify-between items-start mb-4">
-              <h2 className="text-lg sm:text-xl font-bold text-gray-900">Job Details</h2>
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Job Details</h2>
               <button onClick={() => setSelectedJob(null)} className="text-gray-400 hover:text-gray-600">
                 <XCircle className="h-6 w-6" />
               </button>
@@ -260,15 +264,15 @@ export default function AdminJobsPage() {
             </div>
 
             {selectedJob.status === 'pending_review' && (
-              <div className="mt-6 sm:mt-8 flex justify-end border-t pt-4">
+              <div className="mt-8 flex justify-end border-t border-gray-100 pt-6">
                 <button
                   onClick={() => {
                     handleApprove(selectedJob.id);
                     setSelectedJob(null);
                   }}
-                  className="w-full sm:w-auto px-4 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium inline-flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto px-6 py-3 bg-green-600 text-white rounded-xl shadow-lg shadow-green-600/20 hover:bg-green-700 font-bold inline-flex items-center justify-center gap-2 transition-colors"
                 >
-                  <CheckCircle className="w-4 h-4" />
+                  <CheckCircle className="w-5 h-5" />
                   Approve Job
                 </button>
               </div>

@@ -1,15 +1,16 @@
 import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User, UserRole } from '../user/entities/user.entity';
+import { User, UserRole, SellerStatus } from '../user/entities/user.entity';
 import { Job, JobStatus } from '../job/entities/job.entity';
-import { Order, OrderStatus, PaymentGateway } from '../shop/entities/order.entity';
+import { Order, OrderStatus, PaymentGateway, OrderDispute, DisputeStatus } from '../shop/entities/order.entity';
 import { ListingType } from '../shop/entities/shop.entity';
 import {
   SellerApplication,
   SellerApplicationStatus,
 } from '../support/entities/support.entity';
 import { ShopProduct } from '../shop/entities/shop.entity';
+import { CompanyReview, ReviewStatus } from '../review/entities/review.entity';
 
 /**
  * Strips TypeORM entity metadata & circular references by
@@ -31,6 +32,10 @@ export class AdminService {
     private readonly sellerAppRepo: Repository<SellerApplication>,
     @InjectRepository(ShopProduct)
     private readonly productRepo: Repository<ShopProduct>,
+    @InjectRepository(OrderDispute)
+    private readonly disputeRepo: Repository<OrderDispute>,
+    @InjectRepository(CompanyReview)
+    private readonly reviewRepo: Repository<CompanyReview>,
   ) {}
 
   async getDashboardStats() {
@@ -63,6 +68,9 @@ export class AdminService {
       where: { status: OrderStatus.FLAGGED },
     });
     const totalProducts = await this.productRepo.count();
+    const openDisputesCount = await this.disputeRepo.count({
+      where: { status: DisputeStatus.OPEN },
+    });
 
     return {
       totalUsers,
@@ -73,6 +81,7 @@ export class AdminService {
       pendingSellersCount,
       flaggedOrdersCount,
       totalProducts,
+      openDisputesCount,
     };
   }
 
@@ -187,6 +196,33 @@ export class AdminService {
         totalPages: Math.ceil(total / limit),
       },
     };
+  }
+
+  async updateSellerApplication(
+    applicationId: string,
+    status: SellerApplicationStatus,
+    adminId: string,
+  ) {
+    const application = await this.sellerAppRepo.findOne({
+      where: { id: applicationId },
+      relations: ['user'],
+    });
+    if (!application) throw new NotFoundException('Application not found');
+
+    application.status = status;
+    application.reviewedBy = { id: adminId } as any;
+    await this.sellerAppRepo.save(application);
+
+    // Update user's sellerStatus
+    const user = application.user;
+    if (status === SellerApplicationStatus.APPROVED) {
+      user.sellerStatus = SellerStatus.APPROVED;
+    } else if (status === SellerApplicationStatus.REJECTED) {
+      user.sellerStatus = SellerStatus.REJECTED;
+    }
+    await this.userRepo.save(user);
+
+    return { success: true, message: `Seller application ${status}.` };
   }
 
   async getFlaggedOrders(page = 1, limit = 20) {
@@ -435,5 +471,93 @@ export class AdminService {
       success: true,
       message: 'Order has been flagged for review.',
     };
+  }
+  // ─── Disputes ────────────────────────────────────────────────────────
+
+  async getDisputes(page = 1, limit = 10, status?: DisputeStatus) {
+    const query = this.disputeRepo
+      .createQueryBuilder('dispute')
+      .leftJoinAndSelect('dispute.order', 'order')
+      .leftJoinAndSelect('dispute.raisedBy', 'raisedBy')
+      .leftJoinAndSelect('dispute.resolvedBy', 'resolvedBy')
+      .orderBy('dispute.createdAt', 'DESC')
+      .skip((page - 1) * limit)
+      .take(limit);
+
+    if (status) {
+      query.andWhere('dispute.status = :status', { status });
+    }
+
+    const [data, total] = await query.getManyAndCount();
+    return { data: toPlain(data), meta: { page, limit, total } };
+  }
+
+  async resolveDispute(disputeId: string, adminId: string, dto: any) {
+    const dispute = await this.disputeRepo.findOne({
+      where: { id: disputeId },
+      relations: ['order'],
+    });
+
+    if (!dispute) throw new NotFoundException('Dispute not found');
+    if (dispute.status !== DisputeStatus.OPEN) {
+      throw new BadRequestException(`Dispute is already ${dispute.status}`);
+    }
+
+    dispute.status = dto.status;
+    dispute.resolutionNotes = dto.resolutionNotes;
+    dispute.resolvedBy = { id: adminId } as User;
+    dispute.resolvedAt = new Date();
+
+    const order = await this.orderRepo.findOne({ where: { id: dispute.order.id } });
+    if (!order) throw new NotFoundException('Order associated with dispute not found');
+
+    if (dto.status === DisputeStatus.RESOLVED_REFUND) {
+      order.status = OrderStatus.REFUNDED;
+      // You would typically trigger a refund via Flutterwave/Paystack API here
+      this.logger.log(`Admin ${adminId} ordered REFUND for order ${order.id} via dispute ${disputeId}`);
+    } else if (dto.status === DisputeStatus.RESOLVED_RELEASE) {
+      order.status = OrderStatus.COMPLETED;
+      order.earningsReleasedAt = new Date();
+      this.logger.log(`Admin ${adminId} ordered RELEASE for order ${order.id} via dispute ${disputeId}`);
+    }
+
+    await this.orderRepo.save(order);
+    await this.disputeRepo.save(dispute);
+
+    return { success: true, message: `Dispute resolved as ${dto.status}`, data: toPlain(dispute) };
+  }
+
+  // ─── Review Moderation ──────────────────────────────────────────────
+
+  async getPendingReviews(page = 1, limit = 20) {
+    const [data, total] = await this.reviewRepo.findAndCount({
+      where: { status: ReviewStatus.PENDING },
+      order: { createdAt: 'ASC' },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+    return { data: toPlain(data), meta: { page, limit, total } };
+  }
+
+  async approveReview(reviewId: string) {
+    const review = await this.reviewRepo.findOne({ where: { id: reviewId } });
+    if (!review) throw new NotFoundException('Review not found');
+    if (review.status !== ReviewStatus.PENDING) {
+      throw new BadRequestException(`Review is already ${review.status}`);
+    }
+    review.status = ReviewStatus.APPROVED;
+    await this.reviewRepo.save(review);
+    return { success: true, message: 'Review approved.' };
+  }
+
+  async rejectReview(reviewId: string) {
+    const review = await this.reviewRepo.findOne({ where: { id: reviewId } });
+    if (!review) throw new NotFoundException('Review not found');
+    if (review.status !== ReviewStatus.PENDING) {
+      throw new BadRequestException(`Review is already ${review.status}`);
+    }
+    review.status = ReviewStatus.REJECTED;
+    await this.reviewRepo.save(review);
+    return { success: true, message: 'Review rejected.' };
   }
 }

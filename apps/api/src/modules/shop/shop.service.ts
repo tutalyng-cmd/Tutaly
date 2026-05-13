@@ -16,7 +16,7 @@ import {
   Currency,
   ListingType,
 } from './entities/shop.entity';
-import { Order, OrderStatus, PaymentGateway } from './entities/order.entity';
+import { Order, OrderStatus, PaymentGateway, QuoteRequest, QuoteStatus, OrderDispute } from './entities/order.entity';
 import { User, SellerStatus } from '../user/entities/user.entity';
 import {
   SellerApplication,
@@ -26,7 +26,8 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ApplySellerDto } from './dto/apply-seller.dto';
 import { TokenService } from '../auth/token.service';
-
+import { SupportService } from '../support/support.service';
+import { CreateQuoteRequestDto } from './dto/create-quote.dto';
 /**
  * Strips TypeORM entity metadata & circular references by
  * round-tripping through JSON.
@@ -53,7 +54,12 @@ export class ShopService {
     private readonly categoryRepo: Repository<ShopCategory>,
     @InjectRepository(ShopSubcategory)
     private readonly subcategoryRepo: Repository<ShopSubcategory>,
+    @InjectRepository(QuoteRequest)
+    private readonly quoteRepo: Repository<QuoteRequest>,
+    @InjectRepository(OrderDispute)
+    private readonly disputeRepo: Repository<OrderDispute>,
     private readonly tokenService: TokenService,
+    private readonly supportService: SupportService,
   ) {
     this.supabase = createClient(
       process.env.SUPABASE_URL || '',
@@ -109,43 +115,6 @@ export class ShopService {
     return { sellerStatus: user.sellerStatus };
   }
 
-  async adminUpdateSellerApplication(
-    applicationId: string,
-    status: SellerApplicationStatus,
-    adminId: string,
-  ) {
-    const application = await this.sellerAppRepo.findOne({
-      where: { id: applicationId },
-      relations: ['user'],
-    });
-    if (!application) throw new NotFoundException('Application not found');
-
-    application.status = status;
-    application.reviewedBy = { id: adminId } as any;
-    await this.sellerAppRepo.save(application);
-
-    // Update user's sellerStatus
-    const user = application.user;
-    if (status === SellerApplicationStatus.APPROVED) {
-      user.sellerStatus = SellerStatus.APPROVED;
-    } else if (status === SellerApplicationStatus.REJECTED) {
-      user.sellerStatus = SellerStatus.REJECTED;
-    }
-    await this.userRepo.save(user);
-
-    return { success: true, message: `Seller application ${status}.` };
-  }
-
-  async getPendingSellerApplications(page = 1, limit = 10) {
-    const [data, total] = await this.sellerAppRepo.findAndCount({
-      where: { status: SellerApplicationStatus.PENDING },
-      relations: ['user'],
-      order: { createdAt: 'ASC' },
-      take: limit,
-      skip: (page - 1) * limit,
-    });
-    return { items: toPlain(data), meta: { page, limit, total } };
-  }
 
   // ─── Product CRUD ──────────────────────────────────────────────────
 
@@ -738,7 +707,7 @@ export class ShopService {
   async markDelivered(orderId: string, sellerId: string) {
     const order = await this.orderRepo.findOne({
       where: { id: orderId },
-      relations: ['seller'],
+      relations: ['seller', 'buyer'],
     });
     if (!order) throw new NotFoundException('Order not found');
     if (order.seller.id !== sellerId)
@@ -755,6 +724,14 @@ export class ShopService {
     order.escrowReleaseAt = releaseDate;
 
     await this.orderRepo.save(order);
+    
+    await this.supportService.createNotification(
+      order.buyer.id, // we don't have buyer loaded here! wait, I need to add buyer to relations!
+      'order_delivered',
+      `Your order #${order.id.slice(0, 8)} has been delivered. You have 48 hours to confirm.`,
+      `/dashboard/seeker/orders/${order.id}`
+    );
+
     return {
       success: true,
       message:
@@ -765,7 +742,7 @@ export class ShopService {
   async confirmDelivery(orderId: string, buyerId: string) {
     const order = await this.orderRepo.findOne({
       where: { id: orderId },
-      relations: ['buyer'],
+      relations: ['buyer', 'seller'],
     });
     if (!order) throw new NotFoundException('Order not found');
     if (order.buyer.id !== buyerId)
@@ -779,13 +756,20 @@ export class ShopService {
     order.earningsReleasedAt = new Date();
     await this.orderRepo.save(order);
 
+    await this.supportService.createNotification(
+      order.seller.id, // need seller relation here
+      'order_completed',
+      `Order #${order.id.slice(0, 8)} was confirmed! Funds have been released to your escrow.`,
+      `/dashboard/employer/orders/${order.id}`
+    );
+
     return {
       success: true,
       message: 'Delivery confirmed. Funds released to seller.',
     };
   }
 
-  async reportIssue(orderId: string, buyerId: string, reason: string) {
+  async reportIssue(orderId: string, buyerId: string, dto: any) {
     const order = await this.orderRepo.findOne({
       where: { id: orderId },
       relations: ['buyer'],
@@ -801,19 +785,34 @@ export class ShopService {
       );
     }
 
+    // Check if dispute already exists
+    const existingDispute = await this.disputeRepo.findOne({ where: { order: { id: orderId } } });
+    if (existingDispute) {
+      throw new BadRequestException('A dispute is already open for this order.');
+    }
+
     order.status = OrderStatus.FLAGGED;
     // Pausing release by clearing the release date
     order.escrowReleaseAt = null;
     await this.orderRepo.save(order);
 
+    const dispute = this.disputeRepo.create({
+      order: { id: orderId } as any,
+      raisedBy: { id: buyerId } as any,
+      reason: dto.reason,
+      evidenceUrls: dto.evidenceUrls || [],
+    });
+    await this.disputeRepo.save(dispute);
+
     this.logger.warn(
-      `Order ${orderId} flagged by buyer ${buyerId}. Reason: ${reason}`,
+      `Order ${orderId} flagged by buyer ${buyerId}. Reason: ${dto.reason}`,
     );
 
     return {
       success: true,
       message:
         'Issue reported. Order flagged for admin review and auto-release paused.',
+      disputeId: dispute.id,
     };
   }
 
@@ -908,6 +907,84 @@ export class ShopService {
       order: { createdAt: 'DESC' },
       take: limit,
       skip: (page - 1) * limit,
+    });
+    return { data: toPlain(data), meta: { page, limit, total } };
+  }
+
+  // ─── Quotes ────────────────────────────────────────────────────────
+
+  async requestQuote(buyerId: string, dto: any) {
+    const product = await this.productRepo.findOne({
+      where: { id: dto.productId },
+      relations: ['seller'],
+    });
+    if (!product) throw new NotFoundException('Product not found');
+    if (product.seller.id === buyerId) {
+      throw new BadRequestException('You cannot request a quote for your own product');
+    }
+
+    const quote = this.quoteRepo.create({
+      product: { id: dto.productId } as any,
+      buyer: { id: buyerId } as any,
+      seller: { id: product.seller.id } as any,
+      requirements: dto.requirements,
+      budgetRange: dto.budgetRange,
+      deadlineRequested: dto.deadlineRequested ? new Date(dto.deadlineRequested) : undefined,
+      status: QuoteStatus.PENDING,
+    });
+
+    await this.quoteRepo.save(quote);
+    return { success: true, message: 'Quote request sent successfully', quoteId: quote.id };
+  }
+
+  async respondQuote(sellerId: string, quoteId: string, dto: any) {
+    const quote = await this.quoteRepo.findOne({
+      where: { id: quoteId },
+      relations: ['seller', 'buyer', 'product'],
+    });
+    if (!quote) throw new NotFoundException('Quote request not found');
+    if (quote.seller.id !== sellerId) throw new ForbiddenException('Not your quote request');
+
+    if (quote.status !== QuoteStatus.PENDING) {
+      throw new BadRequestException(`Quote is already ${quote.status}`);
+    }
+
+    quote.status = dto.status;
+    if (dto.status === QuoteStatus.QUOTED) {
+      if (!dto.quotedPrice) throw new BadRequestException('Must provide a quoted price');
+      quote.quotedPrice = dto.quotedPrice;
+      quote.sellerNotes = dto.sellerNotes;
+      if (dto.expiresInDays) {
+        const expires = new Date();
+        expires.setDate(expires.getDate() + dto.expiresInDays);
+        quote.expiresAt = expires;
+      }
+    } else {
+      quote.sellerNotes = dto.sellerNotes;
+    }
+
+    await this.quoteRepo.save(quote);
+    return { success: true, message: `Quote ${dto.status}`, data: toPlain(quote) };
+  }
+
+  async getBuyerQuotes(buyerId: string, page = 1, limit = 10) {
+    const [data, total] = await this.quoteRepo.findAndCount({
+      where: { buyer: { id: buyerId } },
+      relations: ['product', 'seller'],
+      order: { createdAt: 'DESC' },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+    return { data: toPlain(data), meta: { page, limit, total } };
+  }
+
+  async getSellerQuotes(sellerId: string, page = 1, limit = 10) {
+    const [data, total] = await this.quoteRepo.findAndCount({
+      where: { seller: { id: sellerId } },
+      relations: ['product', 'buyer'],
+      order: { createdAt: 'DESC' },
+      skip: (page - 1) * limit,
+      take: limit,
     });
     return { data: toPlain(data), meta: { page, limit, total } };
   }

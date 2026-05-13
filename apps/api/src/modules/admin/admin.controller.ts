@@ -15,6 +15,14 @@ import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { UserRole } from '../user/entities/user.entity';
+import { SellerApplicationStatus } from '../support/entities/support.entity';
+import { Request as NestRequest } from '@nestjs/common';
+import { ResolveDisputeDto } from './dto/resolve-dispute.dto';
+import { DisputeStatus } from '../shop/entities/order.entity';
+
+interface AuthenticatedRequest {
+  user: { sub: string; email: string; role: string };
+}
 
 @Controller('admin')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -81,6 +89,15 @@ export class AdminController {
       parseInt(limit || '20', 10),
       status,
     );
+  }
+
+  @Patch('sellers/:id/status')
+  async updateSellerStatus(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body('status') status: SellerApplicationStatus,
+    @NestRequest() req: AuthenticatedRequest,
+  ) {
+    return this.adminService.updateSellerApplication(id, status, req.user.sub);
   }
 
   @Get('orders/flagged')
@@ -155,5 +172,51 @@ export class AdminController {
       status,
     );
   }
-}
 
+  // ─── Disputes ──────────────────────────────────────────────────────────
+
+  @Get('disputes')
+  async getDisputes(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('status') status?: string,
+  ) {
+    return this.adminService.getDisputes(
+      parseInt(page || '1', 10),
+      parseInt(limit || '10', 10),
+      status as DisputeStatus,
+    );
+  }
+
+  @Patch('disputes/:id/resolve')
+  async resolveDispute(
+    @Param('id') id: string,
+    @NestRequest() req: AuthenticatedRequest,
+    @Body() dto: ResolveDisputeDto,
+  ) {
+    return this.adminService.resolveDispute(id, req.user.sub, dto);
+  }
+
+  // ─── Review Moderation ──────────────────────────────────────────────────
+
+  @Get('reviews/pending')
+  async getPendingReviews(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
+    return this.adminService.getPendingReviews(
+      parseInt(page || '1', 10),
+      parseInt(limit || '20', 10),
+    );
+  }
+
+  @Patch('reviews/:id/approve')
+  async approveReview(@Param('id', ParseUUIDPipe) id: string) {
+    return this.adminService.approveReview(id);
+  }
+
+  @Patch('reviews/:id/reject')
+  async rejectReview(@Param('id', ParseUUIDPipe) id: string) {
+    return this.adminService.rejectReview(id);
+  }
+}

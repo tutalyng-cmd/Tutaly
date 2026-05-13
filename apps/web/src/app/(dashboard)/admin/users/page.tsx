@@ -63,41 +63,42 @@ export default function AdminUsersPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Manage Users</h1>
-        <p className="text-gray-500 mt-1">View user accounts and manage platform access</p>
+        <h1 className="text-3xl font-black text-gray-900">Manage Users</h1>
+        <p className="text-gray-500 mt-1">View user accounts and manage platform access.</p>
       </div>
 
       {error && <div className="text-red-500 bg-red-50 p-4 rounded-lg">{error}</div>}
 
-      <div className="bg-white shadow-sm border border-gray-200 rounded-lg overflow-hidden">
+      <div className="bg-white shadow-sm border border-gray-100 rounded-3xl overflow-hidden">
         {users.length === 0 ? (
-          <div className="p-8 text-center text-gray-500">
-            No users found.
+          <div className="p-16 text-center text-gray-500">
+            <h3 className="text-xl font-bold text-gray-900 mb-1">No users found</h3>
           </div>
         ) : (
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  User
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Role
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Joined
-                </th>
-                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-100">
+              <thead className="bg-gray-50/50">
+                <tr>
+                  <th scope="col" className="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider">
+                    User
+                  </th>
+                  <th scope="col" className="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider">
+                    Role
+                  </th>
+                  <th scope="col" className="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th scope="col" className="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider">
+                    Joined
+                  </th>
+                  <th scope="col" className="px-6 py-4 text-right text-xs font-black text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-50">
               {users.map((u) => (
                 <tr key={u.id}>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -126,30 +127,33 @@ export default function AdminUsersPage() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     {u.role !== 'admin' && (
-                      <button
-                        onClick={() => handleToggleStatus(u.id, u.isActive, u.role)}
-                        className={`${
-                          u.isActive 
-                            ? 'text-red-600 hover:text-red-900 bg-red-50' 
-                            : 'text-green-600 hover:text-green-900 bg-green-50'
-                        } px-3 py-1 rounded-md inline-flex items-center`}
-                      >
-                        {u.isActive ? (
-                          <>
-                            <Ban className="h-4 w-4 mr-1" /> Suspend
-                          </>
-                        ) : (
-                          <>
-                            <CheckCircle className="h-4 w-4 mr-1" /> Activate
-                          </>
-                        )}
-                      </button>
+                      <div className="flex justify-end">
+                        <button
+                          onClick={() => handleToggleStatus(u.id, u.isActive, u.role)}
+                          className={`${
+                            u.isActive 
+                              ? 'text-red-700 hover:bg-red-100 bg-red-50' 
+                              : 'text-green-700 hover:bg-green-100 bg-green-50'
+                          } px-3 py-1.5 rounded-lg text-xs font-bold flex items-center transition-colors`}
+                        >
+                          {u.isActive ? (
+                            <>
+                              <Ban className="h-4 w-4 mr-1" /> Suspend
+                            </>
+                          ) : (
+                            <>
+                              <CheckCircle className="h-4 w-4 mr-1" /> Activate
+                            </>
+                          )}
+                        </button>
+                      </div>
                     )}
                   </td>
                 </tr>
               ))}
             </tbody>
-          </table>
+            </table>
+          </div>
         )}
       </div>
     </div>

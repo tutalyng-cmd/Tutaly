@@ -24,7 +24,7 @@ import { APP_GUARD } from '@nestjs/core';
     }),
     BullModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
+      useFactory: (configService: ConfigService) => ({
         redis: configService.get<string>('REDIS_URL') || 'redis://localhost:6379',
       }),
       inject: [ConfigService],

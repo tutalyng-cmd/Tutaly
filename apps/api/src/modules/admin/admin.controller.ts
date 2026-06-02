@@ -280,6 +280,19 @@ export class AdminController {
     );
   }
 
+  @Get('disputes')
+  async getAllDisputes(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('status') status?: string,
+  ) {
+    return this.adminService.getDisputes(
+      parseInt(page || '1', 10),
+      parseInt(limit || '20', 10),
+      status as any,
+    );
+  }
+
   @Patch('disputes/:id')
   async resolveDispute(
     @Param('id', ParseUUIDPipe) disputeId: string,

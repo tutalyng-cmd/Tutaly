@@ -41,7 +41,9 @@ export default function AdminSellersPage() {
       const token = localStorage.getItem('access_token');
 
       let url: string;
-      if (activeTab === 'all') {
+      if (activeTab === 'pending') {
+        url = '/admin/queue/sellers';
+      } else if (activeTab === 'all') {
         url = '/admin/sellers';
       } else {
         url = `/admin/sellers?status=${activeTab}`;

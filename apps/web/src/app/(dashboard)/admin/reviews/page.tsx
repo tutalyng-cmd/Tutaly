@@ -32,7 +32,7 @@ export default function AdminReviewsPage() {
     try {
       const token = localStorage.getItem('access_token');
       if (!token) return;
-      const res = await apiAuth.withToken(token).get(`/admin/reviews/pending?page=${page}&limit=10`);
+      const res = await apiAuth.withToken(token).get(`/admin/queue/reviews?page=${page}&limit=10`);
       setReviews(res.data?.data || []);
       setTotal(res.data?.meta?.total || 0);
     } catch (err) {

@@ -41,7 +41,7 @@ export default function AdminJobsPage() {
 
       let url: string;
       if (activeTab === 'pending_review') {
-        url = '/admin/jobs/pending';
+        url = '/admin/queue/jobs';
       } else if (activeTab === 'all') {
         url = '/admin/jobs';
       } else {

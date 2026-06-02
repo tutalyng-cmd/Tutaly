@@ -101,6 +101,6 @@ export class ShopProduct extends BaseEntity {
   @Column({ type: 'timestamp', nullable: true })
   featuredUntil: Date | null; // When featured status expires
 
-  @Column({ nullable: true })
+  @Column({ type: 'tsvector', nullable: true, select: false })
   featuredSearchVector: any; // For full-text search (TSVector in PostgreSQL)
 }

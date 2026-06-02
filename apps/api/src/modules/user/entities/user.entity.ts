@@ -49,6 +49,12 @@ export class User extends BaseEntity {
   @Column({ type: 'enum', enum: SellerStatus, default: SellerStatus.NONE })
   sellerStatus: SellerStatus;
 
+  @Column({ nullable: true })
+  contactPhone: string;
+
+  @Column({ nullable: true })
+  whatsappPhone: string;
+
   @OneToOne(() => SeekerProfile, (profile) => profile.user)
   seekerProfile: SeekerProfile;
 

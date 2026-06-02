@@ -2,7 +2,9 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ShopController } from './shop.controller';
+import { RatingsDisputesEarningsController } from './controllers/ratings-disputes-earnings.controller';
 import { ShopService } from './shop.service';
+import { RatingsDisputesEarningsService } from './services/ratings-disputes-earnings.service';
 import { EscrowProcessor } from './escrow.processor';
 import { QuoteProcessor } from './quote.processor';
 import { SellerGuard } from './guards/seller.guard';
@@ -13,6 +15,7 @@ import {
 } from './entities/shop.entity';
 import { Order, QuoteRequest, OrderDispute } from './entities/order.entity';
 import { PaymentTransactionAudit } from './entities/payment-audit.entity';
+import { ProductRating } from './entities/product-rating.entity';
 import { User } from '../user/entities/user.entity';
 import { SellerApplication } from '../support/entities/support.entity';
 import { AuthModule } from '../auth/auth.module';
@@ -37,15 +40,17 @@ import { PaymentAuditService } from './services/payment-audit.service';
       QuoteRequest,
       OrderDispute,
       PaymentTransactionAudit,
+      ProductRating,
       User,
       SellerApplication,
     ]),
     ScheduleModule.forRoot(),
     AuthModule,
   ],
-  controllers: [ShopController],
+  controllers: [ShopController, RatingsDisputesEarningsController],
   providers: [
     ShopService,
+    RatingsDisputesEarningsService,
     EscrowProcessor,
     QuoteProcessor,
     SellerGuard,
@@ -60,6 +65,7 @@ import { PaymentAuditService } from './services/payment-audit.service';
   ],
   exports: [
     ShopService,
+    RatingsDisputesEarningsService,
     CurrencyConversionService,
     PaymentGatewayFactory,
     PaymentAuditService,

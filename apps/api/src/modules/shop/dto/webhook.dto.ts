@@ -1,4 +1,5 @@
-import { IsObject, IsString, IsOptional, IsNumber, ValidateNested, Type } from 'class-validator';
+import { IsString, IsOptional, IsNumber, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
 
 // ─── Flutterwave Webhook DTOs ─────────────────────────────────────
 
@@ -16,7 +17,6 @@ export class FlutterwaveWebhookDataDto {
   @IsOptional()
   currency?: string;
 
-  @IsObject()
   @IsOptional()
   meta?: Record<string, any>;
 }
@@ -78,11 +78,9 @@ export class PaystackAuthorizationDto {
   @IsString()
   brand: string;
 
-  @IsString()
   @IsOptional()
   reusable?: string;
 
-  @IsString()
   @IsOptional()
   signature?: string;
 }
@@ -123,7 +121,6 @@ export class PaystackWebhookDataDto {
   @IsOptional()
   authorization?: PaystackAuthorizationDto;
 
-  @IsObject()
   @IsOptional()
   metadata?: Record<string, any>;
 }

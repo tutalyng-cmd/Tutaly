@@ -134,10 +134,7 @@ export class CurrencyConversionService {
    * Set exchange rates manually (for testing or manual updates)
    */
   setExchangeRates(rates: Partial<ExchangeRates>): void {
-    this.exchangeRates = {
-      ...this.exchangeRates,
-      ...rates,
-    };
+    Object.assign(this.exchangeRates, rates);
     this.lastUpdatedAt = new Date();
     this.logger.log('Exchange rates updated manually');
   }

@@ -52,8 +52,8 @@ export class AuthController {
     if (result.refreshToken) {
       res.cookie('refreshToken', result.refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict' as const,
+        secure: true,
+        sameSite: 'none' as const, // Must be 'none' for cross-origin (Vercel ↔ Render)
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         path: '/',
       });
@@ -79,8 +79,8 @@ export class AuthController {
     // Set refresh token as HttpOnly cookie (7 days)
     res.cookie('refreshToken', result.refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict' as const, // Hardened
+      secure: true,
+      sameSite: 'none' as const, // Must be 'none' for cross-origin (Vercel ↔ Render)
       maxAge: 7 * 24 * 60 * 60 * 1000,
       path: '/',
     });
@@ -106,8 +106,8 @@ export class AuthController {
     // Rotate refresh token cookie
     res.cookie('refreshToken', result.refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict' as const,
+      secure: true,
+      sameSite: 'none' as const, // Must be 'none' for cross-origin (Vercel ↔ Render)
       maxAge: 7 * 24 * 60 * 60 * 1000,
       path: '/',
     });
@@ -134,7 +134,11 @@ export class AuthController {
     if (req.user?.sub) {
       await this.authService.logout(req.user.sub);
     }
-    res.clearCookie('refreshToken', { path: '/' });
+    res.clearCookie('refreshToken', { 
+      path: '/',
+      secure: true,
+      sameSite: 'none' as const 
+    });
     return { message: 'Logged out successfully.' };
   }
 }

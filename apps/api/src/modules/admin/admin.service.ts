@@ -72,8 +72,8 @@ export class AdminService {
     const pendingJobsCount = await this.jobRepo.count({
       where: { status: JobStatus.PENDING_REVIEW },
     });
-    const pendingSellersCount = await this.sellerAppRepo.count({
-      where: { status: SellerApplicationStatus.PENDING },
+    const pendingSellersCount = await this.userRepo.count({
+      where: { sellerStatus: SellerStatus.PENDING },
     });
     const flaggedOrdersCount = await this.orderRepo.count({
       where: { status: OrderStatus.FLAGGED },

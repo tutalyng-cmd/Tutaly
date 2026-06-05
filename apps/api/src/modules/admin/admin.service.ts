@@ -513,7 +513,10 @@ export class AdminService {
     }
 
     const [data, total] = await query.getManyAndCount();
-    return { data: toPlain(data), meta: { page, limit, total } };
+    return {
+      items: toPlain(data),
+      meta: { page, limit, total, totalPages: Math.ceil(total / limit) },
+    };
   }
 
   async resolveDispute(disputeId: string, adminId: string, dto: any) {
@@ -571,7 +574,10 @@ export class AdminService {
       skip: (page - 1) * limit,
       take: limit,
     });
-    return { data: toPlain(data), meta: { page, limit, total } };
+    return {
+      items: toPlain(data),
+      meta: { page, limit, total, totalPages: Math.ceil(total / limit) },
+    };
   }
 
   async approveReview(reviewId: string) {

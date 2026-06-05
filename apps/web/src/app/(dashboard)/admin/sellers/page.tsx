@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { CheckCircle, XCircle, Eye, Users, Clock, ShieldCheck, Ban } from 'lucide-react';
+import { CheckCircle, XCircle, Eye, Users, Clock, ShieldCheck, Ban, ChevronLeft, ChevronRight } from 'lucide-react';
 import { apiAuth } from '@/lib/api';
 
 type TabStatus = 'pending' | 'approved' | 'rejected' | 'all';
@@ -20,6 +20,13 @@ const STATUS_BADGES: Record<string, { bg: string; text: string; label: string }>
   rejected: { bg: 'bg-red-100', text: 'text-red-800', label: 'Rejected' },
 };
 
+interface PaginationMeta {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
 export default function AdminSellersPage() {
   const router = useRouter();
 
@@ -29,30 +36,39 @@ export default function AdminSellersPage() {
   const [selectedApp, setSelectedApp] = useState<any | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
   const [activeTab, setActiveTab] = useState<TabStatus>('pending');
+  const [meta, setMeta] = useState<PaginationMeta | null>(null);
+  const [page, setPage] = useState(1);
 
+  // Reset page when tab changes
   useEffect(() => {
-    fetchSellers();
+    setPage(1);
   }, [activeTab]);
 
-  const fetchSellers = async () => {
+  const fetchSellers = useCallback(async () => {
     try {
       setLoading(true);
       setError('');
       const token = localStorage.getItem('access_token');
 
       let url: string;
+      const params: Record<string, any> = { page, limit: 20 };
+
       if (activeTab === 'pending') {
         url = '/admin/queue/sellers';
       } else if (activeTab === 'all') {
         url = '/admin/sellers';
       } else {
-        url = `/admin/sellers?status=${activeTab}`;
+        // For 'approved' and 'rejected', the backend getActiveSellerApplications
+        // only returns approved. So we use queue/sellers or sellers endpoint
+        // The controller GET /admin/sellers returns approved sellers
+        // For rejected, there's no dedicated endpoint, so we'll use /admin/sellers
+        url = '/admin/sellers';
       }
 
-      const res = await apiAuth.withToken(token || undefined).get(url);
+      const res = await apiAuth.withToken(token || undefined).get(url, { params });
       const payload = res.data;
-      const extracted = payload.items || payload.data?.items || (Array.isArray(payload) ? payload : (Array.isArray(payload.data) ? payload.data : []));
-      setSellers(extracted);
+      setSellers(payload.items || []);
+      setMeta(payload.meta || null);
     } catch (err: any) {
       if (err.response?.status === 401 || err.response?.status === 403) {
         router.push('/auth/signin');
@@ -62,14 +78,24 @@ export default function AdminSellersPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [activeTab, page, router]);
 
-  const handleUpdateStatus = async (id: string, status: 'approved' | 'rejected') => {
-    if (!confirm(`Are you sure you want to ${status} this application?`)) return;
+  useEffect(() => {
+    fetchSellers();
+  }, [fetchSellers]);
+
+  const handleUpdateStatus = async (id: string, action: 'approve' | 'reject') => {
+    if (!confirm(`Are you sure you want to ${action} this application?`)) return;
+
+    const reason = action === 'reject' ? prompt('Enter rejection reason (optional):') : undefined;
+
     try {
       setIsUpdating(true);
       const token = localStorage.getItem('access_token');
-      await apiAuth.withToken(token || undefined).patch(`/admin/sellers/${id}/status`, { status });
+      await apiAuth.withToken(token || undefined).patch(`/admin/sellers/${id}`, {
+        action,
+        ...(reason && { reason }),
+      });
       await fetchSellers();
       if (selectedApp?.id === id) {
         setSelectedApp(null);
@@ -93,9 +119,16 @@ export default function AdminSellersPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      <div>
-        <h1 className="text-3xl font-black text-gray-900">Manage Sellers</h1>
-        <p className="text-gray-500 mt-1">Review, approve, and manage all seller applications.</p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-black text-gray-900">Manage Sellers</h1>
+          <p className="text-gray-500 mt-1">Review, approve, and manage all seller applications.</p>
+        </div>
+        {meta && (
+          <div className="text-sm text-gray-500 font-medium">
+            {meta.total} application{meta.total !== 1 ? 's' : ''} total
+          </div>
+        )}
       </div>
 
       {/* Tabs */}
@@ -145,8 +178,7 @@ export default function AdminSellersPage() {
                 <thead className="bg-gray-50/50">
                   <tr>
                     <th scope="col" className="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider">User Details</th>
-                    <th scope="col" className="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider">Category Focus</th>
-                    <th scope="col" className="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider">Status</th>
+                    <th scope="col" className="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider">Seller Status</th>
                     <th scope="col" className="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider">Date</th>
                     <th scope="col" className="px-6 py-4 text-right text-xs font-black text-gray-500 uppercase tracking-wider">Actions</th>
                   </tr>
@@ -155,15 +187,14 @@ export default function AdminSellersPage() {
                   {sellers.map((app) => (
                     <tr key={app.id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-6 py-4">
-                        <div className="text-sm font-medium text-gray-900">{app.user?.email || 'N/A'}</div>
-                        <div className="text-sm text-gray-500 line-clamp-1 max-w-xs">{app.bio}</div>
+                        <div className="text-sm font-medium text-gray-900">{app.email || app.user?.email || 'N/A'}</div>
+                        <div className="text-sm text-gray-500 line-clamp-1 max-w-xs">
+                          {app.seekerProfile?.firstName && app.seekerProfile?.lastName
+                            ? `${app.seekerProfile.firstName} ${app.seekerProfile.lastName}`
+                            : app.bio || '—'}
+                        </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                          {app.categoryFocus}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">{badge(app.status)}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">{badge(app.sellerStatus || app.status)}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {new Date(app.createdAt).toLocaleDateString()}
                       </td>
@@ -172,12 +203,12 @@ export default function AdminSellersPage() {
                           <button onClick={() => setSelectedApp(app)} className="bg-blue-50 text-blue-700 hover:bg-blue-100 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center transition-colors">
                             <Eye className="h-4 w-4 mr-1" />View
                           </button>
-                          {app.status === 'pending' && (
+                          {(app.sellerStatus === 'pending' || app.status === 'pending') && (
                             <>
-                              <button onClick={() => handleUpdateStatus(app.id, 'approved')} disabled={isUpdating} className="bg-green-50 text-green-700 hover:bg-green-100 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center transition-colors disabled:opacity-50">
+                              <button onClick={() => handleUpdateStatus(app.id, 'approve')} disabled={isUpdating} className="bg-green-50 text-green-700 hover:bg-green-100 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center transition-colors disabled:opacity-50">
                                 <CheckCircle className="h-4 w-4 mr-1" />Approve
                               </button>
-                              <button onClick={() => handleUpdateStatus(app.id, 'rejected')} disabled={isUpdating} className="bg-red-50 text-red-700 hover:bg-red-100 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center transition-colors disabled:opacity-50">
+                              <button onClick={() => handleUpdateStatus(app.id, 'reject')} disabled={isUpdating} className="bg-red-50 text-red-700 hover:bg-red-100 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center transition-colors disabled:opacity-50">
                                 <XCircle className="h-4 w-4 mr-1" />Reject
                               </button>
                             </>
@@ -196,28 +227,28 @@ export default function AdminSellersPage() {
                 <div key={app.id} className="p-4 space-y-3">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0 flex-1">
-                      <h3 className="text-sm font-semibold text-gray-900 truncate">{app.user?.email || 'N/A'}</h3>
-                      <p className="text-xs text-gray-500 line-clamp-1 mt-0.5">{app.bio}</p>
+                      <h3 className="text-sm font-semibold text-gray-900 truncate">{app.email || app.user?.email || 'N/A'}</h3>
+                      <p className="text-xs text-gray-500 line-clamp-1 mt-0.5">
+                        {app.seekerProfile?.firstName && app.seekerProfile?.lastName
+                          ? `${app.seekerProfile.firstName} ${app.seekerProfile.lastName}`
+                          : app.bio || '—'}
+                      </p>
                     </div>
-                    {badge(app.status)}
+                    {badge(app.sellerStatus || app.status)}
                   </div>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                      {app.categoryFocus}
-                    </span>
-                    <span className="text-xs text-gray-400">·</span>
                     <span className="text-xs text-gray-500">{new Date(app.createdAt).toLocaleDateString()}</span>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     <button onClick={() => setSelectedApp(app)} className="text-blue-600 bg-blue-50 px-3 py-1.5 rounded-md inline-flex items-center text-xs font-medium">
                       <Eye className="h-3.5 w-3.5 mr-1" />View
                     </button>
-                    {app.status === 'pending' && (
+                    {(app.sellerStatus === 'pending' || app.status === 'pending') && (
                       <>
-                        <button onClick={() => handleUpdateStatus(app.id, 'approved')} disabled={isUpdating} className="text-green-600 bg-green-50 px-3 py-1.5 rounded-md inline-flex items-center text-xs font-medium disabled:opacity-50">
+                        <button onClick={() => handleUpdateStatus(app.id, 'approve')} disabled={isUpdating} className="text-green-600 bg-green-50 px-3 py-1.5 rounded-md inline-flex items-center text-xs font-medium disabled:opacity-50">
                           <CheckCircle className="h-3.5 w-3.5 mr-1" />Approve
                         </button>
-                        <button onClick={() => handleUpdateStatus(app.id, 'rejected')} disabled={isUpdating} className="text-red-600 bg-red-50 px-3 py-1.5 rounded-md inline-flex items-center text-xs font-medium disabled:opacity-50">
+                        <button onClick={() => handleUpdateStatus(app.id, 'reject')} disabled={isUpdating} className="text-red-600 bg-red-50 px-3 py-1.5 rounded-md inline-flex items-center text-xs font-medium disabled:opacity-50">
                           <XCircle className="h-3.5 w-3.5 mr-1" />Reject
                         </button>
                       </>
@@ -230,6 +261,31 @@ export default function AdminSellersPage() {
         )}
       </div>
 
+      {/* Pagination */}
+      {meta && meta.totalPages > 1 && (
+        <div className="flex items-center justify-between pt-2">
+          <p className="text-sm text-gray-500">
+            Page {meta.page} of {meta.totalPages} ({meta.total} total)
+          </p>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page <= 1}
+              className="flex items-center gap-1 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 disabled:opacity-40 transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4" /> Previous
+            </button>
+            <button
+              onClick={() => setPage((p) => p + 1)}
+              disabled={page >= meta.totalPages}
+              className="flex items-center gap-1 px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-xl hover:bg-teal-500 disabled:opacity-40 transition-colors"
+            >
+              Next <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* View Details Modal — bottom sheet on mobile */}
       {selectedApp && (
         <div className="fixed inset-0 bg-gray-900/60 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 p-0 sm:p-4">
@@ -237,7 +293,7 @@ export default function AdminSellersPage() {
             <div className="flex justify-between items-start mb-4">
               <div className="flex flex-wrap items-center gap-2">
                 <h2 className="text-lg sm:text-xl font-bold text-gray-900">Application Details</h2>
-                {badge(selectedApp.status)}
+                {badge(selectedApp.sellerStatus || selectedApp.status)}
               </div>
               <button onClick={() => setSelectedApp(null)} className="text-gray-400 hover:text-gray-600 flex-shrink-0">
                 <XCircle className="h-6 w-6" />
@@ -247,48 +303,46 @@ export default function AdminSellersPage() {
             <div className="space-y-4">
               <div>
                 <h3 className="text-xs sm:text-sm font-medium text-gray-500">Applicant Email</h3>
-                <p className="mt-0.5 text-sm sm:text-base text-gray-900 break-all">{selectedApp.user?.email || 'N/A'}</p>
+                <p className="mt-0.5 text-sm sm:text-base text-gray-900 break-all">{selectedApp.email || selectedApp.user?.email || 'N/A'}</p>
               </div>
 
-              <div>
-                <h3 className="text-xs sm:text-sm font-medium text-gray-500">Category Focus</h3>
-                <span className="mt-1 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                  {selectedApp.categoryFocus}
-                </span>
-              </div>
+              {selectedApp.seekerProfile && (
+                <div>
+                  <h3 className="text-xs sm:text-sm font-medium text-gray-500">Name</h3>
+                  <p className="mt-0.5 text-sm text-gray-900">
+                    {selectedApp.seekerProfile.firstName} {selectedApp.seekerProfile.lastName}
+                  </p>
+                </div>
+              )}
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <h3 className="text-xs sm:text-sm font-medium text-gray-500">Date Submitted</h3>
                   <p className="mt-0.5 text-sm text-gray-900">{new Date(selectedApp.createdAt).toLocaleString()}</p>
                 </div>
-                {selectedApp.reviewedBy && (
-                  <div>
-                    <h3 className="text-xs sm:text-sm font-medium text-gray-500">Reviewed By</h3>
-                    <p className="mt-0.5 text-sm text-gray-900">{selectedApp.reviewedBy?.email || 'Admin'}</p>
-                  </div>
-                )}
               </div>
 
-              <div>
-                <h3 className="text-xs sm:text-sm font-medium text-gray-500">Bio & Experience</h3>
-                <div className="mt-1 text-sm text-gray-900 bg-gray-50 p-3 sm:p-4 rounded-lg whitespace-pre-wrap max-h-48 sm:max-h-64 overflow-y-auto">
-                  {selectedApp.bio}
+              {selectedApp.bio && (
+                <div>
+                  <h3 className="text-xs sm:text-sm font-medium text-gray-500">Bio & Experience</h3>
+                  <div className="mt-1 text-sm text-gray-900 bg-gray-50 p-3 sm:p-4 rounded-lg whitespace-pre-wrap max-h-48 sm:max-h-64 overflow-y-auto">
+                    {selectedApp.bio}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
-            {selectedApp.status === 'pending' && (
+            {(selectedApp.sellerStatus === 'pending' || selectedApp.status === 'pending') && (
               <div className="mt-8 flex flex-col sm:flex-row justify-end gap-3 border-t border-gray-100 pt-6">
                 <button
-                  onClick={() => handleUpdateStatus(selectedApp.id, 'rejected')}
+                  onClick={() => handleUpdateStatus(selectedApp.id, 'reject')}
                   disabled={isUpdating}
                   className="px-6 py-3 bg-red-50 text-red-700 rounded-xl hover:bg-red-100 font-bold disabled:opacity-50 w-full sm:w-auto transition-colors"
                 >
                   Reject
                 </button>
                 <button
-                  onClick={() => handleUpdateStatus(selectedApp.id, 'approved')}
+                  onClick={() => handleUpdateStatus(selectedApp.id, 'approve')}
                   disabled={isUpdating}
                   className="px-6 py-3 bg-green-600 text-white rounded-xl shadow-lg shadow-green-600/20 hover:bg-green-700 font-bold disabled:opacity-50 w-full sm:w-auto transition-colors"
                 >

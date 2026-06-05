@@ -9,7 +9,9 @@ import {
   CheckCircle2,
   XCircle,
   Store,
-  ExternalLink
+  ExternalLink,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import { apiAuth } from '@/lib/api';
 
@@ -27,15 +29,23 @@ function AdminProductsContent() {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [meta, setMeta] = useState<{ total: number; page: number; limit: number; totalPages: number } | null>(null);
+  const [page, setPage] = useState(1);
+
+  // Reset page when filter changes
+  useEffect(() => {
+    setPage(1);
+  }, [currentActive]);
 
   const fetchProducts = React.useCallback(async () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('access_token');
       const res = await apiAuth.withToken(token || undefined).get('/admin/products', {
-        params: { isActive: currentActive || undefined }
+        params: { isActive: currentActive || undefined, page, limit: 20 }
       });
       setProducts(res.data.items || []);
+      setMeta(res.data.meta || null);
     } catch (err: any) {
       if (err.response?.status === 401 || err.response?.status === 403) {
         router.push('/auth/signin');
@@ -45,7 +55,7 @@ function AdminProductsContent() {
     } finally {
       setLoading(false);
     }
-  }, [currentActive, router]);
+  }, [currentActive, page, router]);
 
   useEffect(() => {
     fetchProducts();
@@ -200,6 +210,31 @@ function AdminProductsContent() {
           </div>
         )}
       </div>
+
+      {/* Pagination */}
+      {meta && meta.totalPages > 1 && (
+        <div className="flex items-center justify-between pt-2">
+          <p className="text-sm text-gray-500">
+            Page {meta.page} of {meta.totalPages} ({meta.total} total)
+          </p>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page <= 1}
+              className="flex items-center gap-1 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 disabled:opacity-40 transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4" /> Previous
+            </button>
+            <button
+              onClick={() => setPage((p) => p + 1)}
+              disabled={page >= meta.totalPages}
+              className="flex items-center gap-1 px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-xl hover:bg-teal-500 disabled:opacity-40 transition-colors"
+            >
+              Next <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

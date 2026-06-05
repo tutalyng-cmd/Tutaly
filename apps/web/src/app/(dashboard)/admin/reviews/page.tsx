@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { apiAuth } from '@/lib/api';
-import { Star, CheckCircle, XCircle, MessageSquare } from 'lucide-react';
+import { Star, CheckCircle, XCircle, MessageSquare, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface ReviewData {
   id: string;
@@ -20,11 +20,18 @@ interface ReviewData {
   createdAt: string;
 }
 
+interface PaginationMeta {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
 export default function AdminReviewsPage() {
   const [reviews, setReviews] = useState<ReviewData[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
-  const [total, setTotal] = useState(0);
+  const [meta, setMeta] = useState<PaginationMeta | null>(null);
   const [actionId, setActionId] = useState<string | null>(null);
 
   const fetchReviews = useCallback(async () => {
@@ -32,9 +39,11 @@ export default function AdminReviewsPage() {
     try {
       const token = localStorage.getItem('access_token');
       if (!token) return;
-      const res = await apiAuth.withToken(token).get(`/admin/queue/reviews?page=${page}&limit=10`);
-      setReviews(res.data?.data || []);
-      setTotal(res.data?.meta?.total || 0);
+      const res = await apiAuth.withToken(token).get(`/admin/queue/reviews`, {
+        params: { page, limit: 10 },
+      });
+      setReviews(res.data?.items || []);
+      setMeta(res.data?.meta || null);
     } catch (err) {
       console.error('Failed to load reviews', err);
     } finally {
@@ -49,7 +58,9 @@ export default function AdminReviewsPage() {
     try {
       const token = localStorage.getItem('access_token');
       if (!token) return;
-      await apiAuth.withToken(token).patch(`/admin/reviews/${reviewId}/${action}`);
+      await apiAuth.withToken(token).patch(`/admin/reviews/${reviewId}`, {
+        action,
+      });
       fetchReviews();
     } catch (err) {
       console.error(`Failed to ${action} review`, err);
@@ -66,6 +77,8 @@ export default function AdminReviewsPage() {
       ))}
     </div>
   );
+
+  const total = meta?.total || 0;
 
   return (
     <div>
@@ -164,11 +177,28 @@ export default function AdminReviewsPage() {
         </div>
       )}
 
-      {total > 10 && (
-        <div className="flex justify-center gap-3 mt-8">
-          <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 disabled:opacity-40">Previous</button>
-          <span className="px-4 py-2 text-sm text-gray-500">Page {page}</span>
-          <button onClick={() => setPage(p => p + 1)} disabled={reviews.length < 10} className="px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-xl hover:bg-teal-500 disabled:opacity-40">Next</button>
+      {/* Pagination */}
+      {meta && meta.totalPages > 1 && (
+        <div className="flex items-center justify-between pt-6">
+          <p className="text-sm text-gray-500">
+            Page {meta.page} of {meta.totalPages} ({meta.total} total)
+          </p>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setPage(p => Math.max(1, p - 1))}
+              disabled={page <= 1}
+              className="flex items-center gap-1 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 disabled:opacity-40 transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4" /> Previous
+            </button>
+            <button
+              onClick={() => setPage(p => p + 1)}
+              disabled={page >= meta.totalPages}
+              className="flex items-center gap-1 px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-xl hover:bg-teal-500 disabled:opacity-40 transition-colors"
+            >
+              Next <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       )}
     </div>

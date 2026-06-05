@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { CheckCircle, XCircle, Eye, Briefcase, Clock, ShieldCheck } from 'lucide-react';
+import { CheckCircle, XCircle, Eye, Briefcase, Clock, ShieldCheck, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
 import { apiAuth } from '@/lib/api';
 
 type TabStatus = 'pending_review' | 'active' | 'all';
@@ -20,6 +20,13 @@ const STATUS_BADGES: Record<string, { bg: string; text: string; label: string }>
   removed: { bg: 'bg-red-100', text: 'text-red-800', label: 'Removed' },
 };
 
+interface PaginationMeta {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
 export default function AdminJobsPage() {
   const router = useRouter();
 
@@ -28,29 +35,36 @@ export default function AdminJobsPage() {
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState<TabStatus>('pending_review');
   const [selectedJob, setSelectedJob] = useState<any | null>(null);
+  const [meta, setMeta] = useState<PaginationMeta | null>(null);
+  const [page, setPage] = useState(1);
 
+  // Reset page when tab changes
   useEffect(() => {
-    fetchJobs();
+    setPage(1);
   }, [activeTab]);
 
-  const fetchJobs = async () => {
+  const fetchJobs = useCallback(async () => {
     try {
       setLoading(true);
       setError('');
       const token = localStorage.getItem('access_token');
 
       let url: string;
+      const params: Record<string, any> = { page, limit: 20 };
+
       if (activeTab === 'pending_review') {
         url = '/admin/queue/jobs';
       } else if (activeTab === 'all') {
         url = '/admin/jobs';
       } else {
-        url = `/admin/jobs?status=${activeTab}`;
+        url = '/admin/jobs';
+        params.status = activeTab;
       }
 
-      const res = await apiAuth.withToken(token || undefined).get(url);
+      const res = await apiAuth.withToken(token || undefined).get(url, { params });
       const payload = res.data;
-      setJobs(payload.items || payload.data?.items || (Array.isArray(payload) ? payload : []));
+      setJobs(payload.items || []);
+      setMeta(payload.meta || null);
     } catch (err: any) {
       if (err.response?.status === 401 || err.response?.status === 403) {
         router.push('/auth/signin');
@@ -60,13 +74,32 @@ export default function AdminJobsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [activeTab, page, router]);
+
+  useEffect(() => {
+    fetchJobs();
+  }, [fetchJobs]);
 
   const handleApprove = async (jobId: string) => {
     if (!confirm('Approve this job?')) return;
     try {
       const token = localStorage.getItem('access_token');
-      await apiAuth.withToken(token || undefined).patch(`/jobs/${jobId}/approve`);
+      await apiAuth.withToken(token || undefined).patch(`/admin/jobs/${jobId}`, {
+        action: 'approve',
+      });
+      fetchJobs();
+    } catch (err: any) {
+      alert(err.response?.data?.message || err.message);
+    }
+  };
+
+  const handleRemove = async (jobId: string) => {
+    if (!confirm('Remove this job?')) return;
+    try {
+      const token = localStorage.getItem('access_token');
+      await apiAuth.withToken(token || undefined).patch(`/admin/jobs/${jobId}`, {
+        action: 'remove',
+      });
       fetchJobs();
     } catch (err: any) {
       alert(err.response?.data?.message || err.message);
@@ -84,9 +117,16 @@ export default function AdminJobsPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      <div>
-        <h1 className="text-3xl font-black text-gray-900">Manage Jobs</h1>
-        <p className="text-gray-500 mt-1">Review, approve, and manage all job listings.</p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-black text-gray-900">Manage Jobs</h1>
+          <p className="text-gray-500 mt-1">Review, approve, and manage all job listings.</p>
+        </div>
+        {meta && (
+          <div className="text-sm text-gray-500 font-medium">
+            {meta.total} job{meta.total !== 1 ? 's' : ''} total
+          </div>
+        )}
       </div>
 
       {/* Tabs */}
@@ -160,9 +200,14 @@ export default function AdminJobsPage() {
                             <Eye className="h-4 w-4 mr-1" />View
                           </button>
                           {job.status === 'pending_review' && (
-                            <button onClick={() => handleApprove(job.id)} className="bg-green-50 text-green-700 hover:bg-green-100 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center transition-colors">
-                              <CheckCircle className="h-4 w-4 mr-1" />Approve
-                            </button>
+                            <>
+                              <button onClick={() => handleApprove(job.id)} className="bg-green-50 text-green-700 hover:bg-green-100 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center transition-colors">
+                                <CheckCircle className="h-4 w-4 mr-1" />Approve
+                              </button>
+                              <button onClick={() => handleRemove(job.id)} className="bg-red-50 text-red-700 hover:bg-red-100 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center transition-colors">
+                                <Trash2 className="h-4 w-4 mr-1" />Remove
+                              </button>
+                            </>
                           )}
                         </div>
                       </td>
@@ -193,9 +238,14 @@ export default function AdminJobsPage() {
                       <Eye className="h-3.5 w-3.5 mr-1" />View
                     </button>
                     {job.status === 'pending_review' && (
-                      <button onClick={() => handleApprove(job.id)} className="text-green-600 bg-green-50 px-3 py-1.5 rounded-md inline-flex items-center text-xs font-medium">
-                        <CheckCircle className="h-3.5 w-3.5 mr-1" />Approve
-                      </button>
+                      <>
+                        <button onClick={() => handleApprove(job.id)} className="text-green-600 bg-green-50 px-3 py-1.5 rounded-md inline-flex items-center text-xs font-medium">
+                          <CheckCircle className="h-3.5 w-3.5 mr-1" />Approve
+                        </button>
+                        <button onClick={() => handleRemove(job.id)} className="text-red-600 bg-red-50 px-3 py-1.5 rounded-md inline-flex items-center text-xs font-medium">
+                          <Trash2 className="h-3.5 w-3.5 mr-1" />Remove
+                        </button>
+                      </>
                     )}
                   </div>
                 </div>
@@ -204,6 +254,31 @@ export default function AdminJobsPage() {
           </>
         )}
       </div>
+
+      {/* Pagination */}
+      {meta && meta.totalPages > 1 && (
+        <div className="flex items-center justify-between pt-2">
+          <p className="text-sm text-gray-500">
+            Page {meta.page} of {meta.totalPages} ({meta.total} total)
+          </p>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page <= 1}
+              className="flex items-center gap-1 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 disabled:opacity-40 transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4" /> Previous
+            </button>
+            <button
+              onClick={() => setPage((p) => p + 1)}
+              disabled={page >= meta.totalPages}
+              className="flex items-center gap-1 px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-xl hover:bg-teal-500 disabled:opacity-40 transition-colors"
+            >
+              Next <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* View Details Modal */}
       {selectedJob && (
@@ -264,13 +339,23 @@ export default function AdminJobsPage() {
             </div>
 
             {selectedJob.status === 'pending_review' && (
-              <div className="mt-8 flex justify-end border-t border-gray-100 pt-6">
+              <div className="mt-8 flex justify-end gap-3 border-t border-gray-100 pt-6">
+                <button
+                  onClick={() => {
+                    handleRemove(selectedJob.id);
+                    setSelectedJob(null);
+                  }}
+                  className="px-6 py-3 bg-red-50 text-red-700 rounded-xl hover:bg-red-100 font-bold inline-flex items-center justify-center gap-2 transition-colors"
+                >
+                  <Trash2 className="w-5 h-5" />
+                  Remove Job
+                </button>
                 <button
                   onClick={() => {
                     handleApprove(selectedJob.id);
                     setSelectedJob(null);
                   }}
-                  className="w-full sm:w-auto px-6 py-3 bg-green-600 text-white rounded-xl shadow-lg shadow-green-600/20 hover:bg-green-700 font-bold inline-flex items-center justify-center gap-2 transition-colors"
+                  className="px-6 py-3 bg-green-600 text-white rounded-xl shadow-lg shadow-green-600/20 hover:bg-green-700 font-bold inline-flex items-center justify-center gap-2 transition-colors"
                 >
                   <CheckCircle className="w-5 h-5" />
                   Approve Job

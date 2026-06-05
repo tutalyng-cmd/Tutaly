@@ -34,7 +34,10 @@ export class ReviewsModerationService {
       .take(limit)
       .getManyAndCount();
 
-    return { data: toPlain(data), meta: { page, limit, total } };
+    return {
+      items: toPlain(data),
+      meta: { page, limit, total, totalPages: Math.ceil(total / limit) },
+    };
   }
 
   async approveReview(reviewId: string): Promise<void> {
@@ -124,6 +127,9 @@ export class ReviewsModerationService {
       .take(limit)
       .getManyAndCount();
 
-    return { data: toPlain(data), meta: { page, limit, total } };
+    return {
+      items: toPlain(data),
+      meta: { page, limit, total, totalPages: Math.ceil(total / limit) },
+    };
   }
 }

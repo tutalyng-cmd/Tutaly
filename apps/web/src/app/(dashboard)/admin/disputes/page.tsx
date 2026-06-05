@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { apiAuth } from '@/lib/api';
-import { AlertTriangle, CheckCircle, XCircle, RefreshCw, ExternalLink } from 'lucide-react';
+import { AlertTriangle, CheckCircle, XCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface DisputeData {
   id: string;
@@ -17,12 +17,19 @@ interface DisputeData {
   resolvedAt?: string;
 }
 
+interface PaginationMeta {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
 export default function AdminDisputesPage() {
   const [disputes, setDisputes] = useState<DisputeData[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('');
   const [page, setPage] = useState(1);
-  const [total, setTotal] = useState(0);
+  const [meta, setMeta] = useState<PaginationMeta | null>(null);
   const [resolvingId, setResolvingId] = useState<string | null>(null);
 
   const fetchDisputes = useCallback(async () => {
@@ -30,11 +37,11 @@ export default function AdminDisputesPage() {
     try {
       const token = localStorage.getItem('access_token');
       if (!token) return;
-      const params = new URLSearchParams({ page: String(page), limit: '10' });
-      if (filter) params.set('status', filter);
-      const res = await apiAuth.withToken(token).get(`/admin/disputes?${params}`);
-      setDisputes(res.data?.data || []);
-      setTotal(res.data?.meta?.total || 0);
+      const params: Record<string, any> = { page, limit: 10 };
+      if (filter) params.status = filter;
+      const res = await apiAuth.withToken(token).get('/admin/disputes', { params });
+      setDisputes(res.data?.items || []);
+      setMeta(res.data?.meta || null);
     } catch (err) {
       console.error('Failed to load disputes', err);
     } finally {
@@ -44,15 +51,15 @@ export default function AdminDisputesPage() {
 
   useEffect(() => { fetchDisputes(); }, [fetchDisputes]);
 
-  const handleResolve = async (disputeId: string, status: string) => {
+  const handleResolve = async (disputeId: string, resolution: string) => {
     const notes = prompt('Enter resolution notes:');
     if (!notes) return;
     setResolvingId(disputeId);
     try {
       const token = localStorage.getItem('access_token');
       if (!token) return;
-      await apiAuth.withToken(token).patch(`/admin/disputes/${disputeId}/resolve`, {
-        status,
+      await apiAuth.withToken(token).patch(`/admin/disputes/${disputeId}`, {
+        resolution,
         resolutionNotes: notes,
       });
       fetchDisputes();
@@ -81,6 +88,8 @@ export default function AdminDisputesPage() {
     if (u.firstName && u.lastName) return `${u.firstName} ${u.lastName}`;
     return u.email;
   };
+
+  const total = meta?.total || 0;
 
   return (
     <div>
@@ -175,11 +184,28 @@ export default function AdminDisputesPage() {
         </div>
       )}
 
-      {total > 10 && (
-        <div className="flex justify-center gap-3 mt-8">
-          <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 disabled:opacity-40">Previous</button>
-          <span className="px-4 py-2 text-sm text-gray-500">Page {page}</span>
-          <button onClick={() => setPage(p => p + 1)} disabled={disputes.length < 10} className="px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-xl hover:bg-teal-500 disabled:opacity-40">Next</button>
+      {/* Pagination */}
+      {meta && meta.totalPages > 1 && (
+        <div className="flex items-center justify-between pt-6">
+          <p className="text-sm text-gray-500">
+            Page {meta.page} of {meta.totalPages} ({meta.total} total)
+          </p>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setPage(p => Math.max(1, p - 1))}
+              disabled={page <= 1}
+              className="flex items-center gap-1 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 disabled:opacity-40 transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4" /> Previous
+            </button>
+            <button
+              onClick={() => setPage(p => p + 1)}
+              disabled={page >= meta.totalPages}
+              className="flex items-center gap-1 px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-xl hover:bg-teal-500 disabled:opacity-40 transition-colors"
+            >
+              Next <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       )}
     </div>

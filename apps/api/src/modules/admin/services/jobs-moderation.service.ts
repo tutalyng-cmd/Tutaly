@@ -45,7 +45,10 @@ export class JobsModerationService {
       .take(limit)
       .getManyAndCount();
 
-    return { data: toPlain(data), meta: { page, limit, total } };
+    return {
+      items: toPlain(data),
+      meta: { page, limit, total, totalPages: Math.ceil(total / limit) },
+    };
   }
 
   async approveJob(jobId: string): Promise<void> {
@@ -108,6 +111,9 @@ export class JobsModerationService {
       .take(limit)
       .getManyAndCount();
 
-    return { data: toPlain(data), meta: { page, limit, total } };
+    return {
+      items: toPlain(data),
+      meta: { page, limit, total, totalPages: Math.ceil(total / limit) },
+    };
   }
 }

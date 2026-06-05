@@ -68,7 +68,10 @@ export class UserManagementService {
       .take(limit)
       .getManyAndCount();
 
-    return { data: toPlain(data), meta: { page, limit, total } };
+    return {
+      items: toPlain(data),
+      meta: { page, limit, total, totalPages: Math.ceil(total / limit) },
+    };
   }
 
   async getUserDetail(userId: string) {

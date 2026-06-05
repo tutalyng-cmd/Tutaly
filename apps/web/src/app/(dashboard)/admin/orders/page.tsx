@@ -11,6 +11,8 @@ import {
   XCircle,
   Flag,
   Eye,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import { apiAuth } from '@/lib/api';
 
@@ -48,13 +50,19 @@ function AdminOrdersContent() {
   const [error, setError] = useState('');
   const [meta, setMeta] = useState<{ total: number; page: number; limit: number; totalPages: number } | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+
+  // Reset page when status filter changes
+  useEffect(() => {
+    setPage(1);
+  }, [currentStatus]);
 
   const fetchOrders = React.useCallback(async () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('access_token');
       const res = await apiAuth.withToken(token || undefined).get('/admin/orders', {
-        params: { status: currentStatus || undefined }
+        params: { status: currentStatus || undefined, page, limit: 20 }
       });
       setOrders(res.data.items || []);
       setMeta(res.data.meta);
@@ -68,7 +76,7 @@ function AdminOrdersContent() {
     } finally {
       setLoading(false);
     }
-  }, [currentStatus, router]);
+  }, [currentStatus, page, router]);
 
   useEffect(() => {
     fetchOrders();
@@ -374,6 +382,31 @@ function AdminOrdersContent() {
           </div>
         )}
       </div>
+
+      {/* Pagination */}
+      {meta && meta.totalPages > 1 && (
+        <div className="flex items-center justify-between pt-2">
+          <p className="text-sm text-gray-500">
+            Page {meta.page} of {meta.totalPages} ({meta.total} total)
+          </p>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page <= 1}
+              className="flex items-center gap-1 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 disabled:opacity-40 transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4" /> Previous
+            </button>
+            <button
+              onClick={() => setPage((p) => p + 1)}
+              disabled={page >= meta.totalPages}
+              className="flex items-center gap-1 px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-xl hover:bg-teal-500 disabled:opacity-40 transition-colors"
+            >
+              Next <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

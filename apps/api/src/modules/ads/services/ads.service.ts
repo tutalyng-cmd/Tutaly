@@ -90,11 +90,12 @@ export class AdsService {
   }
 
   async createCampaign(advertiserId: string, data: Partial<AdCampaign>): Promise<AdCampaign> {
-    const campaign = this.campaignRepo.create({
+    const campaignData = {
       ...data,
       advertiser_id: advertiserId,
       status: CampaignStatus.PENDING_PAYMENT,
-    } as any);
+    };
+    const campaign = this.campaignRepo.create(campaignData);
     return this.campaignRepo.save(campaign);
   }
 

@@ -2,9 +2,9 @@ import { Controller, Post, Get, Body, Req, UseGuards, UseInterceptors, UploadedF
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AdsService } from '../services/ads.service';
 import { NotificationService } from '../../admin/services/notification.service';
-import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
-import { RolesGuard } from '../../common/guards/roles.guard';
-import { Roles } from '../../common/decorators/roles.decorator';
+import { JwtAuthGuard } from '../../../common/guards/jwt-auth.guard';
+import { RolesGuard } from '../../../common/guards/roles.guard';
+import { Roles } from '../../../common/decorators/roles.decorator';
 
 @Controller('ads/campaigns')
 @UseGuards(JwtAuthGuard, RolesGuard)

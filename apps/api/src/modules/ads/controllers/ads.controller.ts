@@ -5,6 +5,7 @@ import { NotificationService } from '../../admin/services/notification.service';
 import { JwtAuthGuard } from '../../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../../common/guards/roles.guard';
 import { Roles } from '../../../common/decorators/roles.decorator';
+import { UserRole } from '../../user/entities/user.entity';
 
 @Controller('ads/campaigns')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -15,7 +16,7 @@ export class AdsController {
   ) {}
 
   @Post()
-  @Roles('employer', 'admin') // Block 'seeker'
+  @Roles(UserRole.EMPLOYER, UserRole.ADMIN) // Block 'seeker'
   async createCampaign(@Req() req, @Body() body: any) {
     // Basic implementation of creating a campaign
     const campaign = await this.adsService.createCampaign(req.user.id, body);
@@ -29,7 +30,7 @@ export class AdsController {
   }
 
   @Post('upload-creative')
-  @Roles('employer', 'admin')
+  @Roles(UserRole.EMPLOYER, UserRole.ADMIN)
   @UseInterceptors(FileInterceptor('file'))
   async uploadCreative(@Req() req, @UploadedFile() file: Express.Multer.File) {
     if (!file) {
@@ -45,14 +46,14 @@ export class AdsController {
   }
 
   @Get()
-  @Roles('employer', 'admin')
+  @Roles(UserRole.EMPLOYER, UserRole.ADMIN)
   async getMyCampaigns(@Req() req) {
     // Placeholder
     return [];
   }
 
   @Get('alerts')
-  @Roles('employer', 'admin')
+  @Roles(UserRole.EMPLOYER, UserRole.ADMIN)
   async getAdAlerts(@Req() req) {
     // Fetch all notifications for user, then filter ad-specific types
     // Note: this is a simple implementation. In a real scenario, we would add a method 

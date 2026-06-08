@@ -16,6 +16,7 @@ export enum OrderStatus {
 export enum PaymentGateway {
   FLUTTERWAVE = 'flutterwave',
   PAYSTACK = 'paystack',
+  STRIPE = 'stripe',
 }
 
 @Entity('orders')
@@ -70,10 +71,10 @@ export class Order extends BaseEntity {
   @Column({ type: 'timestamp', nullable: true })
   earningsReleasedAt: Date | null;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ name: 'confirmed_at', type: 'timestamp', nullable: true })
   confirmedAt: Date | null; // When buyer confirms receipt (physical only)
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ name: 'auto_confirm_scheduled_at', type: 'timestamp', nullable: true })
   autoConfirmScheduledAt: Date | null; // 48hr auto-confirm scheduled time
 
   @Column({ default: 1 })
@@ -155,11 +156,12 @@ export class OrderDispute extends BaseEntity {
   status: DisputeStatus;
 
   @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'resolved_by_id' })
   resolvedBy: User;
 
-  @Column('text', { nullable: true })
+  @Column({ name: 'resolution_notes', type: 'text', nullable: true })
   resolutionNotes: string;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ name: 'resolved_at', type: 'timestamp', nullable: true })
   resolvedAt: Date;
 }

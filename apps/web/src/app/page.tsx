@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Hero from '@/components/home/Hero';
 import { Briefcase, MapPin, ArrowRight } from 'lucide-react';
+import { serverFetch } from '@/lib/server-fetch';
 
 interface Job {
   id: string;
@@ -25,28 +26,24 @@ const CURRENCY_SYMBOLS: Record<string, string> = {
 
 async function fetchFeaturedJobs(): Promise<Job[]> {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api'}/jobs?isFeatured=true&limit=6`,
-      { next: { revalidate: 300 } } // ISR: revalidate every 5 minutes
-    );
-    if (!res.ok) return [];
-    const data = await res.json();
-    return data.items || [];
-  } catch {
+    const data = await serverFetch<any>('jobs?isFeatured=true&limit=6', {
+      next: { revalidate: 300 }
+    });
+    return data?.items || [];
+  } catch (error) {
+    console.error('Failed to fetch featured jobs:', error);
     return [];
   }
 }
 
 async function fetchStats() {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api'}/jobs?limit=1`,
-      { next: { revalidate: 300 } }
-    );
-    if (!res.ok) return { total: 0 };
-    const data = await res.json();
-    return { total: data.meta?.total || 0 };
-  } catch {
+    const data = await serverFetch<any>('jobs?limit=1', {
+      next: { revalidate: 300 }
+    });
+    return { total: data?.meta?.total || 0 };
+  } catch (error) {
+    console.error('Failed to fetch stats:', error);
     return { total: 0 };
   }
 }

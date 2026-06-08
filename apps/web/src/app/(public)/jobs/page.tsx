@@ -1,6 +1,8 @@
 import React, { Suspense } from 'react';
+import type { Metadata } from 'next';
 import JobFilterSidebar from '@/components/jobs/JobFilterSidebar';
 import JobResultsWithDetail from '@/components/jobs/JobResultsWithDetail';
+import { serverFetch } from '@/lib/server-fetch';
 
 interface Job {
   id: string;
@@ -24,6 +26,24 @@ interface Job {
   employer?: { id: string; email: string };
 }
 
+export async function generateMetadata(props: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}): Promise<Metadata> {
+  const searchParams = await props.searchParams;
+  const keyword = searchParams.keyword ? String(searchParams.keyword) : '';
+  const location = searchParams.location ? String(searchParams.location) : '';
+  
+  let title = "Job Search";
+  if (keyword && location) title = `${keyword} jobs in ${location}`;
+  else if (keyword) title = `${keyword} jobs`;
+  else if (location) title = `Jobs in ${location}`;
+
+  return {
+    title,
+    description: `Find your next role on Tutaly. Browse thousands of active job listings${location ? ` in ${location}` : ''}.`,
+  };
+}
+
 async function fetchJobs(searchParams: { [key: string]: string | string[] | undefined }) {
   const query = new URLSearchParams();
   Object.keys(searchParams).forEach((key) => {
@@ -31,26 +51,17 @@ async function fetchJobs(searchParams: { [key: string]: string | string[] | unde
   });
 
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api'}/jobs?${query.toString()}`,
-      { cache: 'no-store' }
-    );
-    if (!res.ok) return { items: [] as Job[], meta: { total: 0, page: 1, limit: 20, totalPages: 0 } };
-    return await res.json();
-  } catch {
+    const data = await serverFetch<any>(`jobs?${query.toString()}`, { cache: 'no-store' });
+    return { items: data?.items || [], meta: data?.meta || { total: 0, page: 1, limit: 20, totalPages: 0 } };
+  } catch (err) {
     return { items: [] as Job[], meta: { total: 0, page: 1, limit: 20, totalPages: 0 } };
   }
 }
 
 async function fetchJobDetail(jobId: string): Promise<Job | null> {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api'}/jobs/${jobId}`,
-      { cache: 'no-store' }
-    );
-    if (!res.ok) return null;
-    return await res.json();
-  } catch {
+    return await serverFetch<Job>(`jobs/${jobId}`, { cache: 'no-store' });
+  } catch (err) {
     return null;
   }
 }

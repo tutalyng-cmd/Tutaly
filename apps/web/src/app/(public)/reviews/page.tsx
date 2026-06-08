@@ -3,6 +3,13 @@ import Link from 'next/link';
 import { Star, Building2, Search, ArrowRight, ShieldCheck, ThumbsUp } from 'lucide-react';
 import { api } from '@/lib/api';
 
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Company Reviews',
+  description: 'Read anonymous reviews from verified employees. Discover real company culture across Nigerian industries on Tutaly.',
+};
+
 // This is a Server Component. It fetches data on the server.
 async function getTopCompanies() {
   try {

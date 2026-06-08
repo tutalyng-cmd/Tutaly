@@ -196,4 +196,82 @@ export class MailService {
       );
     }
   }
+
+  async sendBroadcastEmail(
+    to: string,
+    subject: string,
+    htmlBody: string,
+  ): Promise<void> {
+    try {
+      await this.transporter.sendMail({
+        from: `"Tutaly" <${this.fromEmail}>`,
+        to,
+        subject,
+        html: `
+          <div style="font-family: 'Inter', sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px;">
+            <div style="text-align: center; margin-bottom: 30px;">
+              <h1 style="color: #0D1B2A; font-size: 28px; margin: 0;">Tutaly</h1>
+            </div>
+            <div style="background: #f8f9fa; border-radius: 12px; padding: 32px;">
+              ${htmlBody}
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+              <p style="color: #a0aec0; font-size: 12px;">
+                You are receiving this email because you are a registered Tutaly user.
+              </p>
+            </div>
+          </div>
+        `,
+      });
+    } catch (error) {
+      console.error(
+        `[MAILER ERROR] Failed to send broadcast email to ${to}:`,
+        error.message,
+      );
+    }
+  }
+  async sendEmailChangeVerification(
+    to: string,
+    token: string,
+  ): Promise<void> {
+    const verificationUrl = `http://localhost:3000/verify-email-change?token=${token}`;
+    console.log(
+      `[MAILER MOCK] Email change verification for ${to}: ${verificationUrl}`,
+    );
+
+    try {
+      await this.transporter.sendMail({
+        from: `"Tutaly Security" <${this.fromEmail}>`,
+        to,
+        subject: 'Verify Your New Email Address',
+        html: `
+          <div style="font-family: 'Inter', sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px;">
+            <div style="text-align: center; margin-bottom: 30px;">
+              <h1 style="color: #0D1B2A; font-size: 28px; margin: 0;">Tutaly</h1>
+            </div>
+            <div style="background: #f8f9fa; border-radius: 12px; padding: 32px; text-align: center;">
+              <h2 style="color: #0D1B2A; margin-top: 0;">Email Change Request</h2>
+              <p style="color: #4a5568; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
+                We received a request to change your Tutaly account email to this address. 
+                Please click the button below to verify and complete the change.
+              </p>
+              <a href="${verificationUrl}" 
+                 style="background: #2563eb; color: white; padding: 14px 32px; border-radius: 8px; 
+                        text-decoration: none; font-weight: 600; font-size: 16px; display: inline-block;">
+                Verify New Email
+              </a>
+              <p style="color: #a0aec0; font-size: 14px; margin-top: 24px;">
+                If you didn't request this change, you can safely ignore this email.
+              </p>
+            </div>
+          </div>
+        `,
+      });
+    } catch (error) {
+      console.error(
+        `[MAILER ERROR] Failed to send email change verification to ${to}:`,
+        error.message,
+      );
+    }
+  }
 }

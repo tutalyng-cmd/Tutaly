@@ -227,21 +227,19 @@ export class ShopController {
 
   // ─── Payment Webhooks ─────────────────────────────────────────
 
-  @Post('webhook/flutterwave')
-  async flutterwaveWebhook(
+  @Post('webhook/:gateway')
+  async paymentWebhook(
+    @Param('gateway') gatewayName: string,
     @Body() payload: Record<string, any>,
-    @Headers('verif-hash') verifHash: string,
+    @Headers() headers: Record<string, any>,
+    @RawBody() rawBody?: Buffer,
   ) {
-    return this.shopService.handleFlutterwaveWebhook(payload, verifHash);
-  }
-
-  @Post('webhook/paystack')
-  async paystackWebhook(
-    @Body() payload: Record<string, any>,
-    @Headers('x-paystack-signature') signature: string,
-    @RawBody() rawBody: Buffer,
-  ) {
-    return this.shopService.handlePaystackWebhook(payload, signature, rawBody);
+    return this.shopService.handleWebhook(
+      gatewayName,
+      payload,
+      headers,
+      rawBody,
+    );
   }
 
   // ─── Orders ───────────────────────────────────────────────────

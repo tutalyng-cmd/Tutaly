@@ -58,10 +58,16 @@ export class User extends BaseEntity {
   @Column({ type: 'enum', enum: SellerStatus, default: SellerStatus.NONE })
   sellerStatus: SellerStatus;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
+  pendingEmail: string | null;
+
+  @Column({ default: 0 })
+  tokenVersion: number;
+
+  @Column({ name: 'contact_phone', nullable: true })
   contactPhone: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'whatsapp_phone', nullable: true })
   whatsappPhone: string;
 
   @OneToOne(() => SeekerProfile, (profile) => profile.user)
@@ -69,6 +75,9 @@ export class User extends BaseEntity {
 
   @OneToOne(() => EmployerProfile, (profile) => profile.user)
   employerProfile: EmployerProfile;
+
+  @OneToOne('UserSettings', 'user')
+  settings: any;
 
   // Note: Connect module relationships are defined in connect entities to avoid circular dependencies
 }

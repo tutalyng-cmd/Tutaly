@@ -42,12 +42,12 @@ export class SeekerProfile extends BaseEntity {
   socialLinks: { linkedin?: string; portfolio?: string };
 
   // Seller marketplace fields
-  @Column({ nullable: true })
+  @Column({ name: 'contact_phone', nullable: true })
   contactPhone: string; // Business phone for physical orders
 
-  @Column({ nullable: true })
+  @Column({ name: 'contact_whatsapp', nullable: true })
   contactWhatsapp: string; // WhatsApp for communication
 
-  @Column({ type: 'enum', enum: SellerPlan, default: SellerPlan.FREE })
+  @Column({ name: 'seller_plan', type: 'enum', enum: SellerPlan, default: SellerPlan.FREE })
   sellerPlan: SellerPlan;
 }

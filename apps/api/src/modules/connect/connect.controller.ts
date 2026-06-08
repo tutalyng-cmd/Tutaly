@@ -256,7 +256,10 @@ export class ConnectController {
   }
 
   @Get('profiles/:username')
-  async getPublicProfile(@Param('username') username: string) {
-    return this.connectService.getPublicProfile(username);
+  async getPublicProfile(
+    @Param('username') username: string,
+    @NestRequest() req: AuthenticatedRequest,
+  ) {
+    return this.connectService.getPublicProfile(username, req.user.sub);
   }
 }

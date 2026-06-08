@@ -3,6 +3,8 @@ import {
   Get,
   Patch,
   Post,
+  Put,
+  Delete,
   Param,
   Body,
   Query,
@@ -25,6 +27,14 @@ import {
   DisputesResolutionService,
   DisputeResolution,
 } from './services/disputes-resolution.service';
+import { RevenueService } from './services/revenue.service';
+import { AnalyticsService } from './services/analytics.service';
+import { AdvertisingService, CreateAdDto, UpdateAdDto } from './services/advertising.service';
+import { EmailBroadcastService } from './services/email-broadcast.service';
+import { LegalPagesService } from './services/legal-pages.service';
+import { AnnouncementsService } from './services/announcements.service';
+import { SettingsService } from './services/settings.service';
+import { BroadcastAudience } from './entities/newsletter-send.entity';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
@@ -47,6 +57,13 @@ export class AdminController {
     private readonly sellersModerationService: SellersModerationService,
     private readonly reportsModerationService: ReportsModerationService,
     private readonly disputesResolutionService: DisputesResolutionService,
+    private readonly revenueService: RevenueService,
+    private readonly analyticsService: AnalyticsService,
+    private readonly advertisingService: AdvertisingService,
+    private readonly emailBroadcastService: EmailBroadcastService,
+    private readonly legalPagesService: LegalPagesService,
+    private readonly announcementsService: AnnouncementsService,
+    private readonly settingsService: SettingsService,
   ) {}
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -433,5 +450,257 @@ export class AdminController {
     @Body('adminNotes') adminNotes?: string,
   ) {
     return this.adminService.flagOrder(id, adminNotes);
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // REVENUE DASHBOARD
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  @Get('revenue')
+  async getRevenueSummary() {
+    return this.revenueService.getRevenueSummary();
+  }
+
+  @Get('revenue/transactions')
+  async getRevenueTransactions(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
+    return this.revenueService.getRevenueTransactions(
+      parseInt(page || '1', 10),
+      parseInt(limit || '20', 10),
+    );
+  }
+
+  @Get('revenue/summary')
+  async getRevenueTimeSeries(
+    @Query('period') period?: string,
+  ) {
+    return this.revenueService.getRevenueTimeSeries(
+      (period as 'weekly' | 'monthly') || 'monthly',
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // ANALYTICS DASHBOARD
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  @Get('analytics/users')
+  async getUserAnalytics() {
+    return this.analyticsService.getUserAnalytics();
+  }
+
+  @Get('analytics/jobs')
+  async getJobAnalytics() {
+    return this.analyticsService.getJobAnalytics();
+  }
+
+  @Get('analytics/transactions')
+  async getTransactionAnalytics() {
+    return this.analyticsService.getTransactionAnalytics();
+  }
+
+  @Get('analytics/reviews')
+  async getReviewAnalytics() {
+    return this.analyticsService.getReviewAnalytics();
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // ADVERTISING
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  @Get('ads')
+  async getAds(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('status') status?: string,
+  ) {
+    return this.advertisingService.getAds(
+      parseInt(page || '1', 10),
+      parseInt(limit || '20', 10),
+      status,
+    );
+  }
+
+  @Post('ads')
+  async createAd(
+    @Body() dto: CreateAdDto,
+    @NestRequest() req: AuthenticatedRequest,
+  ) {
+    return this.advertisingService.createAd(dto, req.user.sub);
+  }
+
+  @Patch('ads/:id')
+  async updateAd(
+    @Param('id', ParseUUIDPipe) adId: string,
+    @Body() dto: UpdateAdDto,
+  ) {
+    return this.advertisingService.updateAd(adId, dto);
+  }
+
+  @Delete('ads/:id')
+  async deleteAd(@Param('id', ParseUUIDPipe) adId: string) {
+    return this.advertisingService.deleteAd(adId);
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // EMAIL BROADCAST
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  @Post('email/broadcast')
+  async sendBroadcast(
+    @Body('subject') subject: string,
+    @Body('body') body: string,
+    @Body('audience') audience: BroadcastAudience,
+    @NestRequest() req: AuthenticatedRequest,
+  ) {
+    if (!subject || !body) {
+      throw new BadRequestException('Subject and body are required');
+    }
+    return this.emailBroadcastService.sendBroadcast(
+      subject,
+      body,
+      audience || BroadcastAudience.ALL,
+      req.user.sub,
+    );
+  }
+
+  @Get('email/history')
+  async getBroadcastHistory(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
+    return this.emailBroadcastService.getBroadcastHistory(
+      parseInt(page || '1', 10),
+      parseInt(limit || '20', 10),
+    );
+  }
+
+  @Get('email/subscribers')
+  async getSubscribers(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
+    return this.emailBroadcastService.getSubscribers(
+      parseInt(page || '1', 10),
+      parseInt(limit || '20', 10),
+    );
+  }
+
+  @Patch('email/subscribers/:id')
+  async unsubscribeUser(@Param('id', ParseUUIDPipe) userId: string) {
+    return this.emailBroadcastService.unsubscribeUser(userId);
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // LEGAL PAGES
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  @Get('legal')
+  async getAllLegalPages() {
+    return this.legalPagesService.getAllLegalPages();
+  }
+
+  @Get('legal/:slug')
+  async getLegalPage(@Param('slug') slug: string) {
+    return this.legalPagesService.getLegalPageBySlug(slug);
+  }
+
+  @Put('legal/:slug')
+  async updateLegalPage(
+    @Param('slug') slug: string,
+    @Body('content') content: string,
+    @Body('title') title: string | undefined,
+    @NestRequest() req: AuthenticatedRequest,
+  ) {
+    if (!content) {
+      throw new BadRequestException('Content is required');
+    }
+    return this.legalPagesService.updateLegalPage(
+      slug,
+      content,
+      title,
+      req.user.sub,
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // ANNOUNCEMENTS
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  @Post('announcements')
+  async createAnnouncement(
+    @Body('title') title: string,
+    @Body('body') body: string,
+    @Body('expiresAt') expiresAt: string | undefined,
+    @NestRequest() req: AuthenticatedRequest,
+  ) {
+    if (!title || !body) {
+      throw new BadRequestException('Title and body are required');
+    }
+    return this.announcementsService.createAnnouncement(
+      title,
+      body,
+      req.user.sub,
+      expiresAt,
+    );
+  }
+
+  @Get('announcements')
+  async getAllAnnouncements(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
+    return this.announcementsService.getAllAnnouncements(
+      parseInt(page || '1', 10),
+      parseInt(limit || '20', 10),
+    );
+  }
+
+  @Patch('announcements/:id/deactivate')
+  async deactivateAnnouncement(
+    @Param('id', ParseUUIDPipe) announcementId: string,
+  ) {
+    return this.announcementsService.deactivateAnnouncement(announcementId);
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // COMMISSION MANAGEMENT
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  @Get('commission/summary')
+  async getCommissionSummary() {
+    return this.revenueService.getCommissionSummary();
+  }
+
+  @Patch('commission/rate')
+  async updateCommissionRate(
+    @Body('rate') rate: number,
+    @NestRequest() req: AuthenticatedRequest,
+  ) {
+    if (typeof rate !== 'number' || rate < 0 || rate > 100) {
+      throw new BadRequestException('Valid rate percentage (0-100) is required');
+    }
+    return this.settingsService.updateCommissionRate(rate, req.user.sub);
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // COOKIE CONSENT
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  @Get('cookies/settings')
+  async getCookieSettings() {
+    return this.settingsService.getCookieSettings();
+  }
+
+  @Patch('cookies/settings')
+  async updateCookieSettings(
+    @Body('categories') categories: any[],
+    @NestRequest() req: AuthenticatedRequest,
+  ) {
+    if (!categories || !Array.isArray(categories)) {
+      throw new BadRequestException('Categories array is required');
+    }
+    return this.settingsService.updateCookieSettings(categories, req.user.sub);
   }
 }

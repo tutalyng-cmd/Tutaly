@@ -34,6 +34,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { ApplySellerDto } from './dto/apply-seller.dto';
 import { TokenService } from '../auth/token.service';
 import { SupportService } from '../support/support.service';
+import { PaymentGatewayFactory } from './gateways/payment-gateway.factory';
 /**
  * Strips TypeORM entity metadata & circular references by
  * round-tripping through JSON.
@@ -66,6 +67,7 @@ export class ShopService {
     private readonly disputeRepo: Repository<OrderDispute>,
     private readonly tokenService: TokenService,
     private readonly supportService: SupportService,
+    private readonly paymentFactory: PaymentGatewayFactory,
   ) {
     this.supabase = createClient(
       process.env.SUPABASE_URL || '',
@@ -429,235 +431,50 @@ export class ShopService {
       orders.length === 1 ? orders[0].paymentRef : `TUT-BATCH-${Date.now()}`;
 
     // Route to the selected payment gateway
-    if (gateway === PaymentGateway.PAYSTACK) {
-      return this.initPaystackPayment(
-        orders,
-        totalAmount,
-        currency,
-        reference,
-        buyer,
-        userId,
-      );
-    }
-    return this.initFlutterwavePayment(
+    const gatewayInstance = this.paymentFactory.create(gateway);
+    return gatewayInstance.initializePayment({
       orders,
       totalAmount,
       currency,
       reference,
-      buyer,
-      userId,
-    );
-  }
-
-  // ─── Flutterwave Payment Init ─────────────────────────────────────
-
-  private async initFlutterwavePayment(
-    orders: Order[],
-    totalAmount: number,
-    currency: Currency,
-    reference: string,
-    buyer: User | null,
-    userId: string,
-  ) {
-    const flutterwavePayload = {
-      tx_ref: reference,
-      amount: totalAmount, // Flutterwave accepts major currency units — no conversion needed
-      currency: currency,
-      redirect_url: `${process.env.WEB_URL || 'http://localhost:3000'}/shop/checkout/success`,
-      customer: {
-        email: buyer?.email || 'buyer@tutaly.com',
-        name: buyer?.email ? buyer.email.split('@')[0] : 'Tutaly Buyer',
-      },
-      meta: {
-        order_ids: orders.map((o) => o.id).join(','),
-        payment_refs: orders.map((o) => o.paymentRef).join(','),
-      },
-      customizations: {
-        title: 'Tutaly Shop',
-        description: `Payment for ${orders.length} item(s)`,
-      },
-    };
-
-    try {
-      const response = await fetch('https://api.flutterwave.com/v3/payments', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${process.env.FLUTTER_WAVE_SECRET_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(flutterwavePayload),
-      });
-
-      const result = await response.json();
-
-      if (result.status === 'success') {
-        await this.tokenService.setJobCache(this.cartKey(userId), '[]', 1);
-        return {
-          success: true,
-          gateway: 'flutterwave',
-          paymentLink: result.data.link,
-          orders: orders.map((o) => ({
-            id: o.id,
-            paymentRef: o.paymentRef,
-            amount: o.amountPaid,
-            currency: o.currency,
-          })),
-        };
-      } else {
-        throw new BadRequestException(`Flutterwave error: ${result.message}`);
-      }
-    } catch {
-      await this.tokenService.setJobCache(this.cartKey(userId), '[]', 1);
-      return {
-        success: true,
-        gateway: 'flutterwave',
-        paymentLink: null,
-        message:
-          'Orders created. Flutterwave payment link could not be generated (check API keys).',
-        orders: orders.map((o) => ({
-          id: o.id,
-          paymentRef: o.paymentRef,
-          amount: o.amountPaid,
-          currency: o.currency,
-        })),
-      };
-    }
-  }
-
-  // ─── Paystack Payment Init ────────────────────────────────────────
-
-  private async initPaystackPayment(
-    orders: Order[],
-    totalAmount: number,
-    currency: Currency,
-    reference: string,
-    buyer: User | null,
-    userId: string,
-  ) {
-    // Paystack requires amount in the smallest currency unit:
-    // NGN → kobo (*100), USD → cents (*100), EUR → cents (*100)
-    const paystackAmount = Math.round(totalAmount * 100);
-
-    const paystackPayload = {
-      reference,
-      amount: paystackAmount,
-      currency: currency, // Paystack supports NGN, USD, EUR, GHS
-      email: buyer?.email || 'buyer@tutaly.com',
-      callback_url: `${process.env.WEB_URL || 'http://localhost:3000'}/shop/checkout/success`,
+      customerEmail: buyer?.email || 'buyer@tutaly.com',
+      customerName: buyer?.email ? buyer.email.split('@')[0] : 'Tutaly Buyer',
+      redirectUrl: `${process.env.WEB_URL || 'http://localhost:3000'}/shop/checkout/success`,
       metadata: {
         order_ids: orders.map((o) => o.id).join(','),
         payment_refs: orders.map((o) => o.paymentRef).join(','),
       },
-    };
-
-    try {
-      const response = await fetch(
-        'https://api.paystack.co/transaction/initialize',
-        {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(paystackPayload),
-        },
-      );
-
-      const result = await response.json();
-
-      if (result.status === true) {
+    }).then(async (result) => {
+      if (result.success) {
         await this.tokenService.setJobCache(this.cartKey(userId), '[]', 1);
-        return {
-          success: true,
-          gateway: 'paystack',
-          paymentLink: result.data.authorization_url,
-          orders: orders.map((o) => ({
-            id: o.id,
-            paymentRef: o.paymentRef,
-            amount: o.amountPaid,
-            currency: o.currency,
-          })),
-        };
       } else {
-        throw new BadRequestException(`Paystack error: ${result.message}`);
+        await this.tokenService.setJobCache(this.cartKey(userId), '[]', 1);
+        this.logger.error(`Gateway initialization failed: ${result.error}`);
       }
-    } catch {
-      await this.tokenService.setJobCache(this.cartKey(userId), '[]', 1);
-      return {
-        success: true,
-        gateway: 'paystack',
-        paymentLink: null,
-        message:
-          'Orders created. Paystack payment link could not be generated (check API keys).',
-        orders: orders.map((o) => ({
-          id: o.id,
-          paymentRef: o.paymentRef,
-          amount: o.amountPaid,
-          currency: o.currency,
-        })),
-      };
-    }
+      return result;
+    });
   }
 
-  // ─── Flutterwave Webhook ──────────────────────────────────────────
+  // ─── Generic Webhook Handler ──────────────────────────────────────
 
-  async handleFlutterwaveWebhook(
+  async handleWebhook(
+    gatewayName: string,
     payload: Record<string, any>,
-    verifHash: string,
-  ) {
-    const secretHash = process.env.FLUTTER_WAVE_ENCRYPTION_KEY || '';
-    if (verifHash !== secretHash) {
-      throw new ForbiddenException('Invalid webhook signature.');
-    }
-
-    const { event, data } = payload;
-    if (event === 'charge.completed' && data.status === 'successful') {
-      await this.processSuccessfulPayment(data.tx_ref, data.meta);
-    }
-
-    return { success: true };
-  }
-
-  // ─── Paystack Webhook ─────────────────────────────────────────────
-
-  async handlePaystackWebhook(
-    payload: Record<string, any>,
-    signature: string,
+    headers: Record<string, any>,
     rawBody?: Buffer,
   ) {
-    console.log('[Paystack Webhook] Received event:', payload.event);
+    const gateway = this.paymentFactory.createByName(gatewayName);
 
-    // HMAC-SHA512 verification
-    const secret = process.env.PAYSTACK_SECRET_KEY || '';
-    if (!secret) {
-      console.error('[Paystack Webhook] PAYSTACK_SECRET_KEY is not set!');
+    const isValid = await gateway.verifyWebhookSignature(headers, payload, rawBody);
+    if (!isValid) {
+      throw new ForbiddenException(`Invalid ${gatewayName} webhook signature.`);
     }
 
-    // Use rawBody if available, otherwise fallback to JSON.stringify (less reliable)
-    const verificationData = rawBody ? rawBody : JSON.stringify(payload);
-
-    const hash = crypto
-      .createHmac('sha512', secret)
-      .update(verificationData)
-      .digest('hex');
-
-    if (hash !== signature) {
-      console.error('[Paystack Webhook] Signature mismatch!', {
-        received: signature,
-        calculated: hash,
-      });
-      throw new ForbiddenException('Invalid webhook signature.');
-    }
-
-    const { event, data } = payload;
-    if (event === 'charge.success' && data.status === 'success') {
-      console.log(
-        '[Paystack Webhook] Processing successful payment:',
-        data.reference,
-      );
-      await this.processSuccessfulPayment(data.reference, data.metadata);
-    } else {
-      console.log('[Paystack Webhook] Unhandled event type:', event);
+    const result = await gateway.handleWebhookEvent(payload);
+    
+    if (result.processed && result.reference) {
+      // The gateway successfully validated the event and parsed the reference
+      await this.processSuccessfulPayment(result.reference, payload.data?.meta || payload.data?.metadata || {});
     }
 
     return { success: true };

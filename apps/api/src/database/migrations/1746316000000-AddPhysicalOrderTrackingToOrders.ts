@@ -22,7 +22,7 @@ export class AddPhysicalOrderTrackingToOrders1746316000000 implements MigrationI
 
     // Update OrderStatus enum to include CONFIRMED
     await queryRunner.query(`
-      ALTER TYPE order_status_enum ADD VALUE 'confirmed'
+      ALTER TYPE orders_status_enum ADD VALUE 'confirmed'
     `);
   }
 

@@ -438,7 +438,10 @@ export class ConnectService {
     const query = this.userRepo
       .createQueryBuilder('user')
       .leftJoinAndSelect('user.seekerProfile', 'seekerProfile')
+      .leftJoinAndSelect('user.settings', 'settings')
       .where('user.isActive = true')
+      // Exclude users who have opted out of discovery
+      .andWhere(`(settings.privacy->>'showInDiscover' IS NULL OR settings.privacy->>'showInDiscover' != 'false')`)
       .orderBy('user.createdAt', 'DESC')
       .skip((page - 1) * limit)
       .take(limit);
@@ -625,10 +628,11 @@ export class ConnectService {
 
   // ─── Public Profile ─────────────────────────────────────────────────
 
-  async getPublicProfile(username: string) {
+  async getPublicProfile(username: string, requesterId: string) {
     const user = await this.userRepo
       .createQueryBuilder('user')
       .leftJoinAndSelect('user.seekerProfile', 'seekerProfile')
+      .leftJoinAndSelect('user.settings', 'settings')
       .where('user.username = :username', { username })
       .getOne();
 
@@ -645,7 +649,22 @@ export class ConnectService {
       where: { follower: { id: user.id }, status: FollowStatus.ACCEPTED },
     });
 
-    // Get recent posts
+    // Privacy check
+    const isOwner = user.id === requesterId;
+    let isConnected = false;
+
+    if (!isOwner) {
+      const connection = await this.followRepo.findOne({
+        where: { follower: { id: requesterId }, followee: { id: user.id }, status: FollowStatus.ACCEPTED },
+      });
+      isConnected = !!connection;
+
+      if (user.settings?.privacy?.profileVisibility === 'connections_only' && !isConnected) {
+        throw new ForbiddenException('This profile is only visible to connections');
+      }
+    }
+
+    // Get recent posts (only if authorized to see full profile, which is checked above)
     const recentPosts = await this.postRepo.find({
       where: { author: { id: user.id } },
       order: { createdAt: 'DESC' },

@@ -31,6 +31,7 @@ import { AuthModule } from '../auth/auth.module';
 import { PaymentGatewayFactory } from './gateways/payment-gateway.factory';
 import { FlutterwaveGateway } from './gateways/flutterwave.gateway';
 import { PaystackGateway } from './gateways/paystack.gateway';
+import { StripeGateway } from './gateways/stripe.gateway';
 
 // Shop Services
 import { CurrencyConversionService } from './services/currency-conversion.service';
@@ -74,6 +75,7 @@ import { PaymentAuditService } from './services/payment-audit.service';
     // Payment Gateway Services
     FlutterwaveGateway,
     PaystackGateway,
+    StripeGateway,
     PaymentGatewayFactory,
     // Shop Services
     CurrencyConversionService,

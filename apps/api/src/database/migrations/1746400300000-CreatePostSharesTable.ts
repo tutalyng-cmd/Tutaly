@@ -26,7 +26,7 @@ export class CreatePostSharesTable1746400300000 implements MigrationInterface {
             type: 'uuid',
             isPrimary: true,
             generationStrategy: 'uuid',
-            default: 'uuid_generate_v4()',
+            default: 'gen_random_uuid()',
           },
           {
             name: 'originalPostId',

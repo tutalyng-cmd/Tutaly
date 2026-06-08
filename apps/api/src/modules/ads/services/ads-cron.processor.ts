@@ -6,7 +6,7 @@ import { AdCampaign } from '../entities/ad-campaign.entity';
 import { CampaignStatus } from '../enums/ads.enums';
 import { NotificationService } from '../../admin/services/notification.service';
 import { NotificationType } from '../../admin/entities/notification.entity';
-import { Job } from 'bull';
+import type { Job } from 'bull';
 
 @Processor('ads-cron')
 export class AdsCronProcessor {

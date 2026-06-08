@@ -4,7 +4,7 @@ import { AdCampaign } from './entities/ad-campaign.entity';
 import { AdImpression } from './entities/ad-impression.entity';
 import { AdClick } from './entities/ad-click.entity';
 import { BullModule, InjectQueue } from '@nestjs/bull';
-import { Queue } from 'bull';
+import type { Queue } from 'bull';
 import { AdminModule } from '../admin/admin.module';
 import { AdsService } from './services/ads.service';
 import { AdsCronProcessor } from './services/ads-cron.processor';

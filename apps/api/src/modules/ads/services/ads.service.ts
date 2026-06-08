@@ -78,22 +78,23 @@ export class AdsService {
     const campaigns = await query.getMany();
     if (campaigns.length === 0) return null;
 
-    let selected = this.weightedRandom(campaigns);
+    let selected: AdCampaign | null = this.weightedRandom(campaigns);
 
     const todaySpend = await this.getTodaySpend(selected.id);
     if (todaySpend >= selected.daily_budget) {
       selected = await this.getNextEligibleCampaign(campaigns, selected.id);
+      if (!selected) return null;
     }
 
     return selected;
   }
 
-  async createCampaign(advertiserId: string, data: any): Promise<AdCampaign> {
+  async createCampaign(advertiserId: string, data: Partial<AdCampaign>): Promise<AdCampaign> {
     const campaign = this.campaignRepo.create({
       ...data,
       advertiser_id: advertiserId,
       status: CampaignStatus.PENDING_PAYMENT,
-    });
+    } as any);
     return this.campaignRepo.save(campaign);
   }
 

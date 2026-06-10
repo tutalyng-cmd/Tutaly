@@ -64,9 +64,12 @@ export default function ProductDetailPage() {
       });
       setAdded(true);
       setTimeout(() => setAdded(false), 3000);
-    } catch (error) {
-      const err = error as { response?: { data?: { message?: string } }, message?: string };
-      alert(err.response?.data?.message || 'Failed to add to cart');
+    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const error = e as any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const err = e as any;
+alert(err.response?.data?.message || 'Failed to add to cart');
     } finally {
       setAddingToCart(false);
     }
@@ -100,9 +103,12 @@ export default function ProductDetailPage() {
         setQuoteSuccess(false);
         setQuoteDetails({ requirements: '', budget: '', deadline: '' });
       }, 3000);
-    } catch (error) {
-      const err = error as { response?: { data?: { message?: string } }, message?: string };
-      alert(err.response?.data?.message || 'Failed to submit quote request');
+    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const error = e as any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const err = e as any;
+alert(err.response?.data?.message || 'Failed to submit quote request');
     } finally {
       setSubmittingQuote(false);
     }

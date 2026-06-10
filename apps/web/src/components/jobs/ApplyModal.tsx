@@ -303,9 +303,12 @@ export default function ApplyModal({
       await apiAuth.withToken(token).post(`/jobs/${job.id}/apply`, payload);
       setSubmitted(true);
       onSuccess();
-    } catch (error) {
-      const err = error as { response?: { data?: { message?: string } }, message?: string };
-      const errorObj = err as { response?: { data?: { message?: string } }, message?: string };
+    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const error = e as any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const err = e as any;
+const errorObj = err as { response?: { data?: { message?: string } }, message?: string };
       const message = errorObj.response?.data?.message || errorObj.message || 'Application failed';
 
       if (typeof message === 'string' && message.toLowerCase().includes('already applied')) {

@@ -26,9 +26,12 @@ export default function EditLegalPage() {
       const res = await apiAuth.withToken(token || undefined).get(`/admin/legal/${slug}`);
       setTitle(res.data.data.title);
       setContent(res.data.data.content);
-    } catch (error) {
-      const err = error as { response?: { data?: { message?: string } }, message?: string };
-      if (err.response?.status === 401 || err.response?.status === 403) {
+    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const error = e as any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const err = e as any;
+if (err.response?.status === 401 || err.response?.status === 403) {
         router.push('/auth/signin');
       }
       setError(err.response?.data?.message || err.message || 'Error loading page');
@@ -55,9 +58,12 @@ export default function EditLegalPage() {
       });
       setSuccessMessage('Page updated successfully.');
       setTimeout(() => setSuccessMessage(''), 3000);
-    } catch (error) {
-      const err = error as { response?: { data?: { message?: string } }, message?: string };
-      setError(err.response?.data?.message || err.message || 'Failed to update page');
+    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const error = e as any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const err = e as any;
+setError(err.response?.data?.message || err.message || 'Failed to update page');
     } finally {
       setSaving(false);
     }

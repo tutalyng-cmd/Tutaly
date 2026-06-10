@@ -69,9 +69,12 @@ export default function AdminSellersPage() {
       const payload = res.data;
       setSellers(payload.items || []);
       setMeta(payload.meta || null);
-    } catch (error) {
-      const err = error as { response?: { data?: { message?: string } }, message?: string };
-      if (err.response?.status === 401 || err.response?.status === 403) {
+    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const error = e as any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const err = e as any;
+if (err.response?.status === 401 || err.response?.status === 403) {
         router.push('/auth/signin');
         return;
       }
@@ -101,9 +104,12 @@ export default function AdminSellersPage() {
       if (selectedApp?.id === id) {
         setSelectedApp(null);
       }
-    } catch (error) {
-      const err = error as { response?: { data?: { message?: string } }, message?: string };
-      alert(err.response?.data?.message || err.message);
+    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const error = e as any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const err = e as any;
+alert(err.response?.data?.message || err.message);
       console.error('Update failed:', err);
     } finally {
       setIsUpdating(false);

@@ -90,9 +90,12 @@ export default function AdminRevenuePage() {
         });
         setChartData(formatted);
       }
-    } catch (error) {
-      const err = error as { response?: { data?: { message?: string } }, message?: string };
-      if (err.response?.status === 401 || err.response?.status === 403) {
+    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const error = e as any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const err = e as any;
+if (err.response?.status === 401 || err.response?.status === 403) {
         router.push('/auth/signin');
         return;
       }

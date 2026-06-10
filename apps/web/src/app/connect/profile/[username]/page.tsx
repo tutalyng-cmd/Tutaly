@@ -19,9 +19,12 @@ export default function ProfilePage() {
       if (!token) return;
       const res = await apiAuth.withToken(token).get(`/connect/profiles/${username}`);
       setProfile(res.data);
-    } catch (error) {
-      const err = error as { response?: { data?: { message?: string } }, message?: string };
-      setError(err?.response?.data?.message || 'Failed to load profile');
+    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const error = e as any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const err = e as any;
+setError(err?.response?.data?.message || 'Failed to load profile');
     } finally {
       setLoading(false);
     }
@@ -42,9 +45,12 @@ export default function ProfilePage() {
       const token = localStorage.getItem('access_token');
       await apiAuth.withToken(token!).post(`/connect/follow/${profile.id}`);
       alert('Follow request sent');
-    } catch (error) {
-      const err = error as { response?: { data?: { message?: string } }, message?: string };
-      alert(err?.response?.data?.message || 'Failed to follow user');
+    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const error = e as any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const err = e as any;
+alert(err?.response?.data?.message || 'Failed to follow user');
     }
   };
 

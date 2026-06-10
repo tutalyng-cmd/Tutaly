@@ -26,9 +26,12 @@ export default function AdminLegalPages() {
       const token = localStorage.getItem('access_token');
       const res = await apiAuth.withToken(token || undefined).get('/admin/legal');
       setPages(res.data.data || []);
-    } catch (error) {
-      const err = error as { response?: { data?: { message?: string } }, message?: string };
-      if (err.response?.status === 401 || err.response?.status === 403) {
+    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const error = e as any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const err = e as any;
+if (err.response?.status === 401 || err.response?.status === 403) {
         router.push('/auth/signin');
       }
       setError(err.response?.data?.message || err.message || 'Error loading legal pages');

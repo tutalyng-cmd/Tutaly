@@ -22,11 +22,13 @@ function VerifyEmailContent() {
         const res = await api.get(`/auth/verify-email?token=${token}`);
         setStatus('success');
         setMessage(res.data.message || 'Your email has been successfully verified!');
-      } catch (error) {
-      const err = error as { response?: { data?: { message?: string } }, message?: string };
-        setStatus('error');
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const error = err as any;
+      } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const error = e as any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const err = e as any;
+setStatus('error');
+        
         setMessage(error.response?.data?.message || 'Verification link is invalid or has expired.');
       }
     };

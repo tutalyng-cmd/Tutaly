@@ -21,11 +21,12 @@ export default function ForgotPassword() {
       await api.post('/auth/forgot-password', { email });
       // Always show success regardless of whether email exists to prevent enumeration
       setIsSuccess(true);
-    } catch (error) {
-      const err = error as { response?: { data?: { message?: string } }, message?: string };
+    } catch (e) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const error = err as any;
-      setError(error.response?.data?.message || 'Something went wrong.');
+      const error = e as any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const err = e as any;
+setError(error.response?.data?.message || 'Something went wrong.');
     } finally {
       setIsLoading(false);
     }

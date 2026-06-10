@@ -33,9 +33,12 @@ export default function AdminEmailsPage() {
       const token = localStorage.getItem('access_token');
       const res = await apiAuth.withToken(token || undefined).get('/admin/email/history');
       setHistory(res.data.items || []);
-    } catch (error) {
-      const err = error as { response?: { data?: { message?: string } }, message?: string };
-      if (err.response?.status === 401 || err.response?.status === 403) {
+    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const error = e as any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const err = e as any;
+if (err.response?.status === 401 || err.response?.status === 403) {
         router.push('/auth/signin');
       }
     } finally {
@@ -69,9 +72,12 @@ export default function AdminEmailsPage() {
       fetchHistory(); // Refresh history
       
       setTimeout(() => setSendSuccess(''), 5000);
-    } catch (error) {
-      const err = error as { response?: { data?: { message?: string } }, message?: string };
-      setSendError(err.response?.data?.message || err.message || 'Failed to send broadcast');
+    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const error = e as any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const err = e as any;
+setSendError(err.response?.data?.message || err.message || 'Failed to send broadcast');
     } finally {
       setSending(false);
     }

@@ -104,9 +104,12 @@ export default function CheckoutPage() {
       } else {
         router.push(`/shop/checkout/success?orders=${encodeURIComponent(JSON.stringify(data.orders))}`);
       }
-    } catch (error) {
-      const err = error as { response?: { data?: { message?: string } }, message?: string };
-      alert(err.response?.data?.message || 'Checkout failed. Please try again.');
+    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const error = e as any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const err = e as any;
+alert(err.response?.data?.message || 'Checkout failed. Please try again.');
       setCheckingOut(false);
     }
   };

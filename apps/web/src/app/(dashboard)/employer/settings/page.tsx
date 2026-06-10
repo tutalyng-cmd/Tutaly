@@ -48,9 +48,12 @@ export default function EmployerSettingsPage() {
       }
       setSuccessMsg('Settings saved successfully!');
       setTimeout(() => setSuccessMsg(''), 3000);
-    } catch (error) {
-      const err = error as { response?: { data?: { message?: string } }, message?: string };
-      alert(err.response?.data?.message || 'Failed to save settings. Please try again.');
+    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const error = e as any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const err = e as any;
+alert(err.response?.data?.message || 'Failed to save settings. Please try again.');
     } finally {
       setLoading(false);
     }

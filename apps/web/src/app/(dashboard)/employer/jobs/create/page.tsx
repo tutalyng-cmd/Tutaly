@@ -158,9 +158,12 @@ export default function PostJobWizard() {
         alert('Job posted successfully! It is now pending admin review.');
       }
       router.push('/employer/jobs');
-    } catch (error) {
-      const err = error as { response?: { data?: { message?: string } }, message?: string };
-      console.error(err);
+    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const error = e as any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const err = e as any;
+console.error(err);
       setErrorMsg(err.response?.data?.message || err.message || 'Failed to post job');
       setSubmitting(false);
     }

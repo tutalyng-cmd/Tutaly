@@ -68,9 +68,12 @@ export default function EmployerProfilePage() {
 
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
-    } catch (error) {
-      const err = error as { response?: { data?: { message?: string } }, message?: string };
-      alert(err.response?.data?.message || 'Failed to save profile');
+    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const error = e as any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const err = e as any;
+alert(err.response?.data?.message || 'Failed to save profile');
     } finally {
       setSaving(false);
     }
@@ -106,9 +109,12 @@ export default function EmployerProfilePage() {
       
       // Refresh to get the new signed URL
       await fetchProfile();
-    } catch (error) {
-      const err = error as { response?: { data?: { message?: string } }, message?: string };
-      alert(err.response?.data?.message || 'Failed to upload logo');
+    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const error = e as any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const err = e as any;
+alert(err.response?.data?.message || 'Failed to upload logo');
     } finally {
       setUploadingLogo(false);
       if (fileInputRef.current) {

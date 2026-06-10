@@ -268,9 +268,12 @@ export default function FeedPage() {
       setPage(1);
       setHasMore(true);
       fetchFeed(1, true);
-    } catch (error) {
-      const err = error as { response?: { data?: { message?: string } }, message?: string };
-      console.error('Failed to create post', err);
+    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const error = e as any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const err = e as any;
+console.error('Failed to create post', err);
       setPostError(err?.message || err?.response?.data?.message || 'Failed to create post. Please try again.');
     } finally {
       setPosting(false);

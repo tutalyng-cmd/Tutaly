@@ -34,10 +34,12 @@ export default function CreateAdPage() {
       const token = localStorage.getItem('access_token');
       await apiAuth.withToken(token || undefined).post('/admin/ads', formData);
       router.push('/admin/ads');
-    } catch (error) {
-      const err = error as { response?: { data?: { message?: string } }, message?: string };
-      const error = err as { response?: { data?: { message?: string } }, message?: string };
-      setError(error.response?.data?.message || error.message || 'Failed to create ad');
+    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const error = e as any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const err = e as any;
+setError(err.response?.data?.message || err.message || 'Failed to create ad');
       setLoading(false);
     }
   };

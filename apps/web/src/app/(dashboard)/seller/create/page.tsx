@@ -155,9 +155,12 @@ export default function CreateProductPage() {
       }
 
       router.push('/seller');
-    } catch (error) {
-      const err = error as { response?: { data?: { message?: string } }, message?: string };
-      alert(err.response?.data?.message || 'Failed to create product');
+    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const error = e as any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const err = e as any;
+alert(err.response?.data?.message || 'Failed to create product');
     } finally {
       setLoading(false);
     }

@@ -36,11 +36,12 @@ export default function SignIn() {
       localStorage.setItem('user', JSON.stringify(response.data.user));
 
       router.push('/dashboard');
-    } catch (error) {
-      const err = error as { response?: { data?: { message?: string } }, message?: string };
+    } catch (e) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const error = err as any;
-      setError(error.response?.data?.message || 'Invalid email or password.');
+      const error = e as any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const err = e as any;
+setError(error.response?.data?.message || 'Invalid email or password.');
     } finally {
       setIsLoading(false);
     }

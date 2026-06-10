@@ -42,9 +42,12 @@ export default function SubmitSalaryPage() {
       setTimeout(() => {
         router.push('/salaries');
       }, 3000);
-    } catch (error) {
-      const err = error as { response?: { data?: { message?: string } }, message?: string };
-      alert(err.response?.data?.message || 'Failed to submit salary');
+    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const error = e as any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const err = e as any;
+alert(err.response?.data?.message || 'Failed to submit salary');
       setLoading(false);
     }
   };

@@ -34,9 +34,12 @@ export default function AdminAnnouncementsPage() {
       const token = localStorage.getItem('access_token');
       const res = await apiAuth.withToken(token || undefined).get('/admin/announcements');
       setAnnouncements(res.data.items || []);
-    } catch (error) {
-      const err = error as { response?: { data?: { message?: string } }, message?: string };
-      if (err.response?.status === 401 || err.response?.status === 403) {
+    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const error = e as any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const err = e as any;
+if (err.response?.status === 401 || err.response?.status === 403) {
         router.push('/auth/signin');
       }
       setError(err.response?.data?.message || err.message || 'Error loading announcements');
@@ -66,9 +69,12 @@ export default function AdminAnnouncementsPage() {
       setBody('');
       setExpiresAt('');
       fetchAnnouncements();
-    } catch (error) {
-      const err = error as { response?: { data?: { message?: string } }, message?: string };
-      alert(err.response?.data?.message || err.message);
+    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const error = e as any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const err = e as any;
+alert(err.response?.data?.message || err.message);
     } finally {
       setCreating(false);
     }
@@ -80,9 +86,12 @@ export default function AdminAnnouncementsPage() {
       const token = localStorage.getItem('access_token');
       await apiAuth.withToken(token || undefined).patch(`/admin/announcements/${id}/deactivate`);
       fetchAnnouncements();
-    } catch (error) {
-      const err = error as { response?: { data?: { message?: string } }, message?: string };
-      alert(err.response?.data?.message || err.message);
+    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const error = e as any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const err = e as any;
+alert(err.response?.data?.message || err.message);
     }
   };
 

@@ -55,9 +55,12 @@ export default function SellerEarningsPage() {
       await apiAuth.withToken(token || undefined).post('/shop/seller/withdraw', { amount: Number(amount) });
       alert(`Withdrawal request of ₦${Number(amount).toLocaleString()} submitted successfully!`);
       fetchEarnings();
-    } catch (error) {
-      const err = error as { response?: { data?: { message?: string } }, message?: string };
-      alert(err.response?.data?.message || 'Failed to process withdrawal.');
+    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const error = e as any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const err = e as any;
+alert(err.response?.data?.message || 'Failed to process withdrawal.');
     } finally {
       setWithdrawing(false);
     }

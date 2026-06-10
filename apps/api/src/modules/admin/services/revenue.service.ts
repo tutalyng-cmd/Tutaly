@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 import {
   Order,
   OrderStatus,
-  PaymentGateway,
 } from '../../shop/entities/order.entity';
 
 function toPlain<T>(obj: T): T {

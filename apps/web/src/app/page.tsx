@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import Hero from '@/components/home/Hero';
-import AdBanner from '@/components/ads/AdBanner';
 import { Briefcase, MapPin, ArrowRight } from 'lucide-react';
 import { serverFetch } from '@/lib/server-fetch';
 
@@ -58,10 +57,6 @@ export default async function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       <Hero />
-      
-      <div className="pt-8 bg-white">
-        <AdBanner placement="homepage_top" />
-      </div>
 
       {/* Featured Jobs Section */}
       <section className="bg-white py-16">

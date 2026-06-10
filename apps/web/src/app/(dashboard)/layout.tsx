@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import AdBanner from '@/components/ads/AdBanner';
 import { 
   Building2, 
   Briefcase, 
@@ -140,6 +141,9 @@ export default function DashboardLayout({
 
       {/* Main Content Area */}
       <main className="flex-1 overflow-y-auto w-full pb-16 lg:pb-0">
+        <div className="border-b border-gray-100 bg-white">
+          <AdBanner placement="dashboard_top" />
+        </div>
         <div className="p-4 sm:p-8 w-full max-w-7xl mx-auto">
           {children}
         </div>

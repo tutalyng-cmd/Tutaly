@@ -165,6 +165,64 @@ export class AdsService {
     return selected;
   }
 
+  async estimateReach(params: {
+    daily_budget: number;
+    format: string;
+    target_countries?: string[];
+    target_states?: string[];
+    target_industries?: string[];
+    target_roles?: string[];
+    target_user_types?: string[];
+  }) {
+    // 1. Calculate Base Audience Size
+    let baseAudience = 5000000; // 5M base mock audience
+
+    if (params.target_countries?.length) {
+      if (!params.target_countries.includes('Nigeria')) baseAudience *= 0.1;
+    }
+    if (params.target_states?.length) {
+      baseAudience *= (params.target_states.length * 0.1); // rough estimate
+    }
+    if (params.target_industries?.length) {
+      baseAudience *= (params.target_industries.length * 0.15);
+    }
+    if (params.target_roles?.length) {
+      baseAudience *= (params.target_roles.length * 0.05);
+    }
+    if (params.target_user_types?.length) {
+      baseAudience *= (params.target_user_types.length * 0.3);
+    }
+
+    baseAudience = Math.max(100, Math.floor(baseAudience)); // Min 100 people
+
+    // 2. Budget constraints
+    // Assuming 1 NGN = 1 Impression. Reach is about 80% of impressions.
+    const budget = Number(params.daily_budget) || 0;
+    const maxDailyImpressions = budget / (this.CPM_RATE / 1000); 
+    const estimatedDailyReach = Math.min(baseAudience, Math.floor(maxDailyImpressions * 0.8));
+
+    // 3. CTR Estimation
+    let ctr = 0.01; // 1% default
+    switch (params.format) {
+      case 'sponsored_job': ctr = 0.035; break;
+      case 'sponsored_product': ctr = 0.025; break;
+      case 'banner': ctr = 0.008; break;
+      case 'sidebar': ctr = 0.005; break;
+    }
+
+    // Add some random fuzziness based on targeting granularity
+    const targetingScore = [params.target_states, params.target_industries, params.target_roles].filter(Boolean).length;
+    ctr += (targetingScore * 0.002);
+
+    const estimatedDailyClicks = Math.floor(maxDailyImpressions * ctr);
+
+    return {
+      audience_size: baseAudience,
+      estimated_daily_reach: estimatedDailyReach,
+      estimated_daily_clicks: estimatedDailyClicks,
+    };
+  }
+
   async createCampaign(
     advertiserId: string,
     data: Partial<AdCampaign>,

@@ -25,6 +25,20 @@ export class AdsController {
     private readonly notificationService: NotificationService,
   ) {}
 
+  @Post('estimate-reach')
+  @Roles(UserRole.EMPLOYER, UserRole.ADMIN)
+  async estimateReach(@Body() body: any) {
+    return this.adsService.estimateReach({
+      daily_budget: body.daily_budget,
+      format: body.format,
+      target_countries: body.target_countries,
+      target_states: body.target_states,
+      target_industries: body.target_industries,
+      target_roles: body.target_roles,
+      target_user_types: body.target_user_types,
+    });
+  }
+
   @Post()
   @Roles(UserRole.EMPLOYER, UserRole.ADMIN) // Block 'seeker'
   async createCampaign(@Req() req, @Body() body: any) {

@@ -69,7 +69,7 @@ export default function AdminSellersPage() {
       const payload = res.data;
       setSellers(payload.items || []);
       setMeta(payload.meta || null);
-    } catch (err: unknown) {
+    } catch (err: any) {
       if (err.response?.status === 401 || err.response?.status === 403) {
         router.push('/auth/signin');
         return;
@@ -100,7 +100,7 @@ export default function AdminSellersPage() {
       if (selectedApp?.id === id) {
         setSelectedApp(null);
       }
-    } catch (err: unknown) {
+    } catch (err: any) {
       alert(err.response?.data?.message || err.message);
       console.error('Update failed:', err);
     } finally {

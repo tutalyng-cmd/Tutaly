@@ -26,7 +26,7 @@ export default function EditLegalPage() {
       const res = await apiAuth.withToken(token || undefined).get(`/admin/legal/${slug}`);
       setTitle(res.data.data.title);
       setContent(res.data.data.content);
-    } catch (err: unknown) {
+    } catch (err: any) {
       if (err.response?.status === 401 || err.response?.status === 403) {
         router.push('/auth/signin');
       }
@@ -54,7 +54,7 @@ export default function EditLegalPage() {
       });
       setSuccessMessage('Page updated successfully.');
       setTimeout(() => setSuccessMessage(''), 3000);
-    } catch (err: unknown) {
+    } catch (err: any) {
       setError(err.response?.data?.message || err.message || 'Failed to update page');
     } finally {
       setSaving(false);

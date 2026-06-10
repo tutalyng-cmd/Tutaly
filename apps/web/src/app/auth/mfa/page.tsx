@@ -41,7 +41,7 @@ function MfaContent() {
       localStorage.setItem('user', JSON.stringify(response.data.user));
 
       router.push('/dashboard');
-    } catch (err: unknown) {
+    } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const error = err as any;
       setError(error.response?.data?.message || 'Invalid OTP code. Please try again.');

@@ -66,7 +66,7 @@ function AdminOrdersContent() {
       });
       setOrders(res.data.items || []);
       setMeta(res.data.meta);
-    } catch (err: unknown) {
+    } catch (err: any) {
       const error = err as { response?: { status?: number; data?: { message?: string } }; message?: string };
       if (error.response?.status === 401 || error.response?.status === 403) {
         router.push('/auth/signin');
@@ -96,7 +96,7 @@ function AdminOrdersContent() {
         alert(`⚠️ Payment NOT confirmed.\n\nPaystack status: "${data.gatewayStatus}"\n\n${data.message}`);
       }
       fetchOrders();
-    } catch (err: unknown) {
+    } catch (err: any) {
       const error = err as { response?: { data?: { message?: string } }; message?: string };
       alert(error.response?.data?.message || error.message || 'Verification failed');
     } finally {
@@ -113,7 +113,7 @@ function AdminOrdersContent() {
       const token = localStorage.getItem('access_token');
       await apiAuth.withToken(token || undefined).patch(`/admin/orders/${orderId}/cancel`, { adminNotes: note });
       fetchOrders();
-    } catch (err: unknown) {
+    } catch (err: any) {
       const error = err as { response?: { data?: { message?: string } }; message?: string };
       alert(error.response?.data?.message || error.message || 'Cancel failed');
     } finally {
@@ -130,7 +130,7 @@ function AdminOrdersContent() {
       const token = localStorage.getItem('access_token');
       await apiAuth.withToken(token || undefined).patch(`/admin/orders/${orderId}/flag`, { adminNotes: note });
       fetchOrders();
-    } catch (err: unknown) {
+    } catch (err: any) {
       const error = err as { response?: { data?: { message?: string } }; message?: string };
       alert(error.response?.data?.message || error.message || 'Flag failed');
     } finally {
@@ -147,7 +147,7 @@ function AdminOrdersContent() {
       const token = localStorage.getItem('access_token');
       await apiAuth.withToken(token || undefined).patch(`/admin/orders/${id}/resolve`, { resolution, adminNotes: note });
       fetchOrders();
-    } catch (err: unknown) {
+    } catch (err: any) {
       const error = err as { response?: { data?: { message?: string } }; message?: string };
       alert(error.response?.data?.message || error.message || 'Resolve failed');
     } finally {

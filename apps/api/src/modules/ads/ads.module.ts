@@ -7,6 +7,7 @@ import { BullModule, InjectQueue } from '@nestjs/bull';
 import type { Queue } from 'bull';
 import { AdminModule } from '../admin/admin.module';
 import { ShopModule } from '../shop/shop.module';
+import { AuthModule } from '../auth/auth.module';
 import { AdsService } from './services/ads.service';
 import { AdsCronProcessor } from './services/ads-cron.processor';
 import { AdsController } from './controllers/ads.controller';
@@ -19,6 +20,7 @@ import { AdsAdminController } from './controllers/ads-admin.controller';
     BullModule.registerQueue({ name: 'ads-cron' }),
     AdminModule,
     ShopModule,
+    AuthModule,
   ],
   controllers: [AdsController, AdsTrackingController, AdsAdminController],
   providers: [AdsService, AdsCronProcessor],

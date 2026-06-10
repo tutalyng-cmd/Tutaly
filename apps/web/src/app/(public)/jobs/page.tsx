@@ -2,6 +2,7 @@ import React, { Suspense } from 'react';
 import type { Metadata } from 'next';
 import JobFilterSidebar from '@/components/jobs/JobFilterSidebar';
 import JobResultsWithDetail from '@/components/jobs/JobResultsWithDetail';
+import FeaturedJobsCarousel from '@/components/ads/FeaturedJobsCarousel';
 import { serverFetch } from '@/lib/server-fetch';
 
 interface Job {
@@ -97,6 +98,8 @@ export default async function JobsPage(props: {
             {searchParams.keyword ? ` for "${searchParams.keyword}"` : ''}
           </p>
         </div>
+
+        <FeaturedJobsCarousel />
 
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
           <Suspense fallback={<div className="w-full lg:w-72 h-32 animate-pulse bg-gray-200 rounded-xl" />}>

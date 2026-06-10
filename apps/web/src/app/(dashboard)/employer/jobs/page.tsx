@@ -40,6 +40,15 @@ export default function EmployerJobsPage() {
     }
   }
 
+  const pricingTiers = [
+    { id: 'basic', name: 'Basic Boost', duration: 7, price: 5000, desc: 'Top of search results' },
+    { id: 'standard', name: 'Standard Boost', duration: 14, price: 8500, desc: 'Top results + homepage carousel' },
+    { id: 'premium', name: 'Premium Boost', duration: 30, price: 15000, desc: 'Top results + homepage + newsletter' },
+  ];
+
+  const [selectedTier, setSelectedTier] = useState(pricingTiers[0]);
+  const [paymentGateway, setPaymentGateway] = useState<'paystack' | 'flutterwave'>('paystack');
+
   const handleBoost = async () => {
     if (!boostingJob) return;
     setProcessingBoost(true);
@@ -47,12 +56,22 @@ export default function EmployerJobsPage() {
       const token = localStorage.getItem('access_token');
       // Assume ads service generates payment link or directly applies boost if wallet/credits exist
       const res = await apiAuth.withToken(token || undefined).post('/ads/campaigns', {
-        type: 'featured_job',
-        targetId: boostingJob.id,
-        durationDays: 7,
+        job_id: boostingJob.id,
+        goal: 'promote_job',
+        format: 'sponsored_job',
+        destination_url: `/jobs/${boostingJob.id}`,
+        placements: selectedTier.id === 'basic' ? ['featured_jobs'] : ['featured_jobs', 'homepage_hero'],
+        starts_at: new Date(),
+        run_continuously: true,
+        daily_budget: selectedTier.price / selectedTier.duration,
+        total_budget: selectedTier.price,
+        currency: 'NGN',
+        paymentGateway,
       });
       
-      if (res.data.paymentUrl) {
+      if (res.data.payment && res.data.payment.url) {
+        window.location.href = res.data.payment.url;
+      } else if (res.data.paymentUrl) {
         window.location.href = res.data.paymentUrl;
       } else {
         alert("Job boosted successfully!");
@@ -170,7 +189,7 @@ export default function EmployerJobsPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0">
           <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm transition-opacity" onClick={() => setBoostingJob(null)}></div>
           
-          <div className="relative bg-white rounded-2xl shadow-xl transform transition-all sm:max-w-lg sm:w-full overflow-hidden border border-gray-100 animate-in zoom-in-95 duration-200">
+          <div className="relative bg-white rounded-2xl shadow-xl transform transition-all sm:max-w-xl sm:w-full overflow-hidden border border-gray-100 animate-in zoom-in-95 duration-200">
             <div className="bg-gradient-to-br from-amber-500 to-orange-600 p-6 text-white relative">
               <button onClick={() => setBoostingJob(null)} className="absolute top-4 right-4 text-white/70 hover:text-white transition-colors">
                 <X className="w-5 h-5" />
@@ -181,37 +200,38 @@ export default function EmployerJobsPage() {
             </div>
             
             <div className="p-6">
-              <ul className="space-y-4 mb-8">
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5 text-teal-500 shrink-0 mt-0.5" />
-                  <div>
-                    <p className="font-bold text-gray-900 text-sm">Top of Search Results</p>
-                    <p className="text-xs text-gray-500">Your job appears before regular listings for 7 days.</p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5 text-teal-500 shrink-0 mt-0.5" />
-                  <div>
-                    <p className="font-bold text-gray-900 text-sm">Featured Badge</p>
-                    <p className="text-xs text-gray-500">Stands out with a bright highlighted badge.</p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5 text-teal-500 shrink-0 mt-0.5" />
-                  <div>
-                    <p className="font-bold text-gray-900 text-sm">Weekly Email Inclusion</p>
-                    <p className="text-xs text-gray-500">Sent directly to thousands of matched candidates.</p>
-                  </div>
-                </li>
-              </ul>
-              
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-200 mb-6">
-                <div>
-                  <p className="font-bold text-gray-900">7-Day Boost</p>
-                  <p className="text-xs text-gray-500">Billed once</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-xl font-black text-gray-900">₦15,000</p>
+              <div className="space-y-3 mb-6">
+                {pricingTiers.map((tier) => (
+                  <label key={tier.id} className={`flex items-center justify-between p-4 rounded-xl border cursor-pointer transition-colors ${selectedTier.id === tier.id ? 'border-amber-500 bg-amber-50' : 'border-gray-200 hover:bg-gray-50'}`}>
+                    <div className="flex items-center gap-3">
+                      <input 
+                        type="radio" 
+                        name="boost_tier" 
+                        className="w-4 h-4 text-amber-600 focus:ring-amber-500 border-gray-300"
+                        checked={selectedTier.id === tier.id}
+                        onChange={() => setSelectedTier(tier)}
+                      />
+                      <div>
+                        <p className="font-bold text-gray-900">{tier.name} ({tier.duration} days)</p>
+                        <p className="text-xs text-gray-500">{tier.desc}</p>
+                      </div>
+                    </div>
+                    <p className="text-lg font-black text-gray-900">₦{tier.price.toLocaleString()}</p>
+                  </label>
+                ))}
+              </div>
+
+              <div className="mb-6">
+                <p className="text-sm font-bold text-gray-900 mb-2">Select Payment Method</p>
+                <div className="flex gap-4">
+                  <label className={`flex-1 flex items-center justify-center py-3 border rounded-xl cursor-pointer transition-colors ${paymentGateway === 'paystack' ? 'border-teal-500 bg-teal-50 text-teal-700 font-bold' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}>
+                    <input type="radio" className="hidden" checked={paymentGateway === 'paystack'} onChange={() => setPaymentGateway('paystack')} />
+                    Paystack
+                  </label>
+                  <label className={`flex-1 flex items-center justify-center py-3 border rounded-xl cursor-pointer transition-colors ${paymentGateway === 'flutterwave' ? 'border-teal-500 bg-teal-50 text-teal-700 font-bold' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}>
+                    <input type="radio" className="hidden" checked={paymentGateway === 'flutterwave'} onChange={() => setPaymentGateway('flutterwave')} />
+                    Flutterwave
+                  </label>
                 </div>
               </div>
               
@@ -220,7 +240,7 @@ export default function EmployerJobsPage() {
                 disabled={processingBoost}
                 className="w-full flex items-center justify-center gap-2 bg-gray-900 hover:bg-black text-white py-3.5 px-4 rounded-xl font-bold text-sm shadow-xl shadow-gray-900/20 transition-all disabled:opacity-50"
               >
-                {processingBoost ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Pay via Paystack'}
+                {processingBoost ? <Loader2 className="w-5 h-5 animate-spin" /> : `Pay ₦${selectedTier.price.toLocaleString()}`}
               </button>
             </div>
           </div>

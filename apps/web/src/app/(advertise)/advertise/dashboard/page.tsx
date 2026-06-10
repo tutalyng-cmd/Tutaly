@@ -1,6 +1,36 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { apiAuth } from '@/lib/api';
+import { Loader2 } from 'lucide-react';
 
 export default function AdvertiserDashboard() {
+  const [campaigns, setCampaigns] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchCampaigns();
+  }, []);
+
+  const fetchCampaigns = async () => {
+    try {
+      const token = localStorage.getItem('access_token');
+      if (!token) return;
+      const res = await apiAuth.withToken(token).get('/ads/campaigns');
+      setCampaigns(res.data);
+    } catch (err) {
+      console.error('Failed to fetch campaigns', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const totalSpent = campaigns.reduce((sum, c) => sum + Number(c.total_spent || 0), 0);
+  const totalImpressions = campaigns.reduce((sum, c) => sum + Number(c.impression_count || 0), 0);
+  const totalClicks = campaigns.reduce((sum, c) => sum + Number(c.click_count || 0), 0);
+  const avgCTR = totalImpressions > 0 ? ((totalClicks / totalImpressions) * 100).toFixed(1) : '0.0';
+
   return (
     <div className="max-w-7xl mx-auto py-12 px-4">
       <div className="flex justify-between items-center mb-8 border-b border-neutral-800 pb-6">
@@ -20,72 +50,92 @@ export default function AdvertiserDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
         <div className="p-6 bg-neutral-900 rounded-xl border border-neutral-800 border-t-4 border-t-brand-gold relative overflow-hidden">
           <div className="text-sm text-gray-400 uppercase tracking-wider mb-2">Total Spent</div>
-          <div className="text-4xl font-mono font-bold text-white">₦245k</div>
+          <div className="text-4xl font-mono font-bold text-white">₦{totalSpent.toLocaleString()}</div>
           <div className="absolute -bottom-4 -right-4 text-brand-gold opacity-10 text-8xl">₦</div>
         </div>
         <div className="p-6 bg-neutral-900 rounded-xl border border-neutral-800 border-t-4 border-t-brand-blue relative overflow-hidden">
           <div className="text-sm text-gray-400 uppercase tracking-wider mb-2">Total Impressions</div>
-          <div className="text-4xl font-mono font-bold text-white">124k</div>
+          <div className="text-4xl font-mono font-bold text-white">{totalImpressions.toLocaleString()}</div>
           <div className="absolute -bottom-4 -right-4 text-brand-blue opacity-10 text-8xl">👁</div>
         </div>
         <div className="p-6 bg-neutral-900 rounded-xl border border-neutral-800 border-t-4 border-t-brand-green relative overflow-hidden">
           <div className="text-sm text-gray-400 uppercase tracking-wider mb-2">Total Clicks</div>
-          <div className="text-4xl font-mono font-bold text-white">3,240</div>
+          <div className="text-4xl font-mono font-bold text-white">{totalClicks.toLocaleString()}</div>
           <div className="absolute -bottom-4 -right-4 text-brand-green opacity-10 text-8xl">👆</div>
         </div>
         <div className="p-6 bg-neutral-900 rounded-xl border border-neutral-800 border-t-4 border-t-brand-red relative overflow-hidden">
           <div className="text-sm text-gray-400 uppercase tracking-wider mb-2">Avg. CTR</div>
-          <div className="text-4xl font-mono font-bold text-white">2.6%</div>
+          <div className="text-4xl font-mono font-bold text-white">{avgCTR}%</div>
           <div className="absolute -bottom-4 -right-4 text-brand-red opacity-10 text-8xl">%</div>
         </div>
       </div>
 
       {/* ACTIVE CAMPAIGNS TABLE */}
-      <h2 className="text-2xl font-bold mb-6 text-white">Active Campaigns</h2>
+      <h2 className="text-2xl font-bold mb-6 text-white">Your Campaigns</h2>
       <div className="bg-neutral-900 rounded-xl border border-neutral-800 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left whitespace-nowrap">
-            <thead className="bg-neutral-950/50 border-b border-neutral-800">
-              <tr>
-                <th className="p-5 font-semibold text-gray-400 uppercase tracking-wider text-sm">Campaign</th>
-                <th className="p-5 font-semibold text-gray-400 uppercase tracking-wider text-sm">Status</th>
-                <th className="p-5 font-semibold text-gray-400 uppercase tracking-wider text-sm">Spent / Budget</th>
-                <th className="p-5 font-semibold text-gray-400 uppercase tracking-wider text-sm text-right">Impressions</th>
-                <th className="p-5 font-semibold text-gray-400 uppercase tracking-wider text-sm text-right">Clicks (CTR)</th>
-                <th className="p-5 font-semibold text-gray-400 uppercase tracking-wider text-sm text-center">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-neutral-800">
-              <tr className="hover:bg-neutral-800/50 transition-colors">
-                <td className="p-5">
-                  <div className="font-bold text-white text-lg">Summer Tech Hiring</div>
-                  <div className="text-sm text-brand-blue font-mono mt-1">Banner Ad • Home Page</div>
-                </td>
-                <td className="p-5">
-                  <span className="px-3 py-1 bg-brand-green/20 text-brand-green rounded-full text-xs font-bold uppercase tracking-wider border border-brand-green/30">Active</span>
-                </td>
-                <td className="p-5 w-64">
-                  <div className="font-mono font-medium text-white mb-2 flex justify-between">
-                    <span>₦35,000</span>
-                    <span className="text-gray-500">₦70,000</span>
-                  </div>
-                  <div className="w-full h-2 bg-neutral-800 rounded-full overflow-hidden">
-                    <div className="h-full bg-brand-gold rounded-full" style={{ width: '50%' }}></div>
-                  </div>
-                </td>
-                <td className="p-5 text-right font-mono text-gray-300">62,400</td>
-                <td className="p-5 text-right font-mono">
-                  <span className="text-white">1,560</span> 
-                  <span className="text-gray-500 ml-2">(2.5%)</span>
-                </td>
-                <td className="p-5 text-center">
-                  <button className="text-brand-blue hover:text-white font-medium mr-4 transition-colors">Edit</button>
-                  <button className="text-brand-gold hover:text-white font-medium transition-colors">Pause</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        {loading ? (
+          <div className="p-12 flex justify-center text-gray-500">
+            <Loader2 className="w-8 h-8 animate-spin text-brand-blue" />
+          </div>
+        ) : campaigns.length === 0 ? (
+          <div className="p-12 text-center text-gray-500">
+            <p>You have no campaigns yet.</p>
+            <Link href="/advertise/create" className="text-brand-blue hover:underline mt-2 inline-block">Create your first campaign</Link>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left whitespace-nowrap">
+              <thead className="bg-neutral-950/50 border-b border-neutral-800">
+                <tr>
+                  <th className="p-5 font-semibold text-gray-400 uppercase tracking-wider text-sm">Campaign Details</th>
+                  <th className="p-5 font-semibold text-gray-400 uppercase tracking-wider text-sm">Status</th>
+                  <th className="p-5 font-semibold text-gray-400 uppercase tracking-wider text-sm">Spent / Budget</th>
+                  <th className="p-5 font-semibold text-gray-400 uppercase tracking-wider text-sm text-right">Impressions</th>
+                  <th className="p-5 font-semibold text-gray-400 uppercase tracking-wider text-sm text-right">Clicks (CTR)</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-neutral-800">
+                {campaigns.map((c: any) => {
+                  const ctr = c.impression_count > 0 ? ((c.click_count / c.impression_count) * 100).toFixed(1) : '0.0';
+                  const progress = Math.min(100, (Number(c.total_spent) / Number(c.total_budget)) * 100);
+                  
+                  return (
+                    <tr key={c.id} className="hover:bg-neutral-800/50 transition-colors">
+                      <td className="p-5">
+                        <div className="font-bold text-white text-lg capitalize">{c.format?.replace('_', ' ')}</div>
+                        <div className="text-sm text-brand-blue font-mono mt-1 capitalize">{c.placements?.join(', ').replace('_', ' ')}</div>
+                      </td>
+                      <td className="p-5">
+                        <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${
+                          c.status === 'active' ? 'bg-brand-green/20 text-brand-green border-brand-green/30' :
+                          c.status === 'pending_payment' ? 'bg-amber-500/20 text-amber-500 border-amber-500/30' :
+                          c.status === 'pending_review' ? 'bg-brand-blue/20 text-brand-blue border-brand-blue/30' :
+                          'bg-gray-500/20 text-gray-400 border-gray-500/30'
+                        }`}>
+                          {c.status.replace('_', ' ')}
+                        </span>
+                      </td>
+                      <td className="p-5 w-64">
+                        <div className="font-mono font-medium text-white mb-2 flex justify-between">
+                          <span>₦{Number(c.total_spent || 0).toLocaleString()}</span>
+                          <span className="text-gray-500">₦{Number(c.total_budget || 0).toLocaleString()}</span>
+                        </div>
+                        <div className="w-full h-2 bg-neutral-800 rounded-full overflow-hidden">
+                          <div className="h-full bg-brand-gold rounded-full" style={{ width: `${progress}%` }}></div>
+                        </div>
+                      </td>
+                      <td className="p-5 text-right font-mono text-gray-300">{c.impression_count || 0}</td>
+                      <td className="p-5 text-right font-mono">
+                        <span className="text-white">{c.click_count || 0}</span> 
+                        <span className="text-gray-500 ml-2">({ctr}%)</span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );

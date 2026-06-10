@@ -242,6 +242,14 @@ export class AdsService {
     return this.campaignRepo.save(campaign);
   }
 
+  async getMyCampaigns(advertiserId: string): Promise<any[]> {
+    const campaigns = await this.campaignRepo.find({
+      where: { advertiser_id: advertiserId },
+      order: { createdAt: 'DESC' },
+    });
+    return this.attachDetailsToCampaigns(campaigns);
+  }
+
   // ─── ADMIN ENDPOINTS ──────────────────────────────────────
 
   private async attachDetailsToCampaigns(campaigns: AdCampaign[]): Promise<any[]> {

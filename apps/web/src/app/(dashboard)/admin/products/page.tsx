@@ -46,7 +46,7 @@ function AdminProductsContent() {
       });
       setProducts(res.data.items || []);
       setMeta(res.data.meta || null);
-    } catch (err: unknown) {
+    } catch (err: any) {
       if (err.response?.status === 401 || err.response?.status === 403) {
         router.push('/auth/signin');
         return;
@@ -66,7 +66,7 @@ function AdminProductsContent() {
       const token = localStorage.getItem('access_token');
       await apiAuth.withToken(token || undefined).patch(`/shop/products/${id}`, { isActive: !currentStatus });
       fetchProducts();
-    } catch (err: unknown) {
+    } catch (err: any) {
       alert(err.response?.data?.message || 'Failed to update product status');
     }
   };

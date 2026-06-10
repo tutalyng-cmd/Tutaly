@@ -119,7 +119,7 @@ export default function SeekerProfilePage() {
       
       // Refresh the profile to get the new signed URL
       fetchProfile();
-    } catch (err: unknown) {
+    } catch (err: any) {
       setMessage({ type: 'error', text: err instanceof Error ? err.message : 'Failed to upload resume' });
     } finally {
       setUploading(false);

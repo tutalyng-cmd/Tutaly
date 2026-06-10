@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { apiAuth } from '@/lib/api';
 import { UserPlus, Search, Loader2 } from 'lucide-react';
+import Link from 'next/link';
 
 interface PersonData {
   id: string;
@@ -11,6 +12,8 @@ interface PersonData {
   email: string;
   role: string;
   createdAt: string;
+  avatar?: string;
+  username?: string;
 }
 
 export default function DiscoverPage() {
@@ -49,7 +52,7 @@ export default function DiscoverPage() {
 
   const getName = (p: PersonData) => {
     if (p.firstName && p.lastName) return `${p.firstName} ${p.lastName}`;
-    return p.email?.split('@')[0] || 'User';
+    return p.username || p.email?.split('@')[0] || 'User';
   };
 
   const getInitial = (p: PersonData) => getName(p).charAt(0).toUpperCase();
@@ -94,35 +97,46 @@ export default function DiscoverPage() {
       ) : (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {people.map((person, idx) => (
-              <div
-                key={person.id}
-                className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:shadow-md hover:border-teal-200 transition-all group"
-              >
-                <div className="flex items-center gap-4">
-                  <div className={`w-14 h-14 rounded-full bg-gradient-to-br ${gradients[idx % gradients.length]} flex items-center justify-center text-white font-bold text-lg shrink-0 group-hover:scale-105 transition-transform`}>
-                    {getInitial(person)}
+            {people.map((person, idx) => {
+              const profileLink = `/connect/profile/${person.username || person.id}`;
+              return (
+                <div
+                  key={person.id}
+                  className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:shadow-md hover:border-teal-200 transition-all group"
+                >
+                  <div className="flex items-center gap-4">
+                    <Link href={profileLink} className="shrink-0">
+                      <div className={`w-14 h-14 rounded-full bg-gradient-to-br ${gradients[idx % gradients.length]} flex items-center justify-center text-white font-bold text-lg shrink-0 group-hover:scale-105 transition-transform overflow-hidden`}>
+                        {person.avatar ? (
+                          <img src={person.avatar} alt="avatar" className="w-full h-full object-cover" />
+                        ) : (
+                          getInitial(person)
+                        )}
+                      </div>
+                    </Link>
+                    <div className="flex-1 min-w-0">
+                      <Link href={profileLink} className="block hover:underline">
+                        <p className="text-sm font-semibold text-gray-900 truncate">{getName(person)}</p>
+                      </Link>
+                      <p className="text-xs text-gray-400 capitalize">{person.role}</p>
+                    </div>
+                    {following.has(person.id) ? (
+                      <span className="text-xs font-medium text-teal-600 bg-teal-50 px-3 py-1.5 rounded-full">
+                        Requested
+                      </span>
+                    ) : (
+                      <button
+                        onClick={() => handleFollow(person.id)}
+                        className="flex items-center gap-1.5 text-sm font-semibold text-teal-700 bg-teal-50 hover:bg-teal-100 px-3 py-1.5 rounded-full transition-colors"
+                      >
+                        <UserPlus className="w-3.5 h-3.5" />
+                        Follow
+                      </button>
+                    )}
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-gray-900 truncate">{getName(person)}</p>
-                    <p className="text-xs text-gray-400 capitalize">{person.role}</p>
-                  </div>
-                  {following.has(person.id) ? (
-                    <span className="text-xs font-medium text-teal-600 bg-teal-50 px-3 py-1.5 rounded-full">
-                      Requested
-                    </span>
-                  ) : (
-                    <button
-                      onClick={() => handleFollow(person.id)}
-                      className="flex items-center gap-1.5 text-sm font-semibold text-teal-700 bg-teal-50 hover:bg-teal-100 px-3 py-1.5 rounded-full transition-colors"
-                    >
-                      <UserPlus className="w-3.5 h-3.5" />
-                      Follow
-                    </button>
-                  )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {total > 20 && (

@@ -70,8 +70,7 @@ export class AdsController {
   @Get()
   @Roles(UserRole.EMPLOYER, UserRole.ADMIN)
   async getMyCampaigns(@Req() req) {
-    // Placeholder
-    return [];
+    return this.adsService.getMyCampaigns(req.user.sub);
   }
 
   @Get('alerts')

@@ -30,7 +30,7 @@ export default function AdminUsersPage() {
       });
       setUsers(res.data.items || []);
       setMeta(res.data.meta || null);
-    } catch (err: unknown) {
+    } catch (err: any) {
       if (err.response?.status === 401 || err.response?.status === 403) {
         router.push('/auth/signin');
         return;
@@ -62,7 +62,7 @@ export default function AdminUsersPage() {
         status: newStatus,
       });
       fetchUsers();
-    } catch (err: unknown) {
+    } catch (err: any) {
       alert(err.response?.data?.message || err.message);
     }
   };

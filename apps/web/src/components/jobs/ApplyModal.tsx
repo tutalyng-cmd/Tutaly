@@ -303,7 +303,7 @@ export default function ApplyModal({
       await apiAuth.withToken(token).post(`/jobs/${job.id}/apply`, payload);
       setSubmitted(true);
       onSuccess();
-    } catch (err: unknown) {
+    } catch (err: any) {
       const errorObj = err as { response?: { data?: { message?: string } }, message?: string };
       const message = errorObj.response?.data?.message || errorObj.message || 'Application failed';
 

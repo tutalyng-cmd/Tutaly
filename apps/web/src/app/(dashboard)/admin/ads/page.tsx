@@ -78,7 +78,7 @@ export default function AdminAdsModerationPage() {
       const res = await apiAuth.withToken(token || undefined).get(endpoint);
       
       setCampaigns(res.data || []);
-    } catch (err: unknown) {
+    } catch (err: any) {
       const error = err as { response?: { status?: number, data?: { message?: string } }, message?: string };
       if (error.response?.status === 401 || error.response?.status === 403) {
         router.push('/auth/signin');
@@ -100,7 +100,7 @@ export default function AdminAdsModerationPage() {
       const token = localStorage.getItem('access_token');
       await apiAuth.withToken(token || undefined).patch(`/admin/ads/${id}/approve`);
       fetchCampaigns();
-    } catch (err: unknown) {
+    } catch (err: any) {
       const error = err as { response?: { data?: { message?: string } }, message?: string };
       alert(error.response?.data?.message || error.message);
     }
@@ -132,7 +132,7 @@ export default function AdminAdsModerationPage() {
       });
       setRejectModalOpen(false);
       fetchCampaigns();
-    } catch (err: unknown) {
+    } catch (err: any) {
       const error = err as { response?: { data?: { message?: string } }, message?: string };
       alert(error.response?.data?.message || error.message);
     }

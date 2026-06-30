@@ -295,7 +295,7 @@ alert(err.response?.data?.message || err.message);
       {/* View Details Modal */}
       {selectedJob && (
         <div className="fixed inset-0 bg-c900/60 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 p-0 sm:p-4">
-          <div className="bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl w-full sm:max-w-2xl max-h-[90vh] overflow-y-auto p-6 sm:p-8">
+          <div className="bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl w-full sm:max-w-2xl max-h-screen overflow-y-auto p-6 sm:p-8">
             <div className="flex justify-between items-start mb-4">
               <h2 className="text-xl sm:text-2xl font-bold text-c900">Job Details</h2>
               <button onClick={() => setSelectedJob(null)} className="text-c400 hover:text-c600">

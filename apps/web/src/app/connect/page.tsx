@@ -82,7 +82,7 @@ const PostItem = ({ post, currentUserId, onDelete, onLike }: { post: PostData, c
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-3">
           <Link href={authorProfileLink}>
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green to-green flex items-center justify-center text-white font-bold text-sm overflow-hidden shrink-0">
+            <div className="w-10 h-10 rounded-full bg-green flex items-center justify-center text-white font-bold text-sm overflow-hidden shrink-0">
               {post.author.avatar ? (
                 <img src={post.author.avatar} alt="avatar" className="w-full h-full object-cover" />
               ) : (
@@ -125,7 +125,7 @@ const PostItem = ({ post, currentUserId, onDelete, onLike }: { post: PostData, c
 
       {displayImage && (
         <div className="rounded-xl overflow-hidden mb-4 bg-c100 flex justify-center">
-          <img src={displayImage} alt="Post content" className="max-w-full max-h-[500px] object-contain" />
+          <img src={displayImage} alt="Post content" className="max-w-full max-h-layout-lg object-contain" />
         </div>
       )}
 
@@ -306,7 +306,7 @@ console.error('Failed to create post', err);
       {/* Create Post Card */}
       <div className="bg-white rounded-2xl shadow-sm border border-c100 p-5">
         <div className="flex gap-3">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green to-green flex items-center justify-center text-white font-bold text-sm shrink-0">
+          <div className="w-10 h-10 rounded-full bg-green flex items-center justify-center text-white font-bold text-sm shrink-0">
             {currentUserId ? 'Y' : '?'}
           </div>
           <div className="flex-1">

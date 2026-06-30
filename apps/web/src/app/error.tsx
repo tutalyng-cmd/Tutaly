@@ -16,8 +16,8 @@ export default function Error({
   }, [error]);
 
   return (
-    <main className="min-h-[70vh] flex items-center justify-center py-20">
-      <div className="container text-center max-w-[600px]">
+    <main className="min-h-screen flex items-center justify-center py-20">
+      <div className="container text-center max-w-layout-md">
         <div className="w-20 h-20 bg-red/10 text-red rounded-full flex items-center justify-center text-4xl mx-auto mb-6">
           ⚠️
         </div>

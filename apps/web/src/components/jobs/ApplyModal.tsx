@@ -547,7 +547,7 @@ const errorObj = err as { response?: { data?: { message?: string } }, message?: 
                   <FileText className="w-6 h-6 text-green" />
                 </div>
                 <div className="text-left">
-                  <p className="text-sm font-semibold text-c900 truncate max-w-[240px]">
+                  <p className="text-sm font-semibold text-c900 truncate max-w-60">
                     {uploadedFile.name}
                   </p>
                   <p className="text-xs text-c500">
@@ -668,7 +668,7 @@ const errorObj = err as { response?: { data?: { message?: string } }, message?: 
             </p>
 
             <div className="relative">
-              <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#0077B5]" />
+              <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-blue" />
               <input
                 type="url"
                 value={form.linkedinUrl}
@@ -851,7 +851,7 @@ const errorObj = err as { response?: { data?: { message?: string } }, message?: 
             </div>
           )}
 
-          <div className="space-y-3 max-h-[340px] overflow-y-auto pr-1">
+          <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
             {sections.map((section) => (
               <div
                 key={section.title}
@@ -895,7 +895,7 @@ const errorObj = err as { response?: { data?: { message?: string } }, message?: 
           {/* Submit */}
           <button
             onClick={handleSubmit}
-            className="w-full bg-gradient-to-r from-green to-green text-white font-bold py-3.5 px-6 rounded-xl hover:from-green hover:to-green transition shadow-lg shadow-teal-600/20 flex items-center justify-center gap-2 text-base"
+            className="w-full bg-green text-white font-bold py-3.5 px-6 rounded-xl hover:from-green hover:to-green transition shadow-lg shadow-teal-600/20 flex items-center justify-center gap-2 text-base"
           >
             <CheckCircle2 className="w-5 h-5" />
             Submit Application
@@ -923,7 +923,7 @@ const errorObj = err as { response?: { data?: { message?: string } }, message?: 
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
       {/* Mobile: full-screen sheet | Desktop: centered card */}
-      <div className="h-full sm:h-auto sm:max-h-[85vh] bg-white sm:rounded-2xl shadow-2xl w-full sm:max-w-xl overflow-hidden flex flex-col sm:absolute sm:top-1/2 sm:left-1/2 sm:transform sm:-translate-x-1/2 sm:-translate-y-1/2">
+      <div className="h-full sm:h-auto sm:max-h-screen bg-white sm:rounded-2xl shadow-2xl w-full sm:max-w-xl overflow-hidden flex flex-col sm:absolute sm:top-1/2 sm:left-1/2 sm:transform sm:-translate-x-1/2 sm:-translate-y-1/2">
         {/* Close */}
         <button
           onClick={onClose}
@@ -964,7 +964,7 @@ const errorObj = err as { response?: { data?: { message?: string } }, message?: 
                         )}
                       </div>
                       <span
-                        className={`text-[8px] sm:text-[10px] font-medium hidden xs:block ${
+                        className={`text-xs sm:text-xs font-medium hidden xs:block ${
                           isActive ? 'text-green' : isDone ? 'text-green' : 'text-c400'
                         }`}
                       >

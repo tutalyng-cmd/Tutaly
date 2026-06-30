@@ -169,13 +169,13 @@ console.error(err);
     }
   };
 
-  const inputClass = "block w-full rounded-xl border-0 py-3 text-c900 shadow-sm ring-1 ring-inset ring-c300 placeholder:text-c400 focus:ring-2 focus:ring-inset focus:ring-[#1A1C1E] sm:text-sm sm:leading-6 px-4 bg-white transition-all";
-  const labelClass = "block text-sm font-semibold leading-6 text-[#1A1C1E] mb-2";
+  const inputClass = "block w-full rounded-xl border-0 py-3 text-c900 shadow-sm ring-1 ring-inset ring-c300 placeholder:text-c400 focus:ring-2 focus:ring-inset focus:ring-c900 sm:text-sm sm:leading-6 px-4 bg-white transition-all";
+  const labelClass = "block text-sm font-semibold leading-6 text-c900 mb-2";
 
   return (
     <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-[#1A1C1E] tracking-tight">Post a Job</h1>
+        <h1 className="text-3xl font-bold text-c900 tracking-tight">Post a Job</h1>
         <p className="mt-2 text-c500">Find the perfect candidate by providing detailed information about the role.</p>
       </div>
 
@@ -197,7 +197,7 @@ console.error(err);
                   onClick={() => index <= currentStep && setCurrentStep(index)}
                   className={cn(
                     "relative flex h-10 w-10 items-center justify-center rounded-full transition-all duration-300 ring-4 ring-white",
-                    isCompleted ? "bg-green hover:bg-green" : isCurrent ? "bg-[#1A1C1E] border-2 border-[#1A1C1E]" : "bg-white border-2 border-c300"
+                    isCompleted ? "bg-green hover:bg-green" : isCurrent ? "bg-c900 border-2 border-c900" : "bg-white border-2 border-c300"
                   )}
                 >
                   {isCompleted ? (
@@ -209,7 +209,7 @@ console.error(err);
                 </button>
                 <span className={cn(
                   "absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs font-semibold whitespace-nowrap",
-                  isCurrent ? "text-[#1A1C1E]" : isCompleted ? "text-green" : "text-c500"
+                  isCurrent ? "text-c900" : isCompleted ? "text-green" : "text-c500"
                 )}>
                   {step.name}
                 </span>
@@ -245,7 +245,7 @@ console.error(err);
 
               <div>
                 <label className={labelClass}>Job Description *</label>
-                <div className="bg-white rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#1A1C1E]">
+                <div className="bg-white rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-c900">
                   <ReactQuill 
                     theme="snow" 
                     value={formData.description} 
@@ -265,7 +265,7 @@ console.error(err);
                         onClick={() => updateForm({ jobType: type })}
                         className={cn(
                           "px-4 py-2.5 rounded-full text-sm font-medium transition-colors border",
-                          formData.jobType === type ? "bg-[#1A1C1E] text-white border-[#1A1C1E]" : "bg-white text-c700 border-c200 hover:border-c300"
+                          formData.jobType === type ? "bg-c900 text-white border-c900" : "bg-white text-c700 border-c200 hover:border-c300"
                         )}
                       >
                         {type.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}
@@ -338,7 +338,7 @@ console.error(err);
           {currentStep === 1 && (
             <div className="space-y-10 animate-in fade-in slide-in-from-right-4 duration-500">
               <div>
-                <p className="text-lg font-bold text-[#1A1C1E] mb-6">Where is this role located?</p>
+                <p className="text-lg font-bold text-c900 mb-6">Where is this role located?</p>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                   <div>
                     <label className={labelClass}>Country *</label>
@@ -367,7 +367,7 @@ console.error(err);
               <hr className="border-c200" />
 
               <div>
-                <p className="text-lg font-bold text-[#1A1C1E] mb-6">Candidate Requirements</p>
+                <p className="text-lg font-bold text-c900 mb-6">Candidate Requirements</p>
                 <div className="space-y-8">
                   <div>
                     <label className={labelClass}>Experience Level</label>
@@ -378,7 +378,7 @@ console.error(err);
                           onClick={() => updateForm({ experienceLevel: level })}
                           className={cn(
                             "px-5 py-2.5 rounded-xl text-sm font-semibold transition-all border",
-                            formData.experienceLevel === level ? "bg-[#2563EB] text-white border-[#2563EB] shadow-md shadow-blue-500/20" : "bg-white text-c700 border-c200 hover:border-c300"
+                            formData.experienceLevel === level ? "bg-blue text-white border-blue shadow-md shadow-blue-500/20" : "bg-white text-c700 border-c200 hover:border-c300"
                           )}
                         >
                           {level.charAt(0).toUpperCase() + level.slice(1)}
@@ -421,7 +421,7 @@ console.error(err);
                           if (e.key === 'Enter') { e.preventDefault(); addSkill(); }
                         }}
                         placeholder="Type a skill and press Enter..."
-                        className="flex-1 bg-transparent border-0 focus:ring-0 min-w-[200px] text-sm"
+                        className="flex-1 bg-transparent border-0 focus:ring-0 min-w-layout-md text-sm"
                       />
                     </div>
                   </div>
@@ -443,10 +443,10 @@ console.error(err);
                 <div>
                   <label className={labelClass}>How should candidates apply?</label>
                   <div className="flex bg-c100 p-1 rounded-xl w-full">
-                    <button type="button" onClick={() => updateForm({ applyMethod: 'platform' })} className={cn("flex-1 py-2 text-sm font-medium rounded-lg transition-all", formData.applyMethod === 'platform' ? "bg-white shadow-sm text-[#1A1C1E]" : "text-c500")}>
+                    <button type="button" onClick={() => updateForm({ applyMethod: 'platform' })} className={cn("flex-1 py-2 text-sm font-medium rounded-lg transition-all", formData.applyMethod === 'platform' ? "bg-white shadow-sm text-c900" : "text-c500")}>
                       On Platform
                     </button>
-                    <button type="button" onClick={() => updateForm({ applyMethod: 'external' })} className={cn("flex-1 py-2 text-sm font-medium rounded-lg transition-all", formData.applyMethod === 'external' ? "bg-white shadow-sm text-[#1A1C1E]" : "text-c500")}>
+                    <button type="button" onClick={() => updateForm({ applyMethod: 'external' })} className={cn("flex-1 py-2 text-sm font-medium rounded-lg transition-all", formData.applyMethod === 'external' ? "bg-white shadow-sm text-c900" : "text-c500")}>
                       External URL
                     </button>
                   </div>
@@ -461,7 +461,7 @@ console.error(err);
               <hr className="border-c200" />
 
               <div>
-                <p className="text-lg font-bold text-[#1A1C1E] mb-6">Boost Your Visibility</p>
+                <p className="text-lg font-bold text-c900 mb-6">Boost Your Visibility</p>
                 <div className="space-y-4">
                   <label className={cn(
                     "flex items-start p-5 rounded-2xl border-2 cursor-pointer transition-all",
@@ -510,7 +510,7 @@ console.error(err);
             <button
               type="button"
               onClick={handleNext}
-              className="bg-[#1A1C1E] text-white px-8 py-3 rounded-xl font-bold text-sm shadow-lg shadow-gray-900/20 hover:bg-black transition-all flex items-center"
+              className="bg-c900 text-white px-8 py-3 rounded-xl font-bold text-sm shadow-lg shadow-gray-900/20 hover:bg-black transition-all flex items-center"
             >
               Next Step <ChevronRight className="ml-2 w-4 h-4" />
             </button>
@@ -521,7 +521,7 @@ console.error(err);
               disabled={submitting}
               className={cn(
                 "px-8 py-3 rounded-xl font-bold text-sm shadow-lg transition-all flex items-center",
-                formData.isFeatured ? "bg-gold text-white shadow-amber-500/20 hover:bg-gold" : "bg-green text-white shadow-teal-500/20 hover:bg-green",
+                formData.isFeatured ? "bg-gold text-white shadow-amber-500/20 hover:bg-gold" : "bg-green text-white shadow-sm hover:bg-green",
                 submitting ? "opacity-70 cursor-not-allowed" : ""
               )}
             >

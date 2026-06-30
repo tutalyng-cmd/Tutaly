@@ -223,7 +223,7 @@ export default function AdCreationWizard() {
               </span>
             </div>
             <div className="h-2 w-full bg-c100 rounded-full overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-gold via-green to-green w-[60%] mx-auto"></div>
+              <div className="h-full bg-gold shadow-glow-gold w-3/5 mx-auto"></div>
             </div>
             <p className="text-xs text-c400 mt-2 text-center">Your audience selection is broad enough.</p>
           </div>
@@ -240,7 +240,7 @@ export default function AdCreationWizard() {
                 <span className="font-bold text-green">{estimation?.estimated_daily_clicks?.toLocaleString() || '--'}</span>
               </div>
             </div>
-            <p className="text-[10px] text-c400 mt-3 leading-tight flex gap-1">
+            <p className="text-xs text-c400 mt-3 leading-tight flex gap-1">
               <Info className="w-3 h-3 shrink-0" />
               Estimates are based on past performance and your daily budget of ₦{formData.daily_budget.toLocaleString()}.
             </p>

@@ -168,7 +168,7 @@ export default async function Home() {
                   </div>
                 </div>
                 <div className="floatcard">
-                  <div className="floatcard__logo bg-green/20 text-[#2DB85A]">F</div>
+                  <div className="floatcard__logo bg-green/20 text-green">F</div>
                   <div>
                     <div className="floatcard__title">Backend Engineer</div>
                     <div className="floatcard__company">Flutterwave &middot; Lagos</div>
@@ -271,7 +271,7 @@ export default async function Home() {
               <h2 className="section__title" id="salary-title">Stop guessing.<br />Start knowing.</h2>
               <p className="section__subtitle mb-8">Most professionals walk into a negotiation with no idea what they're actually worth. Tutaly shows you real pay data, in your currency, before you walk in.</p>
               <Link href="/salaries" className="btn btn--primary btn--lg">Check your salary now</Link>
-              <p className="mt-3.5 text-[13px] text-c500">No sign-up needed. Data from 47,000+ salary reports.</p>
+              <p className="mt-3.5 text-sm text-c500">No sign-up needed. Data from 47,000+ salary reports.</p>
             </div>
             <div className="reveal visible">
               <div className="salary-card">
@@ -292,7 +292,7 @@ export default async function Home() {
                     <span>₦1.4M</span>
                   </div>
                   <div className="salary-bar-track">
-                    <div className="salary-bar-fill w-[58%]">
+                    <div className="salary-bar-fill w-3/5">
                       <div className="salary-bar-marker"></div>
                     </div>
                   </div>
@@ -326,7 +326,7 @@ export default async function Home() {
       {/* ── REVIEWS ────────────────────────────────────────────────── */}
       <section className="section" id="reviews" aria-labelledby="reviews-title">
         <div className="container">
-          <div className="reveal visible text-center max-w-[600px] mx-auto mb-14">
+          <div className="reveal visible text-center max-w-layout-md mx-auto mb-14">
             <div className="section__label justify-center">Company reviews</div>
             <h2 className="section__title" id="reviews-title">The honest version of the job description.</h2>
             <p className="text-base text-c300 leading-relaxed">Before you say yes to an offer, hear from people who already said yes — and what happened after.</p>
@@ -352,7 +352,7 @@ export default async function Home() {
             </article>
             <article className="review-card">
               <div className="review-card__header">
-                <div className="review-card__logo bg-green/20 text-[#2DB85A]">P</div>
+                <div className="review-card__logo bg-green/20 text-green">P</div>
                 <div>
                   <div className="review-card__company">Paystack</div>
                   <div className="review-card__stars" aria-label="Rating: 4.6 out of 5">
@@ -419,7 +419,7 @@ export default async function Home() {
               </div>
             </article>
             <article className="market-card">
-              <div className="market-card__thumb bg-[#1D7A3A]/15">
+              <div className="market-card__thumb bg-green/20">
                 📊
                 <span className="market-card__badge tag--green">New</span>
               </div>
@@ -571,7 +571,7 @@ export default async function Home() {
             <blockquote className="testi">
               <p className="testi__quote">The company reviews saved me from accepting an offer at a place that looked good on paper. Three ex-employees said the same thing about the culture. I passed.</p>
               <div className="testi__author">
-                <div className="testi__avatar bg-[#1D7A3A]/20 text-[#2DB85A]">IO</div>
+                <div className="testi__avatar bg-green/20 text-green">IO</div>
                 <div>
                   <div className="testi__name">Ifeanyi Okafor</div>
                   <div className="testi__title">Software Engineer, Abuja</div>

@@ -136,7 +136,7 @@ setSendError(err.response?.data?.message || err.message || 'Failed to send broad
                 value={body}
                 onChange={(e) => setBody(e.target.value)}
                 placeholder="<p>Hello there,</p>"
-                className="w-full border-c300 rounded-xl shadow-sm focus:border-green focus:ring-green py-3 px-4 bg-c100 flex-1 min-h-[200px] resize-none"
+                className="w-full border-c300 rounded-xl shadow-sm focus:border-green focus:ring-green py-3 px-4 bg-c100 flex-1 min-h-52 resize-none"
               ></textarea>
             </div>
 

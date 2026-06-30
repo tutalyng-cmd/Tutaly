@@ -113,7 +113,7 @@ if (err.response?.status === 401 || err.response?.status === 403) {
               <p className="text-sm font-bold text-c500 uppercase tracking-wider">Total Users</p>
               <p className="text-3xl font-black text-c900 mt-2">{stats?.totalUsers || 0}</p>
             </div>
-            <div className="h-14 w-14 bg-gradient-to-br from-blueL to-blueL rounded-2xl flex items-center justify-center shadow-inner">
+            <div className="h-14 w-14 bg-blue shadow-glow-blue rounded-2xl flex items-center justify-center shadow-inner">
               <Users className="h-6 w-6 text-blue" />
             </div>
           </div>
@@ -125,7 +125,7 @@ if (err.response?.status === 401 || err.response?.status === 403) {
               <p className="text-sm font-bold text-c500 uppercase tracking-wider">Active Jobs</p>
               <p className="text-3xl font-black text-c900 mt-2">{stats?.activeJobs || 0}</p>
             </div>
-            <div className="h-14 w-14 bg-gradient-to-br from-green to-green rounded-2xl flex items-center justify-center shadow-inner">
+            <div className="h-14 w-14 bg-green rounded-2xl flex items-center justify-center shadow-inner">
               <Briefcase className="h-6 w-6 text-green" />
             </div>
           </div>
@@ -139,7 +139,7 @@ if (err.response?.status === 401 || err.response?.status === 403) {
                 ₦{(stats?.totalRevenue || 0).toLocaleString()}
               </p>
             </div>
-            <div className="h-14 w-14 bg-gradient-to-br from-green to-green rounded-2xl flex items-center justify-center shadow-inner">
+            <div className="h-14 w-14 bg-green rounded-2xl flex items-center justify-center shadow-inner">
               <TrendingUp className="h-6 w-6 text-green" />
             </div>
           </div>
@@ -153,7 +153,7 @@ if (err.response?.status === 401 || err.response?.status === 403) {
                 ₦{(stats?.totalCommission || 0).toLocaleString()}
               </p>
             </div>
-            <div className="h-14 w-14 bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl flex items-center justify-center shadow-inner">
+            <div className="h-14 w-14 bg-c800 border border-c700 rounded-2xl flex items-center justify-center shadow-inner">
               <DollarSign className="h-6 w-6 text-purple-600" />
             </div>
           </div>
@@ -165,7 +165,7 @@ if (err.response?.status === 401 || err.response?.status === 403) {
               <p className="text-sm font-bold text-c500 uppercase tracking-wider">Total Products</p>
               <p className="text-3xl font-black text-c900 mt-2">{stats?.totalProducts || 0}</p>
             </div>
-            <div className="h-14 w-14 bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl flex items-center justify-center shadow-inner">
+            <div className="h-14 w-14 bg-gold shadow-glow-gold rounded-2xl flex items-center justify-center shadow-inner">
               <Package className="h-6 w-6 text-orange-600" />
             </div>
           </div>
@@ -177,7 +177,7 @@ if (err.response?.status === 401 || err.response?.status === 403) {
               <p className="text-sm font-bold text-c500 uppercase tracking-wider">Open Disputes</p>
               <p className="text-3xl font-black text-c900 mt-2">{stats?.openDisputesCount || 0}</p>
             </div>
-            <div className="h-14 w-14 bg-gradient-to-br from-red to-red rounded-2xl flex items-center justify-center shadow-inner">
+            <div className="h-14 w-14 bg-red rounded-2xl flex items-center justify-center shadow-inner">
               <ShieldAlert className="h-6 w-6 text-red" />
             </div>
           </div>

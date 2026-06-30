@@ -131,3 +131,60 @@
 .input::placeholder {
   color: var(--c-500);
 }
+.input:hover:not(:disabled) {
+  border-color: var(--c-400);
+}
+.input.error, .input:invalid {
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2);
+}
+
+/* ─── FLOATCARDS ─────────────────────────────────────────── */
+.floatcard:active {
+  transform: translateY(-2px);
+}
+.floatcard:focus-visible {
+  outline: 2px solid var(--blue-l);
+  outline-offset: 3px;
+}
+.floatcard:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ─── SIDEBAR & LABELS ───────────────────────────────────── */
+.sidebar {
+  background: var(--c-800);
+  border: 1px solid var(--c-700);
+  border-radius: var(--r-lg);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.sidebar__header {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--c-100);
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--c-700);
+  padding-bottom: 12px;
+}
+.sidebar__group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--c-300);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+.label:hover {
+  color: var(--c-100);
+}

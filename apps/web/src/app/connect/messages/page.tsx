@@ -168,13 +168,13 @@ export default function MessagesPage() {
                   onClick={() => openConversation(convo.partner)}
                   className={`w-full p-4 flex items-center gap-3 hover:bg-c100 transition-colors text-left ${selectedPartner?.id === convo.partner.id ? 'bg-green/50' : ''}`}
                 >
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green to-green flex items-center justify-center text-white font-bold text-base shrink-0 overflow-hidden">
+                  <div className="w-12 h-12 rounded-full bg-green flex items-center justify-center text-white font-bold text-base shrink-0 overflow-hidden">
                     {renderAvatar(convo.partner)}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
                       <p className="text-sm font-semibold text-c900 truncate pr-2">{getName(convo.partner)}</p>
-                      <span className="text-[10px] text-c400 shrink-0">{timeAgo(convo.lastMessage.createdAt)}</span>
+                      <span className="text-xs text-c400 shrink-0">{timeAgo(convo.lastMessage.createdAt)}</span>
                     </div>
                     <p className="text-xs text-c500 truncate mt-0.5">
                       {convo.lastMessage.sender.id === currentUserId ? 'You: ' : ''}
@@ -204,7 +204,7 @@ export default function MessagesPage() {
                 <ArrowLeft className="w-5 h-5" />
               </button>
               <Link href={`/connect/profile/${selectedPartner.username || selectedPartner.id}`} className="shrink-0">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green to-green flex items-center justify-center text-white font-bold text-sm overflow-hidden">
+                <div className="w-10 h-10 rounded-full bg-green flex items-center justify-center text-white font-bold text-sm overflow-hidden">
                   {renderAvatar(selectedPartner)}
                 </div>
               </Link>
@@ -230,13 +230,13 @@ export default function MessagesPage() {
                   const isMine = msg.sender.id === currentUserId;
                   return (
                     <div key={msg.id} className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
-                      <div className={`max-w-[70%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
+                      <div className={`max-w-md px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
                         isMine
                           ? 'bg-green text-white rounded-br-sm'
                           : 'bg-white text-c800 border border-c200 rounded-bl-sm shadow-sm'
                       }`}>
                         <p>{msg.body}</p>
-                        <p className={`text-[10px] mt-1 text-right ${isMine ? 'text-green' : 'text-c400'}`}>
+                        <p className={`text-xs mt-1 text-right ${isMine ? 'text-green' : 'text-c400'}`}>
                           {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </p>
                       </div>

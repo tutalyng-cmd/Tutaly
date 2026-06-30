@@ -29,7 +29,7 @@ export default async function AdBanner({ placement }: { placement: string }) {
   return (
     <div className="w-full bg-c100 dark:bg-c800 border-b dark:border-c700 overflow-hidden relative group">
       <Link href={ad.targetUrl || '#'} target="_blank" rel="noopener noreferrer" className="block w-full h-full">
-        <div className="container mx-auto px-4 py-2 flex items-center justify-center relative min-h-[60px] md:min-h-[90px]">
+        <div className="container mx-auto px-4 py-2 flex items-center justify-center relative min-h-16 md:min-h-24">
           {ad.imageUrl ? (
             <Image 
               src={ad.imageUrl} 
@@ -47,7 +47,7 @@ export default async function AdBanner({ placement }: { placement: string }) {
             </div>
           )}
           {ad.imageUrl && (
-            <div className="absolute top-1 right-2 bg-black/50 text-white text-[10px] uppercase px-1.5 py-0.5 rounded backdrop-blur-sm z-10">
+            <div className="absolute top-1 right-2 bg-black/50 text-white text-xs uppercase px-1.5 py-0.5 rounded backdrop-blur-sm z-10">
               Ad
             </div>
           )}

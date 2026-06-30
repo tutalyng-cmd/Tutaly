@@ -115,7 +115,7 @@ setError(err.response?.data?.message || err.message || 'Failed to update page');
                 required
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                className="w-full border-c300 rounded-xl shadow-sm focus:border-green focus:ring-green py-3 px-4 bg-c100 font-mono text-sm min-h-[400px] resize-y"
+                className="w-full border-c300 rounded-xl shadow-sm focus:border-green focus:ring-green py-3 px-4 bg-c100 font-mono text-sm min-h-layout-lg resize-y"
               ></textarea>
               <p className="text-xs text-c500 mt-2">Use valid HTML tags for formatting. Headings, paragraphs, bold, and lists are supported.</p>
             </div>

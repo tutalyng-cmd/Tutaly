@@ -133,7 +133,7 @@ alert(err.response?.data?.message || 'Failed to initialize boost payment.');
                       <div className="font-medium text-c900 flex items-center gap-2">
                         {job.title}
                         {job.isFeatured && (
-                          <span className="bg-gradient-to-r from-gold to-gold text-white text-[10px] font-black px-1.5 py-0.5 rounded-sm flex items-center gap-0.5">
+                          <span className="bg-gold shadow-glow-gold text-white text-xs font-black px-1.5 py-0.5 rounded-sm flex items-center gap-0.5">
                             <Zap className="w-3 h-3 fill-white" /> FEATURED
                           </span>
                         )}
@@ -194,7 +194,7 @@ alert(err.response?.data?.message || 'Failed to initialize boost payment.');
           <div className="fixed inset-0 bg-c900/40 backdrop-blur-sm transition-opacity" onClick={() => setBoostingJob(null)}></div>
           
           <div className="relative bg-white rounded-2xl shadow-xl transform transition-all sm:max-w-xl sm:w-full overflow-hidden border border-c100 animate-in zoom-in-95 duration-200">
-            <div className="bg-gradient-to-br from-gold to-orange-600 p-6 text-white relative">
+            <div className="bg-gold shadow-glow-gold p-6 text-white relative">
               <button onClick={() => setBoostingJob(null)} className="absolute top-4 right-4 text-white/70 hover:text-white transition-colors">
                 <X className="w-5 h-5" />
               </button>

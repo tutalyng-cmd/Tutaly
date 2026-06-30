@@ -69,7 +69,7 @@ alert(err.response?.data?.message || 'Failed to save settings. Please try again.
         <p className="text-c500 mt-1">Manage your company account security, notifications, and privacy preferences.</p>
       </div>
 
-      <div className="bg-white rounded-3xl shadow-sm border border-c100 overflow-hidden flex flex-col md:flex-row min-h-[500px]">
+      <div className="bg-white rounded-3xl shadow-sm border border-c100 overflow-hidden flex flex-col md:flex-row min-h-layout-xl">
         {/* Sidebar Nav */}
         <div className="w-full md:w-64 bg-c100/50 border-r border-c100 p-6 flex flex-col gap-2">
           <button 
@@ -175,7 +175,7 @@ alert(err.response?.data?.message || 'Failed to save settings. Please try again.
                         onChange={() => setNotifications({...notifications, [item.id]: !(notifications as any)[item.id]})}
                         disabled={item.id === 'emailAlerts'}
                       />
-                      <div className="w-11 h-6 bg-c200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-c300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green disabled:opacity-50"></div>
+                      <div className="w-11 h-6 bg-c200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0 after:left-0 after:bg-white after:border-c300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green disabled:opacity-50"></div>
                     </label>
                   </div>
                 ))}

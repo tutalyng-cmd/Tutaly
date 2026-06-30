@@ -127,7 +127,7 @@ export default function NetworkPage() {
             </p>
             <p className="text-xs text-c500 mt-0.5">{tab.label}</p>
             {tab.key === 'pending' && tab.count > 0 && (
-              <span className="inline-block mt-1.5 bg-red text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+              <span className="inline-block mt-1.5 bg-red text-white text-xs font-bold px-2 py-0.5 rounded-full">
                 {tab.count} new
               </span>
             )}
@@ -161,7 +161,7 @@ export default function NetworkPage() {
                 {pending.map((req) => (
                   <div key={req.follower.id} className="bg-white rounded-2xl border border-c100 p-4 hover:shadow-sm transition-all">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-gold to-orange-500 flex items-center justify-center text-white font-bold text-base shrink-0">
+                      <div className="w-12 h-12 rounded-full bg-gold shadow-glow-gold flex items-center justify-center text-white font-bold text-base shrink-0">
                         {getInitial(req.follower)}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -197,7 +197,7 @@ export default function NetworkPage() {
             ) : (
               <div className="space-y-3">
                 {followers.map((person) => (
-                  <PersonCard key={person.id} person={person} getName={getName} getInitial={getInitial} gradient="from-blueL to-blue" />
+                  <PersonCard key={person.id} person={person} getName={getName} getInitial={getInitial} gradient="bg-blue shadow-glow-blue" />
                 ))}
               </div>
             )
@@ -212,7 +212,7 @@ export default function NetworkPage() {
                 {following.map((person) => (
                   <div key={person.id} className="bg-white rounded-2xl border border-c100 p-4 hover:shadow-sm transition-all">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green to-green flex items-center justify-center text-white font-bold text-base shrink-0">
+                      <div className="w-12 h-12 rounded-full bg-green flex items-center justify-center text-white font-bold text-base shrink-0">
                         {getInitial(person)}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -256,8 +256,8 @@ function PersonCard({ person, getName, getInitial, gradient }: {
 }) {
   return (
     <div className="bg-white rounded-2xl border border-c100 p-4 hover:shadow-sm transition-all">
-      <div className="flex items-center gap-3">
-        <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${gradient} flex items-center justify-center text-white font-bold text-base shrink-0`}>
+      <div className="flex items-center gap-4 mb-4">
+        <div className={`w-12 h-12 rounded-full ${gradient} flex items-center justify-center text-white font-bold text-base shrink-0`}>
           {getInitial(person)}
         </div>
         <div className="flex-1 min-w-0">

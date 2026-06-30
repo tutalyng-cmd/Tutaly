@@ -268,7 +268,7 @@ alert(err.response?.data?.message || err.message);
                             <div className="text-xs font-bold text-c700 capitalize">
                               {campaign.format.replace('_', ' ')}
                             </div>
-                            <div className="text-xs text-c500 truncate max-w-[200px]" title={campaign.job ? campaign.job.title : 'General Ad'}>
+                            <div className="text-xs text-c500 truncate max-w-layout-sm" title={campaign.job ? campaign.job.title : 'General Ad'}>
                               {campaign.job ? campaign.job.title : 'General Placement'}
                             </div>
                           </div>
@@ -397,7 +397,7 @@ alert(err.response?.data?.message || err.message);
               <div>
                 <label className="block text-sm font-bold text-c700 mb-2">Additional Comments</label>
                 <textarea 
-                  className="w-full bg-c100 border border-c200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red focus:border-transparent transition-all min-h-[100px] resize-y"
+                  className="w-full bg-c100 border border-c200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red focus:border-transparent transition-all min-h-24 resize-y"
                   placeholder="Provide specific details about why this campaign was rejected..."
                   value={rejectReason}
                   onChange={(e) => setRejectReason(e.target.value)}

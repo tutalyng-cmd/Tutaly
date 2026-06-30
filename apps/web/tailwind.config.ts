@@ -46,6 +46,29 @@ const config: Config = {
       '32': '128px',
       '40': '160px',
     },
+    maxWidth: {
+      'layout-sm': '300px',
+      'layout-md': '500px',
+      'layout-lg': '800px',
+      'layout-xl': '1100px',
+      'full': '100%',
+    },
+    minWidth: {
+      'layout-xs': '72px',
+      'layout-sm': '150px',
+      'layout-md': '200px',
+      'layout-lg': '300px',
+    },
+    maxHeight: {
+      'layout-md': '300px',
+      'layout-lg': '500px',
+      'full': '100%',
+    },
+    minHeight: {
+      'layout-md': '120px',
+      'layout-lg': '400px',
+      'layout-xl': '500px',
+    },
     fontFamily: {
       sans: ["var(--font)", "-apple-system", "sans-serif"],
       mono: ["var(--mono)", "monospace"],

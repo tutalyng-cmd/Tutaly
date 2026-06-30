@@ -15,7 +15,7 @@ export default function PricingPage() {
             <div className="hero__eyebrow-line" aria-hidden="true"></div>
             <span>Pricing</span>
           </div>
-          <h1 className="hero__title mx-auto max-w-[800px]">Simple pricing for teams of all sizes.</h1>
+          <h1 className="hero__title mx-auto max-w-layout-lg">Simple pricing for teams of all sizes.</h1>
           <p className="hero__subtitle mx-auto">
             Find and hire world-class talent without the agency fees.
           </p>
@@ -24,7 +24,7 @@ export default function PricingPage() {
 
       <section className="section pt-0">
         <div className="container">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-[1100px] mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-layout-xl mx-auto">
             {/* Starter Plan */}
             <div className="bg-c800 rounded-2xl border border-c700 p-8 flex flex-col h-full hover:border-c600 transition-colors">
               <h3 className="text-xl font-bold text-c100 mb-2">Starter</h3>
@@ -51,7 +51,7 @@ export default function PricingPage() {
             </div>
 
             {/* Pro Plan */}
-            <div className="bg-c800 rounded-2xl border border-blue p-8 flex flex-col h-full relative shadow-[0_8px_32px_rgba(27,79,158,0.15)] transform md:-translate-y-4">
+            <div className="bg-c800 rounded-2xl border border-blue p-8 flex flex-col h-full relative shadow-lg transform md:-translate-y-4">
               <div className="absolute top-0 right-0 bg-blue text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-xl">POPULAR</div>
               <h3 className="text-xl font-bold text-c100 mb-2">Pro</h3>
               <p className="text-c400 text-sm mb-6 h-10">For companies scaling their teams aggressively.</p>

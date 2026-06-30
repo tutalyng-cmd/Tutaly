@@ -363,7 +363,7 @@ function AdminOrdersContent() {
                       <div className="font-bold text-c900 line-clamp-1">{order.product?.title || 'Unknown Product'}</div>
                       <div className="text-xs text-c400 font-mono mt-0.5">{order.id.slice(0, 8)}…</div>
                       {order.adminNotes && (
-                        <div className="text-[10px] text-gold mt-1 italic line-clamp-1" title={order.adminNotes}>
+                        <div className="text-xs text-gold mt-1 italic line-clamp-1" title={order.adminNotes}>
                           📝 {order.adminNotes}
                         </div>
                       )}
@@ -382,7 +382,7 @@ function AdminOrdersContent() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-black text-c900">{order.currency} {Number(order.amountPaid).toLocaleString()}</div>
-                      <div className="text-[10px] text-c400 uppercase font-bold">{order.paymentGateway}</div>
+                      <div className="text-xs text-c400 uppercase font-bold">{order.paymentGateway}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {getStatusBadge(order.status)}

@@ -158,7 +158,7 @@ alert(err.response?.data?.message || 'Failed to update product status');
                         </div>
                         <div className="min-w-0">
                           <div className="font-bold text-c900 line-clamp-1">{product.title}</div>
-                          <div className="text-[10px] text-c400 font-bold uppercase tracking-wider">{product.listingType}</div>
+                          <div className="text-xs text-c400 font-bold uppercase tracking-wider">{product.listingType}</div>
                         </div>
                       </div>
                     </td>
@@ -178,15 +178,15 @@ alert(err.response?.data?.message || 'Failed to update product status');
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-black text-green">{product.currency} {Number(product.price).toLocaleString()}</div>
-                      <div className="text-[10px] text-c400 font-bold uppercase">{product.pricingType.replace('_', ' ')}</div>
+                      <div className="text-xs text-c400 font-bold uppercase">{product.pricingType.replace('_', ' ')}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {product.isActive ? (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-green text-green rounded-full text-[10px] font-black uppercase">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-green text-green rounded-full text-xs font-black uppercase">
                           <CheckCircle2 className="w-3 h-3" /> Active
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-c100 text-c500 rounded-full text-[10px] font-black uppercase">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-c100 text-c500 rounded-full text-xs font-black uppercase">
                           <XCircle className="w-3 h-3" /> Inactive
                         </span>
                       )}

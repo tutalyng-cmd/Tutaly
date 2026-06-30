@@ -138,7 +138,7 @@ export default async function CompanyReviewDetailPage({ params }: { params: Prom
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-green to-blueL rounded-2xl border border-green p-8 flex flex-col items-center justify-center text-center">
+            <div className="bg-blue shadow-glow-blue rounded-2xl border border-green p-8 flex flex-col items-center justify-center text-center">
               <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mb-4 shadow-sm text-green">
                 <ThumbsUp className="w-10 h-10" />
               </div>

@@ -156,7 +156,7 @@ alert(err.response?.data?.message || 'Failed to submit quote request');
           {/* Left: Images */}
           <div className="lg:col-span-3">
             <div className="bg-white rounded-2xl shadow-sm border border-c200 overflow-hidden">
-              <div className="aspect-[16/10] bg-gradient-to-br from-c100 to-c100 flex items-center justify-center">
+              <div className="aspect-video bg-c800 border border-c700 flex items-center justify-center">
                 {product.imageUrls && product.imageUrls[0] ? (
                   <img src={product.imageUrls[0]} alt={product.title} className="w-full h-full object-cover" />
                 ) : (
@@ -333,7 +333,7 @@ alert(err.response?.data?.message || 'Failed to submit quote request');
                     <textarea 
                       required
                       placeholder="Describe exactly what you need..."
-                      className="w-full bg-white border border-c300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-gold min-h-[120px]"
+                      className="w-full bg-white border border-c300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-gold min-h-layout-md"
                       value={quoteDetails.requirements}
                       onChange={e => setQuoteDetails({...quoteDetails, requirements: e.target.value})}
                     ></textarea>

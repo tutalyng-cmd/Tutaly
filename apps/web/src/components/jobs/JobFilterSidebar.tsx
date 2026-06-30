@@ -98,31 +98,30 @@ export default function JobFilterSidebar() {
 
   const selectClass = "input";
   const inputClass = "input";
-  const labelClass = "block text-[11px] font-bold uppercase tracking-widest text-[var(--c-400)] mb-1";
+  const labelClass = "label mb-1";
 
   return (
-    <aside className="w-full lg:w-[280px] shrink-0">
-      <div style={{ background: 'var(--c-800)', borderRadius: 'var(--r-xl)', border: '1px solid var(--c-700)', padding: '24px' }} className="sticky top-[100px]">
+    <aside className="w-full lg:w-72 shrink-0">
+      <div className="sidebar sticky top-24">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <h2 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--c-100)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <SlidersHorizontal className="w-4 h-4 text-[var(--blue-l)]" /> Filters
+        <div className="sidebar__header flex items-center justify-between">
+          <h2 className="flex items-center gap-2">
+            <SlidersHorizontal className="w-4 h-4 text-blueL" /> Filters
           </h2>
           <button
             onClick={handleClear}
-            style={{ fontSize: '12px', color: 'var(--c-400)', display: 'flex', alignItems: 'center', gap: '4px' }}
-            className="hover:text-[var(--red)] transition"
+            className="text-xs text-c400 flex items-center gap-1 hover:text-red transition"
           >
             <X className="w-3 h-3" /> Clear
           </button>
         </div>
 
-        <div className="space-y-4">
+        <div className="sidebar__group">
           {/* 1. Keyword / Title */}
           <div>
             <label className={labelClass}>Keyword / Title</label>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--c-400)]" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-c400" />
               <input
                 type="text"
                 value={keyword}
@@ -133,11 +132,11 @@ export default function JobFilterSidebar() {
             </div>
           </div>
 
-          <hr style={{ borderColor: 'var(--c-700)', margin: '20px 0' }} />
+          <hr className="border-c700 my-4" />
 
           {/* Location */}
           <div>
-            <p className={labelClass} style={{ color: 'var(--blue-l)', marginBottom: '12px' }}>Location</p>
+            <p className="label text-blueL mb-3">Location</p>
 
             {/* 2. Country */}
             <div className="mb-3">
@@ -183,7 +182,7 @@ export default function JobFilterSidebar() {
             </div>
           </div>
 
-          <hr style={{ borderColor: 'var(--c-700)', margin: '20px 0' }} />
+          <hr className="border-c700 my-4" />
 
           {/* 5. Work Mode */}
           <div>
@@ -232,11 +231,11 @@ export default function JobFilterSidebar() {
             </select>
           </div>
 
-          <hr style={{ borderColor: 'var(--c-700)', margin: '20px 0' }} />
+          <hr className="border-c700 my-4" />
 
           {/* 9. Salary Range */}
           <div>
-            <p className={labelClass} style={{ color: 'var(--blue-l)', marginBottom: '12px' }}>
+            <p className="label text-blueL mb-3">
               Salary Range ({country === 'Nigeria' ? '₦' : country === 'United States' ? '$' : country === 'United Kingdom' ? '£' : '€'})
             </p>
             <div className="grid grid-cols-2 gap-3">
@@ -278,18 +277,16 @@ export default function JobFilterSidebar() {
         </div>
 
         {/* Action Buttons */}
-        <div className="mt-6 flex flex-col gap-3">
+        <div className="mt-2 flex flex-col gap-3">
           <button
             onClick={handleApply}
-            className="btn btn--primary"
-            style={{ width: '100%' }}
+            className="btn btn--primary w-full"
           >
             Apply Filters
           </button>
           <button
             onClick={handleClear}
-            className="btn btn--ghost"
-            style={{ width: '100%' }}
+            className="btn btn--ghost w-full"
           >
             Clear All
           </button>

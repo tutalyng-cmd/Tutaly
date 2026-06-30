@@ -113,7 +113,7 @@ export default function Navbar() {
             <Link href="/shop/cart" className="relative p-2" style={{ color: 'var(--c-200)' }}>
               <ShoppingCart className="h-5 w-5" />
               {cartItemCount > 0 && (
-                <span className="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold leading-none text-white transform translate-x-1/4 -translate-y-1/4 bg-[var(--red)] rounded-full">
+                <span className="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-white transform translate-x-1/4 -translate-y-1/4 bg-red rounded-full">
                   {cartItemCount}
                 </span>
               )}
@@ -129,18 +129,18 @@ export default function Navbar() {
                 >
                   <Bell className="h-5 w-5" />
                   {unreadCount > 0 && (
-                    <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-[var(--red)] border-2 border-[var(--c-900)]"></span>
+                    <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red border-2 border-c900"></span>
                   )}
                 </button>
 
                 {showNotifications && (
-                  <div className="absolute right-0 mt-2 w-80 bg-[var(--c-800)] rounded-[var(--r-lg)] shadow-lg border border-[var(--c-700)] py-2 z-50 max-h-96 overflow-y-auto">
-                    <div className="px-4 py-2 border-b border-[var(--c-700)] flex justify-between items-center">
-                      <h3 className="font-bold text-[var(--c-100)] text-sm">Notifications</h3>
-                      {unreadCount > 0 && <span className="text-xs text-[var(--blue-l)] bg-[rgba(58,125,224,0.1)] px-2 py-0.5 rounded-full">{unreadCount} new</span>}
+                  <div className="absolute right-0 mt-2 w-80 bg-c800 rounded-lg shadow-lg border border-c700 py-2 z-50 max-h-96 overflow-y-auto">
+                    <div className="px-4 py-2 border-b border-c700 flex justify-between items-center">
+                      <h3 className="font-bold text-c100 text-sm">Notifications</h3>
+                      {unreadCount > 0 && <span className="text-xs text-blueL bg-blueL/10 px-2 py-0.5 rounded-full">{unreadCount} new</span>}
                     </div>
                     {notifications.length === 0 ? (
-                      <div className="px-4 py-6 text-center text-sm text-[var(--c-400)]">
+                      <div className="px-4 py-6 text-center text-sm text-c400">
                         No notifications yet
                       </div>
                     ) : (
@@ -149,17 +149,17 @@ export default function Navbar() {
                           key={n.id} 
                           href={getNotifLink(n.type, n.referenceId)}
                           onClick={() => setShowNotifications(false)}
-                          className={`block px-4 py-3 hover:bg-[var(--c-700)] transition-colors ${!n.isRead ? 'bg-[rgba(58,125,224,0.05)]' : ''}`}
+                          className={`block px-4 py-3 hover:bg-c700 transition-colors ${!n.isRead ? 'bg-blueL/5' : ''}`}
                         >
                           <div className="flex gap-3 items-start">
                             <div className="flex-1 min-w-0">
-                              <p className="text-sm text-[var(--c-200)]">{n.message}</p>
-                              <p className="text-xs text-[var(--c-400)] mt-1">{new Date(n.createdAt).toLocaleDateString()}</p>
+                              <p className="text-sm text-c200">{n.message}</p>
+                              <p className="text-xs text-c400 mt-1">{new Date(n.createdAt).toLocaleDateString()}</p>
                             </div>
                             {!n.isRead && (
                               <button 
                                 onClick={(e) => handleMarkRead(n.id, e)}
-                                className="text-[var(--blue-l)] hover:bg-[var(--c-600)] p-1.5 rounded-full shrink-0"
+                                className="text-blueL hover:bg-c600 p-1.5 rounded-full shrink-0"
                                 title="Mark as read"
                                 style={{ background: 'transparent' }}
                               >
@@ -198,13 +198,13 @@ export default function Navbar() {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="absolute top-full left-0 w-full bg-[var(--c-800)] border-b border-[var(--c-700)] md:hidden p-4 flex flex-col gap-3 shadow-lg">
-            <Link onClick={() => setIsMobileMenuOpen(false)} href="/jobs" className="text-[var(--c-200)] font-medium">Jobs</Link>
-            <Link onClick={() => setIsMobileMenuOpen(false)} href="/salaries" className="text-[var(--c-200)] font-medium">Salaries</Link>
-            <Link onClick={() => setIsMobileMenuOpen(false)} href="/reviews" className="text-[var(--c-200)] font-medium">Reviews</Link>
-            <Link onClick={() => setIsMobileMenuOpen(false)} href="/shop" className="text-[var(--c-200)] font-medium">Marketplace</Link>
-            <Link onClick={() => setIsMobileMenuOpen(false)} href="/connect" className="text-[var(--c-200)] font-medium">Connect</Link>
-            <div className="border-t border-[var(--c-700)] mt-2 pt-2 flex flex-col gap-2">
+          <div className="absolute top-full left-0 w-full bg-c800 border-b border-c700 md:hidden p-4 flex flex-col gap-3 shadow-lg">
+            <Link onClick={() => setIsMobileMenuOpen(false)} href="/jobs" className="text-c200 font-medium">Jobs</Link>
+            <Link onClick={() => setIsMobileMenuOpen(false)} href="/salaries" className="text-c200 font-medium">Salaries</Link>
+            <Link onClick={() => setIsMobileMenuOpen(false)} href="/reviews" className="text-c200 font-medium">Reviews</Link>
+            <Link onClick={() => setIsMobileMenuOpen(false)} href="/shop" className="text-c200 font-medium">Marketplace</Link>
+            <Link onClick={() => setIsMobileMenuOpen(false)} href="/connect" className="text-c200 font-medium">Connect</Link>
+            <div className="border-t border-c700 mt-2 pt-2 flex flex-col gap-2">
               {isAuthenticated ? (
                 <Link onClick={() => setIsMobileMenuOpen(false)} href="/dashboard" className="btn btn--primary text-center">Dashboard</Link>
               ) : (

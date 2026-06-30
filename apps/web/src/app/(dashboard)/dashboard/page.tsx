@@ -46,7 +46,7 @@ export default function DashboardRootRedirect() {
   }, [router]);
 
   return (
-    <div className="flex min-h-[60vh] flex-col items-center justify-center">
+    <div className="flex min-h-screen flex-col items-center justify-center">
       <Loader2 className="w-10 h-10 animate-spin text-green mb-4" />
       <h2 className="text-xl font-medium text-c700">Loading your workspace...</h2>
     </div>

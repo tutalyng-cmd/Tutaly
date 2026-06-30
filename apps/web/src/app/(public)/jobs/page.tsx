@@ -87,13 +87,13 @@ export default async function JobsPage(props: {
   });
 
   return (
-    <div className="section" style={{ padding: '120px 0 60px' }}>
+    <div className="section pt-32 pb-16">
       <div className="container">
 
         {/* Header */}
-        <div style={{ marginBottom: '32px' }}>
-          <h1 className="section__title" style={{ fontSize: '32px', marginBottom: '8px' }}>Find Your Next Role</h1>
-          <p className="section__subtitle" style={{ margin: 0, fontSize: '16px' }}>
+        <div className="mb-8">
+          <h1 className="section__title text-3xl mb-2">Find Your Next Role</h1>
+          <p className="section__subtitle m-0 text-base">
             Showing {meta?.total || 0} active job{meta?.total !== 1 ? 's' : ''}
             {searchParams.keyword ? ` for "${searchParams.keyword}"` : ''}
           </p>
@@ -101,12 +101,18 @@ export default async function JobsPage(props: {
 
         <FeaturedJobsCarousel />
 
-        <div style={{ display: 'flex', gap: '32px', flexDirection: 'column' }} className="lg:flex-row">
-          <Suspense fallback={<div style={{ width: '280px', height: '128px', background: 'var(--c-800)', borderRadius: 'var(--r-lg)' }} className="animate-pulse hidden lg:block" />}>
+        <div className="flex flex-col gap-8 lg:flex-row">
+          <Suspense fallback={<div className="w-72 h-32 bg-c800 rounded-lg animate-pulse hidden lg:block" />}>
             <JobFilterSidebar />
           </Suspense>
 
-          <Suspense fallback={<div style={{ flex: 1, height: '256px', background: 'var(--c-800)', borderRadius: 'var(--r-lg)' }} className="animate-pulse" />}>
+          <Suspense fallback={
+            <div className="flex-1 space-y-4">
+              {[1, 2, 3].map(i => (
+                <div key={i} className="h-32 bg-c800 rounded-lg animate-pulse" />
+              ))}
+            </div>
+          }>
             <JobResultsWithDetail
               jobs={jobs}
               meta={meta}

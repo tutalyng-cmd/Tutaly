@@ -13,7 +13,7 @@ export default function JoinCommunityPage() {
     <div className="min-h-screen bg-c100 pt-20 pb-16">
       {/* Hero */}
       <section className="bg-navy py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-blueL via-transparent to-transparent"></div>
+        <div className="absolute inset-0 opacity-10 bg-blue/5"></div>
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
             Your Professional Network, Built for Nigeria
@@ -77,10 +77,10 @@ export default function JoinCommunityPage() {
           </div>
           
           <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-tr from-blueL to-green rounded-3xl transform rotate-3 scale-105 -z-10"></div>
+            <div className="absolute inset-0 bg-blue shadow-glow-blue rounded-3xl transform rotate-3 scale-105 -z-10"></div>
             <div className="bg-white rounded-3xl shadow-xl border border-c100 p-8">
               <div className="flex items-center gap-4 mb-6">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blueL to-green"></div>
+                <div className="w-12 h-12 rounded-full bg-blue shadow-glow-blue"></div>
                 <div>
                   <h5 className="font-bold text-c900">David O.</h5>
                   <p className="text-xs text-c500">Software Engineer @ Fintech Startup</p>

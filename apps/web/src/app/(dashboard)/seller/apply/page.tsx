@@ -107,7 +107,7 @@ export default function ApplySellerPage() {
 
   return (
     <div className="max-w-3xl mx-auto">
-      <div className="bg-gradient-to-r from-green to-navy rounded-2xl p-8 text-white mb-8 shadow-lg relative overflow-hidden">
+      <div className="bg-green rounded-2xl p-8 text-white mb-8 shadow-lg relative overflow-hidden">
         <div className="relative z-10">
           <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center mb-6 backdrop-blur-sm border border-white/20">
             <Store className="w-6 h-6 text-green" />

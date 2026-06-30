@@ -91,7 +91,7 @@ export default function DashboardLayout({
   };
 
   return (
-    <div className="flex h-[calc(100dvh-64px)] overflow-hidden bg-c100 relative">
+    <div className="flex h-screen overflow-hidden bg-c100 relative">
       {/* Sidebar */}
       <aside className="w-64 border-r border-c200 bg-white flex flex-col hidden lg:flex shrink-0">
         <div className="p-4 border-b border-c100 mb-2">
@@ -150,29 +150,29 @@ export default function DashboardLayout({
       </main>
 
       {/* Mobile Bottom Navigation */}
-      <nav className="lg:hidden absolute bottom-0 left-0 right-0 bg-white border-t border-c200 z-50 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] pb-safe">
-        <div className="flex overflow-x-auto justify-start items-center h-16 px-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
+      <nav className="lg:hidden absolute bottom-0 left-0 right-0 bg-white border-t border-c200 z-50 shadow-lg pb-safe">
+        <div className="flex overflow-x-auto justify-start items-center h-16 px-2 ">
           {links.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex flex-col items-center justify-center min-w-[72px] shrink-0 px-1 space-y-1 transition-colors ${
+                className={`flex flex-col items-center justify-center min-w-layout-xs shrink-0 px-1 space-y-1 transition-colors ${
                   isActive ? 'text-green' : 'text-c500 hover:text-c900'
                 }`}
               >
                 <item.icon className={`h-5 w-5 ${isActive ? 'text-green' : ''}`} strokeWidth={isActive ? 2.5 : 2} />
-                <span className={`text-[10px] whitespace-nowrap ${isActive ? 'font-bold' : 'font-medium'}`}>{item.name}</span>
+                <span className={`text-xs whitespace-nowrap ${isActive ? 'font-bold' : 'font-medium'}`}>{item.name}</span>
               </Link>
             );
           })}
           <button
             onClick={handleLogout}
-            className="flex flex-col items-center justify-center min-w-[72px] shrink-0 px-1 space-y-1 text-c500 hover:text-red transition-colors"
+            className="flex flex-col items-center justify-center min-w-layout-xs shrink-0 px-1 space-y-1 text-c500 hover:text-red transition-colors"
           >
             <LogOut className="h-5 w-5" />
-            <span className="text-[10px] font-medium whitespace-nowrap">Sign out</span>
+            <span className="text-xs font-medium whitespace-nowrap">Sign out</span>
           </button>
         </div>
       </nav>

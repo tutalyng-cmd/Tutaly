@@ -14,7 +14,7 @@ export default function PressPage() {
             <div className="hero__eyebrow-line" aria-hidden="true"></div>
             <span>Press & Media</span>
           </div>
-          <h1 className="hero__title mx-auto max-w-[800px]">Tutaly in the news.</h1>
+          <h1 className="hero__title mx-auto max-w-layout-lg">Tutaly in the news.</h1>
           <p className="hero__subtitle mx-auto">
             Resources for journalists, bloggers, and partners.
           </p>

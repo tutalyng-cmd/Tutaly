@@ -76,7 +76,7 @@ alert(err?.response?.data?.message || 'Failed to follow user');
       {/* Profile Header */}
       <div className="bg-white rounded-2xl shadow-sm border border-c100 overflow-hidden">
         {/* Cover Photo Placeholder */}
-        <div className="h-48 bg-gradient-to-r from-green to-green w-full relative">
+        <div className="h-48 bg-green w-full relative">
           {/* We could render cover image here if it was available */}
         </div>
         

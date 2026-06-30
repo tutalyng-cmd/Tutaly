@@ -129,7 +129,7 @@ setError(error.response?.data?.message || 'Failed to reset password.');
             <button
               type="submit"
               disabled={isLoading || !password || !confirmPassword}
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-lg text-sm font-bold text-white bg-gradient-to-r from-green to-green hover:from-green focus:outline-none transition-all disabled:opacity-70"
+              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-lg text-sm font-bold text-white bg-green hover:from-green focus:outline-none transition-all disabled:opacity-70"
             >
               {isLoading ? (
                 <Loader2 className="animate-spin h-5 w-5" />

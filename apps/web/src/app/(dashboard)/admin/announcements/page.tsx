@@ -207,7 +207,7 @@ alert(err.response?.data?.message || err.message);
                   required
                   value={body}
                   onChange={(e) => setBody(e.target.value)}
-                  className="w-full border-c300 rounded-xl shadow-sm focus:border-green focus:ring-green py-3 px-4 bg-c100 min-h-[100px] resize-y"
+                  className="w-full border-c300 rounded-xl shadow-sm focus:border-green focus:ring-green py-3 px-4 bg-c100 min-h-24 resize-y"
                   placeholder="Details of the announcement..."
                 ></textarea>
               </div>

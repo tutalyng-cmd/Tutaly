@@ -209,7 +209,7 @@ alert(err.response?.data?.message || 'Failed to mark as delivered');
                     const statusInfo = STATUS_MAP[order.status] || STATUS_MAP.pending_payment;
                     return (
                       <tr key={order.id} className="hover:bg-c100">
-                        <td className="p-4 font-medium text-c900 max-w-[200px] truncate">{order.product?.title}</td>
+                        <td className="p-4 font-medium text-c900 max-w-layout-sm truncate">{order.product?.title}</td>
                         <td className="p-4 text-sm text-c500">{order.buyer?.email}</td>
                         <td className="p-4 text-sm font-medium">{formatPrice(order.amountPaid, order.currency)}</td>
                         <td className="p-4 text-sm font-bold text-green">{formatPrice(order.sellerEarnings, order.currency)}</td>

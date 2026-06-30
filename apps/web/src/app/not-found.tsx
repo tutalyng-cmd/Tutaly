@@ -2,9 +2,9 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <main className="min-h-[70vh] flex items-center justify-center py-20">
-      <div className="container text-center max-w-[600px]">
-        <div className="text-[120px] font-black text-c800 leading-none mb-4 tracking-tighter shadow-sm mix-blend-screen" style={{ WebkitTextStroke: '1px var(--c-700)', color: 'transparent' }}>
+    <main className="min-h-screen flex items-center justify-center py-20">
+      <div className="container text-center max-w-layout-md">
+        <div className="text-9xl font-black text-c800 leading-none mb-4 tracking-tighter shadow-sm mix-blend-screen" style={{ WebkitTextStroke: '1px var(--c-700)', color: 'transparent' }}>
           404
         </div>
         <h1 className="text-3xl font-bold text-c100 mb-4">Page not found</h1>

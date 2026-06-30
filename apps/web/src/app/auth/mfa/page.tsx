@@ -91,7 +91,7 @@ setError(error.response?.data?.message || 'Invalid OTP code. Please try again.')
                 required
                 value={code}
                 onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
-                className="block w-full text-center text-3xl tracking-[0.5em] font-bold py-3 border border-white/10 rounded-xl bg-white/5 text-white focus:outline-none focus:ring-2 focus:ring-green transition-all"
+                className="block w-full text-center text-3xl tracking-widest font-bold py-3 border border-white/10 rounded-xl bg-white/5 text-white focus:outline-none focus:ring-2 focus:ring-green transition-all"
                 placeholder="000000"
               />
             </div>
@@ -99,7 +99,7 @@ setError(error.response?.data?.message || 'Invalid OTP code. Please try again.')
             <button
               type="submit"
               disabled={isLoading || code.length < 6}
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-lg text-sm font-bold text-white bg-gradient-to-r from-green to-green hover:from-green hover:to-[#0f5c43] transition-all disabled:opacity-50 disabled:cursor-not-allowed items-center"
+              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-lg text-sm font-bold text-white bg-green hover:from-green  transition-all disabled:opacity-50 disabled:cursor-not-allowed items-center"
             >
               {isLoading ? (
                 <Loader2 className="animate-spin h-5 w-5" />

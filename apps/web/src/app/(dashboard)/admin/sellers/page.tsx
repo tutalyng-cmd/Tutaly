@@ -297,7 +297,7 @@ alert(err.response?.data?.message || err.message);
       {/* View Details Modal — bottom sheet on mobile */}
       {selectedApp && (
         <div className="fixed inset-0 bg-c900/60 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 p-0 sm:p-4">
-          <div className="bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl w-full sm:max-w-2xl max-h-[90vh] overflow-y-auto p-6 sm:p-8">
+          <div className="bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl w-full sm:max-w-2xl max-h-screen overflow-y-auto p-6 sm:p-8">
             <div className="flex justify-between items-start mb-4">
               <div className="flex flex-wrap items-center gap-2">
                 <h2 className="text-lg sm:text-xl font-bold text-c900">Application Details</h2>

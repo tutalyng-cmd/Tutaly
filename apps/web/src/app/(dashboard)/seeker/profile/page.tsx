@@ -156,7 +156,7 @@ setMessage({ type: 'error', text: err instanceof Error ? err.message : 'Failed t
     return (
       <div className="p-8 pb-16 animate-pulse">
         <div className="h-8 bg-c200 rounded w-1/4 mb-6" />
-        <div className="h-[400px] bg-c100 rounded-xl" />
+        <div className="h-layout-lg bg-c100 rounded-xl" />
       </div>
     );
   }

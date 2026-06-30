@@ -14,7 +14,7 @@ export default function CareersPage() {
             <div className="hero__eyebrow-line" aria-hidden="true"></div>
             <span>Careers at Tutaly</span>
           </div>
-          <h1 className="hero__title mx-auto max-w-[800px]">Build the future of work with us.</h1>
+          <h1 className="hero__title mx-auto max-w-layout-lg">Build the future of work with us.</h1>
           <p className="hero__subtitle mx-auto">
             We are a fully distributed team building tools to give professionals leverage in their careers.
           </p>
@@ -22,7 +22,7 @@ export default function CareersPage() {
       </section>
 
       <section className="section pt-0">
-        <div className="container max-w-[800px]">
+        <div className="container max-w-layout-lg">
           <div className="mb-12">
             <h2 className="text-2xl font-bold text-c100 mb-6">Open Roles</h2>
             
@@ -74,9 +74,9 @@ export default function CareersPage() {
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-blue/10 to-blue/5 rounded-2xl border border-blue p-8 text-center">
+          <div className="bg-blue shadow-glow-blue rounded-2xl border border-blue p-8 text-center">
             <h3 className="text-xl font-bold text-c100 mb-3">Don't see a fit?</h3>
-            <p className="text-c300 mb-6 max-w-[500px] mx-auto">We're always looking for exceptional talent. Send us your resume and tell us how you can help.</p>
+            <p className="text-c300 mb-6 max-w-layout-md mx-auto">We're always looking for exceptional talent. Send us your resume and tell us how you can help.</p>
             <Link href="mailto:careers@tutaly.com" className="btn btn--primary">Email Us</Link>
           </div>
         </div>

@@ -58,8 +58,8 @@ export default function DiscoverPage() {
   const getInitial = (p: PersonData) => getName(p).charAt(0).toUpperCase();
 
   const gradients = [
-    'from-green to-green',
-    'from-blueL to-blue',
+    'bg-green',
+    'bg-blue shadow-glow-blue',
     'from-purple-400 to-pink-500',
     'from-orange-400 to-red',
     'from-cyan-400 to-blue',
@@ -106,7 +106,7 @@ export default function DiscoverPage() {
                 >
                   <div className="flex items-center gap-4">
                     <Link href={profileLink} className="shrink-0">
-                      <div className={`w-14 h-14 rounded-full bg-gradient-to-br ${gradients[idx % gradients.length]} flex items-center justify-center text-white font-bold text-lg shrink-0 group-hover:scale-105 transition-transform overflow-hidden`}>
+                      <div className={`w-14 h-14 rounded-full ${gradients[idx % gradients.length]} flex items-center justify-center text-white font-bold text-lg shrink-0 group-hover:scale-105 transition-transform overflow-hidden`}>
                         {person.avatar ? (
                           <img src={person.avatar} alt="avatar" className="w-full h-full object-cover" />
                         ) : (

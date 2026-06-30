@@ -14,7 +14,7 @@ export default function ContactPage() {
             <div className="hero__eyebrow-line" aria-hidden="true"></div>
             <span>Contact Us</span>
           </div>
-          <h1 className="hero__title mx-auto max-w-[800px]">How can we help?</h1>
+          <h1 className="hero__title mx-auto max-w-layout-lg">How can we help?</h1>
           <p className="hero__subtitle mx-auto">
             Whether you are a job seeker looking for support or an employer interested in our enterprise plans, we're here for you.
           </p>
@@ -22,7 +22,7 @@ export default function ContactPage() {
       </section>
 
       <section className="section pt-0">
-        <div className="container max-w-[800px]">
+        <div className="container max-w-layout-lg">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
             <div className="bg-c800 border border-c700 rounded-xl p-8 text-center hover:border-c600 transition-colors">
               <div className="text-4xl mb-4">💬</div>

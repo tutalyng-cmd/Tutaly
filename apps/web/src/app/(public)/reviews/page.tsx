@@ -38,7 +38,7 @@ export default async function ReviewsPage() {
     <div className="min-h-screen bg-c100 pt-20 pb-16">
       {/* Hero Section */}
       <section className="bg-navy py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-green via-transparent to-transparent"></div>
+        <div className="absolute inset-0 opacity-10 bg-blue/5"></div>
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 tracking-tight">
             Discover Real Company Culture in Nigeria
@@ -111,7 +111,7 @@ export default async function ReviewsPage() {
         </div>
         
         {/* Call to action */}
-        <div className="mt-20 bg-gradient-to-r from-green to-blueL rounded-3xl p-10 text-center border border-green shadow-sm relative overflow-hidden">
+        <div className="mt-20 bg-blue shadow-glow-blue rounded-3xl p-10 text-center border border-green shadow-sm relative overflow-hidden">
           <div className="relative z-10 max-w-2xl mx-auto">
             <h3 className="text-2xl font-bold text-c900 mb-4">Help Others Make Better Career Choices</h3>
             <p className="text-c600 mb-8 text-lg">Your review is 100% anonymous and helps thousands of Nigerian professionals find the right company culture.</p>

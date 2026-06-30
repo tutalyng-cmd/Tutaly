@@ -34,7 +34,7 @@ export default function LiveFeed() {
   // Prevent hydration mismatch by returning empty server-side
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
-  if (!mounted) return <div className="live-feed min-h-[200px]" />;
+  if (!mounted) return <div className="live-feed min-h-52" />;
 
   return (
     <div className="live-feed">

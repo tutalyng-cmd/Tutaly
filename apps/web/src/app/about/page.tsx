@@ -23,7 +23,7 @@ export default function AboutPage() {
 
       <section className="section">
         <div className="container">
-          <div className="reveal visible max-w-[800px] mx-auto text-center">
+          <div className="reveal visible max-w-layout-lg mx-auto text-center">
             <h2 className="section__title">Our Story</h2>
             <p className="text-lg text-c300 leading-relaxed mb-8">
               We started Tutaly in Lagos because we saw a recurring problem: brilliant engineers, designers, and operators were walking into negotiations with no leverage and no visibility into what they were actually worth on the global stage.
@@ -38,7 +38,7 @@ export default function AboutPage() {
       <section className="section section--alt">
         <div className="container">
           <div className="reveal visible flex flex-wrap gap-12 items-center justify-between">
-            <div className="max-w-[500px]">
+            <div className="max-w-layout-md">
               <div className="section__label">The Mission</div>
               <h2 className="section__title mb-4">Leveling the playing field.</h2>
               <p className="section__subtitle mb-8">
@@ -46,7 +46,7 @@ export default function AboutPage() {
               </p>
               <Link href="/jobs" className="btn btn--primary">Find your next role</Link>
             </div>
-            <div className="grid grid-cols-2 gap-6 flex-1 min-w-[300px]">
+            <div className="grid grid-cols-2 gap-6 flex-1 min-w-layout-lg">
               <div className="bg-c800 p-8 rounded-xl border border-c700 text-center">
                 <div className="text-4xl font-black text-blue mb-2">190k+</div>
                 <div className="text-sm text-c400">Verified Professionals</div>

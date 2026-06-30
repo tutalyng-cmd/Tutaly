@@ -195,7 +195,7 @@ alert(err.response?.data?.message || 'Failed to submit salary');
             <button
               type="submit"
               disabled={loading}
-              className="bg-green hover:bg-green text-white px-8 py-3 rounded-xl font-bold shadow-md transition-all flex items-center justify-center min-w-[150px]"
+              className="bg-green hover:bg-green text-white px-8 py-3 rounded-xl font-bold shadow-md transition-all flex items-center justify-center min-w-layout-sm"
             >
               {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Submit'}
             </button>

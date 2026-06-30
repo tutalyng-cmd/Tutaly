@@ -234,7 +234,7 @@ if (err.response?.status === 401 || err.response?.status === 403) {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-c900">
                         {tx.buyerEmail}
                       </td>
-                      <td className="px-6 py-4 text-sm text-c900 max-w-[200px] truncate">
+                      <td className="px-6 py-4 text-sm text-c900 max-w-layout-sm truncate">
                         {tx.productTitle}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-c500 capitalize">

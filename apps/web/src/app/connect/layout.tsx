@@ -69,7 +69,7 @@ export default function ConnectLayout({ children }: { children: React.ReactNode 
   ];
 
   return (
-    <div className="min-h-[calc(100dvh-64px)] bg-c100">
+    <div className="min-h-screen bg-c100">
       {/* Desktop Top Bar */}
       <div className="hidden lg:block border-b border-c200 bg-white sticky top-16 z-40">
         <div className="max-w-7xl mx-auto px-4">
@@ -89,7 +89,7 @@ export default function ConnectLayout({ children }: { children: React.ReactNode 
                   <item.icon className="w-4 h-4" />
                   {item.name}
                   {item.badge ? (
-                    <span className="absolute -top-0.5 -right-0.5 bg-red text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center leading-none">
+                    <span className="absolute -top-0.5 -right-0.5 bg-red text-white text-xs font-bold px-1.5 py-0.5 rounded-full min-w-4 text-center leading-none">
                       {item.badge > 99 ? '99+' : item.badge}
                     </span>
                   ) : null}
@@ -141,7 +141,7 @@ export default function ConnectLayout({ children }: { children: React.ReactNode 
                 {suggestedUsers.map((user) => (
                   <div key={user.id} className="flex items-center gap-3 px-1">
                     <Link href={`/connect/profile/${user.username || user.id}`} className="shrink-0">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green to-green flex items-center justify-center text-white font-bold text-sm shrink-0 overflow-hidden">
+                      <div className="w-10 h-10 rounded-full bg-green flex items-center justify-center text-white font-bold text-sm shrink-0 overflow-hidden">
                         {user.avatar ? (
                           <img src={user.avatar} alt={user.firstName} className="w-full h-full object-cover" />
                         ) : (
@@ -174,7 +174,7 @@ export default function ConnectLayout({ children }: { children: React.ReactNode 
       </div>
 
       {/* Mobile Bottom Navigation */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-c200 z-50 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] pb-safe">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-c200 z-50 shadow-lg pb-safe">
         <div className="flex items-center justify-around h-16">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
@@ -187,9 +187,9 @@ export default function ConnectLayout({ children }: { children: React.ReactNode 
                 }`}
               >
                 <item.icon className="w-5 h-5" strokeWidth={isActive ? 2.5 : 2} />
-                <span className={`text-[10px] ${isActive ? 'font-bold' : 'font-medium'}`}>{item.name}</span>
+                <span className={`text-xs ${isActive ? 'font-bold' : 'font-medium'}`}>{item.name}</span>
                 {item.badge ? (
-                  <span className="absolute -top-1 right-0 bg-red text-white text-[9px] font-bold px-1 py-0.5 rounded-full min-w-[16px] text-center leading-none">
+                  <span className="absolute -top-1 right-0 bg-red text-white text-xs font-bold px-1 py-0.5 rounded-full min-w-4 text-center leading-none">
                     {item.badge > 99 ? '99+' : item.badge}
                   </span>
                 ) : null}

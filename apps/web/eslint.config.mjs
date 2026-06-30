@@ -22,9 +22,35 @@ const noInlineColorsRule = {
   }
 };
 
+const noArbitraryTailwindRule = {
+  meta: { type: "problem", messages: { noArbitrary: "Do not use arbitrary Tailwind values (e.g. `[100px]`, `[#fff]`). Use CSS tokens or standard Tailwind utilities." } },
+  create(context) {
+    return {
+      "JSXAttribute[name.name='className'] Literal"(node) {
+if (typeof node.value === 'string' && node.value.includes('[')) {
+          const invalidClasses = node.value.split(' ').filter(c => c.includes('[') && !c.includes('content-[') && !c.startsWith('[&') && !c.includes('scrollbar') && !c.includes('[-ms') && !c.includes('content'));
+          if (invalidClasses.length > 0) {
+            context.report({ node, messageId: "noArbitrary" });
+          }
+        }
+      },
+      "JSXAttribute[name.name='className'] TemplateLiteral"(node) {
+const str = node.quasis.map(q => q.value.raw).join('');
+        if (str.includes('[')) {
+          const invalidClasses = str.split(' ').filter(c => c.includes('[') && !c.includes('content-[') && !c.startsWith('[&') && !c.includes('scrollbar') && !c.includes('[-ms') && !c.includes('content'));
+          if (invalidClasses.length > 0) {
+            context.report({ node, messageId: "noArbitrary" });
+          }
+        }
+      }
+    };
+  }
+};
+
 const customPlugin = {
   rules: {
-    "no-inline-colors": noInlineColorsRule
+    "no-inline-colors": noInlineColorsRule,
+    "no-arbitrary-tailwind": noArbitraryTailwindRule
   }
 };
 
@@ -45,7 +71,8 @@ const eslintConfig = defineConfig([
       "@typescript-eslint/no-explicit-any": "warn",
       "@typescript-eslint/no-unused-vars": "warn",
       "react/no-unescaped-entities": "warn",
-      "custom/no-inline-colors": "error"
+      "custom/no-inline-colors": "error",
+      "custom/no-arbitrary-tailwind": "error"
     }
   }
 ]);

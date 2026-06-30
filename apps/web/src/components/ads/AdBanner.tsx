@@ -51,7 +51,7 @@ export default function AdBanner({ placement }: { placement: string }) {
 
   if (isLoading) {
     return (
-      <div className="w-full h-[90px] bg-c900 animate-pulse rounded-xl mb-8 flex items-center justify-center">
+      <div className="w-full h-24 bg-c900 animate-pulse rounded-xl mb-8 flex items-center justify-center">
         <span className="text-c700 text-sm">Loading advertisement...</span>
       </div>
     );
@@ -62,15 +62,15 @@ export default function AdBanner({ placement }: { placement: string }) {
   return (
     <div className="relative w-full max-w-6xl mx-auto mb-10 overflow-hidden rounded-xl border border-c800 group shadow-lg">
       <Link href={ad.target_url} target="_blank" rel="noopener noreferrer">
-        <div className="absolute top-2 right-2 bg-c900/80 backdrop-blur-sm text-c300 text-[10px] uppercase font-bold tracking-widest px-2 py-1 rounded-sm z-10">
+        <div className="absolute top-2 right-2 bg-c900/80 backdrop-blur-sm text-c300 text-xs uppercase font-bold tracking-widest px-2 py-1 rounded-sm z-10">
           Sponsored
         </div>
-        <div className="w-full h-[90px] md:h-[120px] relative bg-c900">
+        <div className="w-full h-24 md:h-32 relative bg-c900">
           <Image 
             src={ad.image_url}
             alt="Advertisement"
             fill
-            className="object-cover group-hover:scale-[1.02] transition-transform duration-500"
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
             unoptimized={ad.image_url.includes('placehold.co')} // allow placeholder images to render without next/image optimization issues
           />
         </div>

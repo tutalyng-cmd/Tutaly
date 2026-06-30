@@ -53,7 +53,7 @@ export default function JobDetailPanel({ job }: { job: Job | null }) {
 
   if (!job) {
     return (
-      <div className="bg-white p-8 rounded-xl shadow-sm border border-c100 min-h-[400px] flex flex-col items-center justify-center text-c400 text-center">
+      <div className="bg-white p-8 rounded-xl shadow-sm border border-c100 min-h-layout-lg flex flex-col items-center justify-center text-c400 text-center">
         <Briefcase className="w-12 h-12 mb-4 text-c300" />
         <p className="font-medium">Select a job to view details</p>
         <p className="text-sm mt-1">Click on any listing to see the full description and apply.</p>
@@ -150,16 +150,16 @@ export default function JobDetailPanel({ job }: { job: Job | null }) {
             )}
           </div>
 
-          <div className="mt-6 space-y-3 text-sm text-[var(--c-300)]">
+          <div className="mt-6 space-y-3 text-sm text-c300">
             <div className="flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-[var(--c-500)]" />
+              <MapPin className="w-4 h-4 text-c500" />
               {job.area ? `${job.area}, ` : ''}
               {job.state}, {job.country}
             </div>
             {job.minSalary && (
               <div className="flex items-center gap-2">
                 <DollarSign className="w-4 h-4 text-c500" />
-                <span className="font-medium text-[#2DB85A] font-mono">
+                <span className="font-medium text-green font-mono">
                   {sym}
                   {job.minSalary.toLocaleString()}
                   {job.maxSalary ? ` – ${sym}${job.maxSalary.toLocaleString()}` : '+'}
@@ -169,12 +169,12 @@ export default function JobDetailPanel({ job }: { job: Job | null }) {
             )}
             {job.deadline && (
               <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-[var(--c-500)]" />
+                <Calendar className="w-4 h-4 text-c500" />
                 Deadline: {new Date(job.deadline).toLocaleDateString()}
               </div>
             )}
             <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4 text-[var(--c-500)]" />
+              <Clock className="w-4 h-4 text-c500" />
               Posted {new Date(job.createdAt).toLocaleDateString()}
             </div>
           </div>
@@ -193,7 +193,7 @@ export default function JobDetailPanel({ job }: { job: Job | null }) {
         {/* Actions */}
         <div className="p-6">
           {applied ? (
-            <div className="w-full bg-[#1D7A3A]/20 text-[#2DB85A] font-bold p-3.5 rounded-md text-center border border-[#1D7A3A]/30 flex items-center justify-center gap-2">
+            <div className="w-full bg-green/20 text-green font-bold p-3.5 rounded-md text-center border border-green/30 flex items-center justify-center gap-2">
               <CheckCircle2 className="w-5 h-5" />
               Application Submitted
             </div>

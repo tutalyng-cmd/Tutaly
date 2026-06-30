@@ -23,7 +23,7 @@ function SuccessContent() {
       <div className="max-w-lg w-full text-center">
         <div className="bg-white rounded-3xl shadow-xl p-10 border border-green">
           {/* Success Icon */}
-          <div className="w-20 h-20 bg-gradient-to-br from-green to-green rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg">
+          <div className="w-20 h-20 bg-green rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg">
             <CheckCircle2 className="w-10 h-10 text-white" />
           </div>
 

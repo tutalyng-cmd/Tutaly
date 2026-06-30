@@ -58,7 +58,7 @@ setStatus('error');
           </p>
           <Link
             href="/auth/signin"
-            className="w-full inline-flex justify-center py-3 px-4 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-green to-green hover:from-green hover:to-[#0f5c43] transition-all shadow-lg shadow-teal-500/20"
+            className="w-full inline-flex justify-center py-3 px-4 rounded-xl text-sm font-bold text-white bg-green hover:from-green  transition-all shadow-lg shadow-sm"
           >
             Go to Sign In
           </Link>
@@ -74,7 +74,7 @@ setStatus('error');
           <p className="text-c400 mb-8">{message}</p>
           <Link
             href="/auth/signup"
-            className="w-full inline-flex justify-center py-3 px-4 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-green to-green focus:outline-none"
+            className="w-full inline-flex justify-center py-3 px-4 rounded-xl text-sm font-bold text-white bg-green focus:outline-none"
           >
             Create New Account
           </Link>

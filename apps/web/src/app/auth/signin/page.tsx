@@ -85,7 +85,7 @@ setError(error.response?.data?.message || 'Invalid email or password.');
               </label>
               <div className="relative rounded-md shadow-sm">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-[var(--c-500)]" />
+                  <Mail className="h-5 w-5 text-c500" />
                 </div>
                 <input
                   type="email"
@@ -103,13 +103,13 @@ setError(error.response?.data?.message || 'Invalid email or password.');
                 <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--c-300)' }}>
                   Password
                 </label>
-                <Link href="/auth/forgot-password" style={{ fontSize: '12px', fontWeight: 600, color: 'var(--blue-l)' }} className="hover:text-[var(--blue)] transition-colors">
+                <Link href="/auth/forgot-password" className="text-xs font-semibold text-blueL hover:text-blue transition-colors">
                   Forgot password?
                 </Link>
               </div>
               <div className="relative rounded-md shadow-sm">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-[var(--c-500)]" />
+                  <Lock className="h-5 w-5 text-c500" />
                 </div>
                 <input
                   type="password"
@@ -153,7 +153,7 @@ setError(error.response?.data?.message || 'Invalid email or password.');
             </div>
 
             <div className="mt-6 text-center">
-              <Link href="/auth/signup" style={{ fontSize: '14px', fontWeight: 600, color: 'var(--c-100)' }} className="hover:text-[var(--blue-l)] transition-colors">
+              <Link href="/auth/signup" style={{ fontSize: '14px', fontWeight: 600, color: 'var(--c-100)' }} className="hover:text-blueL transition-colors">
                 Create an account
               </Link>
             </div>

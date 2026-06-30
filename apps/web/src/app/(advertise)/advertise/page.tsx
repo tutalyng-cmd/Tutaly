@@ -91,7 +91,7 @@ export default function AdvertiseLandingPage() {
       </div>
 
       {/* AUDIENCE STATS */}
-      <div className="bg-gradient-to-r from-brand-blue/20 to-brand-green/10 rounded-3xl p-12 text-center border border-c800">
+      <div className="bg-blue shadow-glow-blue rounded-3xl p-12 text-center border border-c800">
         <h2 className="text-3xl font-bold mb-10 text-white">Join the platform where Nigeria&apos;s talent gathers</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div>

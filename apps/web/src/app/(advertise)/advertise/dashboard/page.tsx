@@ -40,7 +40,7 @@ export default function AdvertiserDashboard() {
         </div>
         <Link 
           href="/advertise/create" 
-          className="px-6 py-3 bg-brand-blue text-white rounded-lg font-bold hover:bg-brand-blue/90 transition-colors shadow-[0_0_15px_rgba(27,79,158,0.3)]"
+          className="px-6 py-3 bg-brand-blue text-white rounded-lg font-bold hover:bg-brand-blue/90 transition-colors shadow-glow-blue"
         >
           + New Campaign
         </Link>

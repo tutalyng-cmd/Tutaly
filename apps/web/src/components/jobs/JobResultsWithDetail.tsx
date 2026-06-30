@@ -192,7 +192,7 @@ export default function JobResultsWithDetail({
                       <span className="floatcard__tag">{job.jobType}</span>
                       {job.isFeatured && <span className="floatcard__new bg-gold/20 text-goldH">Featured</span>}
                       {job.isUrgent && <span className="floatcard__new bg-red/10 text-red">Urgent</span>}
-                      <span className="text-[11px] text-c500 ml-auto">
+                      <span className="text-xs text-c500 ml-auto">
                         {formatTimeAgo(job.createdAt)}
                       </span>
                     </div>
@@ -225,7 +225,7 @@ export default function JobResultsWithDetail({
       </div>
 
       {/* ─── Desktop: Detail Panel (side) ─── */}
-      <div className="hidden lg:block lg:w-[380px] xl:w-[420px] shrink-0">
+      <div className="hidden lg:block lg:w-96 xl:w-layout-md shrink-0">
         <div className="sticky top-8">
           <JobDetailPanel job={selectedJob} />
         </div>

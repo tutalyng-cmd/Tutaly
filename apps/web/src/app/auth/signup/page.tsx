@@ -98,7 +98,7 @@ setError(error.response?.data?.message || 'Failed to register. Please try again.
               <div
                 onClick={() => setRole('seeker')}
                 className={`relative rounded-xl border p-6 cursor-pointer flex flex-col items-center text-center transition-all ${
-                  role === 'seeker' ? 'border-green bg-green/10 shadow-[0_0_15px_rgba(29,158,117,0.3)]' : 'border-white/10 bg-white/5 hover:bg-white/10'
+                  role === 'seeker' ? 'border-green bg-green/10 shadow-lg shadow-green/30' : 'border-white/10 bg-white/5 hover:bg-white/10'
                 }`}
               >
                 <User className={`h-8 w-8 mb-3 ${role === 'seeker' ? 'text-green' : 'text-c400'}`} />
@@ -109,7 +109,7 @@ setError(error.response?.data?.message || 'Failed to register. Please try again.
               <div
                 onClick={() => setRole('employer')}
                 className={`relative rounded-xl border p-6 cursor-pointer flex flex-col items-center text-center transition-all ${
-                  role === 'employer' ? 'border-green bg-green/10 shadow-[0_0_15px_rgba(29,158,117,0.3)]' : 'border-white/10 bg-white/5 hover:bg-white/10'
+                  role === 'employer' ? 'border-green bg-green/10 shadow-lg shadow-green/30' : 'border-white/10 bg-white/5 hover:bg-white/10'
                 }`}
               >
                 <Briefcase className={`h-8 w-8 mb-3 ${role === 'employer' ? 'text-green' : 'text-c400'}`} />
@@ -308,7 +308,7 @@ setError(error.response?.data?.message || 'Failed to register. Please try again.
             <div className="mt-6 text-center">
               <p style={{ fontSize: '14px', color: 'var(--c-400)' }}>
                 Already have an account?{' '}
-                <Link href="/auth/signin" style={{ fontWeight: 600, color: 'var(--c-100)' }} className="hover:text-[var(--blue-l)] transition-colors">
+                <Link href="/auth/signin" style={{ fontWeight: 600, color: 'var(--c-100)' }} className="hover:text-blueL transition-colors">
                   Sign in
                 </Link>
               </p>

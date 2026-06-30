@@ -61,7 +61,7 @@ export default function ShopPage() {
   return (
     <div className="min-h-screen bg-c100 pt-20 pb-16">
       {/* Hero */}
-      <section className="bg-gradient-to-br from-navy via-blueH to-blueH py-16 px-4 relative overflow-hidden">
+      <section className="bg-blue shadow-glow-blue py-16 px-4 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-10 left-10 w-72 h-72 bg-green rounded-full blur-3xl"></div>
           <div className="absolute bottom-10 right-20 w-96 h-96 bg-purple-400 rounded-full blur-3xl"></div>
@@ -139,7 +139,7 @@ export default function ShopPage() {
                   <Link key={product.id} href={`/shop/${product.id}`} className="group block">
                     <div className="bg-white rounded-2xl shadow-sm border border-c100 overflow-hidden hover:shadow-xl hover:border-green transition-all duration-300 transform group-hover:-translate-y-1">
                       {/* Image placeholder */}
-                      <div className="aspect-[4/3] bg-gradient-to-br from-c100 to-c100 flex items-center justify-center relative overflow-hidden">
+                      <div className="aspect-video bg-c800 border border-c700 flex items-center justify-center relative overflow-hidden">
                         {product.imageUrls && product.imageUrls[0] ? (
                           <img src={product.imageUrls[0]} alt={product.title} className="w-full h-full object-cover" />
                         ) : (

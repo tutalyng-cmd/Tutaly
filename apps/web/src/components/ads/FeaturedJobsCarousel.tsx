@@ -48,11 +48,11 @@ export default function FeaturedJobsCarousel() {
 
   return (
     <div className="group floatcard border border-goldH bg-gold/10 p-6 relative overflow-hidden mb-8">
-      <div className="absolute top-4 right-4 bg-goldH text-[11px] font-extrabold px-2 py-1 rounded text-black uppercase tracking-wider flex items-center gap-1">
+      <div className="absolute top-4 right-4 bg-goldH text-xs font-extrabold px-2 py-1 rounded text-black uppercase tracking-wider flex items-center gap-1">
         ⭐ Featured
       </div>
       <h3 className="text-xl font-extrabold text-c100 mb-2">Sponsored Opportunity</h3>
-      <p className="text-c300 mb-4 max-w-[600px] leading-relaxed">
+      <p className="text-c300 mb-4 max-w-layout-md leading-relaxed">
         This is a featured job position. Apply now to fast-track your application!
       </p>
       

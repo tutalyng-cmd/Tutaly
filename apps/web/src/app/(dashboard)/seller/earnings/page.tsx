@@ -103,7 +103,7 @@ alert(err.response?.data?.message || 'Failed to process withdrawal.');
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
         {/* Available Balance */}
-        <div className="bg-gradient-to-br from-green to-green rounded-2xl shadow-sm border border-green p-6 text-white relative overflow-hidden">
+        <div className="bg-green rounded-2xl shadow-sm border border-green p-6 text-white relative overflow-hidden">
           <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-white opacity-10 rounded-full blur-xl"></div>
           <div className="flex items-center justify-between mb-4">
             <p className="font-bold text-green">Available to Withdraw</p>

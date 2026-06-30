@@ -259,7 +259,7 @@ alert(err.response?.data?.message || 'Checkout failed. Please try again.');
                 <Link href="/shop/cart" className="text-sm text-green font-medium hover:underline">Edit Cart</Link>
               </h3>
 
-              <div className="space-y-4 mb-6 max-h-[300px] overflow-y-auto pr-2">
+              <div className="space-y-4 mb-6 max-h-layout-md overflow-y-auto pr-2">
                 {cartItems.map((item) => {
                   const product = products[item.productId];
                   if (!product) return null;

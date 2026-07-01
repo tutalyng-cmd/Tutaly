@@ -5,6 +5,21 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Search } from 'lucide-react';
 
+const POPULAR_ROLES = [
+  { role: 'Software Engineer', count: '3,210', range: '₦600K–₦1.3M' },
+  { role: 'Data Analyst', count: '1,420', range: '₦350K–₦750K' },
+  { role: 'UX Designer', count: '980', range: '₦400K–₦900K' },
+  { role: 'Marketing Manager', count: '760', range: '₦450K–₦950K' },
+  { role: 'DevOps Engineer', count: '540', range: '₦700K–₦1.4M' },
+  { role: 'HR Business Partner', count: '390', range: '₦380K–₦700K' },
+  { role: 'Financial Analyst', count: '610', range: '₦420K–₦820K' },
+  { role: 'Sales Executive', count: '1,100', range: '₦300K–₦650K' },
+  { role: 'Operations Manager', count: '480', range: '₦500K–₦950K' },
+  { role: 'Data Scientist', count: '720', range: '$85K–$120K' },
+  { role: 'QA Engineer', count: '340', range: '₦380K–₦780K' },
+  { role: 'Content Strategist', count: '260', range: '₦320K–₦600K' },
+];
+
 interface SalariesClientProps {
   salaries: any[];
   aggregates: any[];
@@ -125,16 +140,28 @@ export default function SalariesClient({ salaries, aggregates }: SalariesClientP
             </div>
 
             <div className="role-grid reveal visible">
-              {aggregates.map((agg, idx) => (
+              {(aggregates.length > 0 && (aggregates.length > 1 || searchParams.get('role'))) ? aggregates.map((agg, idx) => (
                 <div key={idx} className="role-tile">
                   <div>
-                    <div className="role-tile__name">{agg.role || agg.industry || 'All Roles'}</div>
+                    <div className="role-tile__name">{agg.role || searchParams.get('role') || 'All Roles'}</div>
                     <div className="role-tile__count">{agg.totalSubmissions || 0} reported salaries</div>
                   </div>
-                  <div className="role-tile__salary">₦{(Number(agg.avgSalary) / 1000).toFixed(0)}k/mo</div>
+                  <div className="role-tile__salary">
+                    {agg.minSalary && agg.maxSalary 
+                      ? `₦${(Number(agg.minSalary) / 1000).toFixed(0)}K–₦${(Number(agg.maxSalary) / 1000).toFixed(0)}K`
+                      : `₦${(Number(agg.avgSalary) / 1000).toFixed(0)}K/mo`}
+                  </div>
+                </div>
+              )) : POPULAR_ROLES.map((role, idx) => (
+                <div key={idx} className="role-tile">
+                  <div>
+                    <div className="role-tile__name">{role.role}</div>
+                    <div className="role-tile__count">{role.count} reports</div>
+                  </div>
+                  <div className="role-tile__salary">{role.range}</div>
                 </div>
               ))}
-              {aggregates.length === 0 && (
+              {aggregates.length === 0 && searchParams.get('role') && (
                 <div style={{ color: 'var(--c-500)', padding: '20px 0' }}>No salary data found for this query.</div>
               )}
             </div>

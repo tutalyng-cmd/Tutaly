@@ -49,7 +49,7 @@ function VerifyEmailContent() {
         {status === 'success' && (
           <div>
             <div className="auth-success-icon mx-auto">
-              <CheckCircle2 style={{ width: '28px', height: '28px', color: '#2DB85A' }} />
+              <CheckCircle2 style={{ width: '28px', height: '28px', color: 'var(--green)' }} />
             </div>
             <h1 className="auth-heading">Email Verified!</h1>
             <p className="auth-subheading" style={{ marginBottom: '8px' }}>{message}</p>
@@ -62,7 +62,7 @@ function VerifyEmailContent() {
 
         {status === 'error' && (
           <div>
-            <div className="auth-success-icon mx-auto" style={{ background: 'rgba(204,43,43,0.15)' }}>
+            <div className="auth-success-icon mx-auto bg-red/10 border border-red/20">
               <XCircle style={{ width: '28px', height: '28px', color: 'var(--red)' }} />
             </div>
             <h1 className="auth-heading">Verification Failed</h1>

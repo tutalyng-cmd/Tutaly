@@ -75,7 +75,7 @@ export default function SignUp() {
         </Link>
         <div className="auth-centered-wrap text-center">
           <div className="auth-success-icon mx-auto">
-            <CheckCircle2 style={{ width: '28px', height: '28px', color: '#2DB85A' }} />
+            <CheckCircle2 style={{ width: '28px', height: '28px', color: 'var(--green)' }} />
           </div>
           <h1 className="auth-heading">Check your email</h1>
           <p className="auth-subheading" style={{ marginBottom: '24px' }}>

@@ -145,7 +145,7 @@ export default function JobResultsWithDetail({
       )}
 
       {/* ─── Job List ─── */}
-      <div className="joblist">
+      <div className="flex-1 min-w-0 flex flex-col gap-3">
         {jobs.length === 0 ? (
           <div className="bg-c800 border border-c600 rounded-lg p-12 text-center">
             <h3 className="text-lg font-semibold text-c100 mb-2">No jobs found</h3>
@@ -170,42 +170,31 @@ export default function JobResultsWithDetail({
                   }
                 }}
               >
-                <div className={`jobcard ${isSelected ? 'border-blueL -translate-x-1' : ''}`}>
-                  <div className="jobcard__logo bg-blue/20 text-blueL">
+                <div
+                  className={`floatcard ${isSelected ? 'border-blueL -translate-x-1' : 'border-c600'} transition-transform duration-200`}
+                >
+                  <div className="floatcard__logo bg-blue/20 text-blueL">
                     {job.employer?.email ? job.employer.email.substring(0, 1).toUpperCase() : 'C'}
                   </div>
-                  <div className="jobcard__body">
-                    <div className="jobcard__top">
-                      <div className="min-w-0">
-                        <div className="jobcard__title truncate">{job.title}</div>
-                        <div className="jobcard__company truncate">
-                          {job.employer?.email || 'Confidential Company'}
-                        </div>
-                      </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="floatcard__title truncate">{job.title}</div>
+                    <div className="floatcard__company truncate">
+                      {job.employer?.email || 'Confidential Company'}
                     </div>
-                    
-                    <div className="jobcard__meta mt-3">
+                    <div className="floatcard__meta">
                       {job.minSalary && (
-                        <span className="jobcard__salary">
+                        <span className="floatcard__salary">
                           {sym}{job.minSalary.toLocaleString()}
                           {job.maxSalary ? `–${sym}${job.maxSalary.toLocaleString()}` : '+'}
                         </span>
                       )}
-                      <span>{job.workMode}</span>
-                      <span>{job.jobType}</span>
-                    </div>
-
-                    {(job.isFeatured || job.isUrgent) && (
-                      <div className="jobcard__tags mt-3">
-                        {job.isFeatured && <span className="tag tag--gold">Featured</span>}
-                        {job.isUrgent && <span className="tag tag--red">Urgent</span>}
-                      </div>
-                    )}
-                    
-                    <div className="jobcard__footer mt-4">
-                      <div className="jobcard__posted text-c500 text-xs">
+                      <span className="floatcard__tag">{job.workMode}</span>
+                      <span className="floatcard__tag">{job.jobType}</span>
+                      {job.isFeatured && <span className="floatcard__new bg-gold/20 text-goldH">Featured</span>}
+                      {job.isUrgent && <span className="floatcard__new bg-red/10 text-red">Urgent</span>}
+                      <span className="text-xs text-c500 ml-auto">
                         {formatTimeAgo(job.createdAt)}
-                      </div>
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -216,7 +205,7 @@ export default function JobResultsWithDetail({
 
         {/* Pagination */}
         {meta && meta.totalPages > 1 && (
-          <div className="pagination">
+          <div className="flex justify-center gap-2 pt-4">
             {Array.from({ length: Math.min(meta.totalPages, 5) }, (_, i) => i + 1).map(
               (page) => {
                 const isActive = String(meta.page) === String(page) || (!initialSearchParams.page && page === 1);
@@ -224,7 +213,7 @@ export default function JobResultsWithDetail({
                   <Link
                     key={page}
                     href={buildPageUrl(page)}
-                    className={`page-btn ${isActive ? 'active' : ''}`}
+                    className={`btn px-3.5 py-2 rounded-md ${isActive ? 'bg-blue text-white border-blue' : 'bg-c800 text-c200 border-c600'}`}
                   >
                     {page}
                   </Link>

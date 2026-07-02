@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { User, FileText, UploadCloud, Save, CheckCircle2 } from 'lucide-react';
 import { apiAuth } from '@/lib/api';
+import { CheckCircle2, UploadCloud, FileText } from 'lucide-react';
 
 export default function SeekerProfilePage() {
   const [loading, setLoading] = useState(true);
@@ -101,7 +101,6 @@ export default function SeekerProfilePage() {
 
     try {
       const token = localStorage.getItem('access_token');
-      // Using raw fetch here since our API utility might not handle FormData perfectly
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api'}/user/seeker/resume`, {
         method: 'POST',
         headers: {
@@ -115,16 +114,11 @@ export default function SeekerProfilePage() {
         throw new Error(err.message || 'Upload failed');
       }
 
-      setMessage({ type: 'success', text: 'Resume uploaded successfully! It is now stored in Supabase.' });
-      
-      // Refresh the profile to get the new signed URL
+      setMessage({ type: 'success', text: 'Resume uploaded successfully!' });
       fetchProfile();
     } catch (e) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const error = e as any;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const err = e as any;
-setMessage({ type: 'error', text: err instanceof Error ? err.message : 'Failed to upload resume' });
+      setMessage({ type: 'error', text: err instanceof Error ? err.message : 'Failed to upload resume' });
     } finally {
       setUploading(false);
     }
@@ -152,193 +146,187 @@ setMessage({ type: 'error', text: err instanceof Error ? err.message : 'Failed t
     if (file) uploadFile(file);
   };
 
-  if (loading) {
-    return (
-      <div className="p-8 pb-16 animate-pulse">
-        <div className="h-8 bg-c200 rounded w-1/4 mb-6" />
-        <div className="h-layout-lg bg-c100 rounded-xl" />
-      </div>
-    );
-  }
-
   return (
-    <div className="p-8 pb-16 max-w-4xl">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-c900">Applicant Profile</h1>
-        <p className="text-c500 mt-1">Manage your details and upload your PDF Resume to start applying for jobs.</p>
+    <>
+      <div style={{ marginBottom: '24px' }}>
+        <h1 className="section__title" style={{ fontSize: '28px', marginBottom: '8px' }}>Applicant Profile</h1>
+        <p className="section__subtitle" style={{ marginBottom: 0 }}>Manage your details and upload your PDF Resume to start applying for jobs.</p>
       </div>
 
       {message && (
-        <div className={`mb-6 p-4 rounded-lg flex items-center gap-3 ${message.type === 'success' ? 'bg-green text-green border border-green' : 'bg-red text-red border border-red'}`}>
-          {message.type === 'success' && <CheckCircle2 className="w-5 h-5 text-green" />}
+        <div style={{ 
+          marginBottom: '24px', 
+          padding: '16px', 
+          borderRadius: 'var(--r-lg)', 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: '12px',
+          background: message.type === 'success' ? 'rgba(29,122,58,0.12)' : 'rgba(204,43,43,0.12)',
+          color: message.type === 'success' ? '#2DB85A' : '#F05050',
+          border: `1px solid ${message.type === 'success' ? 'rgba(29,122,58,0.35)' : 'rgba(204,43,43,0.35)'}`
+        }}>
+          {message.type === 'success' && <CheckCircle2 className="w-5 h-5" />}
           {message.text}
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        
-        {/* Left Col: Resume Area */}
-        <div className="md:col-span-1 space-y-6">
-          <div className="bg-white p-6 rounded-xl border border-c100 shadow-sm text-center">
-            <div className="bg-blueL w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <FileText className="w-8 h-8 text-blue" />
-            </div>
-            <h3 className="font-bold text-c900">Your Resume</h3>
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: '60px 24px', color: 'var(--c-500)' }}>Loading profile...</div>
+      ) : (
+        <div className="overview-grid" style={{ gridTemplateColumns: '1fr 1.5fr' }}>
+          
+          {/* Resume Upload Col */}
+          <div className="dcard">
+            <div className="form-section__title">Your Resume</div>
+            <div className="form-section__desc">Must be a PDF under 5MB</div>
             
-            {profile.resumeSignedUrl ? (
-              <div className="mt-4">
-                <a 
-                  href={profile.resumeSignedUrl} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-sm font-medium text-green hover:text-green underline"
-                >
-                  View current resume (PDF)
+            <label 
+              className="dropzone"
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              style={{ display: 'block', borderColor: isDragging ? 'var(--blue)' : 'var(--c-600)', background: isDragging ? 'rgba(27,79,158,0.04)' : 'transparent' }}
+            >
+              <div className="dropzone__icon"><UploadCloud className="w-8 h-8 mx-auto" /></div>
+              <div className="dropzone__title">{isDragging ? 'Drop PDF here' : 'Click to upload or drag and drop'}</div>
+              <div className="dropzone__hint">PDF (max. 5MB)</div>
+              <input 
+                type="file" 
+                accept="application/pdf"
+                onChange={handleFileChange}
+                disabled={uploading}
+                style={{ display: 'none' }}
+              />
+            </label>
+            {uploading && <div style={{ fontSize: '12px', color: 'var(--blue-l)', marginTop: '12px', textAlign: 'center' }}>Uploading...</div>}
+
+            {profile.resumeSignedUrl && (
+              <div className="file-chip">
+                <FileText className="file-chip__icon w-5 h-5" />
+                <div className="file-chip__name">resume.pdf</div>
+                <a href={profile.resumeSignedUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--blue-l)', fontSize: '12px', fontWeight: 500 }}>
+                  View
                 </a>
-                <p className="text-xs text-c500 mt-2">Ready for applications</p>
               </div>
-            ) : (
-              <p className="text-sm text-c500 mt-2">No resume uploaded</p>
             )}
-
-            <div className="mt-6 border-t border-c100 pt-6">
-              <label 
-                className={`block w-full border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors ${isDragging ? 'border-green bg-green' : 'border-c300 hover:border-c400 bg-c100'}`}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
-              >
-                 <UploadCloud className={`w-8 h-8 mx-auto mb-3 ${isDragging ? 'text-green' : 'text-c400'}`} />
-                 <span className="block text-sm font-medium text-c700 mb-1">
-                   {isDragging ? 'Drop PDF here' : 'Click to upload or drag and drop'}
-                 </span>
-                 <span className="block text-xs text-c500">
-                   PDF (max. 5MB)
-                 </span>
-                 <input 
-                    type="file" 
-                    accept="application/pdf"
-                    onChange={handleFileChange}
-                    disabled={uploading}
-                    className="hidden"
-                  />
-               </label>
-               {uploading && <p className="text-xs text-blue font-medium mt-3 text-center">Uploading to Supabase Storage...</p>}
-            </div>
           </div>
-        </div>
 
-        {/* Right Col: Details Form */}
-        <div className="md:col-span-2 space-y-6">
-          <div className="bg-white p-6 rounded-xl border border-c100 shadow-sm">
-            <h3 className="font-bold text-c900 border-b border-c100 pb-4 mb-6 flex items-center gap-2">
-              <User className="w-5 h-5 text-c400" />
-              Basic Details
-            </h3>
-
-            <form onSubmit={handleSaveProfile} className="space-y-5">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-c700 mb-1">First Name</label>
-                  <input 
-                    type="text"
-                    value={profile.firstName}
-                    onChange={(e) => setProfile({ ...profile, firstName: e.target.value })}
-                    className="w-full rounded-lg border border-c200 px-4 py-2.5 text-sm text-black focus:ring-2 focus:ring-green focus:border-transparent outline-none transition"
-                  />
+          {/* Profile Details Col */}
+          <div className="dcard">
+            <form onSubmit={handleSaveProfile}>
+              
+              <div className="form-section">
+                <div className="form-section__title">Basic Information</div>
+                <div className="form-section__desc">Your identity on Tutaly.</div>
+                
+                <div className="form-grid-2">
+                  <div className="field-group">
+                    <label className="field-label">First Name</label>
+                    <input 
+                      type="text" 
+                      className="field-input" 
+                      value={profile.firstName}
+                      onChange={(e) => setProfile({ ...profile, firstName: e.target.value })}
+                    />
+                  </div>
+                  <div className="field-group">
+                    <label className="field-label">Last Name</label>
+                    <input 
+                      type="text" 
+                      className="field-input" 
+                      value={profile.lastName}
+                      onChange={(e) => setProfile({ ...profile, lastName: e.target.value })}
+                    />
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-c700 mb-1">Last Name</label>
+
+                <div className="field-group" style={{ marginTop: '16px' }}>
+                  <label className="field-label">Professional Headline</label>
                   <input 
-                    type="text"
-                    value={profile.lastName}
-                    onChange={(e) => setProfile({ ...profile, lastName: e.target.value })}
-                    className="w-full rounded-lg border border-c200 px-4 py-2.5 text-sm text-black focus:ring-2 focus:ring-green focus:border-transparent outline-none transition"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-c700 mb-1">Professional Headline</label>
-                <input 
-                  type="text"
-                  value={profile.headline}
-                  onChange={(e) => setProfile({ ...profile, headline: e.target.value })}
-                  placeholder="e.g. Senior Software Engineer"
-                  className="w-full rounded-lg border border-c200 px-4 py-2.5 text-sm text-black focus:ring-2 focus:ring-green focus:border-transparent outline-none transition"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-c700 mb-1">Location</label>
-                <input 
-                  type="text"
-                  value={profile.location}
-                  onChange={(e) => setProfile({ ...profile, location: e.target.value })}
-                  placeholder="e.g. Lagos, Nigeria"
-                  className="w-full rounded-lg border border-c200 px-4 py-2.5 text-sm text-black focus:ring-2 focus:ring-green focus:border-transparent outline-none transition"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-c700 mb-1">Professional Bio</label>
-                <textarea 
-                  rows={4}
-                  value={profile.bio}
-                  onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
-                  placeholder="Tell employers about your experience..."
-                  className="w-full rounded-lg border border-c200 px-4 py-2.5 text-sm text-black focus:ring-2 focus:ring-green focus:border-transparent outline-none transition"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-c700 mb-1">Core Skills (comma separated)</label>
-                <input 
-                  type="text"
-                  value={skillsInput}
-                  onChange={(e) => setSkillsInput(e.target.value)}
-                  placeholder="React, Node.js, Project Management"
-                  className="w-full rounded-lg border border-c200 px-4 py-2.5 text-sm text-black focus:ring-2 focus:ring-green focus:border-transparent outline-none transition"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-c700 mb-1">LinkedIn URL</label>
-                  <input 
-                    type="url"
-                    value={profile.socialLinks.linkedin}
-                    onChange={(e) => setProfile({ ...profile, socialLinks: { ...profile.socialLinks, linkedin: e.target.value } })}
-                    placeholder="https://linkedin.com/in/..."
-                    className="w-full rounded-lg border border-c200 px-4 py-2.5 text-sm text-black focus:ring-2 focus:ring-green focus:border-transparent outline-none transition"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-c700 mb-1">Portfolio Web URL</label>
-                  <input 
-                    type="url"
-                    value={profile.socialLinks.portfolio}
-                    onChange={(e) => setProfile({ ...profile, socialLinks: { ...profile.socialLinks, portfolio: e.target.value } })}
-                    placeholder="https://yourwebsite.com"
-                    className="w-full rounded-lg border border-c200 px-4 py-2.5 text-sm text-black focus:ring-2 focus:ring-green focus:border-transparent outline-none transition"
+                    type="text" 
+                    className="field-input" 
+                    value={profile.headline}
+                    onChange={(e) => setProfile({ ...profile, headline: e.target.value })}
+                    placeholder="e.g. Senior Software Engineer"
                   />
                 </div>
               </div>
 
-              <div className="pt-4 flex justify-end">
-                <button 
-                  type="submit"
-                  disabled={saving}
-                  className="bg-c900 text-white font-bold py-2.5 px-6 rounded-xl hover:bg-black transition flex items-center gap-2 disabled:bg-c400"
-                >
-                  <Save className="w-4 h-4" />
+              <div className="form-section">
+                <div className="form-section__title">About You</div>
+                <div className="form-section__desc">Write a brief overview of your experience.</div>
+                
+                <div className="field-group">
+                  <label className="field-label">Location</label>
+                  <input 
+                    type="text" 
+                    className="field-input" 
+                    value={profile.location}
+                    onChange={(e) => setProfile({ ...profile, location: e.target.value })}
+                    placeholder="e.g. Lagos, Nigeria"
+                  />
+                </div>
+
+                <div className="field-group" style={{ marginTop: '16px' }}>
+                  <label className="field-label">Professional Bio</label>
+                  <textarea 
+                    className="textarea" 
+                    value={profile.bio}
+                    onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
+                    placeholder="Tell employers about your experience..."
+                  ></textarea>
+                </div>
+
+                <div className="field-group" style={{ marginTop: '16px' }}>
+                  <label className="field-label">Core Skills (comma separated)</label>
+                  <input 
+                    type="text" 
+                    className="field-input" 
+                    value={skillsInput}
+                    onChange={(e) => setSkillsInput(e.target.value)}
+                    placeholder="React, Node.js, Project Management"
+                  />
+                </div>
+              </div>
+
+              <div className="form-section">
+                <div className="form-section__title">Links</div>
+                <div className="form-section__desc">Where else can people find you?</div>
+                
+                <div className="form-grid-2">
+                  <div className="field-group">
+                    <label className="field-label">LinkedIn URL</label>
+                    <input 
+                      type="url" 
+                      className="field-input" 
+                      value={profile.socialLinks.linkedin}
+                      onChange={(e) => setProfile({ ...profile, socialLinks: { ...profile.socialLinks, linkedin: e.target.value } })}
+                      placeholder="https://linkedin.com/in/..."
+                    />
+                  </div>
+                  <div className="field-group">
+                    <label className="field-label">Portfolio URL</label>
+                    <input 
+                      type="url" 
+                      className="field-input" 
+                      value={profile.socialLinks.portfolio}
+                      onChange={(e) => setProfile({ ...profile, socialLinks: { ...profile.socialLinks, portfolio: e.target.value } })}
+                      placeholder="https://yourwebsite.com"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: '16px' }}>
+                <button type="submit" className="btn btn--primary" disabled={saving}>
                   {saving ? 'Saving...' : 'Save Profile'}
                 </button>
               </div>
+
             </form>
           </div>
         </div>
-
-      </div>
-    </div>
+      )}
+    </>
   );
 }

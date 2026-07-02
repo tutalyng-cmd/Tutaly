@@ -2,27 +2,13 @@
 
 import React, { useState, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import locationsData from '@/data/locations.json';
 
-const INDUSTRIES = [
-  'Technology',
-  'Finance & Banking',
-  'Healthcare',
-  'Oil & Gas',
-  'Telecommunications',
-  'Education',
-  'Manufacturing',
-  'Real Estate',
-  'Agriculture',
-  'Consulting',
-  'Media & Entertainment',
-  'Retail & E-Commerce',
-  'Logistics & Transportation',
-  'Legal',
-  'NGO & Non-Profit',
-];
+interface FilterMeta {
+  industries: string[];
+  locations: Record<string, Record<string, string[]>>;
+}
 
-export default function JobFilterSidebar() {
+export default function JobFilterSidebar({ filterMeta }: { filterMeta?: FilterMeta }) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -40,7 +26,8 @@ export default function JobFilterSidebar() {
   const [datePosted, setDatePosted] = useState(searchParams.get('datePosted') || '');
 
   // Cascading location data
-  const locations: Record<string, Record<string, string[]>> = locationsData;
+  const locations = filterMeta?.locations || {};
+  const industriesList = filterMeta?.industries || [];
   const countries = useMemo(() => Object.keys(locations), [locations]);
   const states = useMemo(() => {
     if (country && locations[country]) return Object.keys(locations[country]);
@@ -192,7 +179,7 @@ export default function JobFilterSidebar() {
         <div className="filter-range">
           <select value={industry} onChange={(e) => setIndustry(e.target.value)} className="w-full bg-c700 border border-c600 rounded-sm py-2 px-2 text-xs font-mono text-c100 outline-none focus:border-blue">
             <option value="">All Industries</option>
-            {INDUSTRIES.map((ind) => (
+            {industriesList.map((ind) => (
               <option key={ind} value={ind}>{ind}</option>
             ))}
           </select>

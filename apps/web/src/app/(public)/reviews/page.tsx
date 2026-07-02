@@ -6,58 +6,7 @@ export const metadata: Metadata = {
   description: 'Read anonymous reviews from verified employees. Discover real company culture across Nigerian industries on Tutaly.',
 };
 
-// Mock data for reviews - matches system design
-const MOCK_REVIEWS = [
-  {
-    id: 1,
-    company: 'Paystack',
-    initials: 'P',
-    logoStyle: { background: 'rgba(29,122,58,0.2)', color: '#2DB85A' },
-    rating: 4.6,
-    reviewCount: '1,847',
-    recommendPct: 91,
-    title: 'The best tech culture in Lagos, full stop.',
-    pros: 'Strong engineering culture with real ownership. Managers actually invest in your growth. Salaries are top-of-market and transparent.',
-    cons: 'Pace can be intense during product launches. On-call rotations are demanding for engineering roles.',
-    department: 'Product',
-    tenure: '3 years',
-    location: 'Lagos, Nigeria',
-    posted: '2 weeks ago',
-  },
-  {
-    id: 2,
-    company: 'Flutterwave',
-    initials: 'F',
-    logoStyle: { background: 'rgba(27,79,158,0.2)', color: 'var(--blue-l)' },
-    rating: 4.2,
-    reviewCount: '2,310',
-    recommendPct: 84,
-    title: 'Fast growth, high expectations — worth it.',
-    pros: 'You learn more in 6 months here than 2 years at a slower company. Compensation is competitive and leadership listens.',
-    cons: 'Reorgs happen frequently as the company scales. Onboarding could be more structured.',
-    department: 'Engineering',
-    tenure: '2 years',
-    location: 'Lagos, Nigeria',
-    posted: '1 month ago',
-  },
-  {
-    id: 3,
-    company: 'Stripe',
-    initials: 'S',
-    logoStyle: { background: 'rgba(201,162,39,0.2)', color: 'var(--gold-h)' },
-    rating: 4.0,
-    reviewCount: '5,420',
-    recommendPct: 78,
-    title: 'Hired me remote, paid me global rates.',
-    pros: 'Fully distributed team, real ownership of the product. Comp is benchmarked to the role, not to where you happen to live.',
-    cons: 'Async communication takes adjustment. Time zone overlap can be limited with some teams.',
-    department: 'Engineering',
-    tenure: '1.5 years',
-    location: 'Remote',
-    posted: '3 weeks ago',
-  },
-];
-
+import { serverFetch } from '@/lib/server-fetch';
 function StarRating({ rating }: { rating: number }) {
   const full = Math.floor(rating);
   const stars = [];
@@ -69,7 +18,31 @@ function StarRating({ rating }: { rating: number }) {
   return <>{stars}</>;
 }
 
-export default async function ReviewsPage() {
+export default async function ReviewsPage(props: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const searchParams = await props.searchParams;
+  const page = Number(searchParams.page) || 1;
+
+  let reviews = [];
+  let meta = { total: 0, page: 1, limit: 10 };
+
+  try {
+    const res = await serverFetch<any>(`reviews/companies/all/recent?page=${page}&limit=10`, { cache: 'no-store' });
+    reviews = res?.data || [];
+    meta = res?.meta || meta;
+  } catch (err) {
+    console.error('Failed to fetch reviews', err);
+  }
+
+  const COLORS = [
+    { background: 'rgba(29,122,58,0.2)', color: '#2DB85A' },
+    { background: 'rgba(27,79,158,0.2)', color: 'var(--blue-l)' },
+    { background: 'rgba(201,162,39,0.2)', color: 'var(--gold-h)' }
+  ];
+
+  const totalPages = Math.ceil(meta.total / meta.limit);
+
   return (
     <div className="page-shell">
       <header className="page-header">
@@ -123,7 +96,7 @@ export default async function ReviewsPage() {
           {/* REVIEW LIST */}
           <main aria-label="Company reviews">
             <div className="results-bar">
-              <p className="results-count"><strong>12,084</strong> companies</p>
+              <p className="results-count"><strong>{meta.total}</strong> reviews</p>
               <div className="results-sort">
                 Sort by
                 <select aria-label="Sort reviews">
@@ -135,55 +108,66 @@ export default async function ReviewsPage() {
             </div>
 
             <div className="review-list">
-              {MOCK_REVIEWS.map((review) => (
-                <article key={review.id} className="review-full reveal visible">
-                  <div className="review-full__head">
-                    <div className="review-full__company-row">
-                      <div
-                        className="review-card__logo"
-                        style={{ ...review.logoStyle, width: '48px', height: '48px', fontSize: '17px' }}
-                      >
-                        {review.initials}
-                      </div>
-                      <div>
-                        <div className="review-card__company" style={{ fontSize: '16px' }}>{review.company}</div>
-                        <div className="review-card__stars" aria-label={`Rating: ${review.rating} out of 5`}>
-                          <StarRating rating={review.rating} />
-                          <span className="review-card__score">{review.rating}</span>
-                          <span style={{ fontSize: '11px', color: 'var(--c-500)', marginLeft: '4px' }}>· {review.reviewCount} reviews</span>
+              {reviews.length === 0 ? (
+                <div className="dash-empty" style={{ padding: '60px 20px', border: '1px solid var(--c-700)' }}>
+                  <div className="dash-empty__title" style={{ color: 'var(--c-500)' }}>No reviews yet</div>
+                </div>
+              ) : reviews.map((review: any, index: number) => {
+                const logoStyle = COLORS[index % COLORS.length];
+                const initials = review.companyName ? review.companyName.substring(0, 1).toUpperCase() : 'C';
+                const datePosted = new Date(review.createdAt).toLocaleDateString();
+
+                return (
+                  <article key={review.id} className="review-full reveal visible">
+                    <div className="review-full__head">
+                      <div className="review-full__company-row">
+                        <div
+                          className="review-card__logo"
+                          style={{ ...logoStyle, width: '48px', height: '48px', fontSize: '17px' }}
+                        >
+                          {initials}
+                        </div>
+                        <div>
+                          <div className="review-card__company" style={{ fontSize: '16px' }}>{review.companyName}</div>
+                          <div className="review-card__stars" aria-label={`Rating: ${review.ratingOverall} out of 5`}>
+                            <StarRating rating={Number(review.ratingOverall) || 0} />
+                            <span className="review-card__score">{review.ratingOverall}</span>
+                          </div>
                         </div>
                       </div>
+                      <span className={`badge ${review.recommend ? 'badge-success' : 'badge-danger'}`}>
+                        {review.recommend ? 'Recommends' : 'Does not recommend'}
+                      </span>
                     </div>
-                    <span className="badge badge-success">Recommends · {review.recommendPct}%</span>
-                  </div>
-                  <div className="review-full__title">&ldquo;{review.title}&rdquo;</div>
-                  <div className="review-full__body">
-                    <div className="review-pro">
-                      <span className="review-pro__label">Pros</span>
-                      {review.pros}
+                    <div className="review-full__title">&ldquo;{review.title}&rdquo;</div>
+                    <div className="review-full__body">
+                      <div className="review-pro">
+                        <span className="review-pro__label">Pros</span>
+                        {review.pros}
+                      </div>
+                      <div className="review-con">
+                        <span className="review-con__label">Cons</span>
+                        {review.cons}
+                      </div>
                     </div>
-                    <div className="review-con">
-                      <span className="review-con__label">Cons</span>
-                      {review.cons}
+                    <div className="review-full__footer">
+                      <span>{review.department} · {review.location}</span>
+                      <span>Posted {datePosted}</span>
                     </div>
-                  </div>
-                  <div className="review-full__footer">
-                    <span>{review.department} · {review.tenure} · {review.location}</span>
-                    <span>Posted {review.posted}</span>
-                  </div>
-                </article>
-              ))}
+                  </article>
+                );
+              })}
             </div>
 
-            <nav className="pagination" aria-label="Review results pages">
-              <button className="page-btn" disabled aria-label="Previous page">‹</button>
-              <button className="page-btn active" aria-current="page">1</button>
-              <button className="page-btn">2</button>
-              <button className="page-btn">3</button>
-              <span style={{ color: 'var(--c-500)', padding: '0 4px' }}>…</span>
-              <button className="page-btn">96</button>
-              <button className="page-btn" aria-label="Next page">›</button>
-            </nav>
+            {totalPages > 1 && (
+              <nav className="pagination" aria-label="Review results pages">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                  <a key={p} href={`/reviews?page=${p}`} className={`page-btn ${p === meta.page ? 'active' : ''}`} aria-current={p === meta.page ? 'page' : undefined}>
+                    {p}
+                  </a>
+                ))}
+              </nav>
+            )}
           </main>
 
         </div>

@@ -3,22 +3,20 @@ import Link from 'next/link';
 import { Search, ArrowLeft, Building2, ArrowRight } from 'lucide-react';
 import { api } from '@/lib/api';
 
-// This is a minimal mock search result page to support the search form action.
-// In a real implementation, you'd fetch matching companies from the API based on the query.
+import { serverFetch } from '@/lib/server-fetch';
 
 export default async function ReviewSearchPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
   const resolvedParams = await searchParams;
   const query = resolvedParams.q || '';
   
-  // Mock results based on query
-  const mockResults = [
-    { name: 'Paystack', rating: 4.8, reviews: 152 },
-    { name: 'Flutterwave', rating: 4.5, reviews: 124 },
-    { name: 'Andela', rating: 4.3, reviews: 98 },
-    { name: 'Moniepoint', rating: 4.6, reviews: 87 },
-    { name: 'Interswitch', rating: 4.1, reviews: 210 },
-    { name: 'Kuda', rating: 4.4, reviews: 76 },
-  ].filter(company => company.name.toLowerCase().includes(query.toLowerCase()));
+  let searchResults = [];
+
+  try {
+    const res = await serverFetch<any>(`reviews/companies/search?q=${encodeURIComponent(query)}`, { cache: 'no-store' });
+    searchResults = res?.data || [];
+  } catch (err) {
+    console.error('Failed to fetch search results', err);
+  }
 
   return (
     <div className="min-h-screen bg-c100 pt-20 pb-16">
@@ -46,17 +44,17 @@ export default async function ReviewSearchPage({ searchParams }: { searchParams:
         </form>
 
         <div className="space-y-4">
-          {mockResults.length > 0 ? (
-            mockResults.map((company, index) => (
-              <Link key={index} href={`/reviews/company/${encodeURIComponent(company.name.toLowerCase())}`} className="block bg-white rounded-xl shadow-sm border border-c200 p-6 hover:shadow-md hover:border-green transition-all">
+          {searchResults.length > 0 ? (
+            searchResults.map((company: any, index: number) => (
+              <Link key={index} href={`/reviews/company/${encodeURIComponent(company.companyName.toLowerCase())}`} className="block bg-white rounded-xl shadow-sm border border-c200 p-6 hover:shadow-md hover:border-green transition-all">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-lg bg-c100 border border-c100 flex items-center justify-center shrink-0">
                       <Building2 className="w-6 h-6 text-c400" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-c900">{company.name}</h3>
-                      <p className="text-sm text-c500">{company.reviews} reviews • {company.rating} Rating</p>
+                      <h3 className="text-xl font-bold text-c900">{company.companyName}</h3>
+                      <p className="text-sm text-c500">{company.totalReviews} reviews • {company.avgOverall} Rating</p>
                     </div>
                   </div>
                   <div className="text-green">

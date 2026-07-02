@@ -50,187 +50,227 @@ export default function SeekerSettingsPage() {
       setSuccessMsg('Settings saved successfully!');
       setTimeout(() => setSuccessMsg(''), 3000);
     } catch (e) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const error = e as any;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const err = e as any;
-alert(err.response?.data?.message || 'Failed to save settings. Please try again.');
+      alert(err.response?.data?.message || 'Failed to save settings. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-4xl mx-auto py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-black text-c900">Settings</h1>
-        <p className="text-c500 mt-1">Manage your account preferences, notifications, and privacy.</p>
-      </div>
-
-      <div className="bg-white rounded-3xl shadow-sm border border-c100 overflow-hidden flex flex-col md:flex-row min-h-layout-xl">
-        {/* Sidebar Nav */}
-        <div className="w-full md:w-64 bg-c100/50 border-r border-c100 p-6 flex flex-col gap-2">
+    <div className="overview-grid" style={{ gridTemplateColumns: '260px 1fr' }}>
+      
+      {/* Settings Navigation Sidebar */}
+      <div className="dcard" style={{ padding: '16px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
           <button 
             onClick={() => setActiveTab('account')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === 'account' ? 'bg-green text-white shadow-md' : 'text-c600 hover:bg-c100'}`}
+            className={`dash-nav-item ${activeTab === 'account' ? 'active' : ''}`}
+            style={{ width: '100%', justifyContent: 'flex-start', border: 'none', background: activeTab === 'account' ? 'rgba(27,79,158,0.16)' : 'transparent', cursor: 'pointer' }}
           >
             <Key className="w-5 h-5" /> Account Security
           </button>
           <button 
             onClick={() => setActiveTab('notifications')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === 'notifications' ? 'bg-green text-white shadow-md' : 'text-c600 hover:bg-c100'}`}
+            className={`dash-nav-item ${activeTab === 'notifications' ? 'active' : ''}`}
+            style={{ width: '100%', justifyContent: 'flex-start', border: 'none', background: activeTab === 'notifications' ? 'rgba(27,79,158,0.16)' : 'transparent', cursor: 'pointer' }}
           >
             <Bell className="w-5 h-5" /> Notifications
           </button>
           <button 
             onClick={() => setActiveTab('privacy')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === 'privacy' ? 'bg-green text-white shadow-md' : 'text-c600 hover:bg-c100'}`}
+            className={`dash-nav-item ${activeTab === 'privacy' ? 'active' : ''}`}
+            style={{ width: '100%', justifyContent: 'flex-start', border: 'none', background: activeTab === 'privacy' ? 'rgba(27,79,158,0.16)' : 'transparent', cursor: 'pointer' }}
           >
             <Shield className="w-5 h-5" /> Privacy
           </button>
         </div>
+      </div>
 
-        {/* Content Area */}
-        <div className="flex-1 p-8">
-          {successMsg && (
-            <div className="mb-6 bg-green text-green px-4 py-3 rounded-xl text-sm font-bold flex items-center gap-2 border border-green">
-              <CheckCircle2 className="w-5 h-5" /> {successMsg}
+      {/* Settings Content Area */}
+      <div className="dcard">
+        <div className="dcard__header" style={{ marginBottom: '24px', borderBottom: '1px solid var(--c-700)', paddingBottom: '16px' }}>
+          <div>
+            <div className="dcard__title" style={{ fontSize: '20px' }}>
+              {activeTab === 'account' && 'Account Security'}
+              {activeTab === 'notifications' && 'Notification Preferences'}
+              {activeTab === 'privacy' && 'Privacy & Visibility'}
             </div>
-          )}
+            <div className="dcard__sub">
+              {activeTab === 'account' && 'Update your password and secure your account.'}
+              {activeTab === 'notifications' && 'Control what emails we send you.'}
+              {activeTab === 'privacy' && 'Manage how your profile appears to others.'}
+            </div>
+          </div>
+        </div>
 
-          {activeTab === 'account' && (
-            <div className="space-y-8 animate-in fade-in duration-300">
-              <div>
-                <h2 className="text-xl font-bold text-c900 mb-4 flex items-center gap-2">
-                  <Lock className="w-5 h-5 text-c400" /> Change Password
-                </h2>
-                <div className="space-y-4 max-w-md">
-                  <div>
-                    <label className="block text-sm font-bold text-c700 mb-1">Current Password</label>
-                    <input 
-                      type="password" 
-                      className="w-full bg-c100 border border-c200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-green" 
-                      value={currentPassword}
-                      onChange={e => setCurrentPassword(e.target.value)}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-bold text-c700 mb-1">New Password</label>
-                    <input 
-                      type="password" 
-                      className="w-full bg-c100 border border-c200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-green" 
-                      value={newPassword}
-                      onChange={e => setNewPassword(e.target.value)}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-bold text-c700 mb-1">Confirm New Password</label>
-                    <input 
-                      type="password" 
-                      className="w-full bg-c100 border border-c200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-green" 
-                      value={confirmPassword}
-                      onChange={e => setConfirmPassword(e.target.value)}
-                    />
-                  </div>
-                </div>
+        {successMsg && (
+          <div style={{ 
+            marginBottom: '24px', 
+            padding: '16px', 
+            borderRadius: 'var(--r-lg)', 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '12px',
+            background: 'rgba(29,122,58,0.12)',
+            color: '#2DB85A',
+            border: '1px solid rgba(29,122,58,0.35)'
+          }}>
+            <CheckCircle2 className="w-5 h-5" /> {successMsg}
+          </div>
+        )}
+
+        {/* ACCOUNT TAB */}
+        {activeTab === 'account' && (
+          <div className="animate-in fade-in duration-300">
+            <div className="form-section">
+              <div className="form-section__title">Change Password</div>
+              <div className="form-section__desc">Ensure your account is using a long, random password to stay secure.</div>
+              
+              <div className="field-group" style={{ maxWidth: '400px' }}>
+                <label className="field-label">Current Password</label>
+                <input 
+                  type="password" 
+                  className="field-input" 
+                  value={currentPassword}
+                  onChange={e => setCurrentPassword(e.target.value)}
+                />
               </div>
-
-              <div className="pt-8 border-t border-c100">
-                <h2 className="text-xl font-bold text-red mb-2 flex items-center gap-2">
-                  <Trash2 className="w-5 h-5" /> Danger Zone
-                </h2>
-                <p className="text-sm text-c500 mb-4 max-w-lg">
-                  Once you delete your account, there is no going back. Please be certain.
-                </p>
-                <button className="bg-red text-red hover:bg-red hover:text-red px-6 py-3 rounded-xl font-bold text-sm transition-colors border border-red shadow-sm">
-                  Delete Account
+              <div className="field-group" style={{ maxWidth: '400px' }}>
+                <label className="field-label">New Password</label>
+                <input 
+                  type="password" 
+                  className="field-input" 
+                  value={newPassword}
+                  onChange={e => setNewPassword(e.target.value)}
+                />
+              </div>
+              <div className="field-group" style={{ maxWidth: '400px' }}>
+                <label className="field-label">Confirm New Password</label>
+                <input 
+                  type="password" 
+                  className="field-input" 
+                  value={confirmPassword}
+                  onChange={e => setConfirmPassword(e.target.value)}
+                />
+              </div>
+              
+              <div style={{ marginTop: '16px' }}>
+                <button 
+                  onClick={handleSave} 
+                  disabled={loading}
+                  className="btn btn--primary"
+                >
+                  {loading ? 'Updating...' : 'Update Password'}
                 </button>
               </div>
             </div>
-          )}
 
-          {activeTab === 'notifications' && (
-            <div className="space-y-6 animate-in fade-in duration-300">
-              <h2 className="text-xl font-bold text-c900 mb-6">Email Notifications</h2>
-              
-              <div className="space-y-4">
-                {[
-                  { id: 'emailAlerts', label: 'Important Account Alerts', desc: 'Security notices, payment receipts, etc. (Required)' },
-                  { id: 'jobMatches', label: 'Job Matches', desc: 'Daily or weekly summaries of new jobs matching your skills.' },
-                  { id: 'applicationUpdates', label: 'Application Updates', desc: 'Alerts when an employer reviews your application.' },
-                  { id: 'marketing', label: 'News & Offers', desc: 'Updates on new features, tips, and special offers.' }
-                ].map(item => (
-                  <div key={item.id} className="flex items-start justify-between p-4 border border-c100 rounded-xl hover:bg-c100 transition-colors">
-                    <div>
-                      <h3 className="font-bold text-c900">{item.label}</h3>
-                      <p className="text-sm text-c500">{item.desc}</p>
-                    </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input 
-                        type="checkbox" 
-                        className="sr-only peer" 
-                        checked={(notifications as any)[item.id]} 
-                        onChange={() => setNotifications({...notifications, [item.id]: !(notifications as any)[item.id]})}
-                        disabled={item.id === 'emailAlerts'}
-                      />
-                      <div className="w-11 h-6 bg-c200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0 after:left-0 after:bg-white after:border-c300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green disabled:opacity-50"></div>
-                    </label>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'privacy' && (
-            <div className="space-y-6 animate-in fade-in duration-300">
-              <h2 className="text-xl font-bold text-c900 mb-6">Privacy Controls</h2>
-              
-              <div className="space-y-6 max-w-lg">
+            <div className="danger-zone" style={{ marginTop: '32px' }}>
+              <div className="danger-row">
                 <div>
-                  <label className="block font-bold text-c900 mb-1">Profile Visibility</label>
-                  <p className="text-sm text-c500 mb-3">Who can see your full professional profile?</p>
-                  <select 
-                    className="w-full bg-c100 border border-c200 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-green"
-                    value={privacy.profileVisibility}
-                    onChange={e => setPrivacy({...privacy, profileVisibility: e.target.value})}
-                  >
-                    <option value="public">Public (Everyone)</option>
-                    <option value="employers_only">Employers Only</option>
-                    <option value="private">Private (Only you)</option>
-                  </select>
+                  <div className="danger-row__title">Delete Account</div>
+                  <div className="danger-row__desc">Once you delete your account, there is no going back. Please be certain.</div>
                 </div>
-
-                <div className="flex items-start justify-between p-4 border border-c100 rounded-xl bg-c100">
-                  <div>
-                    <h3 className="font-bold text-c900">Show in Discover</h3>
-                    <p className="text-sm text-c500">Allow other professionals to find and connect with you.</p>
-                  </div>
-                  <label className="relative inline-flex items-center cursor-pointer mt-1">
-                    <input 
-                      type="checkbox" 
-                      className="sr-only peer" 
-                      checked={privacy.showInDiscover}
-                      onChange={() => setPrivacy({...privacy, showInDiscover: !privacy.showInDiscover})}
-                    />
-                    <div className="w-11 h-6 bg-c200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0 after:left-0 after:bg-white after:border-c300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green"></div>
-                  </label>
-                </div>
+                <button className="btn--danger-outline">Delete Account</button>
               </div>
             </div>
-          )}
-
-          {/* Action Buttons */}
-          <div className="mt-8 pt-6 border-t border-c100 flex justify-end">
-            <button 
-              onClick={handleSave}
-              disabled={loading}
-              className="bg-c900 hover:bg-black text-white px-8 py-3 rounded-xl font-bold text-sm shadow-xl shadow-gray-900/20 transition-all disabled:opacity-50"
-            >
-              {loading ? 'Saving...' : 'Save Changes'}
-            </button>
           </div>
+        )}
 
-        </div>
+        {/* NOTIFICATIONS TAB */}
+        {activeTab === 'notifications' && (
+          <div className="animate-in fade-in duration-300">
+            <div className="form-section">
+              <div className="form-section__title">Email Alerts</div>
+              <div className="form-section__desc">Choose what updates you want to receive via email.</div>
+              
+              <div className="toggle-row">
+                <div>
+                  <div className="toggle-row__title">Important Account Alerts</div>
+                  <div className="toggle-row__desc">Security notices, payment receipts, etc. (Required)</div>
+                </div>
+                <div className="toggle-switch on" style={{ opacity: 0.5, cursor: 'not-allowed' }}></div>
+              </div>
+              
+              <div className="toggle-row" onClick={() => setNotifications({...notifications, jobMatches: !notifications.jobMatches})}>
+                <div>
+                  <div className="toggle-row__title">Job Matches</div>
+                  <div className="toggle-row__desc">Daily or weekly summaries of new jobs matching your skills.</div>
+                </div>
+                <div className={`toggle-switch ${notifications.jobMatches ? 'on' : ''}`}></div>
+              </div>
+              
+              <div className="toggle-row" onClick={() => setNotifications({...notifications, applicationUpdates: !notifications.applicationUpdates})}>
+                <div>
+                  <div className="toggle-row__title">Application Updates</div>
+                  <div className="toggle-row__desc">Alerts when an employer reviews your application.</div>
+                </div>
+                <div className={`toggle-switch ${notifications.applicationUpdates ? 'on' : ''}`}></div>
+              </div>
+              
+              <div className="toggle-row" onClick={() => setNotifications({...notifications, marketing: !notifications.marketing})}>
+                <div>
+                  <div className="toggle-row__title">News & Offers</div>
+                  <div className="toggle-row__desc">Updates on new features, tips, and special offers.</div>
+                </div>
+                <div className={`toggle-switch ${notifications.marketing ? 'on' : ''}`}></div>
+              </div>
+              
+              <div style={{ marginTop: '24px', display: 'flex', justifyContent: 'flex-end' }}>
+                <button 
+                  onClick={handleSave} 
+                  disabled={loading}
+                  className="btn btn--primary"
+                >
+                  {loading ? 'Saving...' : 'Save Preferences'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* PRIVACY TAB */}
+        {activeTab === 'privacy' && (
+          <div className="animate-in fade-in duration-300">
+            <div className="form-section">
+              <div className="form-section__title">Profile Visibility</div>
+              <div className="form-section__desc">Who can see your full professional profile?</div>
+              
+              <div className="field-group" style={{ maxWidth: '400px' }}>
+                <select 
+                  className="field-input"
+                  value={privacy.profileVisibility}
+                  onChange={e => setPrivacy({...privacy, profileVisibility: e.target.value})}
+                  style={{ appearance: 'auto' }}
+                >
+                  <option value="public">Public (Everyone)</option>
+                  <option value="employers_only">Employers Only</option>
+                  <option value="private">Private (Only you)</option>
+                </select>
+              </div>
+              
+              <div className="toggle-row" onClick={() => setPrivacy({...privacy, showInDiscover: !privacy.showInDiscover})} style={{ borderTop: '1px solid var(--c-700)', marginTop: '24px', paddingTop: '16px' }}>
+                <div>
+                  <div className="toggle-row__title">Show in Discover</div>
+                  <div className="toggle-row__desc">Allow other professionals to find and connect with you.</div>
+                </div>
+                <div className={`toggle-switch ${privacy.showInDiscover ? 'on' : ''}`}></div>
+              </div>
+              
+              <div style={{ marginTop: '24px', display: 'flex', justifyContent: 'flex-end' }}>
+                <button 
+                  onClick={handleSave} 
+                  disabled={loading}
+                  className="btn btn--primary"
+                >
+                  {loading ? 'Saving...' : 'Save Settings'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
       </div>
     </div>
   );

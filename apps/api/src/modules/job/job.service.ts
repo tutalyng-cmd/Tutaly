@@ -165,6 +165,48 @@ export class JobService {
     return result;
   }
 
+  async getFilterMetadata() {
+    // Get distinct industries
+    const industriesRaw = await this.jobRepo
+      .createQueryBuilder('job')
+      .select('DISTINCT(job.industry)', 'industry')
+      .where('job.status = :status', { status: JobStatus.ACTIVE })
+      .andWhere('job.industry IS NOT NULL')
+      .andWhere("job.industry != ''")
+      .getRawMany();
+
+    const industries = industriesRaw.map(r => r.industry).sort();
+
+    // Get cascading locations (country -> state -> area)
+    const locationsRaw = await this.jobRepo
+      .createQueryBuilder('job')
+      .select('job.country', 'country')
+      .addSelect('job.state', 'state')
+      .addSelect('job.area', 'area')
+      .where('job.status = :status', { status: JobStatus.ACTIVE })
+      .andWhere('job.country IS NOT NULL')
+      .groupBy('job.country')
+      .addGroupBy('job.state')
+      .addGroupBy('job.area')
+      .getRawMany();
+
+    const locations: Record<string, Record<string, string[]>> = {};
+
+    locationsRaw.forEach(({ country, state, area }) => {
+      if (!country) return;
+      if (!locations[country]) locations[country] = {};
+      
+      if (state) {
+        if (!locations[country][state]) locations[country][state] = [];
+        if (area && !locations[country][state].includes(area)) {
+          locations[country][state].push(area);
+        }
+      }
+    });
+
+    return { industries, locations };
+  }
+
   async findEmployerJobs(employerId: string) {
     const jobs = await this.jobRepo.find({
       where: { employer: { id: employerId } },

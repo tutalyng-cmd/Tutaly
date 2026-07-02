@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { apiAuth } from '@/lib/api';
-import { Loader2, Heart, MapPin, Briefcase, DollarSign, Building2, ExternalLink, Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 
 export default function SavedJobsPage() {
   const [savedJobs, setSavedJobs] = useState<any[]>([]);
@@ -18,7 +18,6 @@ export default function SavedJobsPage() {
       const token = localStorage.getItem('access_token');
       if (!token) return;
       const res = await apiAuth.withToken(token).get('/jobs/saved');
-      // The API might return an array of SavedJob entities. We need to map them to the job objects.
       const jobs = res.data.data ? res.data.data.map((item: any) => item.job || item) : [];
       setSavedJobs(jobs);
     } catch (err) {
@@ -39,99 +38,88 @@ export default function SavedJobsPage() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center py-20">
-        <Loader2 className="w-10 h-10 animate-spin text-green" />
-      </div>
-    );
-  }
+  const getLogoColors = (companyName: string) => {
+    const char = companyName.charAt(0).toUpperCase();
+    const hash = char.charCodeAt(0) % 3;
+    if (hash === 0) return { background: 'rgba(29,122,58,0.18)', color: '#2DB85A' };
+    if (hash === 1) return { background: 'rgba(27,79,158,0.18)', color: 'var(--blue-l)' };
+    return { background: 'rgba(201,162,39,0.18)', color: 'var(--gold-h)' };
+  };
 
   return (
-    <div className="max-w-5xl mx-auto pb-10">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-c900">Saved Jobs</h1>
-        <p className="text-c500 mt-1">Opportunities you've bookmarked for later.</p>
+    <>
+      <div style={{ marginBottom: '24px' }}>
+        <h1 className="section__title" style={{ fontSize: '28px', marginBottom: '8px' }}>Saved Jobs</h1>
+        <p className="section__subtitle" style={{ marginBottom: 0 }}>Opportunities you've bookmarked for later.</p>
       </div>
 
-      {savedJobs.length === 0 ? (
-        <div className="bg-white rounded-2xl shadow-sm border border-c100 p-12 flex flex-col items-center justify-center text-center">
-          <div className="bg-c100 p-6 rounded-full mb-6">
-            <Heart className="w-12 h-12 text-c300" />
-          </div>
-          <h2 className="text-xl font-bold text-c900 mb-2">No saved jobs yet</h2>
-          <p className="text-c500 mb-6 max-w-md">
-            When you see a job you like but aren't ready to apply, save it here to easily find it later.
-          </p>
-          <Link 
-            href="/jobs" 
-            className="bg-green hover:bg-green text-white px-6 py-3 rounded-xl font-medium transition-colors"
-          >
-            Browse Jobs
-          </Link>
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: '60px 24px', color: 'var(--c-500)' }}>Loading saved jobs...</div>
+      ) : savedJobs.length === 0 ? (
+        <div className="dash-empty">
+          <div className="dash-empty__icon">❤️</div>
+          <div className="dash-empty__title">No saved jobs yet</div>
+          <div className="dash-empty__desc">When you see a job you like but aren't ready to apply, save it here to easily find it later.</div>
+          <Link href="/jobs" className="btn btn--primary">Browse Jobs</Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-6">
-          {savedJobs.map((job) => (
-            <div key={job.id} className="bg-white rounded-2xl shadow-sm border border-c100 p-6 hover:shadow-md transition-all group flex flex-col sm:flex-row gap-6">
-              
-              {/* Company Logo or Icon */}
-              <div className="w-16 h-16 rounded-xl bg-c100 border border-c100 flex flex-col items-center justify-center shrink-0">
-                <Building2 className="w-8 h-8 text-c400" />
-              </div>
+        <div className="joblist">
+          {savedJobs.map((job) => {
+            const companyName = job.employer?.employerProfile?.companyName || 'Company';
+            const logoColors = getLogoColors(companyName);
 
-              {/* Job Details */}
-              <div className="flex-1">
-                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-2">
-                  <div>
-                    <Link href={`/jobs/${job.id}`} className="hover:underline">
-                      <h3 className="text-xl font-bold text-c900">{job.title}</h3>
-                    </Link>
-                    <p className="text-green font-medium">{job.employer?.employerProfile?.companyName || 'Company'}</p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Link 
-                      href={`/jobs/${job.id}`}
-                      className="inline-flex items-center gap-1.5 px-4 py-2 bg-green text-green hover:bg-green rounded-lg text-sm font-medium transition-colors"
-                    >
-                      View <ExternalLink className="w-4 h-4" />
-                    </Link>
+            return (
+              <article key={job.id} className="jobcard">
+                <div className="jobcard__logo" style={logoColors}>
+                  {companyName.charAt(0).toUpperCase()}
+                </div>
+                <div className="jobcard__body">
+                  <div className="jobcard__top">
+                    <div>
+                      <Link href={`/jobs/${job.id}`} className="hover:text-blue-l" style={{ display: 'block', transition: 'color 150ms' }}>
+                        <div className="jobcard__title">{job.title}</div>
+                      </Link>
+                      <div className="jobcard__company">{companyName}</div>
+                    </div>
                     <button 
+                      className="jobcard__save" 
                       onClick={() => handleUnsave(job.id)}
-                      className="p-2 text-c400 hover:text-red hover:bg-red rounded-lg transition-colors"
                       title="Remove from saved"
                     >
-                      <Trash2 className="w-5 h-5" />
+                      <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-4 text-sm text-c500 mb-4">
-                  <span className="flex items-center gap-1.5"><MapPin className="w-4 h-4" /> {job.state || 'Location'}, {job.country || 'NG'}</span>
-                  <span className="flex items-center gap-1.5"><Briefcase className="w-4 h-4" /> {job.employmentType}</span>
-                  {job.minSalary && (
-                    <span className="flex items-center gap-1.5"><DollarSign className="w-4 h-4" /> {job.currency || 'NGN'} {Number(job.minSalary).toLocaleString()}</span>
-                  )}
-                </div>
-                
-                {job.skills && job.skills.length > 0 && (
-                  <div className="flex flex-wrap gap-2">
-                    {job.skills.slice(0, 4).map((skill: string, idx: number) => (
-                      <span key={idx} className="bg-c100 text-c600 px-2.5 py-1 rounded-md text-xs font-medium">
-                        {skill}
-                      </span>
-                    ))}
-                    {job.skills.length > 4 && (
-                      <span className="text-xs text-c400 py-1">+{job.skills.length - 4} more</span>
+                  <div className="jobcard__meta">
+                    <span>📍 {job.state || 'Location'}, {job.country || 'NG'}</span>
+                    <span>💼 {job.employmentType}</span>
+                    {job.minSalary && (
+                      <span className="jobcard__salary">{job.currency || 'NGN'} {Number(job.minSalary).toLocaleString()}</span>
                     )}
                   </div>
-                )}
-              </div>
+                  
+                  {job.skills && job.skills.length > 0 && (
+                    <div className="jobcard__tags">
+                      {job.skills.slice(0, 4).map((skill: string, idx: number) => (
+                        <span key={idx} className="tag">{skill}</span>
+                      ))}
+                      {job.skills.length > 4 && (
+                        <span style={{ fontSize: '11px', color: 'var(--c-500)', padding: '4px 0' }}>+{job.skills.length - 4} more</span>
+                      )}
+                    </div>
+                  )}
 
-            </div>
-          ))}
+                  <div className="jobcard__footer">
+                    <div className="jobcard__posted">
+                      {new Date(job.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                    </div>
+                    <Link href={`/jobs/${job.id}`} className="btn btn--sm btn--primary">View details</Link>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
         </div>
       )}
-    </div>
+    </>
   );
 }

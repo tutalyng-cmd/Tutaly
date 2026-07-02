@@ -4,17 +4,16 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { apiAuth } from '@/lib/api';
 import {
-  Package, Plus, ShoppingBag, TrendingUp, Clock,
-  CheckCircle2, Loader2, AlertCircle, Store,
+  Plus, CheckCircle2, Loader2, Clock, Edit2, Archive
 } from 'lucide-react';
 
-const STATUS_MAP: Record<string, { label: string; color: string }> = {
-  pending_payment: { label: 'Awaiting Payment', color: 'bg-gold text-goldH' },
-  paid: { label: 'Paid', color: 'bg-blueL text-blueH' },
-  delivered: { label: 'Delivered', color: 'bg-blueL text-blueH' },
-  completed: { label: 'Completed', color: 'bg-green text-green' },
-  flagged: { label: 'Flagged (Review)', color: 'bg-red text-red' },
-  refunded: { label: 'Refunded', color: 'bg-c100 text-c700' },
+const STATUS_MAP: Record<string, { label: string; color: string; style?: React.CSSProperties }> = {
+  pending_payment: { label: 'Awaiting Payment', color: '', style: { background: 'rgba(201,162,39,0.18)', color: 'var(--gold-h)' } },
+  paid: { label: 'Paid', color: '', style: { background: 'rgba(29,122,58,0.18)', color: '#2DB85A' } },
+  delivered: { label: 'Delivered', color: '', style: { background: 'rgba(27,79,158,0.18)', color: 'var(--blue-l)' } },
+  completed: { label: 'Completed', color: '', style: { background: 'rgba(29,122,58,0.18)', color: '#2DB85A' } },
+  flagged: { label: 'Flagged (Review)', color: '', style: { background: 'rgba(204,43,43,0.18)', color: '#F05050' } },
+  refunded: { label: 'Refunded', color: '', style: { background: 'rgba(255,255,255,0.1)', color: 'var(--c-500)' } },
 };
 
 export default function SellerShopPage() {
@@ -22,9 +21,7 @@ export default function SellerShopPage() {
   const [products, setProducts] = useState<any[]>([]);
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [applyLoading, setApplyLoading] = useState(false);
   const [deliveringId, setDeliveringId] = useState<string | null>(null);
-  const [applyForm, setApplyForm] = useState({ bio: '', categoryFocus: '' });
 
   useEffect(() => {
     checkSellerStatus();
@@ -62,25 +59,6 @@ export default function SellerShopPage() {
     }
   };
 
-  const handleApply = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setApplyLoading(true);
-    try {
-      const token = localStorage.getItem('access_token');
-      if (!token) return;
-      await apiAuth.withToken(token).post('/shop/seller/apply', applyForm);
-      setSellerStatus('pending');
-    } catch (e) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const error = e as any;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const err = e as any;
-alert(err.response?.data?.message || 'Application failed');
-    } finally {
-      setApplyLoading(false);
-    }
-  };
-
   const handleMarkDelivered = async (orderId: string) => {
     setDeliveringId(orderId);
     try {
@@ -90,11 +68,8 @@ alert(err.response?.data?.message || 'Application failed');
       const t = localStorage.getItem('access_token');
       if (t) await fetchSellerData(t);
     } catch (e) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const error = e as any;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const err = e as any;
-alert(err.response?.data?.message || 'Failed to mark as delivered');
+      alert(err.response?.data?.message || 'Failed to mark as delivered');
     } finally {
       setDeliveringId(null);
     }
@@ -103,18 +78,17 @@ alert(err.response?.data?.message || 'Failed to mark as delivered');
   const formatPrice = (price: number, currency?: string) => {
     const cur = currency || 'NGN';
     const locales: Record<string, string> = { NGN: 'en-NG', USD: 'en-US', EUR: 'de-DE' };
-    return new Intl.NumberFormat(locales[cur] || 'en-NG', { style: 'currency', currency: cur }).format(price);
+    return new Intl.NumberFormat(locales[cur] || 'en-NG', { style: 'currency', currency: cur, minimumFractionDigits: 0 }).format(price);
   };
 
   if (loading) {
     return (
-      <div className="p-8 flex justify-center py-20">
-        <Loader2 className="w-10 h-10 animate-spin text-green" />
+      <div style={{ padding: '60px 24px', textAlign: 'center', color: 'var(--c-500)' }}>
+        Loading dashboard...
       </div>
     );
   }
 
-  // Not a seller yet — redirect to apply page
   if (sellerStatus === 'none' || sellerStatus === 'rejected') {
     if (typeof window !== 'undefined') {
       window.location.href = '/seller/apply';
@@ -122,150 +96,143 @@ alert(err.response?.data?.message || 'Failed to mark as delivered');
     return null;
   }
 
-  // Application pending
   if (sellerStatus === 'pending') {
     return (
-      <div className="p-8 pb-16 max-w-2xl">
-        <div className="bg-white rounded-xl shadow-sm border border-c100 p-10 text-center">
-          <Clock className="w-16 h-16 text-gold mx-auto mb-6" />
-          <h2 className="text-2xl font-bold text-c900 mb-3">Application Under Review</h2>
-          <p className="text-c600 max-w-md mx-auto">
-            Your seller application is being reviewed by the Tutaly team. You'll be notified once a decision is made.
-          </p>
+      <div className="dash-empty" style={{ marginTop: '40px' }}>
+        <div className="dash-empty__icon" style={{ background: 'rgba(201,162,39,0.15)', color: 'var(--gold)' }}><Clock size={28} /></div>
+        <div className="dash-empty__title">Application Under Review</div>
+        <div className="dash-empty__desc">
+          Your seller application is being reviewed by the Tutaly team. You'll be notified once a decision is made.
         </div>
       </div>
     );
   }
 
-  // Approved seller — show dashboard
   const totalRevenue = orders
     .filter((o: any) => o.status === 'completed')
     .reduce((sum: number, o: any) => sum + Number(o.sellerEarnings || 0), 0);
   const pendingOrders = orders.filter((o: any) => o.status === 'paid').length;
 
   return (
-    <div className="p-8 pb-16">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
+    <>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
         <div>
-          <h1 className="text-2xl font-bold text-c900">Seller Dashboard</h1>
-          <p className="text-c500 mt-1">Manage your listings and fulfil orders.</p>
+          <h1 className="section__title" style={{ fontSize: '24px', marginBottom: '4px' }}>Seller Dashboard</h1>
+          <p className="section__subtitle" style={{ marginBottom: 0 }}>Manage your listings and fulfil orders.</p>
         </div>
-        <Link
-          href="/seller/create"
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-green px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-green transition-all shrink-0"
-        >
-          <Plus className="w-5 h-5" /> New Listing
+        <Link href="/seller/create" className="btn btn--primary" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Plus className="w-4 h-4" /> New Listing
         </Link>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
-        <div className="bg-white rounded-xl shadow-sm border border-c100 p-6">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="bg-green p-2 rounded-lg"><ShoppingBag className="w-5 h-5 text-green" /></div>
-            <span className="text-sm font-medium text-c500">Active Listings</span>
-          </div>
-          <p className="text-2xl font-bold text-c900">{products.filter(p => p.isActive).length}</p>
+      <div className="stat-grid">
+        <div className="stat-card">
+          <div className="stat-card__label">Active Listings</div>
+          <div className="stat-card__value">{products.filter(p => p.isActive).length}</div>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border border-c100 p-6">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="bg-gold p-2 rounded-lg"><Clock className="w-5 h-5 text-gold" /></div>
-            <span className="text-sm font-medium text-c500">Pending Orders</span>
-          </div>
-          <p className="text-2xl font-bold text-c900">{pendingOrders}</p>
+        <div className="stat-card">
+          <div className="stat-card__label">Pending Orders</div>
+          <div className="stat-card__value">{pendingOrders}</div>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border border-c100 p-6">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="bg-green p-2 rounded-lg"><TrendingUp className="w-5 h-5 text-green" /></div>
-            <span className="text-sm font-medium text-c500">Total Earnings</span>
-          </div>
-          <p className="text-2xl font-bold text-green">{formatPrice(totalRevenue)}</p>
+        <div className="stat-card">
+          <div className="stat-card__label">Total Earnings</div>
+          <div className="stat-card__value" style={{ color: '#2DB85A' }}>{formatPrice(totalRevenue)}</div>
         </div>
       </div>
 
-      {/* Recent Orders */}
-      <div className="mb-10">
-        <h2 className="text-lg font-bold text-c900 mb-4">Recent Orders</h2>
-        {orders.length === 0 ? (
-          <div className="bg-white rounded-xl border border-c100 p-8 text-center text-c500">
-            No orders yet. List a product to start selling!
+      <div className="overview-grid">
+        
+        {/* Recent Orders Col */}
+        <div className="dcard">
+          <div className="dcard__header">
+            <div>
+              <div className="dcard__title">Recent Orders</div>
+              <div className="dcard__sub">Latest purchases from buyers</div>
+            </div>
+            <Link href="/seller/orders" style={{ fontSize: '13px', color: 'var(--blue-l)', fontWeight: 600 }}>View all</Link>
           </div>
-        ) : (
-          <div className="bg-white rounded-xl shadow-sm border border-c100 overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left">
-                <thead className="bg-c100 text-xs font-semibold text-c500 uppercase tracking-wider">
-                  <tr>
-                    <th className="p-4">Product</th>
-                    <th className="p-4">Buyer</th>
-                    <th className="p-4">Amount</th>
-                    <th className="p-4">Your Earning</th>
-                    <th className="p-4">Status</th>
-                    <th className="p-4">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-c100">
-                  {orders.slice(0, 10).map((order: any) => {
-                    const statusInfo = STATUS_MAP[order.status] || STATUS_MAP.pending_payment;
-                    return (
-                      <tr key={order.id} className="hover:bg-c100">
-                        <td className="p-4 font-medium text-c900 max-w-layout-sm truncate">{order.product?.title}</td>
-                        <td className="p-4 text-sm text-c500">{order.buyer?.email}</td>
-                        <td className="p-4 text-sm font-medium">{formatPrice(order.amountPaid, order.currency)}</td>
-                        <td className="p-4 text-sm font-bold text-green">{formatPrice(order.sellerEarnings, order.currency)}</td>
-                        <td className="p-4">
-                          <span className={`${statusInfo.color} px-2 py-1 rounded-md text-xs font-bold`}>
-                            {statusInfo.label}
-                          </span>
-                        </td>
-                        <td className="p-4">
-                          {order.status === 'paid' && (
-                            <button
-                              onClick={() => handleMarkDelivered(order.id)}
-                              disabled={deliveringId === order.id}
-                              className="text-sm font-medium text-green hover:text-green flex items-center gap-1"
-                            >
-                              {deliveringId === order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle2 className="w-3 h-3" />}
-                              Mark Delivered
-                            </button>
-                          )}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+
+          {orders.length === 0 ? (
+            <div className="dash-empty" style={{ padding: '40px 20px' }}>
+              <div className="dash-empty__title" style={{ color: 'var(--c-500)' }}>No orders yet</div>
+            </div>
+          ) : (
+            <div>
+              {orders.slice(0, 5).map((order: any) => {
+                const statusInfo = STATUS_MAP[order.status] || STATUS_MAP.pending_payment;
+                return (
+                  <div key={order.id} className="order-row">
+                    <div className="order-row__thumb" style={{ background: 'rgba(27,79,158,0.15)' }}>📄</div>
+                    <div className="order-row__body">
+                      <div className="order-row__title">{order.product?.title || 'Unknown Product'}</div>
+                      <div className="order-row__meta">
+                        Purchased by {order.buyer?.firstName || order.buyer?.email} · {new Date(order.createdAt).toLocaleDateString()}
+                      </div>
+                    </div>
+                    <div className="order-row__status">
+                      <span style={{ padding: '4px 10px', borderRadius: 'var(--r-pill)', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', ...statusInfo.style }}>
+                        {statusInfo.label}
+                      </span>
+                    </div>
+                    <div className="order-row__price">{formatPrice(order.amountPaid, order.currency)}</div>
+                    
+                    {order.status === 'paid' && (
+                      <button
+                        onClick={() => handleMarkDelivered(order.id)}
+                        disabled={deliveringId === order.id}
+                        className="btn btn--sm"
+                        style={{ marginLeft: '12px', background: 'rgba(29,122,58,0.15)', color: '#2DB85A', borderColor: 'transparent' }}
+                      >
+                        {deliveringId === order.id ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Mark Delivered'}
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Listings Col */}
+        <div className="dcard">
+          <div className="dcard__header">
+            <div>
+              <div className="dcard__title">Your Listings</div>
+              <div className="dcard__sub">Manage products</div>
             </div>
           </div>
-        )}
-      </div>
 
-      {/* Products List */}
-      <div>
-        <h2 className="text-lg font-bold text-c900 mb-4">Your Listings</h2>
-        {products.length === 0 ? (
-          <div className="bg-white rounded-xl border border-c100 p-8 text-center text-c500">
-            No listings yet. Create your first product!
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {products.map((product: any) => (
-              <div key={product.id} className="bg-white rounded-xl shadow-sm border border-c100 p-5">
-                <h3 className="font-bold text-c900 mb-1 line-clamp-1">{product.title}</h3>
-                <p className="text-sm text-c500 capitalize mb-2">{product.listingType}</p>
-                <div className="flex justify-between items-center">
-                  <span className="font-bold text-green">
-                    {product.pricingType === 'per_unit' ? formatPrice(product.price, product.currency) : 'Quote'}
-                  </span>
-                  <span className={`text-xs px-2 py-1 rounded-md font-medium ${product.isActive ? 'bg-green text-green' : 'bg-c100 text-c500'}`}>
-                    {product.isActive ? 'Active' : 'Inactive'}
-                  </span>
+          {products.length === 0 ? (
+            <div className="dash-empty" style={{ padding: '40px 20px' }}>
+              <div className="dash-empty__title" style={{ color: 'var(--c-500)' }}>No listings yet</div>
+            </div>
+          ) : (
+            <div>
+              {products.map((product: any) => (
+                <div key={product.id} className="listing-row">
+                  <div className="listing-row__thumb" style={{ background: 'rgba(201,162,39,0.12)' }}>🎓</div>
+                  <div className="listing-row__body">
+                    <div className="listing-row__title">{product.title}</div>
+                    <div className="listing-row__meta">
+                      Published {new Date(product.createdAt).toLocaleDateString()} · {product.isActive ? 'Active' : 'Inactive'}
+                    </div>
+                  </div>
+                  <div className="listing-row__sales">
+                    <div className="listing-row__sales-num">{product.salesCount || 0}</div>
+                    <div className="listing-row__sales-label">Sold</div>
+                  </div>
+                  <div className="listing-row__price">{formatPrice(product.price, product.currency)}</div>
+                  <div className="listing-row__actions">
+                    <button className="dash-icon-btn" title="Edit Listing"><Edit2 className="w-4 h-4" /></button>
+                    <button className="dash-icon-btn" title="Archive"><Archive className="w-4 h-4" /></button>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+        </div>
+
       </div>
-    </div>
+    </>
   );
 }

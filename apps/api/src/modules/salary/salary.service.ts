@@ -51,6 +51,28 @@ export class SalaryService {
     }));
   }
 
+  async getPopularRoles(limit = 12) {
+    const stats = await this.salaryRepo
+      .createQueryBuilder('salary')
+      .select('salary.role', 'role')
+      .addSelect('COUNT(*)', 'totalSubmissions')
+      .addSelect('MIN(salary.salaryAmount)', 'minSalary')
+      .addSelect('MAX(salary.salaryAmount)', 'maxSalary')
+      .addSelect('AVG(salary.salaryAmount)', 'avgSalary')
+      .groupBy('salary.role')
+      .orderBy('"totalSubmissions"', 'DESC')
+      .limit(limit)
+      .getRawMany();
+
+    return stats.map((stat) => ({
+      role: stat.role,
+      totalSubmissions: parseInt(stat.totalSubmissions),
+      minSalary: parseFloat(stat.minSalary).toFixed(2),
+      maxSalary: parseFloat(stat.maxSalary).toFixed(2),
+      avgSalary: parseFloat(stat.avgSalary).toFixed(2),
+    }));
+  }
+
   async getRecent(page = 1, limit = 10, industry?: string, role?: string) {
     const where: import('typeorm').FindOptionsWhere<SalaryReview> = {};
     if (industry) where.industry = industry;

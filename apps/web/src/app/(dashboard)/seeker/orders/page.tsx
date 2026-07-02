@@ -4,17 +4,16 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { apiAuth } from '@/lib/api';
 import {
-  Package, Download, CheckCircle2, Clock, ShieldCheck,
-  AlertCircle, Loader2, ExternalLink,
+  Download, CheckCircle2, AlertCircle, Loader2, Package, ShieldCheck, Clock
 } from 'lucide-react';
 
-const STATUS_MAP: Record<string, { label: string; color: string; icon: any }> = {
-  pending_payment: { label: 'Pending Payment', color: 'bg-gold text-goldH', icon: Clock },
-  paid: { label: 'Paid', color: 'bg-blueL text-blueH', icon: ShieldCheck },
-  delivered: { label: 'Delivered', color: 'bg-blueL text-blueH', icon: Package },
-  completed: { label: 'Completed', color: 'bg-green text-green', icon: CheckCircle2 },
-  flagged: { label: 'Flagged (Review)', color: 'bg-red text-red', icon: AlertCircle },
-  refunded: { label: 'Refunded', color: 'bg-c100 text-c700', icon: AlertCircle },
+const STATUS_MAP: Record<string, { label: string; className: string; icon: any }> = {
+  pending_payment: { label: 'Pending Payment', className: 'text-c500 bg-c100', icon: Clock },
+  paid: { label: 'Paid', className: 'text-blue-l bg-blue-l', icon: ShieldCheck },
+  delivered: { label: 'Delivered', className: 'text-blue-l bg-blue-l', icon: Package },
+  completed: { label: 'Completed', className: 'text-green bg-green', icon: CheckCircle2 },
+  flagged: { label: 'Flagged (Review)', className: 'text-red bg-red', icon: AlertCircle },
+  refunded: { label: 'Refunded', className: 'text-c700 bg-c100', icon: AlertCircle },
 };
 
 export default function BuyerOrdersPage() {
@@ -50,11 +49,8 @@ export default function BuyerOrdersPage() {
         window.open(res.data.downloadUrl, '_blank');
       }
     } catch (e) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const error = e as any;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const err = e as any;
-alert(err.response?.data?.message || 'Download failed');
+      alert(err.response?.data?.message || 'Download failed');
     } finally {
       setDownloading(null);
     }
@@ -69,11 +65,8 @@ alert(err.response?.data?.message || 'Download failed');
       await apiAuth.withToken(token).post(`/shop/orders/${orderId}/confirm-delivery`);
       fetchOrders();
     } catch (e) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const error = e as any;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const err = e as any;
-alert(err.response?.data?.message || 'Confirmation failed');
+      alert(err.response?.data?.message || 'Confirmation failed');
     } finally {
       setConfirming(null);
     }
@@ -89,11 +82,8 @@ alert(err.response?.data?.message || 'Confirmation failed');
       await apiAuth.withToken(token).post(`/shop/orders/${orderId}/report`, { reason });
       fetchOrders();
     } catch (e) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const error = e as any;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const err = e as any;
-alert(err.response?.data?.message || 'Failed to report issue');
+      alert(err.response?.data?.message || 'Failed to report issue');
     }
   };
 
@@ -103,93 +93,72 @@ alert(err.response?.data?.message || 'Failed to report issue');
     return new Intl.NumberFormat(locales[cur] || 'en-NG', { style: 'currency', currency: cur }).format(price);
   };
 
-  if (loading) {
-    return (
-      <div className="p-8 flex justify-center py-20">
-        <Loader2 className="w-10 h-10 animate-spin text-green" />
-      </div>
-    );
-  }
-
   return (
-    <div className="p-8 pb-16 max-w-5xl">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-c900">My Orders</h1>
-        <p className="text-c500 mt-1">Track your purchases and download digital products.</p>
+    <>
+      <div style={{ marginBottom: '24px' }}>
+        <h1 className="section__title" style={{ fontSize: '28px', marginBottom: '8px' }}>My Orders</h1>
+        <p className="section__subtitle" style={{ marginBottom: 0 }}>Track your purchases and download digital products.</p>
       </div>
 
-      {orders.length === 0 ? (
-        <div className="text-center py-16 bg-white rounded-xl border border-c100">
-          <Package className="w-12 h-12 text-c300 mx-auto mb-4" />
-          <h3 className="text-lg font-bold text-c900 mb-2">No orders yet</h3>
-          <p className="text-c500 mb-6">Visit the shop to find tools and resources.</p>
-          <Link href="/shop" className="text-green font-medium hover:text-green">
-            Browse Shop →
-          </Link>
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: '60px 24px', color: 'var(--c-500)' }}>Loading orders...</div>
+      ) : orders.length === 0 ? (
+        <div className="dash-empty">
+          <div className="dash-empty__icon">🛍️</div>
+          <div className="dash-empty__title">No orders yet</div>
+          <div className="dash-empty__desc">Visit the shop to find tools and resources.</div>
+          <Link href="/shop" className="btn btn--primary">Browse Shop</Link>
         </div>
       ) : (
-        <div className="space-y-4">
-          {orders.map((order: any) => {
+        <div className="dcard" style={{ padding: '0' }}>
+          {orders.map((order: any, idx: number) => {
             const statusInfo = STATUS_MAP[order.status] || STATUS_MAP.pending_payment;
-            const StatusIcon = statusInfo.icon;
-
+            
             return (
-              <div key={order.id} className="bg-white rounded-xl shadow-sm border border-c100 p-6">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 bg-c100 rounded-xl flex items-center justify-center shrink-0">
-                      <Package className="w-7 h-7 text-c400" />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-c900">{order.product?.title || 'Product'}</h3>
-                      <p className="text-xs text-c500 font-mono mt-0.5">{order.paymentRef}</p>
-                      <p className="text-sm text-c500 mt-1">
-                        {new Date(order.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <span className={`${statusInfo.color} px-3 py-1 rounded-lg text-xs font-bold flex items-center gap-1`}>
-                      <StatusIcon className="w-3.5 h-3.5" /> {statusInfo.label}
+              <div key={order.id} className="order-row" style={{ 
+                border: 'none', 
+                borderBottom: idx < orders.length - 1 ? '1px solid var(--c-700)' : 'none',
+                borderRadius: 0,
+                margin: 0,
+                padding: '24px'
+              }}>
+                <div className="order-row__thumb" style={{ background: 'rgba(29,122,58,0.18)', color: '#2DB85A' }}>
+                  📦
+                </div>
+                <div className="order-row__body">
+                  <div className="order-row__title">{order.product?.title || 'Product'}</div>
+                  <div className="order-row__meta">
+                    {order.paymentRef} · {new Date(order.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                    <span style={{ marginLeft: '8px', padding: '2px 6px', borderRadius: 'var(--r-sm)', fontSize: '10px', fontWeight: 600, background: 'rgba(255,255,255,0.05)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                      <statusInfo.icon className="w-3 h-3" /> {statusInfo.label}
                     </span>
-                    <span className="font-bold text-green text-lg">{formatPrice(order.amountPaid, order.currency)}</span>
                   </div>
                 </div>
-
-                {/* Action Buttons */}
-                <div className="mt-4 pt-4 border-t border-c100 flex flex-wrap gap-2">
-                  {/* Download for digital */}
+                <div className="order-row__price">{formatPrice(order.amountPaid, order.currency)}</div>
+                <div className="order-row__status" style={{ display: 'flex', gap: '8px' }}>
                   {order.product?.fileS3Key && ['paid', 'delivered', 'completed'].includes(order.status) && (
                     <button
                       onClick={() => handleDownload(order.id)}
                       disabled={downloading === order.id}
-                      className="inline-flex items-center gap-1.5 bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
+                      className="btn btn--sm" style={{ background: 'rgba(27,79,158,0.18)', color: 'var(--blue-l)', border: 'none' }}
                     >
-                      {downloading === order.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-                      Download
+                      {downloading === order.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />} Download
                     </button>
                   )}
-
-                  {/* Confirm delivery */}
                   {order.status === 'delivered' && (
                     <button
                       onClick={() => handleConfirmDelivery(order.id)}
                       disabled={confirming === order.id}
-                      className="inline-flex items-center gap-1.5 bg-green hover:bg-green text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
+                      className="btn btn--sm btn--primary"
                     >
-                      {confirming === order.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
-                      Confirm Delivery
+                      {confirming === order.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />} Confirm
                     </button>
                   )}
-
-                  {/* Report Issue */}
                   {['paid', 'delivered'].includes(order.status) && (
                     <button
                       onClick={() => handleReportIssue(order.id)}
-                      className="inline-flex items-center gap-1.5 border border-red text-red hover:bg-red px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                      className="btn btn--sm btn--danger-outline"
                     >
-                      <AlertCircle className="w-4 h-4" />
                       Report Issue
                     </button>
                   )}
@@ -199,6 +168,6 @@ alert(err.response?.data?.message || 'Failed to report issue');
           })}
         </div>
       )}
-    </div>
+    </>
   );
 }

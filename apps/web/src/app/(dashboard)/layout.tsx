@@ -3,7 +3,6 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import AdBanner from '@/components/ads/AdBanner';
 import { 
   Building2, 
   Briefcase, 
@@ -17,7 +16,10 @@ import {
   Package,
   AlertTriangle,
   MessageSquare,
+  Bell,
+  HelpCircle,
 } from 'lucide-react';
+import Image from 'next/image';
 
 export default function DashboardLayout({
   children,
@@ -27,7 +29,6 @@ export default function DashboardLayout({
   const pathname = usePathname();
   const router = useRouter();
   
-  // Exclude the root redirect page from sidebar wrapper
   if (pathname === '/dashboard') {
     return <main>{children}</main>;
   }
@@ -35,7 +36,9 @@ export default function DashboardLayout({
   const isEmployer = pathname.startsWith('/employer');
   const isSeeker = pathname.startsWith('/seeker');
   const isSeller = pathname.startsWith('/seller');
+  const isAdmin = pathname.startsWith('/admin');
 
+  // We can group links if needed, but for now we'll support both flat and grouped structures.
   const employerLinks = [
     { name: 'Overview', href: '/employer', icon: Building2 },
     { name: 'My Jobs', href: '/employer/jobs', icon: Briefcase },
@@ -45,12 +48,28 @@ export default function DashboardLayout({
   ];
 
   const seekerLinks = [
-    { name: 'My Profile', href: '/seeker', icon: User },
-    { name: 'Applications', href: '/seeker/applications', icon: Briefcase },
-    { name: 'Saved Jobs', href: '/seeker/saved', icon: Heart },
-    { name: 'My Orders', href: '/seeker/orders', icon: ShoppingBag },
-    { name: 'Seller Dashboard', href: '/seller', icon: Store },
-    { name: 'Settings', href: '/seeker/settings', icon: Settings },
+    {
+      label: 'Platform',
+      items: [
+        { name: 'Overview', href: '/seeker', icon: Building2 },
+        { name: 'Applications', href: '/seeker/applications', icon: Briefcase },
+        { name: 'Saved Jobs', href: '/seeker/saved', icon: Heart },
+      ]
+    },
+    {
+      label: 'Marketplace',
+      items: [
+        { name: 'My Orders', href: '/seeker/orders', icon: ShoppingBag },
+        { name: 'Seller Dashboard', href: '/seller', icon: Store },
+      ]
+    },
+    {
+      label: 'Account',
+      items: [
+        { name: 'Profile', href: '/seeker/profile', icon: User },
+        { name: 'Settings', href: '/seeker/settings', icon: Settings },
+      ]
+    }
   ];
 
   const sellerLinks = [
@@ -58,7 +77,6 @@ export default function DashboardLayout({
     { name: 'Add Product', href: '/seller/create', icon: FileText },
   ];
 
-  const isAdmin = pathname.startsWith('/admin');
   const adminLinks = [
     { name: 'Overview', href: '/admin', icon: Building2 },
     { name: 'Approve Jobs', href: '/admin/jobs', icon: Briefcase },
@@ -69,8 +87,6 @@ export default function DashboardLayout({
     { name: 'Reviews', href: '/admin/reviews', icon: MessageSquare },
     { name: 'Manage Users', href: '/admin/users', icon: User },
   ];
-
-  const links = isSeller ? sellerLinks : isEmployer ? employerLinks : isSeeker ? seekerLinks : isAdmin ? adminLinks : [];
 
   const handleLogout = async () => {
     try {
@@ -83,99 +99,112 @@ export default function DashboardLayout({
         });
       }
     } catch {
-      // Even if backend call fails, clear local state
+      // ignore
     }
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     router.push('/');
   };
 
+  const renderNavItems = (items: any[]) => {
+    return items.map((item) => {
+      const isActive = pathname === item.href;
+      return (
+        <Link
+          key={item.href}
+          href={item.href}
+          className={`dash-nav-item ${isActive ? 'active' : ''}`}
+        >
+          <item.icon className="w-[17px] h-[17px]" />
+          {item.name}
+        </Link>
+      );
+    });
+  };
+
+  const getPageTitle = () => {
+    // Find active link name for title
+    let title = 'Dashboard';
+    const findTitle = (items: any[]) => {
+      for (const item of items) {
+        if (item.items) {
+          findTitle(item.items);
+        } else if (item.href === pathname) {
+          title = item.name;
+        }
+      }
+    };
+    if (isSeeker) findTitle(seekerLinks);
+    else if (isEmployer) findTitle(employerLinks);
+    else if (isSeller) findTitle(sellerLinks);
+    else if (isAdmin) findTitle(adminLinks);
+    return title;
+  };
+
+  const title = getPageTitle();
+
   return (
-    <div className="flex h-screen overflow-hidden bg-c100 relative">
+    <div className="dash-shell">
       {/* Sidebar */}
-      <aside className="w-64 border-r border-c200 bg-white flex flex-col hidden lg:flex shrink-0">
-        <div className="p-4 border-b border-c100 mb-2">
-          <p className="text-xs font-bold text-c400 uppercase tracking-wider">
-            {isSeller ? 'Seller Dashboard' : isEmployer ? 'Employer Workspace' : isSeeker ? 'Professional Profile' : isAdmin ? 'Admin Control Panel' : 'Dashboard'}
-          </p>
+      <aside className="dash-sidebar" aria-label="Dashboard navigation">
+        <div className="dash-sidebar__logo">
+          <Link href="/">
+            <div style={{ fontSize: '20px', fontWeight: 800, color: 'var(--c-100)', letterSpacing: '-0.02em' }}>
+              Tutaly<span style={{ color: 'var(--blue-l)' }}>.</span>
+            </div>
+          </Link>
         </div>
 
-        <nav className="flex-1 space-y-1 px-3 mt-2">
-          {links.map((item) => {
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors ${
-                  isActive
-                    ? 'bg-green text-green'
-                    : 'text-c700 hover:bg-c100 hover:text-c900'
-                }`}
-              >
-                <item.icon
-                  className={`mr-3 h-5 w-5 shrink-0 ${
-                    isActive ? 'text-green' : 'text-c400 group-hover:text-c500'
-                  }`}
-                  aria-hidden="true"
-                />
-                {item.name}
-              </Link>
-            );
-          })}
+        <nav className="dash-sidebar__nav">
+          {isSeeker ? (
+            seekerLinks.map((group, idx) => (
+              <div key={idx} className="dash-nav-group">
+                {group.label && <div className="dash-nav-label">{group.label}</div>}
+                {renderNavItems(group.items)}
+              </div>
+            ))
+          ) : (
+            <div className="dash-nav-group">
+              {renderNavItems(isEmployer ? employerLinks : isSeller ? sellerLinks : isAdmin ? adminLinks : [])}
+            </div>
+          )}
         </nav>
 
-        <div className="p-4 border-t border-c200 mt-auto">
-          <button
-            onClick={handleLogout}
-            className="group flex w-full items-center px-3 py-2.5 text-sm font-medium text-c700 rounded-lg transition-colors hover:bg-red hover:text-red"
-          >
-            <LogOut
-              className="mr-3 h-5 w-5 shrink-0 text-c400 group-hover:text-red"
-              aria-hidden="true"
-            />
-            Sign out
-          </button>
+        <div className="dash-sidebar__footer">
+          <div className="dash-user-card" onClick={handleLogout}>
+            <div className="dash-user-avatar">
+              <LogOut className="w-4 h-4" />
+            </div>
+            <div className="dash-user-info">
+              <div className="dash-user-name">Sign out</div>
+              <div className="dash-user-role">Log out of account</div>
+            </div>
+          </div>
         </div>
       </aside>
 
-      {/* Main Content Area */}
-      <main className="flex-1 overflow-y-auto w-full pb-16 lg:pb-0">
-        <div className="border-b border-c100 bg-white">
-          <AdBanner placement="dashboard_top" />
+      {/* Main Content */}
+      <div className="dash-main">
+        <div className="dash-topbar">
+          <div>
+            <div className="dash-topbar__title">{title}</div>
+            <div className="dash-topbar__crumb">Dashboard / {title}</div>
+          </div>
+          <div className="dash-topbar__actions">
+            <button className="dash-icon-btn" aria-label="Notifications">
+              <Bell className="w-4 h-4" />
+              <span className="dash-icon-btn__dot"></span>
+            </button>
+            <button className="dash-icon-btn" aria-label="Help">
+              <HelpCircle className="w-4 h-4" />
+            </button>
+          </div>
         </div>
-        <div className="p-4 sm:p-8 w-full max-w-7xl mx-auto">
+
+        <div className="dash-content">
           {children}
         </div>
-      </main>
-
-      {/* Mobile Bottom Navigation */}
-      <nav className="lg:hidden absolute bottom-0 left-0 right-0 bg-white border-t border-c200 z-50 shadow-lg pb-safe">
-        <div className="flex overflow-x-auto justify-start items-center h-16 px-2 ">
-          {links.map((item) => {
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`flex flex-col items-center justify-center min-w-layout-xs shrink-0 px-1 space-y-1 transition-colors ${
-                  isActive ? 'text-green' : 'text-c500 hover:text-c900'
-                }`}
-              >
-                <item.icon className={`h-5 w-5 ${isActive ? 'text-green' : ''}`} strokeWidth={isActive ? 2.5 : 2} />
-                <span className={`text-xs whitespace-nowrap ${isActive ? 'font-bold' : 'font-medium'}`}>{item.name}</span>
-              </Link>
-            );
-          })}
-          <button
-            onClick={handleLogout}
-            className="flex flex-col items-center justify-center min-w-layout-xs shrink-0 px-1 space-y-1 text-c500 hover:text-red transition-colors"
-          >
-            <LogOut className="h-5 w-5" />
-            <span className="text-xs font-medium whitespace-nowrap">Sign out</span>
-          </button>
-        </div>
-      </nav>
+      </div>
     </div>
   );
 }

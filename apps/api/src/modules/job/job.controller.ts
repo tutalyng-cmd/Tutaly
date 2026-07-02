@@ -41,6 +41,11 @@ export class JobController {
     return this.jobService.findAll(query);
   }
 
+  @Get('meta/filters')
+  async getFilterMetadata() {
+    return this.jobService.getFilterMetadata();
+  }
+
   // ─── SPECIFIC ROUTES (must come BEFORE :id) ──────────────
 
   @UseGuards(JwtAuthGuard, RolesGuard)

@@ -71,7 +71,14 @@ export default async function JobsPage(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const searchParams = await props.searchParams;
-  const { items: jobs, meta } = await fetchJobs(searchParams);
+  
+  // Fetch jobs and filter metadata in parallel
+  const [{ items: jobs, meta }, filterMetaRes] = await Promise.all([
+    fetchJobs(searchParams),
+    serverFetch<any>('jobs/meta/filters', { cache: 'no-store' }).catch(() => null)
+  ]);
+  
+  const filterMeta = filterMetaRes || { industries: [], locations: {} };
   const selectedJobId = searchParams.jobId ? String(searchParams.jobId) : null;
 
   // Fetch full detail for selected job
@@ -119,7 +126,7 @@ export default async function JobsPage(props: {
 
         <div className="layout-split">
           <Suspense fallback={<div className="w-72 h-32 bg-c800 rounded-lg animate-pulse hidden lg:block" />}>
-            <JobFilterSidebar />
+            <JobFilterSidebar filterMeta={filterMeta} />
           </Suspense>
 
           <Suspense fallback={

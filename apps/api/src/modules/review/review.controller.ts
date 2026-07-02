@@ -70,6 +70,23 @@ export class ReviewController {
     return this.reviewService.updateReviewStatus(id, status);
   }
 
+  @Get('all/recent')
+  async getRecentGlobalReviews(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
+    const p = parseInt(page || '1', 10);
+    const l = parseInt(limit || '10', 10);
+    return this.reviewService.getRecentGlobalReviews(p, l);
+  }
+
+  @Get('search')
+  async searchCompanies(
+    @Query('q') query: string,
+  ) {
+    return { data: await this.reviewService.searchCompanies(query) };
+  }
+
   @Get(':companyName/aggregates')
   async getAggregates(@Param('companyName') companyName: string) {
     return { data: await this.reviewService.getCompanyAggregates(companyName) };

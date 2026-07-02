@@ -105,6 +105,40 @@ export class ReviewService {
     return { data, meta: { page, limit, total } };
   }
 
+  async getRecentGlobalReviews(page = 1, limit = 10) {
+    const [data, total] = await this.reviewRepo.findAndCount({
+      where: { status: ReviewStatus.APPROVED },
+      order: { createdAt: 'DESC' },
+      take: limit,
+      skip: (page - 1) * limit,
+    });
+
+    return { data, meta: { page, limit, total } };
+  }
+
+  async searchCompanies(query: string) {
+    if (!query) return [];
+    
+    // Group by companyName, match by ilike
+    const stats = await this.reviewRepo
+      .createQueryBuilder('review')
+      .select('review.companyName', 'companyName')
+      .addSelect('COUNT(*)', 'totalReviews')
+      .addSelect('AVG(review.ratingOverall)', 'avgOverall')
+      .where('review.status = :status', { status: ReviewStatus.APPROVED })
+      .andWhere('review.companyName ILIKE :query', { query: `%${query}%` })
+      .groupBy('review.companyName')
+      .orderBy('"totalReviews"', 'DESC')
+      .limit(10)
+      .getRawMany();
+
+    return stats.map((stat) => ({
+      companyName: stat.companyName,
+      totalReviews: parseInt(stat.totalReviews),
+      avgOverall: parseFloat(stat.avgOverall).toFixed(1),
+    }));
+  }
+
   async getPendingReviews(page = 1, limit = 10) {
     const [data, total] = await this.reviewRepo.findAndCount({
       where: { status: ReviewStatus.PENDING },

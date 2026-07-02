@@ -1,124 +1,165 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import { apiAuth } from '@/lib/api';
-import { Briefcase, Heart, Search, User, FileText, CheckCircle2, AlertCircle } from 'lucide-react';
+import { 
+  Megaphone,
+  ChevronRight,
+  Bookmark,
+  Check,
+  Circle
+} from 'lucide-react';
 
 export default function SeekerOverviewPage() {
-  const [userEmail, setUserEmail] = useState('');
-  const [profile, setProfile] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchSeekerDetails() {
-      try {
-        const token = localStorage.getItem('access_token');
-        if (!token) return;
-        
-        const [meRes, profileRes] = await Promise.all([
-          apiAuth.withToken(token).get('/user/me'),
-          apiAuth.withToken(token).get('/user/seeker/profile')
-        ]);
-        
-        setUserEmail(meRes.data.data?.email || 'Professional');
-        setProfile(profileRes.data);
-      } catch (err) {
-        console.error("Failed to load seeker data", err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    
-    fetchSeekerDetails();
-  }, []);
-
-  const calculateCompletion = () => {
-    if (!profile) return 0;
-    let score = 0;
-    if (profile.firstName && profile.lastName) score += 20;
-    if (profile.headline) score += 20;
-    if (profile.bio) score += 20;
-    if (profile.skills && profile.skills.length > 0) score += 20;
-    if (profile.resumeUrl) score += 20;
-    return score;
-  };
-
-  const completionScore = calculateCompletion();
-
   return (
-    <div>
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
-        <div>
-          <h1 className="text-3xl font-extrabold text-c100">Your Dashboard</h1>
-          <p className="text-c400 mt-2">Welcome back, {loading ? '...' : (profile?.firstName ? `${profile.firstName} ${profile.lastName}` : userEmail)}</p>
+    <>
+      <Link href="/advertise" className="ad-banner" aria-label="Run an ad — promote your profile or listings to employers and buyers">
+        <div className="ad-banner__left">
+          <div className="ad-banner__icon">
+            <Megaphone className="w-[18px] h-[18px]" />
+          </div>
+          <div>
+            <div className="ad-banner__title">Get seen by more employers</div>
+            <div className="ad-banner__desc">Run a targeted ad to promote your profile or marketplace listings — starts at ₦5,000.</div>
+          </div>
         </div>
-        <Link 
-          href="/jobs" 
-          className="btn btn--primary shrink-0"
-        >
-          <Search className="w-5 h-5" /> Find Jobs
-        </Link>
+        <div className="ad-banner__cta">
+          <span style={{ fontSize: '12.5px', fontWeight: 700, color: 'var(--gold-h)' }}>Create an ad</span>
+          <ChevronRight className="ad-banner__arrow w-4 h-4" />
+        </div>
+      </Link>
+
+      <div className="dcard" style={{ background: 'linear-gradient(135deg, rgba(27,79,158,0.14), rgba(201,162,39,0.06))', borderColor: 'var(--c-700)', marginBottom: '16px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+          <div>
+            <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--c-100)', marginBottom: '4px' }}>Welcome back 👋</div>
+            <div style={{ fontSize: '13px', color: 'var(--c-400)' }}>You have 3 active applications and 12 new job matches this week.</div>
+          </div>
+          <Link href="/jobs" className="btn btn--primary btn--sm">Browse new matches</Link>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 mb-8">
-        {/* Quick Action Cards */}
-        <Link href="/seeker/applications" className="group block">
-          <div className="bg-c800 rounded-xl border border-c700 p-6 flex flex-col items-center justify-center text-center h-full transition-all hover:border-blue hover:shadow-glow-blue">
-            <div className="bg-green/20 p-4 rounded-full text-green mb-4 transition-transform duration-200 group-hover:scale-110">
-              <Briefcase className="w-8 h-8" />
-            </div>
-            <h3 className="text-lg font-extrabold text-c100">My Applications</h3>
-            <p className="text-sm text-c400 mt-2">Track the status of roles you have applied for.</p>
-          </div>
-        </Link>
-        
-        <Link href="/seeker/saved" className="group block">
-          <div className="bg-c800 rounded-xl border border-c700 p-6 flex flex-col items-center justify-center text-center h-full transition-all hover:border-red hover:shadow-md">
-            <div className="bg-red/15 p-4 rounded-full text-red mb-4 transition-transform duration-200 group-hover:scale-110">
-              <Heart className="w-8 h-8" />
-            </div>
-            <h3 className="text-lg font-extrabold text-c100">Saved Jobs</h3>
-            <p className="text-sm text-c400 mt-2">View the opportunities you bookmarked for later.</p>
-          </div>
-        </Link>
+      <div className="stat-grid">
+        <div className="stat-card">
+          <div className="stat-card__label">Applications</div>
+          <div className="stat-card__value">24</div>
+          <div className="stat-card__delta up">↑ 6 this month</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-card__label">Profile views</div>
+          <div className="stat-card__value">312</div>
+          <div className="stat-card__delta up">↑ 18% this week</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-card__label">Saved jobs</div>
+          <div className="stat-card__value">9</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-card__label">Profile strength</div>
+          <div className="stat-card__value" style={{ color: 'var(--gold-h)' }}>82%</div>
+        </div>
+      </div>
 
-        {/* Profile Completion Card */}
-        <Link href="/seeker/profile" className="group block sm:col-span-2 lg:col-span-1">
-          <div className="bg-blue shadow-glow-blue rounded-xl border border-blue p-6 flex flex-col h-full relative overflow-hidden">
-            <div className="absolute -top-4 -right-4 w-24 h-24 bg-blue opacity-10 rounded-full blur-2xl"></div>
-            
-            <div className="flex justify-between items-start mb-4 relative z-10">
-              <div className="bg-blue/20 p-3 rounded-md text-blueL">
-                <User className="w-6 h-6" />
+      <div className="overview-grid">
+        {/* LEFT COLUMN */}
+        <div>
+          <div className="dcard">
+            <div className="dcard__header">
+              <div>
+                <div className="dcard__title">Recent applications</div>
+                <div className="dcard__sub">Your latest activity</div>
               </div>
-              <div className="text-right">
-                <span className="text-2xl font-extrabold text-c100">{completionScore}%</span>
-                <p className="text-xs text-blueL">Profile complete</p>
-              </div>
-            </div>
-            
-            <div className="w-full bg-c800 rounded-full h-2 mb-4">
-              <div className="bg-blue h-2 rounded-full transition-all duration-1000 ease-in-out" style={{ width: `${completionScore}%` }}></div>
+              <Link href="/seeker/applications" style={{ fontSize: '12.5px', fontWeight: 600, color: 'var(--blue-l)' }}>View all →</Link>
             </div>
 
-            <div className="mt-auto space-y-2 relative z-10">
-              {completionScore < 100 ? (
-                <>
-                  {!profile?.headline && <p className="text-sm text-c300 flex items-center gap-2"><AlertCircle className="w-4 h-4 text-goldH" /> Add a headline</p>}
-                  {!profile?.resumeUrl && <p className="text-sm text-c300 flex items-center gap-2"><AlertCircle className="w-4 h-4 text-goldH" /> Upload your CV</p>}
-                  <p className="text-sm font-semibold text-blueL mt-2 flex items-center gap-1">Complete Profile &rarr;</p>
-                </>
-              ) : (
-                <div className="flex items-center gap-2 text-green">
-                  <CheckCircle2 className="w-5 h-5" />
-                  <span className="text-sm font-semibold">Your profile is looking great!</span>
+            <div className="app-row">
+              <div className="app-row__logo" style={{ background: 'rgba(29,122,58,0.18)', color: '#2DB85A' }}>P</div>
+              <div className="app-row__body">
+                <div className="app-row__title">Senior Product Manager</div>
+                <div className="app-row__meta">Paystack · Lagos, Nigeria</div>
+              </div>
+              <div className="app-row__status"><span className="status--offer" style={{ padding: '4px 10px', borderRadius: 'var(--r-pill)', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase' }}>Offer</span></div>
+            </div>
+            <div className="app-row">
+              <div className="app-row__logo" style={{ background: 'rgba(27,79,158,0.18)', color: 'var(--blue-l)' }}>F</div>
+              <div className="app-row__body">
+                <div className="app-row__title">Backend Engineer (Node.js)</div>
+                <div className="app-row__meta">Flutterwave · Lagos, Nigeria</div>
+              </div>
+              <div className="app-row__status"><span className="status--interview" style={{ padding: '4px 10px', borderRadius: 'var(--r-pill)', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase' }}>Interview</span></div>
+            </div>
+            <div className="app-row" style={{ marginBottom: 0 }}>
+              <div className="app-row__logo" style={{ background: 'rgba(201,162,39,0.18)', color: 'var(--gold-h)' }}>A</div>
+              <div className="app-row__body">
+                <div className="app-row__title">Data Scientist</div>
+                <div className="app-row__meta">Andela · Remote, Global</div>
+              </div>
+              <div className="app-row__status"><span className="status--review" style={{ padding: '4px 10px', borderRadius: 'var(--r-pill)', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase' }}>In review</span></div>
+            </div>
+          </div>
+
+          <div className="dcard">
+            <div className="dcard__header">
+              <div>
+                <div className="dcard__title">Recommended for you</div>
+                <div className="dcard__sub">Based on your profile and skills</div>
+              </div>
+              <Link href="/jobs" style={{ fontSize: '12.5px', fontWeight: 600, color: 'var(--blue-l)' }}>See more →</Link>
+            </div>
+            <div className="joblist">
+              <article className="jobcard" style={{ padding: '16px' }}>
+                <div className="jobcard__logo" style={{ width: '40px', height: '40px', fontSize: '15px', background: 'rgba(204,43,43,0.14)', color: '#F05050' }}>N</div>
+                <div className="jobcard__body">
+                  <div className="jobcard__top">
+                    <div>
+                      <div className="jobcard__title" style={{ fontSize: '14px' }}>Staff Software Engineer</div>
+                      <div className="jobcard__company">Novalink</div>
+                    </div>
+                    <button className="jobcard__save" aria-label="Save job" style={{ width: '28px', height: '28px' }}>
+                      <Bookmark className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                  <div className="jobcard__meta">
+                    <span>📍 Remote, Global</span>
+                    <span className="jobcard__salary">$95,000 – $135,000</span>
+                  </div>
                 </div>
-              )}
+              </article>
             </div>
           </div>
-        </Link>
+        </div>
+
+        {/* RIGHT COLUMN */}
+        <div>
+          <div className="dcard">
+            <div className="dcard__title" style={{ marginBottom: '14px' }}>Profile strength</div>
+            <div className="salary-bar-track" style={{ marginBottom: '8px' }}>
+              <div className="salary-bar-fill" style={{ width: '82%', background: 'linear-gradient(90deg, rgba(201,162,39,0.5), var(--gold))' }}></div>
+            </div>
+            <p style={{ fontSize: '12px', color: 'var(--c-500)', marginBottom: '16px' }}>Add your work experience to reach 100%.</p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 0', borderTop: '1px solid var(--c-700)' }}>
+              <Check className="w-3.5 h-3.5" stroke="#2DB85A" strokeWidth={3} />
+              <span style={{ fontSize: '12.5px', color: 'var(--c-300)' }}>Resume uploaded</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 0' }}>
+              <Check className="w-3.5 h-3.5" stroke="#2DB85A" strokeWidth={3} />
+              <span style={{ fontSize: '12.5px', color: 'var(--c-300)' }}>Skills added</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 0' }}>
+              <Circle className="w-3.5 h-3.5" stroke="var(--c-500)" />
+              <span style={{ fontSize: '12.5px', color: 'var(--c-500)' }}>Work experience missing</span>
+            </div>
+            <Link href="/seeker/profile" className="btn btn--ghost btn--sm btn--full" style={{ marginTop: '14px' }}>Complete profile</Link>
+          </div>
+
+          <div className="dcard">
+            <div className="dcard__title" style={{ marginBottom: '14px' }}>Your salary insight</div>
+            <div style={{ fontFamily: 'var(--mono)', fontSize: '26px', fontWeight: 600, color: '#2DB85A', marginBottom: '2px' }}>₦820K</div>
+            <div style={{ fontSize: '11.5px', color: 'var(--c-500)', marginBottom: '14px' }}>Median for Product Manager, Lagos</div>
+            <Link href="/salaries" className="btn btn--ghost btn--sm btn--full">Explore salary data</Link>
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

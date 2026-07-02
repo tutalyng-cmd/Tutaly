@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { apiAuth } from '@/lib/api';
-import { Briefcase, Building2, MapPin, Calendar, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 
 interface SubApplication {
@@ -27,6 +26,7 @@ export default function SeekerApplicationsPage() {
   const [loading, setLoading] = useState(true);
   const [applications, setApplications] = useState<SubApplication[]>([]);
   const [error, setError] = useState('');
+  const [activeTab, setActiveTab] = useState('Active');
 
   useEffect(() => {
     fetchApplications();
@@ -40,113 +40,123 @@ export default function SeekerApplicationsPage() {
       const { data } = await apiAuth.withToken(token).get('/jobs/seeker/applications');
       setApplications(data);
     } catch (e) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const error = e as any;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const err = e as any;
-setError(err instanceof Error ? err.message : 'Failed to fetch your applications');
+      setError(err instanceof Error ? err.message : 'Failed to fetch your applications');
     } finally {
       setLoading(false);
     }
   };
 
-  const getStatusBadge = (status: string) => {
+  const getStatusStyle = (status: string) => {
     switch (status.toUpperCase()) {
       case 'APPLIED':
-        return <span className="px-3 py-1 bg-blueL text-blueH text-xs font-bold rounded-full border border-blueL">APPLIED</span>;
+        return { className: 'status--review', style: { padding: '4px 10px', borderRadius: 'var(--r-pill)', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase' as const, background: 'rgba(201,162,39,0.2)', color: 'var(--gold-h)' } };
       case 'REVIEWING':
-        return <span className="px-3 py-1 bg-purple-50 text-purple-700 text-xs font-bold rounded-full border border-purple-200">REVIEWING</span>;
       case 'SHORTLISTED':
-        return <span className="px-3 py-1 bg-green text-green text-xs font-bold rounded-full border border-green">SHORTLISTED</span>;
+      case 'INTERVIEW':
+        return { className: 'status--interview', style: { padding: '4px 10px', borderRadius: 'var(--r-pill)', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase' as const, background: 'rgba(27,79,158,0.2)', color: 'var(--blue-l)' } };
       case 'OFFERED':
-        return <span className="px-3 py-1 bg-green text-green text-xs font-bold rounded-full border border-green">OFFERED</span>;
+        return { className: 'status--offer', style: { padding: '4px 10px', borderRadius: 'var(--r-pill)', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase' as const, background: 'rgba(29,122,58,0.2)', color: '#2DB85A' } };
       case 'REJECTED':
-        return <span className="px-3 py-1 bg-red text-red text-xs font-bold rounded-full border border-red">REJECTED</span>;
+        return { className: '', style: { padding: '4px 10px', borderRadius: 'var(--r-pill)', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase' as const, background: 'rgba(204,43,43,0.12)', color: '#F05050' } };
       default:
-        return <span className="px-3 py-1 bg-c100 text-c700 text-xs font-bold rounded-full border border-c200">{status}</span>;
+        return { className: '', style: { padding: '4px 10px', borderRadius: 'var(--r-pill)', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase' as const, background: 'var(--c-700)', color: 'var(--c-300)' } };
     }
   };
 
-  if (loading) {
-    return (
-      <div className="p-8 pb-16 animate-pulse">
-        <div className="h-8 bg-c200 rounded w-1/4 mb-6" />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="h-40 bg-c100 rounded-xl" />
-          <div className="h-40 bg-c100 rounded-xl" />
-        </div>
-      </div>
-    );
-  }
+  // Mock logo colors based on company name
+  const getLogoColors = (companyName: string) => {
+    const char = companyName.charAt(0).toUpperCase();
+    const hash = char.charCodeAt(0) % 3;
+    if (hash === 0) return { background: 'rgba(29,122,58,0.18)', color: '#2DB85A' };
+    if (hash === 1) return { background: 'rgba(27,79,158,0.18)', color: 'var(--blue-l)' };
+    return { background: 'rgba(201,162,39,0.18)', color: 'var(--gold-h)' };
+  };
+
+  // Filtering logic
+  const activeApps = applications.filter(a => !['REJECTED', 'OFFERED'].includes(a.status.toUpperCase()));
+  const interviewApps = applications.filter(a => ['REVIEWING', 'SHORTLISTED', 'INTERVIEW'].includes(a.status.toUpperCase()));
+  const offerApps = applications.filter(a => a.status.toUpperCase() === 'OFFERED');
+  const archivedApps = applications.filter(a => a.status.toUpperCase() === 'REJECTED');
+
+  let displayedApps = activeApps;
+  if (activeTab === 'Interviews') displayedApps = interviewApps;
+  if (activeTab === 'Offers') displayedApps = offerApps;
+  if (activeTab === 'Archived') displayedApps = archivedApps;
 
   return (
-    <div className="p-8 pb-16 max-w-5xl">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-c900">My Applications</h1>
-        <p className="text-c500 mt-1">Track the status of jobs you have applied to.</p>
+    <>
+      <div style={{ marginBottom: '24px' }}>
+        <h1 className="section__title" style={{ fontSize: '28px', marginBottom: '8px' }}>Applications</h1>
+        <p className="section__subtitle" style={{ marginBottom: 0 }}>Track the status of jobs you have applied to.</p>
       </div>
 
       {error && (
-        <div className="mb-6 p-4 bg-red text-red border border-red rounded-lg text-sm">
+        <div style={{ padding: '16px', background: 'rgba(204,43,43,0.12)', color: '#F05050', borderRadius: 'var(--r-lg)', marginBottom: '24px' }}>
           {error}
         </div>
       )}
 
-      {applications.length === 0 ? (
-        <div className="bg-white p-12 rounded-xl border border-c100 text-center shadow-sm">
-          <Briefcase className="w-12 h-12 mx-auto mb-4 text-c200" />
-          <h3 className="text-lg font-bold text-c900 mb-2">No applications yet</h3>
-          <p className="text-c500 text-sm mb-6">You haven&apos;t applied to any jobs. Explore active listings to find your next role.</p>
-          <Link href="/jobs" className="inline-flex bg-c900 text-white font-bold py-2.5 px-6 rounded-xl hover:bg-black transition">
-            Explore Jobs
-          </Link>
+      <div className="app-tabs">
+        <div className={`app-tab ${activeTab === 'Active' ? 'active' : ''}`} onClick={() => setActiveTab('Active')}>
+          Active <span className="app-tab__count">{activeApps.length}</span>
+        </div>
+        <div className={`app-tab ${activeTab === 'Interviews' ? 'active' : ''}`} onClick={() => setActiveTab('Interviews')}>
+          Interviews <span className="app-tab__count">{interviewApps.length}</span>
+        </div>
+        <div className={`app-tab ${activeTab === 'Offers' ? 'active' : ''}`} onClick={() => setActiveTab('Offers')}>
+          Offers <span className="app-tab__count">{offerApps.length}</span>
+        </div>
+        <div className={`app-tab ${activeTab === 'Archived' ? 'active' : ''}`} onClick={() => setActiveTab('Archived')}>
+          Archived <span className="app-tab__count">{archivedApps.length}</span>
+        </div>
+      </div>
+
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: '60px 24px', color: 'var(--c-500)' }}>Loading applications...</div>
+      ) : applications.length === 0 ? (
+        <div className="dash-empty">
+          <div className="dash-empty__icon">💼</div>
+          <div className="dash-empty__title">No applications yet</div>
+          <div className="dash-empty__desc">You haven't applied to any jobs. Explore active listings to find your next role.</div>
+          <Link href="/jobs" className="btn btn--primary">Explore Jobs</Link>
+        </div>
+      ) : displayedApps.length === 0 ? (
+        <div className="dash-empty">
+          <div className="dash-empty__title">No {activeTab.toLowerCase()} applications</div>
+          <div className="dash-empty__desc">Check back later or view your other tabs.</div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
-          {applications.map((app) => (
-            <div key={app.id} className="bg-white p-5 rounded-xl border border-c100 shadow-sm hover:shadow-md transition">
-              <div className="flex justify-between items-start mb-3">
-                <div className="min-w-0 pr-4">
-                  <h3 className="font-bold text-c900 truncate text-lg">
+        <div>
+          {displayedApps.map((app) => {
+            const companyName = app.job.employer.email.split('@')[0];
+            const logoColors = getLogoColors(companyName);
+            const statusStyle = getStatusStyle(app.status);
+            
+            return (
+              <div key={app.id} className="app-row">
+                <div className="app-row__logo" style={logoColors}>
+                  {companyName.charAt(0).toUpperCase()}
+                </div>
+                <div className="app-row__body">
+                  <Link href={`/jobs?jobId=${app.job.id}`} className="app-row__title hover:text-blue-l" style={{ display: 'block', transition: 'color 150ms' }}>
                     {app.job.title}
-                  </h3>
-                  <div className="flex items-center gap-1.5 text-sm text-c500 mt-1">
-                    <Building2 className="w-4 h-4 text-c400" />
-                    <span className="truncate">{app.job.employer.email.split('@')[0]} Company</span>
+                  </Link>
+                  <div className="app-row__meta">
+                    {companyName} Company · {app.job.area ? `${app.job.area}, ` : ''}{app.job.state}
                   </div>
                 </div>
-                <div className="shrink-0 flex flex-col items-end gap-2 text-right">
-                  {getStatusBadge(app.status)}
+                <div className="app-row__status">
+                  <span className={statusStyle.className} style={statusStyle.style}>{app.status}</span>
+                </div>
+                <div className="app-row__date">
+                  {new Date(app.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                 </div>
               </div>
-
-              <div className="mt-4 flex flex-wrap gap-2 text-xs text-c600 mb-6">
-                 <span className="bg-c100 px-2 py-1 rounded border border-c100">
-                    {app.job.jobType}
-                 </span>
-                 <span className="bg-c100 px-2 py-1 rounded border border-c100">
-                    {app.job.workMode}
-                 </span>
-                 <span className="flex items-center gap-1 bg-c100 px-2 py-1 rounded border border-c100">
-                    <MapPin className="w-3 h-3 text-c400" />
-                    {app.job.area ? `${app.job.area}, ` : ''}{app.job.state}
-                 </span>
-              </div>
-
-              <div className="flex items-center justify-between border-t border-c100 pt-4 mt-auto">
-                 <div className="flex items-center gap-1.5 text-xs text-c400">
-                   <Calendar className="w-3.5 h-3.5" />
-                   Applied {new Date(app.createdAt).toLocaleDateString()}
-                 </div>
-                 
-                 <Link href={`/jobs?jobId=${app.job.id}`} className="text-sm font-medium text-green flex items-center gap-1 hover:text-green">
-                    View Posting <ExternalLink className="w-3.5 h-3.5" />
-                 </Link>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
-    </div>
+    </>
   );
 }

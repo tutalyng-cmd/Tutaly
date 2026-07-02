@@ -9,7 +9,7 @@ import { useCart } from "@/components/providers/CartProvider";
 import { apiAuth } from "@/lib/api";
 
 export default function Navbar() {
-  const pathname = usePathname();
+  const pathname = usePathname() || '';
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);

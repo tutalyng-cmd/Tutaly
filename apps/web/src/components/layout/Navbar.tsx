@@ -177,11 +177,11 @@ export default function Navbar() {
 
             {/* Auth Buttons */}
             {isAuthenticated ? (
-              <Link href="/dashboard" className="btn btn--primary hidden md:inline-flex">Dashboard</Link>
+              <Link href="/dashboard" className="btn btn--primary !hidden md:!inline-flex">Dashboard</Link>
             ) : (
               <>
-                <Link href="/auth/signin" className="btn btn--ghost hidden md:inline-flex">Sign in</Link>
-                <Link href="/employer/jobs/create" className="btn btn--primary hidden md:inline-flex">Get started</Link>
+                <Link href="/auth/signin" className="btn btn--ghost !hidden md:!inline-flex">Sign in</Link>
+                <Link href="/employer/jobs/create" className="btn btn--primary !hidden md:!inline-flex">Get started</Link>
               </>
             )}
 

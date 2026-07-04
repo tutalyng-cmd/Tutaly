@@ -5,8 +5,19 @@ import Link from 'next/link';
 import { apiAuth } from '@/lib/api';
 import { Loader2 } from 'lucide-react';
 
+interface Campaign {
+  id: string;
+  format?: string;
+  placements?: string[];
+  status: string;
+  total_spent?: number | string;
+  total_budget?: number | string;
+  impression_count?: number;
+  click_count?: number;
+}
+
 export default function AdvertiserDashboard() {
-  const [campaigns, setCampaigns] = useState<any[]>([]);
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -95,8 +106,8 @@ export default function AdvertiserDashboard() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-c800">
-                {campaigns.map((c: any) => {
-                  const ctr = c.impression_count > 0 ? ((c.click_count / c.impression_count) * 100).toFixed(1) : '0.0';
+                {campaigns.map((c: Campaign) => {
+                  const ctr = (c.impression_count || 0) > 0 ? (((c.click_count || 0) / (c.impression_count || 1)) * 100).toFixed(1) : '0.0';
                   const progress = Math.min(100, (Number(c.total_spent) / Number(c.total_budget)) * 100);
                   
                   return (

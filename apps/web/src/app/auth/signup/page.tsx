@@ -46,7 +46,7 @@ export default function SignUp() {
       await api.post('/auth/register', payload);
       setIsSuccess(true);
     } catch (e) {
-      const err = e as any;
+      const err = e as { response?: { data?: { message?: string } } };
       setError(err.response?.data?.message || 'Failed to register. Please try again.');
     } finally {
       setIsLoading(false);
@@ -79,7 +79,7 @@ export default function SignUp() {
           </div>
           <h1 className="auth-heading">Check your email</h1>
           <p className="auth-subheading" style={{ marginBottom: '24px' }}>
-            We've sent a verification link to <span style={{ color: 'var(--c-100)', fontWeight: 500 }}>{email}</span>.
+            We&apos;ve sent a verification link to <span style={{ color: 'var(--c-100)', fontWeight: 500 }}>{email}</span>.
           </p>
           <Link href="/auth/signin" className="btn btn--primary btn--full">Go to Sign in</Link>
         </div>
@@ -98,7 +98,7 @@ export default function SignUp() {
 
         <div className="auth-panel__content">
           <div className="auth-panel__quote">
-            "We filled our senior engineering roles 40% faster using Tutaly's verified talent pool. It's the only platform we trust."
+            &quot;We filled our senior engineering roles 40% faster using Tutaly&apos;s verified talent pool. It&apos;s the only platform we trust.&quot;
           </div>
           <div className="auth-panel__author">
             <div className="auth-panel__avatar" style={{ background: 'var(--green)' }}>AJ</div>
@@ -209,7 +209,7 @@ export default function SignUp() {
 
             <div className="check-row" style={{ marginTop: '24px' }}>
               <input type="checkbox" id="terms" className="filter-checkbox" required checked={termsAgreed} onChange={e => setTermsAgreed(e.target.checked)} />
-              <label htmlFor="terms">I agree to Tutaly's <Link href="/terms">Terms of Service</Link> and <Link href="/privacy">Privacy Policy</Link>.</label>
+              <label htmlFor="terms">I agree to Tutaly&apos;s <Link href="/terms">Terms of Service</Link> and <Link href="/privacy">Privacy Policy</Link>.</label>
             </div>
 
             <button type="submit" disabled={isLoading} className="btn btn--primary btn--full flex justify-center items-center gap-2">

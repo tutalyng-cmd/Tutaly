@@ -42,11 +42,8 @@ function MfaContent() {
 
       router.push('/dashboard');
     } catch (e) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const error = e as any;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const err = e as any;
-setError(error.response?.data?.message || 'Invalid OTP code. Please try again.');
+      const error = e as { response?: { data?: { message?: string } } };
+      setError(error.response?.data?.message || 'Invalid OTP code. Please try again.');
     } finally {
       setIsLoading(false);
     }

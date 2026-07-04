@@ -22,7 +22,7 @@ function VerifyEmailContent() {
         setStatus('success');
         setMessage(res.data.message || 'Your email has been successfully verified!');
       } catch (e) {
-        const err = e as any;
+        const err = e as { response?: { data?: { message?: string } } };
         setStatus('error');
         setMessage(err.response?.data?.message || 'Verification link is invalid or has expired.');
       }

@@ -35,7 +35,7 @@ export default function SignIn() {
 
       router.push('/dashboard');
     } catch (e) {
-      const err = e as any;
+      const err = e as { response?: { data?: { message?: string } } };
       setError(err.response?.data?.message || 'Invalid email or password.');
     } finally {
       setIsLoading(false);

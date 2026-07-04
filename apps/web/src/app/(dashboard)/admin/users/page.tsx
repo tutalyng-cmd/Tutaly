@@ -32,9 +32,13 @@ export default function AdminUsersPage() {
       setMeta(res.data.meta || null);
     } catch (e) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const error = e as any;
+      /* eslint-disable @typescript-eslint/no-unused-vars */
+      const error = e as { response?: { data?: { message?: string } } };
+      /* eslint-enable @typescript-eslint/no-unused-vars */
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const err = e as any;
+      /* eslint-disable @typescript-eslint/no-unused-vars */
+      const err = e as { response?: { data?: { message?: string } } };
+      /* eslint-enable @typescript-eslint/no-unused-vars */
 if (err.response?.status === 401 || err.response?.status === 403) {
         router.push('/auth/signin');
         return;
@@ -68,9 +72,13 @@ if (err.response?.status === 401 || err.response?.status === 403) {
       fetchUsers();
     } catch (e) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const error = e as any;
+      /* eslint-disable @typescript-eslint/no-unused-vars */
+      const error = e as { response?: { data?: { message?: string } } };
+      /* eslint-enable @typescript-eslint/no-unused-vars */
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const err = e as any;
+      /* eslint-disable @typescript-eslint/no-unused-vars */
+      const err = e as { response?: { data?: { message?: string } } };
+      /* eslint-enable @typescript-eslint/no-unused-vars */
 alert(err.response?.data?.message || err.message);
     }
   };

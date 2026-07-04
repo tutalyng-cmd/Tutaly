@@ -305,9 +305,13 @@ export default function ApplyModal({
       onSuccess();
     } catch (e) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const error = e as any;
+      /* eslint-disable @typescript-eslint/no-unused-vars */
+      const error = e as { response?: { data?: { message?: string } } };
+      /* eslint-enable @typescript-eslint/no-unused-vars */
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const err = e as any;
+      /* eslint-disable @typescript-eslint/no-unused-vars */
+      const err = e as { response?: { data?: { message?: string } } };
+      /* eslint-enable @typescript-eslint/no-unused-vars */
 const errorObj = err as { response?: { data?: { message?: string } }, message?: string };
       const message = errorObj.response?.data?.message || errorObj.message || 'Application failed';
 

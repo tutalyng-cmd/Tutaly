@@ -272,7 +272,9 @@ export default function FeedPage() {
       setHasMore(true);
       fetchFeed(1, true);
     } catch (e) {
-      const err = e as any;
+      /* eslint-disable @typescript-eslint/no-unused-vars */
+      const err = e as { response?: { data?: { message?: string } } };
+      /* eslint-enable @typescript-eslint/no-unused-vars */
       console.error('Failed to create post', err);
       setPostError(err?.message || err?.response?.data?.message || 'Failed to create post. Please try again.');
     } finally {

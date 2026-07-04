@@ -35,11 +35,8 @@ function ResetPasswordContent() {
       await api.post('/auth/reset-password', { token, newPassword: password });
       setIsSuccess(true);
     } catch (e) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const error = e as any;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const err = e as any;
-setError(error.response?.data?.message || 'Failed to reset password.');
+      const error = e as { response?: { data?: { message?: string } } };
+      setError(error.response?.data?.message || 'Failed to reset password.');
     } finally {
       setIsLoading(false);
     }

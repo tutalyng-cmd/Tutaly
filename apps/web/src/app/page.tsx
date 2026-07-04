@@ -179,7 +179,7 @@ export default async function Home() {
               </div>
             </div>
             
-            <div className="hidden lg:block relative rounded-3xl overflow-hidden shadow-2xl shadow-blue-900/10 border border-white/20 h-full min-h-[500px]">
+            <div className="hidden lg:block relative rounded-3xl overflow-hidden shadow-2xl shadow-blue-900/10 border border-white/20 h-full" style={{ minHeight: '500px' }}>
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent z-10 mix-blend-overlay"></div>
               <Image src="/images/feature.png" alt="Professional working" layout="fill" objectFit="cover" className="transform hover:scale-105 transition-transform duration-700" />
             </div>

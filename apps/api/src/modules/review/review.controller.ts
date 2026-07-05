@@ -81,9 +81,7 @@ export class ReviewController {
   }
 
   @Get('search')
-  async searchCompanies(
-    @Query('q') query: string,
-  ) {
+  async searchCompanies(@Query('q') query: string) {
     return { data: await this.reviewService.searchCompanies(query) };
   }
 

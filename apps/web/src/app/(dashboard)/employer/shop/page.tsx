@@ -9,12 +9,12 @@ import {
 } from 'lucide-react';
 
 const STATUS_MAP: Record<string, { label: string; color: string }> = {
-  pending_payment: { label: 'Awaiting Payment', color: 'bg-gold text-goldH' },
-  paid: { label: 'Paid', color: 'bg-blueL text-blueH' },
-  delivered: { label: 'Delivered', color: 'bg-blueL text-blueH' },
-  completed: { label: 'Completed', color: 'bg-green text-green' },
-  flagged: { label: 'Flagged (Review)', color: 'bg-red text-red' },
-  refunded: { label: 'Refunded', color: 'bg-c100 text-c700' },
+  pending_payment: { label: 'Awaiting Payment', color: 'tag--gold' },
+  paid: { label: 'Paid', color: 'tag--blue' },
+  delivered: { label: 'Delivered', color: 'tag--blue' },
+  completed: { label: 'Completed', color: 'tag--green' },
+  flagged: { label: 'Flagged (Review)', color: 'tag' }, // can add tag--red if needed
+  refunded: { label: 'Refunded', color: 'tag' },
 };
 
 export default function SellerShopPage() {
@@ -108,7 +108,7 @@ alert(err.response?.data?.message || 'Failed to mark as delivered');
 
   if (loading) {
     return (
-      <div className="p-8 flex justify-center py-20">
+      <div className="flex justify-center py-20">
         <Loader2 className="w-10 h-10 animate-spin text-green" />
       </div>
     );
@@ -117,39 +117,43 @@ alert(err.response?.data?.message || 'Failed to mark as delivered');
   // Not a seller yet — show application form
   if (sellerStatus === 'none' || sellerStatus === 'rejected') {
     return (
-      <div className="p-8 pb-16 max-w-2xl">
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-c900">Become a Seller</h1>
-          <p className="text-c500 mt-1">Apply to sell templates, tools, and services on the Tutaly marketplace.</p>
+      <div className="max-w-2xl">
+        <div className="dcard mb-6">
+          <div className="dcard__header">
+            <div>
+              <h1 className="dcard__title">Become a Seller</h1>
+              <p className="dcard__sub">Apply to sell templates, tools, and services on the Tutaly marketplace.</p>
+            </div>
+          </div>
         </div>
 
         {sellerStatus === 'rejected' && (
-          <div className="bg-red border border-red rounded-xl p-4 mb-6 flex items-center gap-3 text-red">
-            <AlertCircle className="w-5 h-5 shrink-0" />
-            Your previous application was not approved. You may apply again with updated information.
+          <div className="mb-6 p-4 rounded-xl flex items-start gap-3" style={{ backgroundColor: 'var(--red-10)', border: '1px solid var(--red)', color: 'var(--red)' }}>
+            <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+            <p className="text-sm font-medium">Your previous application was not approved. You may apply again with updated information.</p>
           </div>
         )}
 
-        <form onSubmit={handleApply} className="bg-white rounded-xl shadow-sm border border-c100 p-8 space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-c700 mb-1">Why do you want to sell on Tutaly? *</label>
+        <form onSubmit={handleApply} className="dcard space-y-6">
+          <div className="form-field">
+            <label className="form-label">Why do you want to sell on Tutaly? *</label>
             <textarea
               value={applyForm.bio}
               onChange={(e) => setApplyForm(prev => ({ ...prev, bio: e.target.value }))}
               rows={5}
-              className="w-full rounded-lg border border-c200 px-4 py-2.5 text-sm text-black focus:ring-2 focus:ring-green focus:border-transparent outline-none"
+              className="form-input"
               required
               minLength={20}
               placeholder="Tell us about your expertise and what you plan to offer (min 20 characters)..."
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-c700 mb-1">Category Focus *</label>
+          <div className="form-field">
+            <label className="form-label">Category Focus *</label>
             <input
               type="text"
               value={applyForm.categoryFocus}
               onChange={(e) => setApplyForm(prev => ({ ...prev, categoryFocus: e.target.value }))}
-              className="w-full rounded-lg border border-c200 px-4 py-2.5 text-sm text-black focus:ring-2 focus:ring-green focus:border-transparent outline-none"
+              className="form-input"
               required
               placeholder="e.g. CV Templates, Design Services, Software Tools"
             />
@@ -157,7 +161,7 @@ alert(err.response?.data?.message || 'Failed to mark as delivered');
           <button
             type="submit"
             disabled={applyLoading}
-            className="bg-green hover:bg-green text-white px-6 py-3 rounded-xl font-bold transition-colors flex items-center gap-2 disabled:opacity-50"
+            className="btn btn--primary"
           >
             {applyLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Store className="w-4 h-4" />}
             Submit Application
@@ -170,11 +174,11 @@ alert(err.response?.data?.message || 'Failed to mark as delivered');
   // Application pending
   if (sellerStatus === 'pending') {
     return (
-      <div className="p-8 pb-16 max-w-2xl">
-        <div className="bg-white rounded-xl shadow-sm border border-c100 p-10 text-center">
-          <Clock className="w-16 h-16 text-gold mx-auto mb-6" />
-          <h2 className="text-2xl font-bold text-c900 mb-3">Application Under Review</h2>
-          <p className="text-c600 max-w-md mx-auto">
+      <div className="max-w-2xl">
+        <div className="dcard text-center py-12">
+          <Clock className="w-16 h-16 mx-auto mb-6 opacity-80" style={{ color: 'var(--gold)' }} />
+          <h2 className="text-xl font-bold mb-3" style={{ color: 'var(--c-100)' }}>Application Under Review</h2>
+          <p className="max-w-md mx-auto" style={{ color: 'var(--c-400)', fontSize: '14px' }}>
             Your seller application is being reviewed by the Tutaly team. You'll be notified once a decision is made.
           </p>
         </div>
@@ -189,57 +193,56 @@ alert(err.response?.data?.message || 'Failed to mark as delivered');
   const pendingOrders = orders.filter((o: any) => o.status === 'paid').length;
 
   return (
-    <div className="p-8 pb-16">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-c900">Seller Dashboard</h1>
-          <p className="text-c500 mt-1">Manage your listings and fulfil orders.</p>
+    <div>
+      <div className="dcard mb-6" style={{ background: 'linear-gradient(135deg, var(--green-10), transparent)', borderColor: 'var(--c-700)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+          <div>
+            <h1 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--c-100)', marginBottom: '4px' }}>Seller Dashboard</h1>
+            <p style={{ fontSize: '13px', color: 'var(--c-400)' }}>Manage your listings and fulfil orders.</p>
+          </div>
+          <Link
+            href="/employer/shop/create"
+            className="btn btn--primary btn--sm"
+          >
+            <Plus className="w-4 h-4" /> New Listing
+          </Link>
         </div>
-        <Link
-          href="/employer/shop/create"
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-green px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-green transition-all shrink-0"
-        >
-          <Plus className="w-5 h-5" /> New Listing
-        </Link>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
-        <div className="bg-white rounded-xl shadow-sm border border-c100 p-6">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="bg-green p-2 rounded-lg"><ShoppingBag className="w-5 h-5 text-green" /></div>
-            <span className="text-sm font-medium text-c500">Active Listings</span>
+      <div className="stat-grid mb-8">
+        <div className="stat-card">
+          <div className="stat-card__label flex items-center gap-2">
+            <ShoppingBag className="w-4 h-4" style={{ color: 'var(--green-light)' }} /> Active Listings
           </div>
-          <p className="text-2xl font-bold text-c900">{products.filter(p => p.isActive).length}</p>
+          <p className="stat-card__value">{products.filter(p => p.isActive).length}</p>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border border-c100 p-6">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="bg-gold p-2 rounded-lg"><Clock className="w-5 h-5 text-gold" /></div>
-            <span className="text-sm font-medium text-c500">Pending Orders</span>
+        <div className="stat-card">
+          <div className="stat-card__label flex items-center gap-2">
+            <Clock className="w-4 h-4" style={{ color: 'var(--gold-h)' }} /> Pending Orders
           </div>
-          <p className="text-2xl font-bold text-c900">{pendingOrders}</p>
+          <p className="stat-card__value">{pendingOrders}</p>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border border-c100 p-6">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="bg-green p-2 rounded-lg"><TrendingUp className="w-5 h-5 text-green" /></div>
-            <span className="text-sm font-medium text-c500">Total Earnings</span>
+        <div className="stat-card">
+          <div className="stat-card__label flex items-center gap-2">
+            <TrendingUp className="w-4 h-4" style={{ color: 'var(--blue-l)' }} /> Total Earnings
           </div>
-          <p className="text-2xl font-bold text-green">{formatPrice(totalRevenue)}</p>
+          <p className="stat-card__value">{formatPrice(totalRevenue)}</p>
         </div>
       </div>
 
       {/* Recent Orders */}
       <div className="mb-10">
-        <h2 className="text-lg font-bold text-c900 mb-4">Recent Orders</h2>
+        <h2 style={{ fontSize: '16px', fontWeight: 700, color: 'var(--c-100)', marginBottom: '16px' }}>Recent Orders</h2>
         {orders.length === 0 ? (
-          <div className="bg-white rounded-xl border border-c100 p-8 text-center text-c500">
+          <div className="dcard text-center" style={{ padding: '32px', color: 'var(--c-400)' }}>
             No orders yet. List a product to start selling!
           </div>
         ) : (
-          <div className="bg-white rounded-xl shadow-sm border border-c100 overflow-hidden">
+          <div className="dcard p-0 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left">
-                <thead className="bg-c100 text-xs font-semibold text-c500 uppercase tracking-wider">
+                <thead className="text-xs font-semibold uppercase tracking-wider" style={{ backgroundColor: 'var(--c-800)', borderBottom: '1px solid var(--c-700)', color: 'var(--c-400)' }}>
                   <tr>
                     <th className="p-4">Product</th>
                     <th className="p-4">Buyer</th>
@@ -249,17 +252,17 @@ alert(err.response?.data?.message || 'Failed to mark as delivered');
                     <th className="p-4">Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-c100">
+                <tbody className="divide-y divide-c700">
                   {orders.slice(0, 10).map((order: any) => {
                     const statusInfo = STATUS_MAP[order.status] || STATUS_MAP.pending_payment;
                     return (
-                      <tr key={order.id} className="hover:bg-c100">
-                        <td className="p-4 font-medium text-c900 max-w-layout-sm truncate">{order.product?.title}</td>
-                        <td className="p-4 text-sm text-c500">{order.buyer?.email}</td>
-                        <td className="p-4 text-sm font-medium">{formatPrice(order.amountPaid, order.currency)}</td>
+                      <tr key={order.id} className="hover:bg-c800 transition-colors">
+                        <td className="p-4 font-bold max-w-layout-sm truncate" style={{ color: 'var(--c-100)' }}>{order.product?.title}</td>
+                        <td className="p-4 text-sm" style={{ color: 'var(--c-400)' }}>{order.buyer?.email}</td>
+                        <td className="p-4 text-sm font-medium" style={{ color: 'var(--c-100)' }}>{formatPrice(order.amountPaid, order.currency)}</td>
                         <td className="p-4 text-sm font-bold text-green">{formatPrice(order.sellerEarnings, order.currency)}</td>
                         <td className="p-4">
-                          <span className={`${statusInfo.color} px-2 py-1 rounded-md text-xs font-bold`}>
+                          <span className={`${statusInfo.color}`}>
                             {statusInfo.label}
                           </span>
                         </td>
@@ -287,22 +290,22 @@ alert(err.response?.data?.message || 'Failed to mark as delivered');
 
       {/* Products List */}
       <div>
-        <h2 className="text-lg font-bold text-c900 mb-4">Your Listings</h2>
+        <h2 style={{ fontSize: '16px', fontWeight: 700, color: 'var(--c-100)', marginBottom: '16px' }}>Your Listings</h2>
         {products.length === 0 ? (
-          <div className="bg-white rounded-xl border border-c100 p-8 text-center text-c500">
+          <div className="dcard text-center" style={{ padding: '32px', color: 'var(--c-400)' }}>
             No listings yet. Create your first product!
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {products.map((product: any) => (
-              <div key={product.id} className="bg-white rounded-xl shadow-sm border border-c100 p-5">
-                <h3 className="font-bold text-c900 mb-1 line-clamp-1">{product.title}</h3>
-                <p className="text-sm text-c500 capitalize mb-2">{product.listingType}</p>
-                <div className="flex justify-between items-center">
+              <div key={product.id} className="dcard p-5" style={{ display: 'flex', flexDirection: 'column' }}>
+                <h3 className="font-bold mb-1 line-clamp-1" style={{ color: 'var(--c-100)' }}>{product.title}</h3>
+                <p className="text-sm capitalize mb-4" style={{ color: 'var(--c-400)' }}>{product.listingType}</p>
+                <div className="flex justify-between items-center mt-auto">
                   <span className="font-bold text-green">
                     {product.pricingType === 'per_unit' ? formatPrice(product.price, product.currency) : 'Quote'}
                   </span>
-                  <span className={`text-xs px-2 py-1 rounded-md font-medium ${product.isActive ? 'bg-green text-green' : 'bg-c100 text-c500'}`}>
+                  <span className={product.isActive ? 'tag tag--green' : 'tag'}>
                     {product.isActive ? 'Active' : 'Inactive'}
                   </span>
                 </div>

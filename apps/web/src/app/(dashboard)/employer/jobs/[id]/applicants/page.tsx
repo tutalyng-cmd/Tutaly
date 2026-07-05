@@ -423,117 +423,114 @@ const msg = err?.response?.data?.message || 'Failed to load resume';
   }
 
   // ─── LIST VIEW ─────────────────────────────────────
-  return (
-    <div className="max-w-6xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
-      <div className="mb-8">
-        <Link href="/employer/jobs" className="text-green hover:text-green flex items-center gap-1 mb-4 text-sm font-medium">
-          <ArrowLeft className="w-4 h-4" /> Back to Jobs
-        </Link>
-        <h1 className="text-3xl font-bold text-c900">Applicants</h1>
-        <p className="text-c500 mt-1">Review candidates and manage their application status. Click on an applicant to see their full application.</p>
+  const applied = applicants.filter(a => a.status === 'applied');
+  const reviewing = applicants.filter(a => a.status === 'reviewing');
+  const shortlisted = applicants.filter(a => a.status === 'shortlisted');
+  const offered = applicants.filter(a => a.status === 'offered');
+  const rejected = applicants.filter(a => a.status === 'rejected');
+
+  const jobTitle = applicants.length > 0 && applicants[0].job?.title ? applicants[0].job.title : 'Job Applicants';
+
+  const renderCard = (app: Applicant) => (
+    <div key={app.id} className="kanban-card cursor-pointer hover:border-c400 transition" onClick={() => viewApplicationDetail(app)}>
+      <div className="kanban-card__head">
+        <div className="kanban-card__avatar" style={{ background: 'var(--c-500)' }}>
+          {getApplicantName(app).charAt(0).toUpperCase()}
+        </div>
+        <div>
+          <div className="kanban-card__name">{getApplicantName(app)}</div>
+          <div className="kanban-card__role">{app.location || app.seeker?.seekerProfile?.location || 'Unknown Location'}</div>
+        </div>
       </div>
-
-      <div className="bg-white rounded-xl shadow-sm border border-c100 overflow-hidden">
-        {loading ? (
-          <div className="p-8 text-center text-c500 italic">Finding candidates...</div>
-        ) : applicants.length === 0 ? (
-          <div className="p-16 text-center text-c500">
-            <User className="w-12 h-12 mx-auto mb-4 text-c300" />
-            <h3 className="text-lg font-medium text-c900 mb-2">No applicants yet</h3>
-            <p className="text-sm">When job seekers apply to this position, they will appear here.</p>
-          </div>
-        ) : (
-          <ul className="divide-y divide-c200">
-            {applicants.map((app) => {
-              const statusInfo = STATUS_LABELS[app.status] || { label: app.status, bg: 'bg-c100', text: 'text-c700' };
-
-              return (
-                <li
-                  key={app.id}
-                  className="p-6 hover:bg-c100 transition cursor-pointer"
-                  onClick={() => viewApplicationDetail(app)}
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex gap-4">
-                      <div className="h-12 w-12 rounded-full bg-green flex items-center justify-center text-green font-bold text-xl shrink-0">
-                        {getApplicantName(app).charAt(0).toUpperCase()}
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-medium text-c900">{getApplicantName(app)}</h3>
-                        <p className="text-sm text-c500">{app.email || app.seeker?.email}</p>
-                        {app.seeker?.seekerProfile?.headline && (
-                          <p className="text-xs text-c400 mt-0.5">{app.seeker.seekerProfile.headline}</p>
-                        )}
-
-                        <div className="mt-3 flex gap-4 text-sm items-center">
-                          {hasResume(app) && (
-                            <button
-                              className="flex items-center gap-1 text-green font-medium hover:text-green cursor-pointer"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                viewResume(app);
-                              }}
-                            >
-                              <FileText className="w-4 h-4" /> Resume
-                            </button>
-                          )}
-                          <span className="text-c400">|</span>
-                          <span className="text-c500">Applied {new Date(app.createdAt).toLocaleDateString()}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col items-end gap-3 shrink-0">
-                      <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${statusInfo.bg} ${statusInfo.text}`}>
-                        {statusInfo.label}
-                      </span>
-
-                      {/* Quick action buttons */}
-                      <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
-                        {app.status === 'applied' && (
-                          <>
-                            <button onClick={() => updateStatus(app.id, 'reviewing')} className="flex items-center gap-1 bg-blueL text-blueH px-3 py-1.5 rounded-md text-xs font-medium hover:bg-blueL transition">
-                              <Eye className="w-3 h-3" /> Review
-                            </button>
-                            <button onClick={() => updateStatus(app.id, 'rejected')} className="flex items-center gap-1 bg-red text-red px-3 py-1.5 rounded-md text-xs font-medium hover:bg-red transition">
-                              <X className="w-3 h-3" /> Reject
-                            </button>
-                          </>
-                        )}
-                        {app.status === 'reviewing' && (
-                          <>
-                            <button onClick={() => updateStatus(app.id, 'shortlisted')} className="flex items-center gap-1 bg-green text-green px-3 py-1.5 rounded-md text-xs font-medium hover:bg-green transition">
-                              <Check className="w-3 h-3" /> Shortlist
-                            </button>
-                            <button onClick={() => updateStatus(app.id, 'rejected')} className="flex items-center gap-1 bg-red text-red px-3 py-1.5 rounded-md text-xs font-medium hover:bg-red transition">
-                              <X className="w-3 h-3" /> Reject
-                            </button>
-                          </>
-                        )}
-                        {app.status === 'shortlisted' && (
-                          <>
-                            <button onClick={() => updateStatus(app.id, 'offered')} className="flex items-center gap-1 bg-purple-50 text-purple-700 px-3 py-1.5 rounded-md text-xs font-medium hover:bg-purple-100 transition">
-                              <Clock className="w-3 h-3" /> Offer
-                            </button>
-                            <button onClick={() => updateStatus(app.id, 'rejected')} className="flex items-center gap-1 bg-red text-red px-3 py-1.5 rounded-md text-xs font-medium hover:bg-red transition">
-                              <X className="w-3 h-3" /> Reject
-                            </button>
-                          </>
-                        )}
-                      </div>
-
-                      {/* View detail indicator */}
-                      <span className="text-xs text-c400 flex items-center gap-1">
-                        View details <ChevronRight className="w-3 h-3" />
-                      </span>
-                    </div>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        )}
+      <div className="kanban-card__meta mt-2">
+        <span className="kanban-card__date">{new Date(app.createdAt).toLocaleDateString()}</span>
       </div>
     </div>
+  );
+
+  return (
+    <>
+      <div className="mb-4">
+        <Link href="/employer/jobs" className="text-c400 hover:text-c100 flex items-center gap-1 mb-4 text-sm font-medium transition-colors">
+          <ArrowLeft className="w-4 h-4" /> Back to Jobs
+        </Link>
+      </div>
+
+      <div className="dcard" style={{ marginBottom: '16px', padding: '18px 24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+          <div>
+            <div style={{ fontSize: '15px', fontWeight: 700, color: 'var(--c-100)' }}>{jobTitle}</div>
+            <div style={{ fontSize: '12px', color: 'var(--c-500)', marginTop: '2px' }}>
+              {applicants.length} total applicant{applicants.length !== 1 ? 's' : ''}
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <Link href={`/employer/jobs/${jobId}/edit`} className="btn btn--ghost btn--sm">Edit job post</Link>
+            <Link href={`/jobs/${jobId}`} className="btn btn--ghost btn--sm">View public listing</Link>
+          </div>
+        </div>
+      </div>
+
+      {loading ? (
+        <div className="p-8 text-center text-c500 italic">Finding candidates...</div>
+      ) : applicants.length === 0 ? (
+        <div className="dash-empty">
+          <div className="dash-empty__icon">
+            <User className="w-6 h-6 text-c400" />
+          </div>
+          <div className="dash-empty__title">No applicants yet</div>
+          <div className="dash-empty__desc">When job seekers apply to this position, they will appear here.</div>
+        </div>
+      ) : (
+        <div className="kanban">
+          {/* New / Applied */}
+          <div className="kanban-col">
+            <div className="kanban-col__head">
+              <span className="kanban-col__title">New</span>
+              <span className="kanban-col__count">{applied.length}</span>
+            </div>
+            {applied.map(renderCard)}
+          </div>
+
+          {/* Screening / Reviewing */}
+          <div className="kanban-col">
+            <div className="kanban-col__head">
+              <span className="kanban-col__title">Screening</span>
+              <span className="kanban-col__count">{reviewing.length}</span>
+            </div>
+            {reviewing.map(renderCard)}
+          </div>
+
+          {/* Interview / Shortlisted */}
+          <div className="kanban-col">
+            <div className="kanban-col__head">
+              <span className="kanban-col__title">Interview</span>
+              <span className="kanban-col__count">{shortlisted.length}</span>
+            </div>
+            {shortlisted.map(renderCard)}
+          </div>
+
+          {/* Offer / Offered */}
+          <div className="kanban-col">
+            <div className="kanban-col__head">
+              <span className="kanban-col__title">Offer</span>
+              <span className="kanban-col__count">{offered.length}</span>
+            </div>
+            {offered.map(renderCard)}
+          </div>
+
+          {/* Not selected / Rejected */}
+          <div className="kanban-col">
+            <div className="kanban-col__head">
+              <span className="kanban-col__title">Not selected</span>
+              <span className="kanban-col__count">{rejected.length}</span>
+            </div>
+            <div style={{ opacity: 0.6 }}>
+              {rejected.map(renderCard)}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

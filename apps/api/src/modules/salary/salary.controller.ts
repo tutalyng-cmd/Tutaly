@@ -23,9 +23,7 @@ export class SalaryController {
   }
 
   @Get('roles/popular')
-  async getPopularRoles(
-    @Query('limit') limit?: string,
-  ) {
+  async getPopularRoles(@Query('limit') limit?: string) {
     const l = parseInt(limit || '12', 10);
     return {
       data: await this.salaryService.getPopularRoles(l),

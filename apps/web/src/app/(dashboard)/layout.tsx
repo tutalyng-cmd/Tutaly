@@ -20,6 +20,10 @@ import {
   HelpCircle,
   Menu,
   X,
+  LayoutDashboard,
+  Megaphone,
+  CreditCard,
+  Users2,
 } from 'lucide-react';
 import Image from 'next/image';
 
@@ -43,11 +47,23 @@ export default function DashboardLayout({
 
   // We can group links if needed, but for now we'll support both flat and grouped structures.
   const employerLinks = [
-    { name: 'Overview', href: '/employer', icon: Building2 },
-    { name: 'My Jobs', href: '/employer/jobs', icon: Briefcase },
-    { name: 'Post a Job', href: '/employer/jobs/create', icon: FileText },
-    { name: 'Seller Dashboard', href: '/seller', icon: Store },
-    { name: 'Settings', href: '/employer/settings', icon: Settings },
+    {
+      label: 'Workspace',
+      items: [
+        { name: 'Overview', href: '/employer', icon: LayoutDashboard },
+        { name: 'Job Postings', href: '/employer/jobs', icon: Briefcase },
+        { name: 'Applicants', href: '/employer/applicants', icon: Users2 },
+        { name: 'Ad Campaigns', href: '/employer/ads', icon: Megaphone },
+      ]
+    },
+    {
+      label: 'Company',
+      items: [
+        { name: 'Company Profile', href: '/employer/profile', icon: Building2 },
+        { name: 'Billing & Plan', href: '/employer/billing', icon: CreditCard },
+        { name: 'Settings', href: '/employer/settings', icon: Settings },
+      ]
+    }
   ];
 
   const seekerLinks = [
@@ -167,9 +183,16 @@ export default function DashboardLayout({
                 {renderNavItems(group.items)}
               </div>
             ))
+          ) : isEmployer ? (
+            employerLinks.map((group, idx) => (
+              <div key={idx} className="dash-nav-group">
+                {group.label && <div className="dash-nav-label">{group.label}</div>}
+                {renderNavItems(group.items)}
+              </div>
+            ))
           ) : (
             <div className="dash-nav-group">
-              {renderNavItems(isEmployer ? employerLinks : isSeller ? sellerLinks : isAdmin ? adminLinks : [])}
+              {renderNavItems(isSeller ? sellerLinks : isAdmin ? adminLinks : [])}
             </div>
           )}
         </nav>
@@ -221,9 +244,16 @@ export default function DashboardLayout({
                   {renderNavItems(group.items)}
                 </div>
               ))
+            ) : isEmployer ? (
+              employerLinks.map((group, idx) => (
+                <div key={idx} className="mb-4">
+                  {group.label && <div className="text-xs font-bold text-c500 uppercase tracking-wider mb-2 px-3">{group.label}</div>}
+                  {renderNavItems(group.items)}
+                </div>
+              ))
             ) : (
               <div className="mb-4">
-                {renderNavItems(isEmployer ? employerLinks : isSeller ? sellerLinks : isAdmin ? adminLinks : [])}
+                {renderNavItems(isSeller ? sellerLinks : isAdmin ? adminLinks : [])}
               </div>
             )}
             <div className="mt-4 pt-4 border-t border-c700">

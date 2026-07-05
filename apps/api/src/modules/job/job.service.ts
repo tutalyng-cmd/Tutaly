@@ -175,7 +175,7 @@ export class JobService {
       .andWhere("job.industry != ''")
       .getRawMany();
 
-    const industries = industriesRaw.map(r => r.industry).sort();
+    const industries = industriesRaw.map((r) => r.industry).sort();
 
     // Get cascading locations (country -> state -> area)
     const locationsRaw = await this.jobRepo
@@ -195,7 +195,7 @@ export class JobService {
     locationsRaw.forEach(({ country, state, area }) => {
       if (!country) return;
       if (!locations[country]) locations[country] = {};
-      
+
       if (state) {
         if (!locations[country][state]) locations[country][state] = [];
         if (area && !locations[country][state].includes(area)) {

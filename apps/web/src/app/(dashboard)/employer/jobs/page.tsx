@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { apiAuth } from '@/lib/api';
-import { Plus, Users, Clock, CheckCircle, Zap, X, Loader2 } from 'lucide-react';
+import { Plus, Users, Clock, CheckCircle, Zap, X, Loader2, MoreVertical, Edit2, Eye, LayoutDashboard, Share2 } from 'lucide-react';
 
 interface Job {
   id: string;
@@ -22,6 +22,7 @@ export default function EmployerJobsPage() {
   const [loading, setLoading] = useState(true);
   const [boostingJob, setBoostingJob] = useState<Job | null>(null);
   const [processingBoost, setProcessingBoost] = useState(false);
+  const [statusFilter, setStatusFilter] = useState('All statuses');
 
   useEffect(() => {
     fetchJobs();
@@ -54,7 +55,6 @@ export default function EmployerJobsPage() {
     setProcessingBoost(true);
     try {
       const token = localStorage.getItem('access_token');
-      // Assume ads service generates payment link or directly applies boost if wallet/credits exist
       const res = await apiAuth.withToken(token || undefined).post('/ads/campaigns', {
         job_id: boostingJob.id,
         goal: 'promote_job',
@@ -80,113 +80,119 @@ export default function EmployerJobsPage() {
       }
     } catch (e) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const error = e as any;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const err = e as any;
-alert(err.response?.data?.message || 'Failed to initialize boost payment.');
+      alert(err.response?.data?.message || 'Failed to initialize boost payment.');
     } finally {
       setProcessingBoost(false);
     }
   };
 
+  const filteredJobs = jobs.filter(job => {
+    if (statusFilter === 'All statuses') return true;
+    if (statusFilter === 'Active' && job.status === 'active') return true;
+    if (statusFilter === 'Draft' && job.status === 'draft') return true;
+    if (statusFilter === 'Closed' && job.status === 'expired') return true;
+    if (statusFilter === 'Pending Review' && job.status === 'pending_review') return true;
+    return false;
+  });
+
   return (
-    <div className="max-w-6xl mx-auto py-10 px-4 sm:px-6 lg:px-8 relative">
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-c900">Manage Your Jobs</h1>
-          <p className="text-c500 mt-1">View your postings, track applications, and manage your hiring pipeline.</p>
+    <>
+      <div className="results-bar">
+        <p className="results-count">
+          <strong>{jobs.length}</strong> job posts
+        </p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div className="results-sort">
+            <select aria-label="Filter by status" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+              <option>All statuses</option>
+              <option>Active</option>
+              <option>Pending Review</option>
+              <option>Draft</option>
+              <option>Closed</option>
+            </select>
+          </div>
+          <Link href="/employer/jobs/create" className="btn btn--primary btn--sm">+ Post a new job</Link>
         </div>
-        <Link href="/employer/jobs/create" className="flex items-center gap-2 bg-green text-white px-4 py-2 rounded-lg font-medium hover:bg-green transition">
-          <Plus className="w-4 h-4" /> Post New Job
-        </Link>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-c100 overflow-hidden">
-        {loading ? (
-          <div className="p-8 text-center text-c500 italic">Loading your jobs...</div>
-        ) : jobs.length === 0 ? (
-          <div className="p-16 text-center text-c500">
-            <h3 className="text-lg font-medium text-c900 mb-2">No jobs posted yet</h3>
-            <p className="text-sm">Get started by creating your first job post to find top talent in Nigeria.</p>
-            <Link href="/employer/jobs/create" className="mt-4 inline-block bg-white text-green font-medium border border-green px-4 py-2 rounded-lg hover:bg-green">
-              Post your first job
-            </Link>
+      {loading ? (
+        <div className="p-8 text-center text-c500 italic flex flex-col items-center justify-center">
+          <Loader2 className="w-8 h-8 animate-spin mb-4" />
+          Loading your jobs...
+        </div>
+      ) : filteredJobs.length === 0 ? (
+        <div className="dash-empty">
+          <div className="dash-empty__icon">
+            <LayoutDashboard className="w-6 h-6 text-c400" />
           </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-c200">
-              <thead className="bg-c100">
-                <tr>
-                  <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-c900 sm:pl-6">Job Title</th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-c900">Location</th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-c900">Status</th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-c900">Date Posted</th>
-                  <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
-                    <span className="sr-only">Actions</span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-c200 bg-white">
-                {jobs.map((job) => (
-                  <tr key={job.id} className="hover:bg-c100">
-                    <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
-                      <div className="font-medium text-c900 flex items-center gap-2">
-                        {job.title}
-                        {job.isFeatured && (
-                          <span className="bg-gold shadow-glow-gold text-white text-xs font-black px-1.5 py-0.5 rounded-sm flex items-center gap-0.5">
-                            <Zap className="w-3 h-3 fill-white" /> FEATURED
-                          </span>
-                        )}
-                      </div>
-                      <div className="text-c500">{job.jobType} · {job.workMode}</div>
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-c500">
-                      {job.area ? `${job.area}, ` : ''}{job.state}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-c500">
-                      {job.status === 'active' ? (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-green px-2 py-1 text-xs font-medium text-green ring-1 ring-inset ring-green/20">
-                          <CheckCircle className="w-3 h-3" /> Active
-                        </span>
-                      ) : job.status === 'pending_review' ? (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-gold px-2 py-1 text-xs font-medium text-goldH ring-1 ring-inset ring-gold/20">
-                          <Clock className="w-3 h-3" /> Pending Review
-                        </span>
-                      ) : job.status === 'expired' ? (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-c100 px-2 py-1 text-xs font-medium text-c600 ring-1 ring-inset ring-c500/10">
-                          Expired
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-c100 px-2 py-1 text-xs font-medium text-c600 ring-1 ring-inset ring-c500/10">
-                          {job.status}
-                        </span>
-                      )}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-c500">
-                      {new Date(job.createdAt).toLocaleDateString()}
-                    </td>
-                    <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                      <div className="flex items-center justify-end gap-3">
-                        {!job.isFeatured && job.status === 'active' && (
-                          <button 
-                            onClick={() => setBoostingJob(job)}
-                            className="text-gold hover:text-goldH flex items-center gap-1 text-xs font-bold bg-gold px-2 py-1 rounded-md border border-gold transition-colors"
-                          >
-                            <Zap className="w-3 h-3" /> Boost
-                          </button>
-                        )}
-                        <Link href={`/employer/jobs/${job.id}/applicants`} className="text-green hover:text-green flex items-center gap-1 border-l pl-3 border-c200">
-                          <Users className="w-4 h-4" /> Applicants
-                        </Link>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+          <div className="dash-empty__title">No jobs found</div>
+          <div className="dash-empty__desc">You don't have any job postings matching the selected filter.</div>
+          <Link href="/employer/jobs/create" className="btn btn--primary btn--sm mt-4">Post your first job</Link>
+        </div>
+      ) : (
+        <div className="flex flex-col">
+          {filteredJobs.map((job) => (
+            <div key={job.id} className="jobpost-row">
+              <div className="jobpost-row__body">
+                <div className="jobpost-row__title flex items-center gap-2">
+                  {job.title}
+                  {job.isFeatured && (
+                    <span className="badge badge--new" style={{ borderColor: 'var(--gold)', color: 'var(--gold-h)', background: 'var(--gold-10)' }}>
+                      <Zap className="w-3 h-3 mr-1" /> Featured
+                    </span>
+                  )}
+                </div>
+                <div className="jobpost-row__meta">
+                  Posted {new Date(job.createdAt).toLocaleDateString()} · {job.area ? `${job.area}, ` : ''}{job.state} · {job.jobType} · {job.workMode}
+                </div>
+              </div>
+
+              <div className="jobpost-row__stats">
+                <div className="jobpost-row__stat">
+                  <div className="jobpost-row__stat-num">-</div>
+                  <div className="jobpost-row__stat-label">Views</div>
+                </div>
+                <div className="jobpost-row__stat">
+                  <div className="jobpost-row__stat-num">-</div>
+                  <div className="jobpost-row__stat-label">Applied</div>
+                </div>
+              </div>
+
+              <div className="jobpost-row__status">
+                {job.status === 'active' ? (
+                  <span className="status--active text-xs font-semibold px-2 py-1 rounded-full">Active</span>
+                ) : job.status === 'pending_review' ? (
+                  <span className="status--draft text-xs font-semibold px-2 py-1 rounded-full">Pending Review</span>
+                ) : job.status === 'draft' ? (
+                  <span className="status--draft text-xs font-semibold px-2 py-1 rounded-full">Draft</span>
+                ) : (
+                  <span className="status--closed text-xs font-semibold px-2 py-1 rounded-full">Closed</span>
+                )}
+              </div>
+
+              <div className="jobpost-row__actions ml-2">
+                {!job.isFeatured && job.status === 'active' && (
+                  <button 
+                    onClick={() => setBoostingJob(job)} 
+                    className="btn btn--ghost btn--sm" 
+                    style={{ padding: '6px 12px', fontSize: '12px' }}
+                    title="Boost this job"
+                  >
+                    <Zap className="w-3 h-3" /> Boost
+                  </button>
+                )}
+                <Link href={`/employer/jobs/${job.id}/applicants`} className="btn btn--ghost btn--sm" style={{ padding: '6px 12px', fontSize: '12px' }}>
+                  Manage
+                </Link>
+                <button className="btn btn--ghost btn--sm" style={{ padding: '6px', minWidth: 'auto' }} title="Options">
+                  <MoreVertical className="w-4 h-4 text-c400" />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Boost Modal */}
       {boostingJob && (
@@ -250,7 +256,6 @@ alert(err.response?.data?.message || 'Failed to initialize boost payment.');
           </div>
         </div>
       )}
-
-    </div>
+    </>
   );
 }

@@ -118,7 +118,7 @@ export class ReviewService {
 
   async searchCompanies(query: string) {
     if (!query) return [];
-    
+
     // Group by companyName, match by ilike
     const stats = await this.reviewRepo
       .createQueryBuilder('review')

@@ -1,217 +1,114 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Shield, Bell, Lock, Key, Trash2, CheckCircle2, Building2 } from 'lucide-react';
-import { apiAuth } from '@/lib/api';
 
 export default function EmployerSettingsPage() {
-  const [activeTab, setActiveTab] = useState<'account' | 'notifications' | 'privacy'>('account');
-  const [loading, setLoading] = useState(false);
-  const [successMsg, setSuccessMsg] = useState('');
-
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-
   const [notifications, setNotifications] = useState({
-    emailAlerts: true,
-    applicantActivity: true,
-    adCampaignUpdates: true,
-    marketing: false,
+    newApplicants: true,
+    weeklyDigest: true,
+    expiryReminders: true,
+    productUpdates: false,
   });
 
-  const [privacy, setPrivacy] = useState({
-    companyVisibility: 'public',
-  });
-
-  const handleSave = async () => {
-    setLoading(true);
-    setSuccessMsg('');
-    try {
-      const token = localStorage.getItem('access_token');
-      if (activeTab === 'notifications') {
-        await apiAuth.withToken(token || undefined).patch('/users/settings/notifications', notifications);
-      } else if (activeTab === 'privacy') {
-        await apiAuth.withToken(token || undefined).patch('/users/settings/privacy', privacy);
-      } else if (activeTab === 'account') {
-        if (newPassword && newPassword !== confirmPassword) {
-          alert("Passwords do not match");
-          setLoading(false);
-          return;
-        }
-        if (newPassword) {
-          await apiAuth.withToken(token || undefined).patch('/users/settings/password', { currentPassword, newPassword });
-          setCurrentPassword('');
-          setNewPassword('');
-          setConfirmPassword('');
-        }
-      }
-      setSuccessMsg('Settings saved successfully!');
-      setTimeout(() => setSuccessMsg(''), 3000);
-    } catch (e) {
-      const err = e as any;
-      alert(err.response?.data?.message || 'Failed to save settings. Please try again.');
-    } finally {
-      setLoading(false);
-    }
+  const toggleNotification = (key: keyof typeof notifications) => {
+    setNotifications(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
   return (
-    <div className="max-w-4xl">
-      <div className="dcard mb-6">
-        <div className="dcard__header">
-          <div>
-            <div className="dcard__title flex items-center gap-2"><Building2 className="w-5 h-5 text-green" /> Employer Settings</div>
-            <div className="dcard__sub">Manage your company account security, notifications, and privacy preferences.</div>
+    <>
+      <div className="dcard">
+        <div className="form-section">
+          <div className="form-section__title">Account</div>
+          <div className="form-section__desc">Your login credentials for this employer account.</div>
+          <div className="form-grid-2">
+            <div className="form-field">
+              <label className="form-label" htmlFor="e-email">Email address</label>
+              <input className="input" type="email" id="e-email" defaultValue="hiring@flutterwave.com" />
+            </div>
+            <div className="form-field">
+              <label className="form-label" htmlFor="e-pass">Password</label>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <input className="input" type="password" defaultValue="••••••••••" disabled style={{ opacity: 0.6 }} />
+                <button className="btn btn--ghost btn--sm" style={{ whiteSpace: 'nowrap' }}>Change</button>
+              </div>
+            </div>
           </div>
+        </div>
+
+        <div className="form-section">
+          <div className="form-section__title">Notifications</div>
+          <div className="toggle-row" onClick={() => toggleNotification('newApplicants')} style={{ cursor: 'pointer' }}>
+            <div>
+              <div className="toggle-row__title">New applicants</div>
+              <div className="toggle-row__desc">Get notified when someone applies to your job posts</div>
+            </div>
+            <div className={`toggle-switch ${notifications.newApplicants ? 'on' : ''}`}></div>
+          </div>
+          <div className="toggle-row" onClick={() => toggleNotification('weeklyDigest')} style={{ cursor: 'pointer' }}>
+            <div>
+              <div className="toggle-row__title">Weekly performance digest</div>
+              <div className="toggle-row__desc">Summary of views, applications, and pipeline movement</div>
+            </div>
+            <div className={`toggle-switch ${notifications.weeklyDigest ? 'on' : ''}`}></div>
+          </div>
+          <div className="toggle-row" onClick={() => toggleNotification('expiryReminders')} style={{ cursor: 'pointer' }}>
+            <div>
+              <div className="toggle-row__title">Job post expiry reminders</div>
+              <div className="toggle-row__desc">Alert 3 days before a listing expires</div>
+            </div>
+            <div className={`toggle-switch ${notifications.expiryReminders ? 'on' : ''}`}></div>
+          </div>
+          <div className="toggle-row" onClick={() => toggleNotification('productUpdates')} style={{ cursor: 'pointer' }}>
+            <div>
+              <div className="toggle-row__title">Product updates &amp; tips</div>
+              <div className="toggle-row__desc">Occasional emails about new employer features</div>
+            </div>
+            <div className={`toggle-switch ${notifications.productUpdates ? 'on' : ''}`}></div>
+          </div>
+        </div>
+
+        <div className="form-section" style={{ borderBottom: 'none', paddingBottom: 0 }}>
+          <div className="form-section__title">Team members</div>
+          <div className="form-section__desc">People with access to this employer account.</div>
+
+          <div className="team-row">
+            <div className="team-row__avatar" style={{ background: 'linear-gradient(135deg, var(--blue), var(--blue-l))' }}>EW</div>
+            <div>
+              <div className="team-row__name">Edudje Wisdom</div>
+              <div className="team-row__email">edudje@flutterwave.com</div>
+            </div>
+            <div className="team-row__role">
+              <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--gold-h)', background: 'rgba(201,162,39,0.15)', padding: '3px 10px', borderRadius: 'var(--r-pill)' }}>Owner</span>
+            </div>
+          </div>
+          <div className="team-row">
+            <div className="team-row__avatar" style={{ background: 'linear-gradient(135deg, var(--green), #2DB85A)' }}>NT</div>
+            <div>
+              <div className="team-row__name">Ngozi Thomas</div>
+              <div className="team-row__email">ngozi@flutterwave.com</div>
+            </div>
+            <div className="team-row__role">
+              <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--c-400)', background: 'var(--c-700)', padding: '3px 10px', borderRadius: 'var(--r-pill)' }}>Recruiter</span>
+            </div>
+          </div>
+          <div className="team-row" style={{ borderBottom: 'none' }}>
+            <div className="team-row__avatar" style={{ background: 'linear-gradient(135deg, var(--gold), var(--gold-h))' }}>HA</div>
+            <div>
+              <div className="team-row__name">Hassan Ahmed</div>
+              <div className="team-row__email">hassan@flutterwave.com</div>
+            </div>
+            <div className="team-row__role">
+              <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--c-400)', background: 'var(--c-700)', padding: '3px 10px', borderRadius: 'var(--r-pill)' }}>Viewer</span>
+            </div>
+          </div>
+          <button className="btn btn--ghost btn--sm" style={{ marginTop: '14px' }}>+ Invite team member</button>
         </div>
       </div>
 
-      <div className="dcard p-0 flex flex-col md:flex-row overflow-hidden border-c700">
-        {/* Sidebar Nav */}
-        <div className="w-full md:w-64 border-b md:border-b-0 md:border-r border-c700 p-6 flex flex-col gap-2" style={{ backgroundColor: 'var(--c-800)' }}>
-          <button 
-            onClick={() => setActiveTab('account')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === 'account' ? 'bg-c700 text-c100' : 'text-c400 hover:bg-c700 hover:text-c200'}`}
-          >
-            <Key className="w-5 h-5" /> Account Security
-          </button>
-          <button 
-            onClick={() => setActiveTab('notifications')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === 'notifications' ? 'bg-c700 text-c100' : 'text-c400 hover:bg-c700 hover:text-c200'}`}
-          >
-            <Bell className="w-5 h-5" /> Notifications
-          </button>
-          <button 
-            onClick={() => setActiveTab('privacy')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === 'privacy' ? 'bg-c700 text-c100' : 'text-c400 hover:bg-c700 hover:text-c200'}`}
-          >
-            <Shield className="w-5 h-5" /> Privacy
-          </button>
-        </div>
-
-        {/* Content Area */}
-        <div className="flex-1 p-8">
-          {successMsg && (
-            <div className="mb-6 px-4 py-3 rounded-xl text-sm font-bold flex items-center gap-2" style={{ backgroundColor: 'var(--green-10)', color: 'var(--green-light)', border: '1px solid var(--green-20)' }}>
-              <CheckCircle2 className="w-5 h-5" /> {successMsg}
-            </div>
-          )}
-
-          {activeTab === 'account' && (
-            <div className="animate-in fade-in duration-300">
-              <div className="form-section" style={{ borderBottom: 'none', paddingBottom: 0 }}>
-                <div className="form-section__title flex items-center gap-2"><Lock className="w-4 h-4 text-c400" /> Change Password</div>
-                
-                <div className="form-field">
-                  <label className="form-label">Current Password</label>
-                  <input 
-                    type="password" 
-                    className="form-input" 
-                    value={currentPassword}
-                    onChange={e => setCurrentPassword(e.target.value)}
-                  />
-                </div>
-                <div className="form-field">
-                  <label className="form-label">New Password</label>
-                  <input 
-                    type="password" 
-                    className="form-input" 
-                    value={newPassword}
-                    onChange={e => setNewPassword(e.target.value)}
-                  />
-                </div>
-                <div className="form-field">
-                  <label className="form-label">Confirm New Password</label>
-                  <input 
-                    type="password" 
-                    className="form-input" 
-                    value={confirmPassword}
-                    onChange={e => setConfirmPassword(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div className="form-section mt-8 pt-8" style={{ borderTop: '1px solid var(--c-700)' }}>
-                <div className="form-section__title flex items-center gap-2" style={{ color: 'var(--red)' }}><Trash2 className="w-4 h-4" /> Danger Zone</div>
-                <div className="form-section__desc">Once you delete your company account, all active jobs and data will be removed.</div>
-                
-                <button className="btn btn--outline mt-4" style={{ color: 'var(--red)', borderColor: 'var(--red)' }}>
-                  Delete Company Account
-                </button>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'notifications' && (
-            <div className="animate-in fade-in duration-300">
-              <div className="form-section" style={{ borderBottom: 'none', paddingBottom: 0 }}>
-                <div className="form-section__title">Email Notifications</div>
-                
-                <div className="space-y-4 mt-6">
-                  {[
-                    { id: 'emailAlerts', label: 'Important Account Alerts', desc: 'Security notices, billing receipts, etc. (Required)' },
-                    { id: 'applicantActivity', label: 'Applicant Activity', desc: 'Alerts when a new candidate applies to your jobs.' },
-                    { id: 'adCampaignUpdates', label: 'Ad Campaign Updates', desc: 'Notifications about your featured/urgent ad approvals.' },
-                    { id: 'marketing', label: 'News & Offers', desc: 'Updates on platform features and hiring tips.' }
-                  ].map(item => (
-                    <label key={item.id} className={`flex items-start p-4 rounded-xl border cursor-pointer transition-all ${(notifications as any)[item.id] ? "border-c500" : "border-c700"}`} style={{ backgroundColor: 'var(--c-800)' }}>
-                      <div className="flex-1">
-                        <h3 className="font-bold text-c100 text-sm">{item.label}</h3>
-                        <p className="text-sm text-c400 mt-1">{item.desc}</p>
-                      </div>
-                      <div className="flex items-center h-6 pt-1 ml-4">
-                        <div 
-                          className={`filter-checkbox ${(notifications as any)[item.id] ? "checked" : ""}`} 
-                          style={(notifications as any)[item.id] ? { borderColor: 'var(--green)', backgroundColor: 'var(--green)' } : { borderColor: 'var(--c-500)' }} 
-                          onClick={(e) => { 
-                            e.preventDefault(); 
-                            if (item.id !== 'emailAlerts') {
-                              setNotifications({...notifications, [item.id]: !(notifications as any)[item.id]});
-                            }
-                          }}
-                        ></div>
-                      </div>
-                    </label>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'privacy' && (
-            <div className="animate-in fade-in duration-300">
-              <div className="form-section" style={{ borderBottom: 'none', paddingBottom: 0 }}>
-                <div className="form-section__title">Privacy Controls</div>
-                <div className="form-section__desc">Manage who can view your company profile.</div>
-                
-                <div className="form-field mt-6">
-                  <label className="form-label">Company Visibility</label>
-                  <select 
-                    className="form-input"
-                    value={privacy.companyVisibility}
-                    onChange={e => setPrivacy({...privacy, companyVisibility: e.target.value})}
-                  >
-                    <option value="public">Public (Everyone)</option>
-                    <option value="private">Hidden (Only visible to your applicants)</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          )}
-
-          <div className="mt-8 pt-6 border-t border-c700 flex justify-end">
-            <button 
-              onClick={handleSave}
-              disabled={loading}
-              className="btn btn--primary"
-            >
-              {loading ? 'Saving...' : 'Save Changes'}
-            </button>
-          </div>
-
-        </div>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', margin: '20px 0' }}>
+        <button className="btn btn--ghost">Cancel</button>
+        <button className="btn btn--primary">Save changes</button>
       </div>
-    </div>
+    </>
   );
 }

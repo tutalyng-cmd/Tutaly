@@ -68,7 +68,7 @@ export default function EmployerOverviewPage() {
         </div>
       )}
 
-      <div className="dcard" style={{ background: 'linear-gradient(135deg, var(--blue-14), var(--gold-06))', borderColor: 'var(--c-700)', marginBottom: '16px' }}>
+      <div className="dcard" style={{ background: 'linear-gradient(135deg, rgba(27,79,158,0.14), rgba(201,162,39,0.06))', borderColor: 'var(--c-700)', marginBottom: '16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
           <div>
             <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--c-100)', marginBottom: '4px' }}>Welcome back, {companyName} 👋</div>
@@ -118,35 +118,25 @@ export default function EmployerOverviewPage() {
 
         <div>
           <div className="dcard" style={{ marginBottom: '16px' }}>
-            <div className="dcard__header">
-              <div>
-                <div className="dcard__title">Hiring pipeline</div>
-                <div className="dcard__sub">Across all active jobs</div>
-              </div>
+            <div className="dcard__title" style={{ marginBottom: '14px' }}>Hiring pipeline</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '9px 0', borderBottom: '1px solid var(--c-700)' }}>
+              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--gold)' }}></span>
+              <span style={{ fontSize: '12.5px', color: 'var(--c-300)', flex: 1 }}>Pending Review</span>
+              <span style={{ fontFamily: 'var(--mono)', fontSize: '12.5px', color: 'var(--c-100)', fontWeight: 600 }}>{loading ? '-' : stats.pendingJobs}</span>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginTop: '20px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '13px' }}>
-                <span style={{ color: 'var(--c-300)' }}>Pending Review</span>
-                <span style={{ fontFamily: 'var(--mono)', fontWeight: 600, color: 'var(--c-100)' }}>{loading ? '-' : stats.pendingJobs}</span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '13px' }}>
-                <span style={{ color: 'var(--c-300)' }}>Total Applicants</span>
-                <span style={{ fontFamily: 'var(--mono)', fontWeight: 600, color: 'var(--c-100)' }}>{loading ? '-' : stats.totalApplicants}</span>
-              </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '9px 0', borderBottom: '1px solid var(--c-700)' }}>
+              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--blue-l)' }}></span>
+              <span style={{ fontSize: '12.5px', color: 'var(--c-300)', flex: 1 }}>Total Applicants</span>
+              <span style={{ fontFamily: 'var(--mono)', fontSize: '12.5px', color: 'var(--c-100)', fontWeight: 600 }}>{loading ? '-' : stats.totalApplicants}</span>
             </div>
+            <Link href="/employer/jobs" className="btn btn--ghost btn--sm btn--full" style={{ marginTop: '14px' }}>View applicants</Link>
           </div>
 
-          <div className="dcard" style={{ background: 'linear-gradient(135deg, var(--green-10), var(--green-02))', borderColor: 'var(--green-20)' }}>
-            <div className="dcard__title" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Star className="w-4 h-4 text-green" /> Current plan
-            </div>
-            <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginTop: '12px' }}>
-              <div>
-                <div style={{ fontSize: '18px', fontWeight: 800, color: 'var(--c-100)' }}>Growth Plan</div>
-                <div style={{ fontSize: '12px', color: 'var(--c-400)' }}>Renews Oct 12, 2024</div>
-              </div>
-              <Link href="/employer/profile" style={{ fontSize: '12px', fontWeight: 600, color: 'var(--blue-l)' }}>Manage</Link>
-            </div>
+          <div className="dcard">
+            <div className="dcard__title" style={{ marginBottom: '14px' }}>Current plan</div>
+            <div style={{ fontSize: '15px', fontWeight: 700, color: 'var(--c-100)', marginBottom: '2px' }}>Growth Plan</div>
+            <div style={{ fontSize: '12px', color: 'var(--c-500)', marginBottom: '14px' }}>Unlimited job posts</div>
+            <Link href="/employer/billing" className="btn btn--ghost btn--sm btn--full">Manage plan</Link>
           </div>
         </div>
       </div>

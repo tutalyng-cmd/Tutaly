@@ -9,8 +9,13 @@ export default function EmployerProfilePage() {
   const [profile, setProfile] = useState({
     companyName: '',
     industry: '',
+    companySize: '201–1,000 employees',
     website: '',
     companyBio: '',
+    city: '',
+    founded: '',
+    linkedin: '',
+    twitter: '',
     logoUrl: '',
     logoSignedUrl: '',
     isVerified: false,
@@ -33,8 +38,13 @@ export default function EmployerProfilePage() {
       setProfile({
         companyName: res.data.companyName || '',
         industry: res.data.industry || '',
+        companySize: res.data.companySize || '201–1,000 employees',
         website: res.data.website || '',
         companyBio: res.data.companyBio || '',
+        city: res.data.city || '',
+        founded: res.data.founded || '',
+        linkedin: res.data.linkedin || '',
+        twitter: res.data.twitter || '',
         logoUrl: res.data.logoUrl || '',
         logoSignedUrl: res.data.logoSignedUrl || '',
         isVerified: res.data.isVerified || false,
@@ -63,8 +73,13 @@ export default function EmployerProfilePage() {
       await apiAuth.withToken(token).patch('/user/employer/profile', {
         companyName: profile.companyName,
         industry: profile.industry,
+        companySize: profile.companySize,
         website: profile.website,
         companyBio: profile.companyBio,
+        city: profile.city,
+        founded: profile.founded,
+        linkedin: profile.linkedin,
+        twitter: profile.twitter,
       });
 
       setSuccess(true);
@@ -180,18 +195,26 @@ export default function EmployerProfilePage() {
             </div>
             <div className="form-field">
               <label className="form-label" htmlFor="industry">Industry</label>
-              <input 
-                className="input" 
-                type="text" 
-                id="industry" 
-                name="industry"
-                value={profile.industry}
-                onChange={handleChange}
-                placeholder="e.g. Technology, Finance, Healthcare"
-              />
+              <select className="input" id="industry" name="industry" value={profile.industry} onChange={handleChange}>
+                <option value="">Select industry...</option>
+                <option value="Fintech">Fintech</option>
+                <option value="Healthcare">Healthcare</option>
+                <option value="E-commerce">E-commerce</option>
+                <option value="Logistics">Logistics</option>
+                <option value="Education">Education</option>
+              </select>
             </div>
           </div>
           <div className="form-grid-2">
+            <div className="form-field">
+              <label className="form-label" htmlFor="companySize">Company size</label>
+              <select className="input" id="companySize" name="companySize" value={profile.companySize} onChange={handleChange}>
+                <option value="1–50 employees">1–50 employees</option>
+                <option value="51–200 employees">51–200 employees</option>
+                <option value="201–1,000 employees">201–1,000 employees</option>
+                <option value="1,000+ employees">1,000+ employees</option>
+              </select>
+            </div>
             <div className="form-field">
               <label className="form-label" htmlFor="website">Website</label>
               <input 
@@ -201,7 +224,7 @@ export default function EmployerProfilePage() {
                 name="website"
                 value={profile.website}
                 onChange={handleChange}
-                placeholder="https://www.example.com"
+                placeholder="https://flutterwave.com"
               />
             </div>
           </div>
@@ -221,11 +244,73 @@ export default function EmployerProfilePage() {
           </div>
         </div>
 
+        <div className="form-section">
+          <div className="form-section__title">Headquarters</div>
+          <div className="form-grid-2">
+            <div className="form-field">
+              <label className="form-label" htmlFor="city">City</label>
+              <input 
+                className="input" 
+                type="text" 
+                id="city" 
+                name="city"
+                value={profile.city}
+                onChange={handleChange}
+                placeholder="e.g. Lagos, Nigeria"
+              />
+            </div>
+            <div className="form-field">
+              <label className="form-label" htmlFor="founded">Founded</label>
+              <input 
+                className="input" 
+                type="text" 
+                id="founded" 
+                name="founded"
+                value={profile.founded}
+                onChange={handleChange}
+                placeholder="e.g. 2016"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="form-section" style={{ borderBottom: 'none', paddingBottom: 0 }}>
+          <div className="form-section__title">Social links</div>
+          <div className="form-grid-2">
+            <div className="form-field">
+              <label className="form-label" htmlFor="linkedin">LinkedIn</label>
+              <input 
+                className="input" 
+                type="url" 
+                id="linkedin" 
+                name="linkedin"
+                value={profile.linkedin}
+                onChange={handleChange}
+                placeholder="https://linkedin.com/company/..."
+              />
+            </div>
+            <div className="form-field">
+              <label className="form-label" htmlFor="twitter">X (Twitter)</label>
+              <input 
+                className="input" 
+                type="url" 
+                id="twitter" 
+                name="twitter"
+                value={profile.twitter}
+                onChange={handleChange}
+                placeholder="https://x.com/..."
+              />
+            </div>
+          </div>
+        </div>
+
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '20px', flexWrap: 'wrap', gap: '12px' }}>
-          <span style={{ fontSize: '12.5px', fontWeight: 600, color: 'var(--green)' }}>
-            {success && 'Save successful!'}
-          </span>
-          <div style={{ display: 'flex', gap: '10px' }}>
+          <Link href={`/reviews/company/${profile.companyName.toLowerCase().replace(/\s+/g, '-')}`} style={{ fontSize: '12.5px', fontWeight: 600, color: 'var(--blue-l)' }}>
+            View your public company page →
+          </Link>
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            {success && <span style={{ fontSize: '12.5px', fontWeight: 600, color: '#2DB85A', marginRight: '8px' }}>Save successful!</span>}
+            <button type="button" className="btn btn--ghost" onClick={() => fetchProfile()}>Cancel</button>
             <button type="submit" disabled={saving} className="btn btn--primary">
               {saving ? 'Saving...' : 'Save changes'}
             </button>

@@ -184,23 +184,23 @@ const msg = err?.response?.data?.message || 'Failed to load resume';
         ) : (
           <>
             {/* Header */}
-            <div className="bg-white rounded-xl shadow-sm border border-c100 p-6 mb-6">
+            <div className="dcard mb-6 p-6">
               <div className="flex items-start justify-between">
                 <div className="flex gap-4">
-                  <div className="h-16 w-16 rounded-full bg-green flex items-center justify-center text-green font-bold text-2xl shrink-0">
+                  <div className="h-16 w-16 rounded-full bg-green flex items-center justify-center text-green font-bold text-2xl shrink-0" style={{ background: 'rgba(45,184,90,0.15)' }}>
                     {getApplicantName(selectedApp).charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <h1 className="text-2xl font-bold text-c900">{getApplicantName(selectedApp)}</h1>
-                    <p className="text-c500">{selectedApp.email || selectedApp.seeker?.email}</p>
+                    <h1 className="text-2xl font-bold text-c100">{getApplicantName(selectedApp)}</h1>
+                    <p className="text-c400">{selectedApp.email || selectedApp.seeker?.email}</p>
                     {selectedApp.seeker?.seekerProfile?.headline && (
-                      <p className="text-sm text-c600 mt-1">{selectedApp.seeker.seekerProfile.headline}</p>
+                      <p className="text-sm text-c500 mt-1">{selectedApp.seeker.seekerProfile.headline}</p>
                     )}
                     <div className="flex items-center gap-3 mt-3">
                       <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${statusInfo.bg} ${statusInfo.text}`}>
                         {statusInfo.label}
                       </span>
-                      <span className="text-xs text-c400">
+                      <span className="text-xs text-c500">
                         Applied {new Date(selectedApp.createdAt).toLocaleDateString()}
                       </span>
                     </div>
@@ -211,30 +211,30 @@ const msg = err?.response?.data?.message || 'Failed to load resume';
                 <div className="flex gap-2 shrink-0">
                   {selectedApp.status === 'applied' && (
                     <>
-                      <button onClick={() => updateStatus(selectedApp.id, 'reviewing')} className="flex items-center gap-1 bg-blueL text-blueH px-3 py-1.5 rounded-md text-sm font-medium hover:bg-blueL transition">
+                      <button onClick={() => updateStatus(selectedApp.id, 'reviewing')} className="btn btn--sm" style={{ background: 'var(--blue)', color: '#fff', border: 'none' }}>
                         <Eye className="w-4 h-4" /> Review
                       </button>
-                      <button onClick={() => updateStatus(selectedApp.id, 'rejected')} className="flex items-center gap-1 bg-red text-red px-3 py-1.5 rounded-md text-sm font-medium hover:bg-red transition">
+                      <button onClick={() => updateStatus(selectedApp.id, 'rejected')} className="btn btn--sm btn--danger-outline">
                         <X className="w-4 h-4" /> Reject
                       </button>
                     </>
                   )}
                   {selectedApp.status === 'reviewing' && (
                     <>
-                      <button onClick={() => updateStatus(selectedApp.id, 'shortlisted')} className="flex items-center gap-1 bg-green text-green px-3 py-1.5 rounded-md text-sm font-medium hover:bg-green transition">
+                      <button onClick={() => updateStatus(selectedApp.id, 'shortlisted')} className="btn btn--sm" style={{ background: 'rgba(45,184,90,0.15)', color: '#2DB85A', border: 'none' }}>
                         <Check className="w-4 h-4" /> Shortlist
                       </button>
-                      <button onClick={() => updateStatus(selectedApp.id, 'rejected')} className="flex items-center gap-1 bg-red text-red px-3 py-1.5 rounded-md text-sm font-medium hover:bg-red transition">
+                      <button onClick={() => updateStatus(selectedApp.id, 'rejected')} className="btn btn--sm btn--danger-outline">
                         <X className="w-4 h-4" /> Reject
                       </button>
                     </>
                   )}
                   {selectedApp.status === 'shortlisted' && (
                     <>
-                      <button onClick={() => updateStatus(selectedApp.id, 'offered')} className="flex items-center gap-1 bg-purple-50 text-purple-700 px-3 py-1.5 rounded-md text-sm font-medium hover:bg-purple-100 transition">
+                      <button onClick={() => updateStatus(selectedApp.id, 'offered')} className="btn btn--sm" style={{ background: 'rgba(201,162,39,0.15)', color: 'var(--gold-h)', border: 'none' }}>
                         <Clock className="w-4 h-4" /> Offer
                       </button>
-                      <button onClick={() => updateStatus(selectedApp.id, 'rejected')} className="flex items-center gap-1 bg-red text-red px-3 py-1.5 rounded-md text-sm font-medium hover:bg-red transition">
+                      <button onClick={() => updateStatus(selectedApp.id, 'rejected')} className="btn btn--sm btn--danger-outline">
                         <X className="w-4 h-4" /> Reject
                       </button>
                     </>
@@ -248,13 +248,13 @@ const msg = err?.response?.data?.message || 'Failed to load resume';
               {/* Left Column - Personal Info & Links */}
               <div className="space-y-6">
                 {/* Contact Information */}
-                <div className="bg-white rounded-xl shadow-sm border border-c100 p-6">
-                  <h3 className="text-sm font-semibold text-c900 uppercase tracking-wider mb-4">Contact Information</h3>
+                <div className="dcard p-6">
+                  <h3 className="text-sm font-semibold text-c100 uppercase tracking-wider mb-4">Contact Information</h3>
                   <div className="space-y-3">
                     {(selectedApp.email || selectedApp.seeker?.email) && (
                       <div className="flex items-center gap-3 text-sm">
                         <Mail className="w-4 h-4 text-c400 shrink-0" />
-                        <a href={`mailto:${selectedApp.email || selectedApp.seeker?.email}`} className="text-green hover:text-green">
+                        <a href={`mailto:${selectedApp.email || selectedApp.seeker?.email}`} className="text-blue-l hover:underline">
                           {selectedApp.email || selectedApp.seeker?.email}
                         </a>
                       </div>
@@ -262,13 +262,13 @@ const msg = err?.response?.data?.message || 'Failed to load resume';
                     {selectedApp.phone && (
                       <div className="flex items-center gap-3 text-sm">
                         <Phone className="w-4 h-4 text-c400 shrink-0" />
-                        <span className="text-c700">{selectedApp.phone}</span>
+                        <span className="text-c300">{selectedApp.phone}</span>
                       </div>
                     )}
                     {(selectedApp.location || selectedApp.seeker?.seekerProfile?.location) && (
                       <div className="flex items-center gap-3 text-sm">
                         <MapPin className="w-4 h-4 text-c400 shrink-0" />
-                        <span className="text-c700">{selectedApp.location || selectedApp.seeker?.seekerProfile?.location}</span>
+                        <span className="text-c300">{selectedApp.location || selectedApp.seeker?.seekerProfile?.location}</span>
                       </div>
                     )}
                   </div>
@@ -276,21 +276,21 @@ const msg = err?.response?.data?.message || 'Failed to load resume';
 
                 {/* Links */}
                 {(selectedApp.linkedinUrl || selectedApp.portfolioUrl || selectedApp.githubUrl) && (
-                  <div className="bg-white rounded-xl shadow-sm border border-c100 p-6">
-                    <h3 className="text-sm font-semibold text-c900 uppercase tracking-wider mb-4">Links</h3>
+                  <div className="dcard p-6">
+                    <h3 className="text-sm font-semibold text-c100 uppercase tracking-wider mb-4">Links</h3>
                     <div className="space-y-3">
                       {selectedApp.linkedinUrl && (
-                        <a href={selectedApp.linkedinUrl} target="_blank" rel="noreferrer" className="flex items-center gap-3 text-sm text-green hover:text-green">
+                        <a href={selectedApp.linkedinUrl} target="_blank" rel="noreferrer" className="flex items-center gap-3 text-sm text-blue-l hover:underline">
                           <Link2 className="w-4 h-4 shrink-0" /> LinkedIn
                         </a>
                       )}
                       {selectedApp.portfolioUrl && (
-                        <a href={selectedApp.portfolioUrl} target="_blank" rel="noreferrer" className="flex items-center gap-3 text-sm text-green hover:text-green">
+                        <a href={selectedApp.portfolioUrl} target="_blank" rel="noreferrer" className="flex items-center gap-3 text-sm text-blue-l hover:underline">
                           <Link2 className="w-4 h-4 shrink-0" /> Portfolio
                         </a>
                       )}
                       {selectedApp.githubUrl && (
-                        <a href={selectedApp.githubUrl} target="_blank" rel="noreferrer" className="flex items-center gap-3 text-sm text-green hover:text-green">
+                        <a href={selectedApp.githubUrl} target="_blank" rel="noreferrer" className="flex items-center gap-3 text-sm text-blue-l hover:underline">
                           <Link2 className="w-4 h-4 shrink-0" /> GitHub
                         </a>
                       )}
@@ -300,25 +300,25 @@ const msg = err?.response?.data?.message || 'Failed to load resume';
 
                 {/* Expectations */}
                 {(selectedApp.expectedSalary || selectedApp.noticePeriod || selectedApp.availableFrom) && (
-                  <div className="bg-white rounded-xl shadow-sm border border-c100 p-6">
-                    <h3 className="text-sm font-semibold text-c900 uppercase tracking-wider mb-4">Expectations</h3>
+                  <div className="dcard p-6">
+                    <h3 className="text-sm font-semibold text-c100 uppercase tracking-wider mb-4">Expectations</h3>
                     <div className="space-y-3">
                       {selectedApp.expectedSalary && (
                         <div className="flex items-center gap-3 text-sm">
                           <DollarSign className="w-4 h-4 text-c400 shrink-0" />
-                          <span className="text-c700">Expected: {selectedApp.job?.currency || 'NGN'} {Number(selectedApp.expectedSalary).toLocaleString()}</span>
+                          <span className="text-c300 font-mono">Expected: {selectedApp.job?.currency || 'NGN'} {Number(selectedApp.expectedSalary).toLocaleString()}</span>
                         </div>
                       )}
                       {selectedApp.noticePeriod && (
                         <div className="flex items-center gap-3 text-sm">
                           <Clock className="w-4 h-4 text-c400 shrink-0" />
-                          <span className="text-c700">Notice: {selectedApp.noticePeriod}</span>
+                          <span className="text-c300">Notice: {selectedApp.noticePeriod}</span>
                         </div>
                       )}
                       {selectedApp.availableFrom && (
                         <div className="flex items-center gap-3 text-sm">
                           <Calendar className="w-4 h-4 text-c400 shrink-0" />
-                          <span className="text-c700">Available from: {selectedApp.availableFrom}</span>
+                          <span className="text-c300">Available from: {selectedApp.availableFrom}</span>
                         </div>
                       )}
                     </div>
@@ -327,13 +327,13 @@ const msg = err?.response?.data?.message || 'Failed to load resume';
 
                 {/* Resume */}
                 {hasResume(selectedApp) && (
-                  <div className="bg-white rounded-xl shadow-sm border border-c100 p-6">
-                    <h3 className="text-sm font-semibold text-c900 uppercase tracking-wider mb-4">Resume / CV</h3>
+                  <div className="dcard p-6">
+                    <h3 className="text-sm font-semibold text-c100 uppercase tracking-wider mb-4">Resume / CV</h3>
                     <button
                       onClick={() => viewResume(selectedApp)}
-                      className="flex items-center gap-2 bg-green text-green px-4 py-3 rounded-lg text-sm font-medium hover:bg-green transition w-full"
+                      className="btn btn--full"
                     >
-                      <FileText className="w-5 h-5" /> View / Download Resume
+                      <FileText className="w-4 h-4" /> View / Download Resume
                     </button>
                   </div>
                 )}
@@ -343,39 +343,39 @@ const msg = err?.response?.data?.message || 'Failed to load resume';
               <div className="lg:col-span-2 space-y-6">
                 {/* Cover Letter */}
                 {selectedApp.coverLetter && (
-                  <div className="bg-white rounded-xl shadow-sm border border-c100 p-6">
-                    <h3 className="text-sm font-semibold text-c900 uppercase tracking-wider mb-4">Cover Letter</h3>
-                    <div className="text-sm text-c700 leading-relaxed whitespace-pre-wrap">{selectedApp.coverLetter}</div>
+                  <div className="dcard p-6">
+                    <h3 className="text-sm font-semibold text-c100 uppercase tracking-wider mb-4">Cover Letter</h3>
+                    <div className="text-sm text-c300 leading-relaxed whitespace-pre-wrap">{selectedApp.coverLetter}</div>
                   </div>
                 )}
 
                 {/* Experience */}
                 {selectedApp.experience && (
-                  <div className="bg-white rounded-xl shadow-sm border border-c100 p-6">
-                    <h3 className="text-sm font-semibold text-c900 uppercase tracking-wider mb-4 flex items-center gap-2">
-                      <Briefcase className="w-4 h-4" /> Work Experience
+                  <div className="dcard p-6">
+                    <h3 className="text-sm font-semibold text-c100 uppercase tracking-wider mb-4 flex items-center gap-2">
+                      <Briefcase className="w-4 h-4 text-c400" /> Work Experience
                     </h3>
-                    <div className="text-sm text-c700 leading-relaxed whitespace-pre-wrap">{selectedApp.experience}</div>
+                    <div className="text-sm text-c300 leading-relaxed whitespace-pre-wrap">{selectedApp.experience}</div>
                   </div>
                 )}
 
                 {/* Education */}
                 {selectedApp.education && (
-                  <div className="bg-white rounded-xl shadow-sm border border-c100 p-6">
-                    <h3 className="text-sm font-semibold text-c900 uppercase tracking-wider mb-4 flex items-center gap-2">
-                      <GraduationCap className="w-4 h-4" /> Education
+                  <div className="dcard p-6">
+                    <h3 className="text-sm font-semibold text-c100 uppercase tracking-wider mb-4 flex items-center gap-2">
+                      <GraduationCap className="w-4 h-4 text-c400" /> Education
                     </h3>
-                    <div className="text-sm text-c700 leading-relaxed whitespace-pre-wrap">{selectedApp.education}</div>
+                    <div className="text-sm text-c300 leading-relaxed whitespace-pre-wrap">{selectedApp.education}</div>
                   </div>
                 )}
 
                 {/* Skills */}
                 {selectedApp.skills && selectedApp.skills.length > 0 && (
-                  <div className="bg-white rounded-xl shadow-sm border border-c100 p-6">
-                    <h3 className="text-sm font-semibold text-c900 uppercase tracking-wider mb-4">Skills</h3>
+                  <div className="dcard p-6">
+                    <h3 className="text-sm font-semibold text-c100 uppercase tracking-wider mb-4">Skills</h3>
                     <div className="flex flex-wrap gap-2">
                       {selectedApp.skills.map((skill, i) => (
-                        <span key={i} className="inline-flex items-center rounded-full bg-c100 px-3 py-1 text-xs font-medium text-c700">
+                        <span key={i} className="skill-chip">
                           {skill}
                         </span>
                       ))}
@@ -385,26 +385,26 @@ const msg = err?.response?.data?.message || 'Failed to load resume';
 
                 {/* Seeker Profile (Platform Profile) */}
                 {selectedApp.seeker?.seekerProfile && (
-                  <div className="bg-white rounded-xl shadow-sm border border-c100 p-6">
-                    <h3 className="text-sm font-semibold text-c900 uppercase tracking-wider mb-4 flex items-center gap-2">
-                      <User className="w-4 h-4" /> Tutaly Platform Profile
+                  <div className="dcard p-6">
+                    <h3 className="text-sm font-semibold text-c100 uppercase tracking-wider mb-4 flex items-center gap-2">
+                      <User className="w-4 h-4 text-c400" /> Tutaly Platform Profile
                     </h3>
                     <div className="space-y-3">
                       {selectedApp.seeker.seekerProfile.headline && (
-                        <p className="text-sm text-c700"><span className="font-medium">Headline:</span> {selectedApp.seeker.seekerProfile.headline}</p>
+                        <p className="text-sm text-c300"><span className="font-medium text-c100">Headline:</span> {selectedApp.seeker.seekerProfile.headline}</p>
                       )}
                       {selectedApp.seeker.seekerProfile.bio && (
                         <div>
-                          <p className="font-medium text-sm text-c700 mb-1">Bio:</p>
-                          <p className="text-sm text-c600 whitespace-pre-wrap">{selectedApp.seeker.seekerProfile.bio}</p>
+                          <p className="font-medium text-sm text-c100 mb-1">Bio:</p>
+                          <p className="text-sm text-c300 whitespace-pre-wrap">{selectedApp.seeker.seekerProfile.bio}</p>
                         </div>
                       )}
                       {selectedApp.seeker.seekerProfile.skills && selectedApp.seeker.seekerProfile.skills.length > 0 && (
                         <div>
-                          <p className="font-medium text-sm text-c700 mb-2">Profile Skills:</p>
+                          <p className="font-medium text-sm text-c100 mb-2">Profile Skills:</p>
                           <div className="flex flex-wrap gap-2">
                             {selectedApp.seeker.seekerProfile.skills.map((skill, i) => (
-                              <span key={i} className="inline-flex items-center rounded-full bg-green px-3 py-1 text-xs font-medium text-green">
+                              <span key={i} className="skill-chip">
                                 {skill}
                               </span>
                             ))}
@@ -416,6 +416,7 @@ const msg = err?.response?.data?.message || 'Failed to load resume';
                 )}
               </div>
             </div>
+
           </>
         )}
       </div>

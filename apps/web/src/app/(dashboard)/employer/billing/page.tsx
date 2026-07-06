@@ -1,21 +1,18 @@
 'use client';
 
 import React, { useState } from 'react';
-import { CreditCard, Download, Star, Shield, ArrowRight, CheckCircle2 } from 'lucide-react';
-import Link from 'next/link';
 
 export default function EmployerBillingPage() {
   const [loading, setLoading] = useState(false);
 
   const invoices = [
-    { id: 'INV-2024-001', date: 'Oct 12, 2024', amount: '₦45,000', plan: 'Growth Plan (Monthly)', status: 'paid' },
-    { id: 'INV-2024-002', date: 'Sep 12, 2024', amount: '₦45,000', plan: 'Growth Plan (Monthly)', status: 'paid' },
-    { id: 'INV-2024-003', date: 'Aug 12, 2024', amount: '₦45,000', plan: 'Growth Plan (Monthly)', status: 'paid' },
+    { id: 'INV-2024-001', date: 'Jun 15, 2026', amount: '₦85,000' },
+    { id: 'INV-2024-002', date: 'May 15, 2026', amount: '₦85,000' },
+    { id: 'INV-2024-003', date: 'Apr 15, 2026', amount: '₦85,000' },
   ];
 
   const handleUpdatePayment = () => {
     setLoading(true);
-    // Simulate API call
     setTimeout(() => {
       setLoading(false);
       alert('Payment method update functionality would open here.');
@@ -23,113 +20,79 @@ export default function EmployerBillingPage() {
   };
 
   return (
-    <div className="max-w-4xl">
-      <div className="dcard mb-6">
-        <div className="dcard__header">
-          <div>
-            <h1 className="dcard__title flex items-center gap-2">
-              <CreditCard className="w-5 h-5" style={{ color: 'var(--blue-l)' }} /> Billing & Plan
-            </h1>
-            <p className="dcard__sub">Manage your subscription, payment methods, and billing history.</p>
+    <>
+      <div className="plan-card">
+        <div>
+          <div className="plan-card__name">
+            🚀 Growth Plan 
+            <span style={{ background: 'transparent', border: '1px solid var(--gold)', color: 'var(--gold-h)', padding: '2px 8px', borderRadius: 'var(--r-pill)', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+              Current
+            </span>
           </div>
+          <div className="plan-card__price">₦85,000 / month · Renews Jul 15, 2026</div>
+        </div>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button className="btn btn--ghost btn--sm">Change plan</button>
+          <button className="btn--danger-outline" style={{ fontSize: '12.5px', padding: '8px 16px' }}>Cancel plan</button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        {/* Current Plan */}
-        <div className="dcard" style={{ background: 'linear-gradient(135deg, var(--green-10), transparent)', borderColor: 'var(--green-20)' }}>
-          <div className="flex items-center gap-2 mb-4">
-            <Star className="w-5 h-5" style={{ color: 'var(--green)' }} />
-            <h2 className="font-bold text-sm uppercase tracking-wider" style={{ color: 'var(--green-light)' }}>Current Plan</h2>
-          </div>
-          <div className="mb-6">
-            <div className="text-3xl font-black mb-1" style={{ color: 'var(--c-100)' }}>Growth Plan</div>
-            <div className="text-sm font-medium" style={{ color: 'var(--c-400)' }}>₦45,000 / month</div>
-          </div>
-          <div className="space-y-3 mb-6">
-            <div className="flex items-center gap-2 text-sm" style={{ color: 'var(--c-300)' }}>
-              <CheckCircle2 className="w-4 h-4" style={{ color: 'var(--green)' }} /> Up to 10 active job posts
-            </div>
-            <div className="flex items-center gap-2 text-sm" style={{ color: 'var(--c-300)' }}>
-              <CheckCircle2 className="w-4 h-4" style={{ color: 'var(--green)' }} /> Applicant tracking system
-            </div>
-            <div className="flex items-center gap-2 text-sm" style={{ color: 'var(--c-300)' }}>
-              <CheckCircle2 className="w-4 h-4" style={{ color: 'var(--green)' }} /> Standard support
-            </div>
-          </div>
-          <div className="flex gap-3">
-            <button className="btn btn--primary flex-1">Upgrade Plan</button>
-            <button className="btn btn--outline" style={{ borderColor: 'var(--red)', color: 'var(--red)' }}>Cancel</button>
-          </div>
+      <div className="dcard">
+        <div className="dcard__header">
+          <div className="dcard__title">Plan usage this cycle</div>
         </div>
+        <div className="plan-usage-row">
+          <span className="plan-usage-label">Job posts</span>
+          <span className="plan-usage-value">4 / 10</span>
+        </div>
+        <div className="plan-usage-row">
+          <span className="plan-usage-label">Featured listings</span>
+          <span className="plan-usage-value">1 / 3</span>
+        </div>
+        <div className="plan-usage-row">
+          <span className="plan-usage-label">Team seats</span>
+          <span className="plan-usage-value">3 / 5</span>
+        </div>
+        <div className="plan-usage-row">
+          <span className="plan-usage-label">Applicant exports</span>
+          <span className="plan-usage-value">Unlimited</span>
+        </div>
+      </div>
 
-        {/* Payment Method */}
-        <div className="dcard flex flex-col">
-          <div className="flex items-center gap-2 mb-6">
-            <Shield className="w-5 h-5" style={{ color: 'var(--gold)' }} />
-            <h2 className="font-bold text-sm uppercase tracking-wider" style={{ color: 'var(--c-400)' }}>Payment Method</h2>
+      <div className="dcard">
+        <div className="dcard__header">
+          <div className="dcard__title">Payment method</div>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <div style={{ width: '44px', height: '30px', background: 'var(--c-700)', borderRadius: 'var(--r-sm)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 700, color: 'var(--c-300)', flexShrink: 0 }}>
+            VISA
           </div>
-          
-          <div className="p-4 rounded-xl border border-c700 mb-6 flex-1 flex flex-col justify-center" style={{ backgroundColor: 'var(--c-800)' }}>
-            <div className="flex items-center justify-between mb-2">
-              <div className="font-bold" style={{ color: 'var(--c-100)' }}>Visa ending in 4242</div>
-              <div className="px-2 py-1 rounded text-xs font-bold" style={{ backgroundColor: 'var(--blue-10)', color: 'var(--blue-l)' }}>Default</div>
-            </div>
-            <div className="text-sm" style={{ color: 'var(--c-400)' }}>Expires 12/2026</div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--c-100)' }}>•••• •••• •••• 4242</div>
+            <div style={{ fontSize: '11.5px', color: 'var(--c-500)' }}>Expires 08/28</div>
           </div>
-
           <button 
+            className="btn btn--ghost btn--sm" 
             onClick={handleUpdatePayment}
             disabled={loading}
-            className="btn btn--outline w-full"
           >
-            {loading ? 'Processing...' : 'Update Payment Method'}
+            {loading ? 'Updating...' : 'Update'}
           </button>
         </div>
       </div>
 
-      {/* Billing History */}
-      <div className="dcard p-0 overflow-hidden">
-        <div className="p-6 border-b border-c700 flex items-center justify-between">
-          <div>
-            <h2 className="font-bold" style={{ color: 'var(--c-100)' }}>Billing History</h2>
-            <p className="text-sm mt-1" style={{ color: 'var(--c-400)' }}>View and download past invoices.</p>
+      <div className="dcard" style={{ marginBottom: 0 }}>
+        <div className="dcard__header">
+          <div className="dcard__title">Billing history</div>
+        </div>
+        {invoices.map((invoice, i) => (
+          <div key={invoice.id} className="invoice-row">
+            <span className="invoice-row__date">{invoice.date}</span>
+            <span className="invoice-row__amount">{invoice.amount}</span>
+            <a href="#" className="invoice-row__download">Download</a>
           </div>
-        </div>
-        
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead style={{ backgroundColor: 'var(--c-800)', borderBottom: '1px solid var(--c-700)' }} className="text-xs font-semibold uppercase tracking-wider text-c400">
-              <tr>
-                <th className="p-4" style={{ color: 'var(--c-400)' }}>Invoice</th>
-                <th className="p-4" style={{ color: 'var(--c-400)' }}>Date</th>
-                <th className="p-4" style={{ color: 'var(--c-400)' }}>Amount</th>
-                <th className="p-4" style={{ color: 'var(--c-400)' }}>Plan</th>
-                <th className="p-4" style={{ color: 'var(--c-400)' }}>Status</th>
-                <th className="p-4 text-right" style={{ color: 'var(--c-400)' }}>Download</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-c700">
-              {invoices.map((invoice) => (
-                <tr key={invoice.id} className="hover:bg-c800 transition-colors">
-                  <td className="p-4 font-bold" style={{ color: 'var(--c-100)' }}>{invoice.id}</td>
-                  <td className="p-4 text-sm" style={{ color: 'var(--c-400)' }}>{invoice.date}</td>
-                  <td className="p-4 text-sm font-medium" style={{ color: 'var(--c-100)' }}>{invoice.amount}</td>
-                  <td className="p-4 text-sm" style={{ color: 'var(--c-300)' }}>{invoice.plan}</td>
-                  <td className="p-4">
-                    <span className="tag tag--green capitalize">{invoice.status}</span>
-                  </td>
-                  <td className="p-4 text-right">
-                    <button className="p-2 rounded-lg hover:bg-c700 transition-colors inline-flex" style={{ color: 'var(--c-400)' }}>
-                      <Download className="w-4 h-4" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        ))}
       </div>
-    </div>
+    </>
   );
 }

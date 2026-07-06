@@ -145,7 +145,7 @@ export default function PostJobWizard() {
   };
 
   return (
-    <div className="dcard max-w-4xl">
+    <div className="dcard">
       {errorMsg && (
         <div className="mb-8 rounded-xl p-4 border flex items-start" style={{ borderColor: 'var(--red)', backgroundColor: 'var(--red-10)' }}>
           <p className="text-sm" style={{ color: 'var(--red)' }}>{errorMsg}</p>
@@ -161,7 +161,7 @@ export default function PostJobWizard() {
           <input className="input" type="text" id="jtitle" placeholder="e.g. Senior Product Manager" value={formData.title} onChange={e => updateForm({ title: e.target.value })} />
         </div>
 
-        <div className="form-grid-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="form-grid-2">
           <div className="form-field">
             <label className="form-label" htmlFor="jdept">Department</label>
             <input className="input" type="text" id="jdept" placeholder="e.g. Product" value={formData.department} onChange={e => updateForm({ department: e.target.value })} />
@@ -177,7 +177,7 @@ export default function PostJobWizard() {
           </div>
         </div>
 
-        <div className="form-grid-3 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
           <div className="form-field">
             <label className="form-label">Country *</label>
             <select className="input" value={formData.country} onChange={e => updateForm({ country: e.target.value, state: '', area: '' })}>
@@ -201,7 +201,7 @@ export default function PostJobWizard() {
           </div>
         </div>
 
-        <div className="form-grid-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="form-grid-2">
           <div className="form-field">
             <label className="form-label" htmlFor="jmode">Work mode</label>
             <select className="input" id="jmode" value={formData.workMode} onChange={e => updateForm({ workMode: e.target.value })}>
@@ -221,7 +221,7 @@ export default function PostJobWizard() {
           </div>
         </div>
         
-        <div className="form-grid-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="form-grid-2">
           <div className="form-field">
             <label className="form-label">Industry *</label>
             <select className="input" value={formData.industry} onChange={e => updateForm({ industry: e.target.value })}>
@@ -243,7 +243,7 @@ export default function PostJobWizard() {
         <div className="form-section__title">Compensation</div>
         <div className="form-section__desc">Listings with visible salary get 3× more qualified applicants.</div>
         
-        <div className="form-grid-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="form-grid-2">
           <div className="form-field">
             <label className="form-label" htmlFor="jsalmin">Minimum salary (₦ / month)</label>
             <input className="input" type="number" id="jsalmin" placeholder="e.g. 700000" value={formData.minSalary} onChange={e => updateForm({ minSalary: e.target.value })} />
@@ -253,9 +253,9 @@ export default function PostJobWizard() {
             <input className="input" type="number" id="jsalmax" placeholder="e.g. 1000000" value={formData.maxSalary} onChange={e => updateForm({ maxSalary: e.target.value })} />
           </div>
         </div>
-        <label className="check-row flex items-center gap-3 cursor-pointer mt-2" style={{ marginBottom: 0 }}>
-          <div className={cn("filter-checkbox", formData.showSalary ? "checked" : "")} onClick={(e) => { e.preventDefault(); updateForm({ showSalary: !formData.showSalary }); }}></div>
-          <span className="text-sm" style={{ color: 'var(--c-300)' }}>Show salary range publicly on this listing</span>
+        <label className="check-row" style={{ marginBottom: 0 }}>
+          <span className={cn("filter-checkbox", formData.showSalary ? "checked" : "")} onClick={(e) => { e.preventDefault(); updateForm({ showSalary: !formData.showSalary }); }} style={{ marginTop: '2px' }}></span>
+          <span>Show salary range publicly on this listing</span>
         </label>
       </div>
 
@@ -274,7 +274,7 @@ export default function PostJobWizard() {
         </div>
         <div className="form-field mt-14" style={{ marginBottom: 0 }}>
           <label className="form-label" htmlFor="jreq">Requirements (Optional)</label>
-          <textarea className="input" id="jreq" style={{ minHeight: '100px' }} placeholder="List key requirements, one per line..." value={formData.requirements} onChange={e => updateForm({ requirements: e.target.value })}></textarea>
+          <textarea className="textarea" id="jreq" style={{ minHeight: '100px' }} placeholder="List key requirements, one per line..." value={formData.requirements} onChange={e => updateForm({ requirements: e.target.value })}></textarea>
         </div>
       </div>
 
@@ -301,7 +301,7 @@ export default function PostJobWizard() {
         <div className="form-section__title">Application Settings & Visibility</div>
         <div className="form-section__desc">Configure how candidates apply and boost your listing.</div>
         
-        <div className="form-grid-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="form-grid-2">
           <div className="form-field">
             <label className="form-label">Application Deadline</label>
             <input className="input" type="date" value={formData.deadline} onChange={e => updateForm({ deadline: e.target.value })} />

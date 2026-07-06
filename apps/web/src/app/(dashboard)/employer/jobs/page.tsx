@@ -117,29 +117,29 @@ export default function EmployerJobsPage() {
       </div>
 
       {loading ? (
-        <div className="p-8 text-center text-c500 italic flex flex-col items-center justify-center">
-          <Loader2 className="w-8 h-8 animate-spin mb-4" />
+        <div style={{ padding: '32px', textAlign: 'center', color: 'var(--c-500)', fontStyle: 'italic', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+          <Loader2 className="animate-spin" style={{ width: '32px', height: '32px', marginBottom: '16px' }} />
           Loading your jobs...
         </div>
       ) : filteredJobs.length === 0 ? (
         <div className="dash-empty">
           <div className="dash-empty__icon">
-            <LayoutDashboard className="w-6 h-6 text-c400" />
+            <LayoutDashboard style={{ width: '24px', height: '24px', color: 'var(--c-400)' }} />
           </div>
           <div className="dash-empty__title">No jobs found</div>
           <div className="dash-empty__desc">You don't have any job postings matching the selected filter.</div>
-          <Link href="/employer/jobs/create" className="btn btn--primary btn--sm mt-4">Post your first job</Link>
+          <Link href="/employer/jobs/create" className="btn btn--primary btn--sm" style={{ marginTop: '16px' }}>Post your first job</Link>
         </div>
       ) : (
-        <div className="flex flex-col">
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
           {filteredJobs.map((job) => (
-            <div key={job.id} className="jobpost-row">
+            <div key={job.id} className="jobpost-row" style={job.status === 'expired' ? { opacity: 0.7, marginBottom: 0 } : {}}>
               <div className="jobpost-row__body">
-                <div className="jobpost-row__title flex items-center gap-2">
+                <div className="jobpost-row__title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   {job.title}
                   {job.isFeatured && (
-                    <span className="badge badge--new" style={{ borderColor: 'var(--gold)', color: 'var(--gold-h)', background: 'var(--gold-10)' }}>
-                      <Zap className="w-3 h-3 mr-1" /> Featured
+                    <span style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--gold-h)', background: 'var(--gold-10)', border: '1px solid var(--gold)', padding: '2px 6px', borderRadius: 'var(--r-pill)', display: 'flex', alignItems: 'center' }}>
+                      <Zap style={{ width: '12px', height: '12px', marginRight: '4px' }} /> Featured
                     </span>
                   )}
                 </div>
@@ -161,33 +161,36 @@ export default function EmployerJobsPage() {
 
               <div className="jobpost-row__status">
                 {job.status === 'active' ? (
-                  <span className="status--active text-xs font-semibold px-2 py-1 rounded-full">Active</span>
+                  <span className="status--active" style={{ padding: '4px 10px', borderRadius: 'var(--r-pill)', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase' }}>Active</span>
                 ) : job.status === 'pending_review' ? (
-                  <span className="status--draft text-xs font-semibold px-2 py-1 rounded-full">Pending Review</span>
+                  <span className="status--draft" style={{ padding: '4px 10px', borderRadius: 'var(--r-pill)', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase' }}>Pending</span>
                 ) : job.status === 'draft' ? (
-                  <span className="status--draft text-xs font-semibold px-2 py-1 rounded-full">Draft</span>
+                  <span className="status--draft" style={{ padding: '4px 10px', borderRadius: 'var(--r-pill)', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase' }}>Draft</span>
                 ) : (
-                  <span className="status--closed text-xs font-semibold px-2 py-1 rounded-full">Closed</span>
+                  <span className="status--closed" style={{ padding: '4px 10px', borderRadius: 'var(--r-pill)', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase' }}>Closed</span>
                 )}
               </div>
 
-              <div className="jobpost-row__actions ml-2">
+              <div className="jobpost-row__actions">
                 {!job.isFeatured && job.status === 'active' && (
                   <button 
                     onClick={() => setBoostingJob(job)} 
                     className="btn btn--ghost btn--sm" 
-                    style={{ padding: '6px 12px', fontSize: '12px' }}
                     title="Boost this job"
                   >
-                    <Zap className="w-3 h-3" /> Boost
+                    Boost
                   </button>
                 )}
-                <Link href={`/employer/jobs/${job.id}/applicants`} className="btn btn--ghost btn--sm" style={{ padding: '6px 12px', fontSize: '12px' }}>
-                  Manage
-                </Link>
-                <button className="btn btn--ghost btn--sm" style={{ padding: '6px', minWidth: 'auto' }} title="Options">
-                  <MoreVertical className="w-4 h-4 text-c400" />
-                </button>
+                {job.status === 'expired' ? (
+                  <button className="btn btn--ghost btn--sm">Repost</button>
+                ) : (
+                  <>
+                    <Link href={`/employer/jobs/${job.id}/applicants`} className="btn btn--ghost btn--sm">
+                      Applicants
+                    </Link>
+                    <button className="btn btn--ghost btn--sm">Edit</button>
+                  </>
+                )}
               </div>
             </div>
           ))}

@@ -68,7 +68,7 @@ export default function EmployerOverviewPage() {
         </div>
       )}
 
-      <div className="dcard" style={{ background: 'linear-gradient(135deg, rgba(27,79,158,0.14), rgba(201,162,39,0.06))', borderColor: 'var(--c-700)', marginBottom: '16px' }}>
+      <div className="dcard" style={{ borderColor: 'var(--c-700)', marginBottom: '16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
           <div>
             <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--c-100)', marginBottom: '4px' }}>Welcome back, {companyName} 👋</div>

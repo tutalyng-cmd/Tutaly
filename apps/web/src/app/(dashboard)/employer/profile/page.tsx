@@ -309,7 +309,7 @@ export default function EmployerProfilePage() {
             View your public company page →
           </Link>
           <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-            {success && <span style={{ fontSize: '12.5px', fontWeight: 600, color: '#2DB85A', marginRight: '8px' }}>Save successful!</span>}
+            {success && <span style={{ fontSize: '12.5px', fontWeight: 600, color: 'var(--green)', marginRight: '8px' }}>Save successful!</span>}
             <button type="button" className="btn btn--ghost" onClick={() => fetchProfile()}>Cancel</button>
             <button type="submit" disabled={saving} className="btn btn--primary">
               {saving ? 'Saving...' : 'Save changes'}

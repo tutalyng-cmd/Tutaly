@@ -187,7 +187,7 @@ const msg = err?.response?.data?.message || 'Failed to load resume';
             <div className="dcard mb-6 p-6">
               <div className="flex items-start justify-between">
                 <div className="flex gap-4">
-                  <div className="h-16 w-16 rounded-full bg-green flex items-center justify-center text-green font-bold text-2xl shrink-0" style={{ background: 'rgba(45,184,90,0.15)' }}>
+                  <div className="h-16 w-16 rounded-full flex items-center justify-center text-green font-bold text-2xl shrink-0" style={{ background: 'var(--green-light)' }}>
                     {getApplicantName(selectedApp).charAt(0).toUpperCase()}
                   </div>
                   <div>
@@ -211,7 +211,7 @@ const msg = err?.response?.data?.message || 'Failed to load resume';
                 <div className="flex gap-2 shrink-0">
                   {selectedApp.status === 'applied' && (
                     <>
-                      <button onClick={() => updateStatus(selectedApp.id, 'reviewing')} className="btn btn--sm" style={{ background: 'var(--blue)', color: '#fff', border: 'none' }}>
+                      <button onClick={() => updateStatus(selectedApp.id, 'reviewing')} className="btn btn--sm btn--primary" style={{ border: 'none' }}>
                         <Eye className="w-4 h-4" /> Review
                       </button>
                       <button onClick={() => updateStatus(selectedApp.id, 'rejected')} className="btn btn--sm btn--danger-outline">
@@ -221,7 +221,7 @@ const msg = err?.response?.data?.message || 'Failed to load resume';
                   )}
                   {selectedApp.status === 'reviewing' && (
                     <>
-                      <button onClick={() => updateStatus(selectedApp.id, 'shortlisted')} className="btn btn--sm" style={{ background: 'rgba(45,184,90,0.15)', color: '#2DB85A', border: 'none' }}>
+                      <button onClick={() => updateStatus(selectedApp.id, 'shortlisted')} className="btn btn--sm" style={{ background: 'var(--green-light)', color: 'var(--green)', border: 'none' }}>
                         <Check className="w-4 h-4" /> Shortlist
                       </button>
                       <button onClick={() => updateStatus(selectedApp.id, 'rejected')} className="btn btn--sm btn--danger-outline">
@@ -231,7 +231,7 @@ const msg = err?.response?.data?.message || 'Failed to load resume';
                   )}
                   {selectedApp.status === 'shortlisted' && (
                     <>
-                      <button onClick={() => updateStatus(selectedApp.id, 'offered')} className="btn btn--sm" style={{ background: 'rgba(201,162,39,0.15)', color: 'var(--gold-h)', border: 'none' }}>
+                      <button onClick={() => updateStatus(selectedApp.id, 'offered')} className="btn btn--sm" style={{ background: 'var(--gold-light)', color: 'var(--gold-h)', border: 'none' }}>
                         <Clock className="w-4 h-4" /> Offer
                       </button>
                       <button onClick={() => updateStatus(selectedApp.id, 'rejected')} className="btn btn--sm btn--danger-outline">

@@ -83,8 +83,8 @@ export default function AdminReviewsPage() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-c900">Review Moderation</h1>
-        <p className="text-c500 text-sm mt-1">{total} pending reviews</p>
+        <h1 className="text-2xl font-bold text-c900">Company Review Moderation</h1>
+        <p className="text-c500 text-sm mt-1">{total} pending company reviews</p>
       </div>
 
       {loading ? (
@@ -100,8 +100,8 @@ export default function AdminReviewsPage() {
       ) : reviews.length === 0 ? (
         <div className="bg-white rounded-3xl border border-c100 p-12 text-center">
           <MessageSquare className="w-12 h-12 text-c300 mx-auto mb-4" />
-          <h3 className="text-lg font-bold text-c900 mb-2">No pending reviews</h3>
-          <p className="text-c500 text-sm">All reviews have been moderated. ✨</p>
+          <h3 className="text-lg font-bold text-c900 mb-2">No pending company reviews</h3>
+          <p className="text-c500 text-sm">All company reviews have been moderated. ✨</p>
         </div>
       ) : (
         <div className="space-y-4">

@@ -103,7 +103,7 @@ export default function DashboardLayout({
     { name: 'Shop Catalog', href: '/admin/products', icon: Package },
     { name: 'Shop Orders', href: '/admin/orders', icon: ShoppingBag },
     { name: 'Disputes', href: '/admin/disputes', icon: AlertTriangle },
-    { name: 'Reviews', href: '/admin/reviews', icon: MessageSquare },
+    { name: 'Company Reviews', href: '/admin/reviews', icon: MessageSquare },
     { name: 'Manage Users', href: '/admin/users', icon: User },
   ];
 

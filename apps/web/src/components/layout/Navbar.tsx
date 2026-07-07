@@ -103,7 +103,7 @@ export default function Navbar() {
           <ul className="nav__links" role="list">
             <li><Link href="/jobs" className={isActive("/jobs")}>Jobs</Link></li>
             <li><Link href="/salaries" className={isActive("/salaries")}>Salaries</Link></li>
-            <li><Link href="/reviews" className={isActive("/reviews")}>Reviews</Link></li>
+            <li><Link href="/reviews" className={isActive("/reviews")}>Company Reviews</Link></li>
             <li><Link href="/shop" className={isActive("/shop")}>Shop</Link></li>
             <li><Link href="/community" className={isActive("/community")}>Community</Link></li>
           </ul>
@@ -201,7 +201,7 @@ export default function Navbar() {
           <div className="absolute top-full left-0 w-full bg-c800 border-b border-c700 md:hidden p-4 flex flex-col gap-3 shadow-lg">
             <Link onClick={() => setIsMobileMenuOpen(false)} href="/jobs" className="text-c200 font-medium">Jobs</Link>
             <Link onClick={() => setIsMobileMenuOpen(false)} href="/salaries" className="text-c200 font-medium">Salaries</Link>
-            <Link onClick={() => setIsMobileMenuOpen(false)} href="/reviews" className="text-c200 font-medium">Reviews</Link>
+            <Link onClick={() => setIsMobileMenuOpen(false)} href="/reviews" className="text-c200 font-medium">Company Reviews</Link>
             <Link onClick={() => setIsMobileMenuOpen(false)} href="/shop" className="text-c200 font-medium">Shop</Link>
             <Link onClick={() => setIsMobileMenuOpen(false)} href="/community" className="text-c200 font-medium">Community</Link>
             <div className="border-t border-c700 mt-2 pt-2 flex flex-col gap-2">

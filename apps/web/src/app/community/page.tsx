@@ -5,6 +5,7 @@ import { apiAuth } from '@/lib/api';
 import { Send, Heart, MessageSquare, MoreHorizontal, Trash2, ImagePlus, X, Link as LinkIcon, Flag, Loader2 } from 'lucide-react';
 import { uploadToCloudinary } from '@/lib/cloudinary';
 import Link from 'next/link';
+import SidebarAd from '@/components/ads/SidebarAd';
 
 interface PostData {
   id: string;
@@ -110,7 +111,7 @@ const PostItem = ({ post, currentUserId, onDelete, onLike }: { post: PostData, c
                 <LinkIcon className="w-4 h-4" /> Copy Link
               </button>
               {post.author.id === currentUserId ? (
-                <button onClick={() => { onDelete(post.id); setShowMenu(false); }} style={{ width: '100%', textAlign: 'left', padding: '8px 16px', fontSize: '13px', color: '#F05050', background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <button onClick={() => { onDelete(post.id); setShowMenu(false); }} style={{ width: '100%', textAlign: 'left', padding: '8px 16px', fontSize: '13px', color: 'var(--red)', background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <Trash2 className="w-4 h-4" /> Delete Post
                 </button>
               ) : (
@@ -154,7 +155,7 @@ const PostItem = ({ post, currentUserId, onDelete, onLike }: { post: PostData, c
               style={{ flex: 1, background: 'var(--c-700)', border: '1px solid var(--c-600)', borderRadius: 'var(--r-md)', padding: '8px 12px', fontSize: '13px', color: 'var(--c-100)', outline: 'none' }}
               onKeyDown={e => e.key === 'Enter' && handlePostComment()}
             />
-            <button onClick={handlePostComment} disabled={!newComment.trim()} style={{ background: 'var(--blue)', color: '#fff', border: 'none', borderRadius: 'var(--r-md)', padding: '0 16px', fontSize: '13px', fontWeight: 600, cursor: newComment.trim() ? 'pointer' : 'not-allowed', opacity: newComment.trim() ? 1 : 0.5 }}>
+            <button onClick={handlePostComment} disabled={!newComment.trim()} style={{ background: 'var(--blue)', color: 'var(--c-100)', border: 'none', borderRadius: 'var(--r-md)', padding: '0 16px', fontSize: '13px', fontWeight: 600, cursor: newComment.trim() ? 'pointer' : 'not-allowed', opacity: newComment.trim() ? 1 : 0.5 }}>
               Post
             </button>
           </div>
@@ -373,7 +374,7 @@ export default function FeedPage() {
                   {imagePreview && (
                     <div style={{ position: 'relative', marginTop: '12px', display: 'inline-block', borderRadius: 'var(--r-md)', overflow: 'hidden', border: '1px solid var(--c-600)' }}>
                       <img src={imagePreview} alt="Preview" style={{ maxHeight: '192px', objectFit: 'cover' }} />
-                      <button onClick={removeImage} style={{ position: 'absolute', top: '8px', right: '8px', background: 'rgba(0,0,0,0.5)', color: '#fff', padding: '4px', borderRadius: '50%', border: 'none', cursor: 'pointer' }}>
+                      <button onClick={removeImage} style={{ position: 'absolute', top: '8px', right: '8px', background: 'var(--c-900)', color: 'var(--c-100)', padding: '4px', borderRadius: '50%', border: 'none', cursor: 'pointer', opacity: 0.8 }}>
                         <X className="w-4 h-4" />
                       </button>
                     </div>
@@ -387,7 +388,7 @@ export default function FeedPage() {
                     <button
                       onClick={handleCreatePost}
                       disabled={posting || (!newPost.trim() && !imageFile)}
-                      style={{ background: 'var(--blue)', color: '#fff', border: 'none', borderRadius: 'var(--r-md)', padding: '8px 16px', fontSize: '13px', fontWeight: 600, cursor: (posting || (!newPost.trim() && !imageFile)) ? 'not-allowed' : 'pointer', opacity: (posting || (!newPost.trim() && !imageFile)) ? 0.5 : 1, display: 'flex', alignItems: 'center', gap: '8px' }}
+                      style={{ background: 'var(--blue)', color: 'var(--c-100)', border: 'none', borderRadius: 'var(--r-md)', padding: '8px 16px', fontSize: '13px', fontWeight: 600, cursor: (posting || (!newPost.trim() && !imageFile)) ? 'not-allowed' : 'pointer', opacity: (posting || (!newPost.trim() && !imageFile)) ? 0.5 : 1, display: 'flex', alignItems: 'center', gap: '8px' }}
                     >
                       {posting ? <Loader2 className="w-4 h-4" style={{ animation: 'spin 1s linear infinite' }} /> : <Send className="w-4 h-4" />}
                       {posting ? 'Posting...' : 'Post'}
@@ -398,7 +399,7 @@ export default function FeedPage() {
             </div>
 
             {postError && (
-              <div style={{ background: 'rgba(204,43,43,0.1)', border: '1px solid rgba(204,43,43,0.5)', padding: '12px', borderRadius: 'var(--r-md)', marginBottom: '16px', fontSize: '13px', color: '#F05050' }}>
+              <div style={{ background: 'var(--red-10)', border: '1px solid var(--red)', padding: '12px', borderRadius: 'var(--r-md)', marginBottom: '16px', fontSize: '13px', color: 'var(--red)' }}>
                 {postError}
               </div>
             )}
@@ -487,6 +488,8 @@ export default function FeedPage() {
                 <a href="#" style={{ fontSize: '12px', color: 'var(--c-300)' }}>#CareerGrowth</a>
               </div>
             </div>
+
+            <SidebarAd placement="community_sidebar" />
           </aside>
 
         </div>

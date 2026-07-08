@@ -2,7 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Search } from 'lucide-react';
 import { serverFetch } from '@/lib/server-fetch';
-
+import AdBanner from '@/components/layout/AdBanner';
 interface Job {
   id: string;
   title: string;
@@ -132,6 +132,9 @@ export default async function Home() {
 
         </div>
       </section>
+
+      {/* ── ADVERTISEMENT ──────────────────────────────────────────── */}
+      <AdBanner placement="homepage_top" />
 
       {/* ── LOGOS ──────────────────────────────────────────────────── */}
       <div className="logos" aria-label="Companies hiring on Tutaly">

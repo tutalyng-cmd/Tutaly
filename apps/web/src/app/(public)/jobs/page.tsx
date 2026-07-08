@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import JobFilterSidebar from '@/components/jobs/JobFilterSidebar';
 import JobResultsWithDetail from '@/components/jobs/JobResultsWithDetail';
 import FeaturedJobsCarousel from '@/components/ads/FeaturedJobsCarousel';
+import SidebarAd from '@/components/ads/SidebarAd';
 import { serverFetch } from '@/lib/server-fetch';
 
 interface Job {
@@ -126,7 +127,10 @@ export default async function JobsPage(props: {
 
         <div className="layout-split">
           <Suspense fallback={<div className="w-72 h-32 bg-c800 rounded-lg animate-pulse hidden lg:block" />}>
-            <JobFilterSidebar filterMeta={filterMeta} />
+            <div className="flex flex-col gap-6">
+              <JobFilterSidebar filterMeta={filterMeta} />
+              <SidebarAd placement="jobs_sidebar" />
+            </div>
           </Suspense>
 
           <Suspense fallback={

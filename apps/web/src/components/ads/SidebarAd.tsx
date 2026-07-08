@@ -42,29 +42,30 @@ export default function SidebarAd({ placement }: { placement: string }) {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-c100 overflow-hidden relative group mt-4">
-      <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-md text-xs text-white font-bold px-1.5 py-0.5 rounded tracking-wider uppercase z-10">
+    <div className="bg-c800 rounded-xl border border-c700 overflow-hidden relative group mt-4">
+      <div className="absolute top-2 right-2 bg-c900/60 backdrop-blur-md text-xs text-c100 font-bold px-1.5 py-0.5 rounded tracking-wider uppercase z-10 border border-c700/50">
         Ad
       </div>
       <a 
-        href={ad.target_url || '#'} 
+        href={ad.destination_url || '#'} 
         onClick={handleClick}
         target="_blank" 
         rel="noopener noreferrer"
         className="block"
       >
         {ad.image_url ? (
-          <div className="aspect-video bg-c100 relative">
-            <img src={ad.image_url} alt="Advertisement" className="object-cover w-full h-full" />
+          <div className="aspect-video bg-c700 relative">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={ad.image_url} alt={ad.alt_text || "Advertisement"} className="object-cover w-full h-full" />
           </div>
         ) : (
-          <div className="aspect-video bg-blue shadow-glow-blue flex flex-col items-center justify-center p-6 text-center border-b border-c100">
-            <h4 className="font-bold text-c900 mb-2">{ad.format.replace('_', ' ').toUpperCase()}</h4>
-            <p className="text-sm text-c600">Promote your business here to thousands of professionals.</p>
+          <div className="aspect-video bg-blue/10 flex flex-col items-center justify-center p-6 text-center border-b border-c700">
+            <h4 className="font-bold text-blue-l mb-2">{ad.format ? ad.format.replace('_', ' ').toUpperCase() : 'ADVERTISEMENT'}</h4>
+            <p className="text-xs text-c400">{ad.alt_text || "Promote your business here to thousands of professionals."}</p>
           </div>
         )}
-        <div className="p-3 bg-c100/50 group-hover:bg-c100 transition-colors">
-          <p className="text-xs text-c500 font-medium truncate">Sponsored via Tutaly Ads</p>
+        <div className="p-3 bg-c800 group-hover:bg-c700 transition-colors border-t border-c700">
+          <p className="text-xs text-c400 font-medium truncate group-hover:text-c200 transition-colors">Sponsored via Tutaly Ads</p>
         </div>
       </a>
     </div>

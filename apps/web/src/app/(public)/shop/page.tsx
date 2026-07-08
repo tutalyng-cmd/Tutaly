@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { api } from '@/lib/api';
+import AdBanner from '@/components/layout/AdBanner';
 
 const LISTING_TYPE_MAP: Record<string, { label: string; icon: string; color: string; tagClass: string }> = {
   digital: { label: 'Digital', icon: '📄', color: 'rgba(27,79,158,0.15)', tagClass: 'tag--blue' },
@@ -56,6 +57,8 @@ export default function ShopPage() {
           <p className="page-header__sub">Resume templates, courses, salary reports, and guides — from people who've done it.</p>
         </div>
       </header>
+
+      <AdBanner placement="shop_top" />
 
       <div className="container" style={{ padding: '28px 0 80px' }}>
         <div className="category-rail" role="list" aria-label="Shop categories">

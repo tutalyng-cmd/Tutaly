@@ -55,10 +55,18 @@ export default function Footer() {
         </div>
         <div className="footer__bottom">
           <p className="footer__copy">© {new Date().getFullYear()} Tutaly. All rights reserved. Started in Lagos, building for everywhere.</p>
-          <div className="footer__legal">
-            <Link href="/legal/privacy-policy">Privacy</Link>
-            <Link href="/legal/terms-of-service">Terms</Link>
-            <Link href="/legal/cookies">Cookies</Link>
+          <div className="footer__legal flex flex-wrap gap-4 justify-center md:justify-end text-sm text-c500">
+            <Link href="/legal/terms-of-service" className="hover:text-green transition-colors">Terms of Service</Link>
+            <Link href="/legal/privacy-policy" className="hover:text-green transition-colors">Privacy Policy</Link>
+            <Link href="/legal/disclaimer" className="hover:text-green transition-colors">Disclaimer</Link>
+            <Link href="/legal/community-guidelines" className="hover:text-green transition-colors">Community Guidelines</Link>
+            <Link href="/legal/safety" className="hover:text-green transition-colors">Safety</Link>
+            <Link href="/legal/review-policy" className="hover:text-green transition-colors">Review Policy</Link>
+            <Link href="/legal/marketplace-policy" className="hover:text-green transition-colors">Marketplace Policy</Link>
+            <Link href="/legal/refund-policy" className="hover:text-green transition-colors">Refund Policy</Link>
+            <Link href="/legal/advertiser-policy" className="hover:text-green transition-colors">Advertiser Policy</Link>
+            <Link href="/legal/employer-policy" className="hover:text-green transition-colors">Employer Policy</Link>
+            <Link href="/legal/cookies" className="hover:text-green transition-colors">Cookie Policy</Link>
           </div>
         </div>
       </div>

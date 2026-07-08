@@ -15,8 +15,8 @@ export default function AboutPage() {
             <span>About Tutaly</span>
           </div>
           <h1 className="hero__title">We believe talent is evenly distributed. Opportunity is not.</h1>
-          <p className="hero__subtitle">
-            Tutaly is building the global professional ecosystem to bridge the gap between world-class talent and world-class opportunities.
+          <p className="hero__subtitle max-w-layout-md mx-auto">
+            Welcome to Tutaly, where job seekers and employers connect seamlessly. Discover a multitude of available positions, access valuable company reviews, explore salary information, and find essential materials all in one place. As a prominent professional network, Tutaly also fosters connections among individuals. Join us to unlock limitless opportunities and forge meaningful relationships.
           </p>
         </div>
       </section>

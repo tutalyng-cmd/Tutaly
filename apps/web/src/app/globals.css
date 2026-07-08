@@ -7,6 +7,12 @@
 @import "../styles/footer.css";
 @import "../styles/home.css";
 
+@layer base {
+  body {
+    background-color: var(--c-900);
+    color: var(--c-200);
+  }
+}
 
 /* ─── CONNECT FEED ─── */
   /* ─── CONNECT FEED ───────────────────────────────────────── */

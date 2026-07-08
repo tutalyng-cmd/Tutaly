@@ -46,7 +46,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} ${jetbrains.variable}`}>
-      <body className="flex flex-col min-h-screen">
+      <body className="flex flex-col min-h-screen bg-c900 text-c200">
         <CartProvider>
           <Navbar />
           <main className="flex-grow">{children}</main>

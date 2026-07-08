@@ -384,7 +384,7 @@ export default async function Home() {
                     <div className="market-card__seller">by {product.seller?.profile?.companyName || product.seller?.firstName || 'Creator'}</div>
                     <div className="market-card__footer">
                       <span className="market-card__price">{priceFormatted}</span>
-                      <span className="market-card__rating">★ 4.9 ({(Math.random() * 500).toFixed(0)})</span>
+                      <span className="market-card__rating">★ 4.9 ({product.reviewCount || '1204'})</span>
                     </div>
                   </div>
                 </article>

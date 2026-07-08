@@ -77,7 +77,7 @@ export default function CartPage() {
 
   return (
     <div className="page-shell">
-      <div className="container" style={{ maxWidth: '1000px', margin: '0 auto', padding: '60px 20px' }}>
+      <div className="container max-w-5xl mx-auto px-5 py-16">
         
         <div className="page-header mb-8" style={{ borderBottom: 'none' }}>
           <div className="page-header__eyebrow">Checkout Process</div>
@@ -86,8 +86,8 @@ export default function CartPage() {
         </div>
 
         {cartItems.length === 0 ? (
-          <div className="text-center py-20 rounded-2xl border" style={{ backgroundColor: 'var(--c-800)', borderColor: 'var(--c-700)' }}>
-            <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: 'var(--c-700)' }}>
+          <div className="text-center py-20 rounded-2xl border bg-c800 border-c700">
+            <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 bg-c700">
               <ShoppingBag className="w-8 h-8" style={{ color: 'var(--c-400)' }} />
             </div>
             <h2 className="text-2xl font-bold mb-3" style={{ color: 'var(--c-100)' }}>Your cart is empty</h2>
@@ -105,8 +105,8 @@ export default function CartPage() {
                 {cartItems.map((item) => {
                   const product = item.product || item;
                   return (
-                    <div key={item.id} className="flex gap-6 p-6 rounded-2xl border" style={{ backgroundColor: 'var(--c-800)', borderColor: 'var(--c-700)' }}>
-                      <div className="w-20 h-20 rounded-xl flex-shrink-0 flex items-center justify-center text-3xl" style={{ backgroundColor: 'var(--c-700)' }}>
+                    <div key={item.id} className="flex gap-6 p-6 rounded-2xl border bg-c800 border-c700">
+                      <div className="w-20 h-20 rounded-xl flex-shrink-0 flex items-center justify-center text-3xl bg-c700">
                         {product.listingType === 'digital' ? '📄' : product.listingType === 'service' ? '💼' : '📦'}
                       </div>
                       
@@ -143,8 +143,8 @@ export default function CartPage() {
 
             {/* Order Summary Sidebar */}
             <div className="lg:col-span-1">
-              <div className="rounded-2xl p-6 lg:p-8 sticky top-28 border" style={{ backgroundColor: 'var(--c-800)', borderColor: 'var(--c-700)' }}>
-                <h3 className="text-lg font-bold mb-6 pb-4 border-b" style={{ color: 'var(--c-100)', borderColor: 'var(--c-700)' }}>Order Summary</h3>
+              <div className="rounded-2xl p-6 lg:p-8 sticky top-28 border bg-c800 border-c700">
+                <h3 className="text-lg font-bold mb-6 pb-4 border-b border-c700" style={{ color: 'var(--c-100)' }}>Order Summary</h3>
                 
                 <div className="space-y-4 mb-6">
                   <div className="flex justify-between items-center">

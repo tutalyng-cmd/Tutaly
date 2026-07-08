@@ -98,8 +98,8 @@ export default function ShopProductDetailPage() {
   const typeInfo = typeIcons[product.listingType] || typeIcons.digital;
 
   return (
-    <div className="page-shell" style={{ backgroundColor: 'var(--bg)', minHeight: '100vh' }}>
-      <div className="container" style={{ maxWidth: '1100px', padding: '40px 20px' }}>
+    <div className="page-shell min-h-screen">
+      <div className="container max-w-6xl mx-auto px-5 py-10">
         
         <Link href="/shop" className="inline-flex items-center text-sm font-semibold hover:underline mb-8" style={{ color: 'var(--blue-l)' }}>
           <ArrowLeft className="w-4 h-4 mr-2" /> Back to Shop
@@ -109,7 +109,7 @@ export default function ShopProductDetailPage() {
           
           {/* Left Column: Image/Icon & Details */}
           <div className="lg:col-span-8 space-y-8">
-            <div className="w-full aspect-[4/3] rounded-2xl flex items-center justify-center relative overflow-hidden" style={{ backgroundColor: 'var(--c-800)', border: '1px solid var(--c-700)' }}>
+            <div className="w-full aspect-video rounded-2xl flex items-center justify-center relative overflow-hidden bg-c800 border border-c700">
               <div className="absolute inset-0 bg-gradient-to-tr from-black/20 to-transparent"></div>
               <div style={{ fontSize: '8rem', zIndex: 10 }}>{typeInfo.icon}</div>
               {product.isBestseller && (
@@ -117,7 +117,7 @@ export default function ShopProductDetailPage() {
               )}
             </div>
 
-            <div className="rounded-2xl p-8" style={{ backgroundColor: 'var(--c-800)', border: '1px solid var(--c-700)' }}>
+            <div className="rounded-2xl p-8 bg-c800 border border-c700">
               <h2 className="text-xl font-bold mb-6" style={{ color: 'var(--c-100)' }}>About this resource</h2>
               
               <div className="prose prose-invert max-w-none text-sm leading-relaxed" style={{ color: 'var(--c-300)' }}>
@@ -129,7 +129,7 @@ export default function ShopProductDetailPage() {
               </div>
             </div>
             
-            <div className="rounded-2xl p-8" style={{ backgroundColor: 'var(--c-800)', border: '1px solid var(--c-700)' }}>
+            <div className="rounded-2xl p-8 bg-c800 border border-c700">
               <h2 className="text-xl font-bold mb-4" style={{ color: 'var(--c-100)' }}>About the Creator</h2>
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg" style={{ backgroundColor: 'var(--blue-10)', color: 'var(--blue)' }}>
@@ -145,7 +145,7 @@ export default function ShopProductDetailPage() {
 
           {/* Right Column: Checkout Card */}
           <div className="lg:col-span-4">
-            <div className="rounded-2xl p-6 lg:p-8 sticky top-24" style={{ backgroundColor: 'var(--c-800)', border: '1px solid var(--c-700)', boxShadow: '0 12px 40px rgba(0,0,0,0.2)' }}>
+            <div className="rounded-2xl p-6 lg:p-8 sticky top-24 shadow-2xl bg-c800 border border-c700">
               
               <div className="mb-2 text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--c-400)' }}>
                 {typeInfo.label}

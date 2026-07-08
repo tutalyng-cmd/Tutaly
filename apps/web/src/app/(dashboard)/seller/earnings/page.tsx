@@ -60,21 +60,21 @@ export default function SellerEarningsPage() {
       </div>
 
       <div className="stat-grid mb-8">
-        <div className="stat-card" style={{ background: 'linear-gradient(135deg, rgba(29,122,58,0.1), rgba(29,122,58,0.02))', borderColor: '#2DB85A' }}>
+        <div className="stat-card" style={{ background: 'linear-gradient(135deg, var(--green-10), var(--green-10))', borderColor: 'var(--green)' }}>
           <div className="flex justify-between items-start mb-2">
             <div className="stat-card__label" style={{ color: 'var(--c-300)' }}>Available to Withdraw</div>
-            <div className="p-2 rounded-full" style={{ background: 'rgba(29,122,58,0.15)', color: '#2DB85A' }}>
+            <div className="p-2 rounded-full" style={{ background: 'var(--green-10)', color: 'var(--green)' }}>
               <DollarSign className="w-4 h-4" />
             </div>
           </div>
-          <div className="stat-card__value" style={{ color: '#2DB85A', fontSize: '32px' }}>{formatPrice(clearedRevenue)}</div>
+          <div className="stat-card__value" style={{ color: 'var(--green)', fontSize: '32px' }}>{formatPrice(clearedRevenue)}</div>
           <div className="stat-card__delta" style={{ color: 'var(--c-400)' }}>Funds cleared from completed orders</div>
         </div>
 
         <div className="stat-card">
           <div className="flex justify-between items-start mb-2">
             <div className="stat-card__label">Pending Clearance</div>
-            <div className="p-2 rounded-full" style={{ background: 'rgba(201,162,39,0.15)', color: 'var(--gold)' }}>
+            <div className="p-2 rounded-full" style={{ background: 'var(--gold-10)', color: 'var(--gold)' }}>
               <Loader2 className="w-4 h-4" />
             </div>
           </div>
@@ -85,7 +85,7 @@ export default function SellerEarningsPage() {
         <div className="stat-card">
           <div className="flex justify-between items-start mb-2">
             <div className="stat-card__label">Total All-Time Revenue</div>
-            <div className="p-2 rounded-full" style={{ background: 'rgba(27,79,158,0.15)', color: 'var(--blue-l)' }}>
+            <div className="p-2 rounded-full" style={{ background: 'var(--blue-10)', color: 'var(--blue-l)' }}>
               <TrendingUp className="w-4 h-4" />
             </div>
           </div>
@@ -113,7 +113,7 @@ export default function SellerEarningsPage() {
                 {orders.slice(0, 10).map((order) => (
                   <div key={order.id} className="flex items-center justify-between p-3 rounded-lg hover:bg-c700 transition-colors">
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(29,122,58,0.1)', color: '#2DB85A' }}>
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'var(--green-10)', color: 'var(--green)' }}>
                         <ArrowUpRight className="w-5 h-5" />
                       </div>
                       <div>
@@ -122,8 +122,8 @@ export default function SellerEarningsPage() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="font-mono text-sm font-bold" style={{ color: '#2DB85A' }}>+{formatPrice(order.amountPaid || order.total, order.currency)}</div>
-                      <div className="text-xs font-semibold uppercase tracking-wider mt-1" style={{ color: order.status === 'completed' ? '#2DB85A' : 'var(--gold)' }}>
+                      <div className="font-mono text-sm font-bold" style={{ color: 'var(--green)' }}>+{formatPrice(order.amountPaid || order.total, order.currency)}</div>
+                      <div className="text-xs font-semibold uppercase tracking-wider mt-1" style={{ color: order.status === 'completed' ? 'var(--green)' : 'var(--gold)' }}>
                         {order.status === 'completed' ? 'Cleared' : 'Pending'}
                       </div>
                     </div>
@@ -149,7 +149,7 @@ export default function SellerEarningsPage() {
             <div className="p-4 rounded-xl border border-c600 mb-4" style={{ background: 'var(--c-700)' }}>
               <div className="flex items-center justify-between mb-2">
                 <div className="text-sm font-bold" style={{ color: 'var(--c-100)' }}>Bank Transfer</div>
-                <span className="text-xs font-bold uppercase px-2 py-1 rounded-md" style={{ background: 'rgba(29,122,58,0.15)', color: '#2DB85A' }}>Default</span>
+                <span className="text-xs font-bold uppercase px-2 py-1 rounded-md" style={{ background: 'var(--green-10)', color: 'var(--green)' }}>Default</span>
               </div>
               <div className="text-sm" style={{ color: 'var(--c-400)' }}>GTBank •••• 4092</div>
               <div className="text-xs mt-1" style={{ color: 'var(--c-500)' }}>Chukwudi O.</div>

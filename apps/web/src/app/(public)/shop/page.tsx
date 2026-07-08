@@ -5,9 +5,9 @@ import Link from 'next/link';
 import { api } from '@/lib/api';
 
 const LISTING_TYPE_MAP: Record<string, { label: string; icon: string; color: string; tagClass: string }> = {
-  digital: { label: 'Digital', icon: '📄', color: 'rgba(27,79,158,0.15)', tagClass: 'tag--blue' },
-  physical: { label: 'Physical', icon: '📦', color: 'rgba(29,122,58,0.15)', tagClass: 'tag--green' },
-  service: { label: 'Service', icon: '💼', color: 'rgba(201,162,39,0.12)', tagClass: 'tag--gold' },
+  digital: { label: 'Digital', icon: '📄', color: 'var(--blue-10)', tagClass: 'tag--blue' },
+  physical: { label: 'Physical', icon: '📦', color: 'var(--green-10)', tagClass: 'tag--green' },
+  service: { label: 'Service', icon: '💼', color: 'var(--gold-10)', tagClass: 'tag--gold' },
 };
 
 export default function ShopPage() {

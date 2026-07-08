@@ -1,0 +1,519 @@
+
+> web@0.1.0 lint /home/uplix/Desktop/UPLIX/tutaly/apps/web
+> eslint
+
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/admin/ads/create/page.tsx
+  38:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  42:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  43:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/admin/ads/page.tsx
+   81:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+   82:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+   85:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  111:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  115:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  116:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+  150:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  154:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  155:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/admin/announcements/page.tsx
+   38:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+   42:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+   43:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+   77:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+   81:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+   82:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+   98:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  102:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  103:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/admin/disputes/page.tsx
+  40:36  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/admin/emails/page.tsx
+  37:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  41:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  42:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+  80:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  84:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  85:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/admin/jobs/page.tsx
+   33:36  warning  Unexpected any. Specify a different type                                                               @typescript-eslint/no-explicit-any
+   37:50  warning  Unexpected any. Specify a different type                                                               @typescript-eslint/no-explicit-any
+   53:36  warning  Unexpected any. Specify a different type                                                               @typescript-eslint/no-explicit-any
+   69:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+   73:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+   74:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+  100:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  104:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  105:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+  121:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  125:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  126:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/admin/legal/[slug]/page.tsx
+  30:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  34:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  35:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+  66:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  70:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  71:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/admin/legal/page.tsx
+  30:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  34:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  35:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/admin/orders/page.tsx
+   70:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+   71:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+   74:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  107:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  108:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+  111:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  131:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  132:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+  135:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  155:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  156:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+  159:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  179:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  180:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+  183:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/admin/page.tsx
+  20:38  warning  Unexpected any. Specify a different type                                                               @typescript-eslint/no-explicit-any
+  36:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  40:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  41:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/admin/products/page.tsx
+  29:44  warning  Unexpected any. Specify a different type                                                               @typescript-eslint/no-explicit-any
+  50:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  54:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  55:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+  78:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  82:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  83:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/admin/revenue/page.tsx
+  57:46  warning  Unexpected any. Specify a different type                                                               @typescript-eslint/no-explicit-any
+  83:54  warning  Unexpected any. Specify a different type                                                               @typescript-eslint/no-explicit-any
+  94:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  98:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  99:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/admin/sellers/page.tsx
+   33:42  warning  Unexpected any. Specify a different type                                                               @typescript-eslint/no-explicit-any
+   36:50  warning  Unexpected any. Specify a different type                                                               @typescript-eslint/no-explicit-any
+   54:36  warning  Unexpected any. Specify a different type                                                               @typescript-eslint/no-explicit-any
+   73:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+   77:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+   78:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+  112:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  116:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  117:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/admin/users/page.tsx
+  18:38  warning  Unexpected any. Specify a different type                                                               @typescript-eslint/no-explicit-any
+  34:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  38:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  39:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+  74:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  78:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  79:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/employer/ads/page.tsx
+   5:8   warning  'Link' is defined but never used          @typescript-eslint/no-unused-vars
+  35:43  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/employer/billing/page.tsx
+  70:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  87:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/employer/jobs/[id]/applicants/page.tsx
+   15:3   warning  'ChevronRight' is defined but never used     @typescript-eslint/no-unused-vars
+   79:9   warning  'router' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  156:13  warning  'error' is assigned a value but never used   @typescript-eslint/no-unused-vars
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/employer/jobs/create/page.tsx
+  111:22   warning  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  131:13   warning  'res' is assigned a value but never used                         @typescript-eslint/no-unused-vars
+  140:24   warning  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  345:94   warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  345:108  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/employer/jobs/page.tsx
+    6:10   warning  'Plus' is defined but never used                                 @typescript-eslint/no-unused-vars
+    6:16   warning  'Users' is defined but never used                                @typescript-eslint/no-unused-vars
+    6:23   warning  'Clock' is defined but never used                                @typescript-eslint/no-unused-vars
+    6:30   warning  'CheckCircle' is defined but never used                          @typescript-eslint/no-unused-vars
+    6:60   warning  'MoreVertical' is defined but never used                         @typescript-eslint/no-unused-vars
+    6:74   warning  'Edit2' is defined but never used                                @typescript-eslint/no-unused-vars
+    6:81   warning  'Eye' is defined but never used                                  @typescript-eslint/no-unused-vars
+    6:103  warning  'Share2' is defined but never used                               @typescript-eslint/no-unused-vars
+  130:52   warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  212:93   warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  212:113  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/employer/page.tsx
+   6:55  warning  'Users' is defined but never used  @typescript-eslint/no-unused-vars
+   6:62  warning  'Star' is defined but never used   @typescript-eslint/no-unused-vars
+   6:68  warning  'Plus' is defined but never used   @typescript-eslint/no-unused-vars
+  36:17  warning  'e' is defined but never used      @typescript-eslint/no-unused-vars
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/employer/profile/page.tsx
+    6:19  warning  'Upload' is defined but never used                                                                                                                                                                                                                                                       @typescript-eslint/no-unused-vars
+    6:27  warning  'Building2' is defined but never used                                                                                                                                                                                                                                                    @typescript-eslint/no-unused-vars
+    6:38  warning  'CheckCircle2' is defined but never used                                                                                                                                                                                                                                                 @typescript-eslint/no-unused-vars
+  156:17  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/employer/shop/create/page.tsx
+  14:48  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  15:54  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  91:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/employer/shop/page.tsx
+    7:3   warning  'Package' is defined but never used                                                                                   @typescript-eslint/no-unused-vars
+   22:44  warning  Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+   23:40  warning  Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+   31:6   warning  React Hook useEffect has a missing dependency: 'checkSellerStatus'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+   75:13  warning  'error' is assigned a value but never used                                                                            @typescript-eslint/no-unused-vars
+   94:13  warning  'error' is assigned a value but never used                                                                            @typescript-eslint/no-unused-vars
+  182:78  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                       react/no-unescaped-entities
+  191:17  warning  Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+  192:30  warning  Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+  193:43  warning  Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+  256:52  warning  Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+  300:37  warning  Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/layout.tsx
+   28:8   warning  'Image' is defined but never used         @typescript-eslint/no-unused-vars
+  130:34  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  150:31  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/seeker/applications/page.tsx
+   43:24  warning  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  121:54  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/seeker/orders/page.tsx
+   10:76  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   20:40  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   52:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   68:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   85:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  114:31  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/seeker/profile/page.tsx
+  120:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/seeker/saved/page.tsx
+   9:46  warning  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  21:61  warning  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  36:14  warning  'err' is defined but never used                                  @typescript-eslint/no-unused-vars
+  53:87  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  62:81  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/seeker/settings/page.tsx
+   4:24  warning  'Lock' is defined but never used          @typescript-eslint/no-unused-vars
+   4:35  warning  'Trash2' is defined but never used        @typescript-eslint/no-unused-vars
+  53:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/seller/apply/page.tsx
+  20:6   warning  React Hook useEffect has a missing dependency: 'checkStatus'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  53:21  warning  Unexpected any. Specify a different type                                                                        @typescript-eslint/no-explicit-any
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/seller/create/page.tsx
+    6:10  warning  'X' is defined but never used                                    @typescript-eslint/no-unused-vars
+   49:48  warning  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  108:22  warning  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  157:24  warning  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  200:49  warning  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  260:58  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  260:63  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  260:66  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  260:74  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/seller/earnings/page.tsx
+  9:40  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/seller/orders/page.tsx
+   6:19  warning  'Package' is defined but never used       @typescript-eslint/no-unused-vars
+  18:40  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  48:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/seller/page.tsx
+   19:44  warning  Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+   20:40  warning  Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+   25:6   warning  React Hook useEffect has a missing dependency: 'checkSellerStatus'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+   86:76  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                       react/no-unescaped-entities
+   93:17  warning  Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+   94:30  warning  Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+   95:9   warning  'pendingOrders' is assigned a value but never used                                                                    @typescript-eslint/no-unused-vars
+   95:43  warning  Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+   96:46  warning  Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+  145:37  warning  Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+  181:45  warning  Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(public)/jobs/error.tsx
+   7:3   warning  'error' is defined but never used                                @typescript-eslint/no-unused-vars
+  21:20  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(public)/jobs/page.tsx
+  56:36  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  58:12  warning  'err' is defined but never used           @typescript-eslint/no-unused-vars
+  66:12  warning  'err' is defined but never used           @typescript-eslint/no-unused-vars
+  79:17  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(public)/join-community/page.tsx
+  90:17   warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  90:170  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  90:200  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  90:209  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(public)/legal/[slug]/page.tsx
+  24:12  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(public)/reviews/company/[name]/page.tsx
+    3:10  warning  'notFound' is defined but never used      @typescript-eslint/no-unused-vars
+    4:48  warning  'ArrowRight' is defined but never used    @typescript-eslint/no-unused-vars
+   11:12  warning  'error' is defined but never used         @typescript-eslint/no-unused-vars
+   20:12  warning  'error' is defined but never used         @typescript-eslint/no-unused-vars
+  161:35  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(public)/reviews/page.tsx
+   31:35  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  115:40  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(public)/reviews/search/page.tsx
+   4:10  warning  'api' is defined but never used                                  @typescript-eslint/no-unused-vars
+  15:35  warning  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  29:30  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  29:38  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  48:41  warning  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  70:54  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  70:85  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  70:93  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(public)/reviews/write/page.tsx
+  88:13  warning  'error' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(public)/salaries/error.tsx
+   7:3   warning  'error' is defined but never used                                @typescript-eslint/no-unused-vars
+  21:20  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(public)/salaries/page.tsx
+  39:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  40:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  41:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(public)/salaries/submit/page.tsx
+  36:61  warning  Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  47:13  warning  'error' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(public)/shop/[id]/page.tsx
+    9:11  warning  'Star' is defined but never used                                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+   12:63  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   21:42  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   39:6   warning  React Hook useEffect has a missing dependency: 'fetchProduct'. Either include it or remove the dependency array                                                                                                                                                                          react-hooks/exhaustive-deps
+   69:13  warning  'error' is assigned a value but never used                                                                                                                                                                                                                                               @typescript-eslint/no-unused-vars
+  108:13  warning  'error' is assigned a value but never used                                                                                                                                                                                                                                               @typescript-eslint/no-unused-vars
+  161:19  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(public)/shop/cart/page.tsx
+  11:46   warning  Unexpected any. Specify a different type                                                                      @typescript-eslint/no-explicit-any
+  16:6    warning  React Hook useEffect has a missing dependency: 'fetchCart'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  94:104  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                               react/no-unescaped-entities
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(public)/shop/checkout/page.tsx
+   11:46  warning  Unexpected any. Specify a different type                                                                        @typescript-eslint/no-explicit-any
+   18:6   warning  React Hook useEffect has a missing dependency: 'fetchCart'. Either include it or remove the dependency array    react-hooks/exhaustive-deps
+   61:17  warning  Unexpected any. Specify a different type                                                                        @typescript-eslint/no-explicit-any
+  129:34  error    Do not use arbitrary Tailwind values (e.g. `[100px]`, `[#fff]`). Use CSS tokens or standard Tailwind utilities  custom/no-arbitrary-tailwind
+  130:34  error    Do not use arbitrary Tailwind values (e.g. `[100px]`, `[#fff]`). Use CSS tokens or standard Tailwind utilities  custom/no-arbitrary-tailwind
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(public)/shop/page.tsx
+   14:44   warning  Unexpected any. Specify a different type                                                                          @typescript-eslint/no-explicit-any
+   18:18   warning  'setSearch' is assigned a value but never used                                                                    @typescript-eslint/no-unused-vars
+   23:6    warning  React Hook useEffect has a missing dependency: 'fetchProducts'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+   56:114  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                   react/no-unescaped-entities
+  100:37   warning  Unexpected any. Specify a different type                                                                          @typescript-eslint/no-explicit-any
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/about/page.tsx
+  32:94  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  45:94  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/auth/forgot-password/page.tsx
+  33:9   warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  60:97  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                          react/no-unescaped-entities
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/auth/signin/page.tsx
+  51:11   warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  56:13   warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                                                                                                                                                                                                                          react/no-unescaped-entities
+  56:125  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                                                                                                                                                                                                                          react/no-unescaped-entities
+  84:13   warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  89:16   warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                          react/no-unescaped-entities
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/auth/signup/page.tsx
+   74:11  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+   96:11  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  129:13  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/auth/verify-email/page.tsx
+  37:9  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/blog/page.tsx
+  36:112  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/careers/page.tsx
+  78:65  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  79:69  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/community/discover/page.tsx
+    5:28  warning  'Loader2' is defined but never used                                                                                                                                                                                                                                                      @typescript-eslint/no-unused-vars
+  111:27  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/community/layout.tsx
+    5:10  warning  'useRouter' is defined but never used                                                                                                                                                                                                                                                    @typescript-eslint/no-unused-vars
+   15:3   warning  'UserPlus' is defined but never used                                                                                                                                                                                                                                                     @typescript-eslint/no-unused-vars
+   22:56  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   23:50  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   79:30  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   85:34  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  109:19  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  158:23  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/community/messages/page.tsx
+  110:23  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  125:34  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  127:14  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  158:91  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                          react/no-unescaped-entities
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/community/my-posts/page.tsx
+  108:17  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/community/network/page.tsx
+  5:28  warning  'UserX' is defined but never used        @typescript-eslint/no-unused-vars
+  5:35  warning  'UserPlus' is defined but never used     @typescript-eslint/no-unused-vars
+  5:52  warning  'ChevronDown' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/community/notifications/page.tsx
+  5:10  warning  'Bell' is defined but never used   @typescript-eslint/no-unused-vars
+  5:25  warning  'Check' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/community/page.tsx
+   20:28  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   26:32  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   34:44  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   93:15  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  139:11  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  180:41  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  205:50  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  270:29  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  301:14  warning  'err' is defined but never used                                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+  311:14  warning  'err' is defined but never used                                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+  319:13  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  336:17  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/community/profile/[username]/page.tsx
+    6:20  warning  'UserMinus' is defined but never used                                                                                                                                                                                                                                                    @typescript-eslint/no-unused-vars
+    6:72  warning  'LinkIcon' is defined but never used                                                                                                                                                                                                                                                     @typescript-eslint/no-unused-vars
+   11:42  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   23:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+   27:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+   28:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+   45:6   warning  React Hook useEffect has a missing dependency: 'fetchProfile'. Either include it or remove the dependency array                                                                                                                                                                          react-hooks/exhaustive-deps
+   53:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+   57:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+   58:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+   96:19  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  158:42  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  163:19  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/community/saved/page.tsx
+    5:32  warning  'Loader2' is defined but never used                                                                                                                                                                                                                                                      @typescript-eslint/no-unused-vars
+   58:14  warning  'err' is defined but never used                                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+   61:34  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   70:56  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                          react/no-unescaped-entities
+   98:22  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                          react/no-unescaped-entities
+  117:27  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  144:21  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/contact/page.tsx
+  19:115  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/error.tsx
+  26:13  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/not-found.tsx
+  12:27  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  12:47  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  12:97  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/page.tsx
+   20:7    warning  'CURRENCY_SYMBOLS' is assigned a value but never used            @typescript-eslint/no-unused-vars
+   29:36   warning  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+   41:36   warning  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+   52:10   warning  'featuredJobs' is assigned a value but never used                @typescript-eslint/no-unused-vars
+  173:58   warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  180:76   warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  200:118  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  274:51   warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  274:94   warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  292:51   warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  292:94   warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  310:51   warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  310:90   warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  414:118  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  489:56   warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  515:136  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  537:122  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/press/page.tsx
+  48:122  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/sitemap.ts
+  23:45  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/components/ads/AdCreationWizard.tsx
+   69:16  warning  'err' is defined but never used           @typescript-eslint/no-unused-vars
+   88:43  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  159:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/components/ads/FeaturedJobsCarousel.tsx
+  8:32  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/components/ads/SidebarAd.tsx
+  6:32  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/components/home/LiveFeed.tsx
+  15:38  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/components/jobs/ApplyModal.tsx
+  307:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  311:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  312:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/components/layout/AdBanner.tsx
+  21:12  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/components/layout/Footer.tsx
+  13:87  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  50:43  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/components/layout/Navbar.tsx
+  18:54  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  56:44  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  57:18  warning  'err' is defined but never used           @typescript-eslint/no-unused-vars
+
+/home/uplix/Desktop/UPLIX/tutaly/apps/web/src/components/providers/CartProvider.tsx
+  28:54  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+✖ 350 problems (2 errors, 348 warnings)
+  0 errors and 93 warnings potentially fixable with the `--fix` option.
+
+ ELIFECYCLE  Command failed with exit code 1.

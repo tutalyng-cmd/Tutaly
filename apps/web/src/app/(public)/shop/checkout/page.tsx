@@ -121,13 +121,13 @@ export default function CheckoutPage() {
             <div className="p-6 rounded-2xl border mb-8" style={{ backgroundColor: 'var(--c-800)', borderColor: 'var(--blue)', boxShadow: '0 0 0 1px var(--blue)' }}>
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-5 h-5 rounded-full border-4 flex items-center justify-center" style={{ borderColor: 'var(--blue)', backgroundColor: '#fff' }}>
+                  <div className="w-5 h-5 rounded-full border-4 flex items-center justify-center" style={{ borderColor: 'var(--blue)', backgroundColor: 'white' }}>
                   </div>
                   <span className="font-bold text-lg" style={{ color: 'var(--c-100)' }}>Paystack</span>
                 </div>
                 <div className="flex gap-2">
-                  <div className="w-10 h-6 bg-c700 rounded flex items-center justify-center text-[10px] font-bold text-white">VISA</div>
-                  <div className="w-10 h-6 bg-c700 rounded flex items-center justify-center text-[10px] font-bold text-white">MC</div>
+                  <div className="w-10 h-6 bg-c700 rounded flex items-center justify-center text-xs font-bold text-white">VISA</div>
+                  <div className="w-10 h-6 bg-c700 rounded flex items-center justify-center text-xs font-bold text-white">MC</div>
                 </div>
               </div>
               <p className="text-sm ml-8" style={{ color: 'var(--c-400)' }}>
@@ -136,8 +136,8 @@ export default function CheckoutPage() {
             </div>
 
             <div className="space-y-4">
-              <div className="flex items-start gap-3 p-4 rounded-xl" style={{ backgroundColor: 'rgba(29,122,58,0.08)' }}>
-                <ShieldCheck className="w-6 h-6 mt-0.5" style={{ color: '#2DB85A' }} />
+              <div className="flex items-start gap-3 p-4 rounded-xl" style={{ backgroundColor: 'var(--green-10)' }}>
+                <ShieldCheck className="w-6 h-6 mt-0.5" style={{ color: 'var(--green)' }} />
                 <div>
                   <h4 className="font-bold text-sm" style={{ color: 'var(--c-100)' }}>Buyer Protection Guarantee</h4>
                   <p className="text-xs mt-1" style={{ color: 'var(--c-400)' }}>Your payment is held securely in escrow and only released to the seller once you receive your order.</p>
@@ -192,7 +192,7 @@ export default function CheckoutPage() {
 
               <div className="flex justify-between items-center border-t pt-6 mb-8" style={{ borderColor: 'var(--c-700)' }}>
                 <span className="text-lg font-bold" style={{ color: 'var(--c-100)' }}>Total</span>
-                <span className="text-2xl font-bold font-mono" style={{ color: '#2DB85A' }}>{formatPrice(subtotal, currency)}</span>
+                <span className="text-2xl font-bold font-mono" style={{ color: 'var(--green)' }}>{formatPrice(subtotal, currency)}</span>
               </div>
 
               <button 

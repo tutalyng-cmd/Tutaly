@@ -122,7 +122,7 @@ export default function CartPage() {
                         </div>
                         
                         <div className="flex justify-between items-center mt-2 pt-4 border-t" style={{ borderColor: 'var(--c-700)' }}>
-                          <div className="text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--c-300)' }}>
+                          <div className="text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full" style={{ background: 'var(--c-700)', color: 'var(--c-300)' }}>
                             {product.listingType}
                           </div>
                           
@@ -159,7 +159,7 @@ export default function CartPage() {
 
                 <div className="flex justify-between items-center border-t pt-6 mb-8" style={{ borderColor: 'var(--c-700)' }}>
                   <span className="text-base font-bold" style={{ color: 'var(--c-100)' }}>Estimated Total</span>
-                  <span className="text-2xl font-bold font-mono" style={{ color: '#2DB85A' }}>{formatPrice(subtotal, currency)}</span>
+                  <span className="text-2xl font-bold font-mono" style={{ color: 'var(--green)' }}>{formatPrice(subtotal, currency)}</span>
                 </div>
 
                 <Link href="/shop/checkout" className="btn btn--primary w-full text-center flex justify-center py-4 text-base">

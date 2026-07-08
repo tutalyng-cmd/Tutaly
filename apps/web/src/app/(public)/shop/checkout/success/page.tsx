@@ -10,7 +10,7 @@ export default function CheckoutSuccessPage() {
       <div className="container flex-1 flex flex-col items-center justify-center py-20" style={{ maxWidth: '600px', margin: '0 auto' }}>
         
         <div className="mb-8 text-center">
-          <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: 'rgba(45, 184, 90, 0.1)', color: '#2DB85A' }}>
+          <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: 'var(--green-10)', color: 'var(--green)' }}>
             <CheckCircle2 className="w-12 h-12" />
           </div>
           <h1 className="text-3xl font-bold mb-3" style={{ color: 'var(--c-100)' }}>Payment Successful!</h1>

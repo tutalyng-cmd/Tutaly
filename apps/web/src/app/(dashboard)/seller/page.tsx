@@ -97,7 +97,7 @@ export default function SellerShopPage() {
 
   return (
     <>
-      <div className="dcard" style={{ background: 'linear-gradient(135deg, rgba(29,122,58,0.14), rgba(201,162,39,0.05))', borderColor: 'var(--c-700)', marginBottom: '16px' }}>
+      <div className="dcard" style={{ background: 'linear-gradient(135deg, var(--green-10), var(--gold-10))', borderColor: 'var(--c-700)', marginBottom: '16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
           <div>
             <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--c-100)', marginBottom: '4px' }}>Your Seller Dashboard</div>
@@ -110,7 +110,7 @@ export default function SellerShopPage() {
       <div className="stat-grid">
         <div className="stat-card">
           <div className="stat-card__label">Total earnings</div>
-          <div className="stat-card__value" style={{ color: '#2DB85A' }}>{formatPrice(totalRevenue)}</div>
+          <div className="stat-card__value" style={{ color: 'var(--green)' }}>{formatPrice(totalRevenue)}</div>
           <div className="stat-card__delta up">↑ All time</div>
         </div>
         <div className="stat-card">
@@ -144,7 +144,7 @@ export default function SellerShopPage() {
           <div>
             {products.map((product: any) => (
               <div key={product.id} className="listing-row">
-                <div className="listing-row__thumb" style={{ background: 'rgba(27,79,158,0.15)' }}>{product.listingType === 'digital' ? '📄' : product.listingType === 'service' ? '💼' : '📦'}</div>
+                <div className="listing-row__thumb" style={{ background: 'var(--blue-10)' }}>{product.listingType === 'digital' ? '📄' : product.listingType === 'service' ? '💼' : '📦'}</div>
                 <div className="listing-row__body">
                   <div className="listing-row__title">{product.title}</div>
                   <div className="listing-row__meta">Published {new Date(product.createdAt).toLocaleDateString()} · {product.isActive ? 'Active' : 'Inactive'}</div>
@@ -182,7 +182,7 @@ export default function SellerShopPage() {
               const statusInfo = STATUS_MAP[order.status] || STATUS_MAP.pending_payment;
               return (
                 <div key={order.id} className="order-row">
-                  <div className="order-row__thumb" style={{ background: 'rgba(27,79,158,0.15)' }}>📄</div>
+                  <div className="order-row__thumb" style={{ background: 'var(--blue-10)' }}>📄</div>
                   <div className="order-row__body">
                     <div className="order-row__title">{order.product?.title || 'Unknown Product'}</div>
                     <div className="order-row__meta">
@@ -190,7 +190,7 @@ export default function SellerShopPage() {
                     </div>
                   </div>
                   <div className="order-row__status">
-                    <span style={{ background: 'rgba(29,122,58,0.18)', color: '#2DB85A', padding: '4px 10px', borderRadius: 'var(--r-pill)', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase' }}>
+                    <span style={{ background: 'var(--green-10)', color: 'var(--green)', padding: '4px 10px', borderRadius: 'var(--r-pill)', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase' }}>
                       {statusInfo.label}
                     </span>
                   </div>

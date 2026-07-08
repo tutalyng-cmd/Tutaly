@@ -134,7 +134,7 @@ export default function SellerOrdersPage() {
               const statusInfo = STATUS_MAP[order.status] || STATUS_MAP.pending_payment;
               return (
                 <div key={order.id} className="order-row">
-                  <div className="order-row__thumb" style={{ background: 'rgba(27,79,158,0.15)' }}>{statusInfo.icon}</div>
+                  <div className="order-row__thumb" style={{ background: 'var(--blue-10)' }}>{statusInfo.icon}</div>
                   
                   <div className="order-row__body">
                     <div className="order-row__title">{order.product?.title || 'Unknown Product'}</div>
@@ -153,8 +153,8 @@ export default function SellerOrdersPage() {
 
                   <div className="flex flex-col items-end gap-2 flex-shrink-0 w-40 text-right">
                     <span style={{ 
-                      background: order.status === 'paid' ? 'rgba(201,162,39,0.15)' : 'rgba(29,122,58,0.18)', 
-                      color: order.status === 'paid' ? 'var(--gold)' : '#2DB85A', 
+                      background: order.status === 'paid' ? 'var(--gold-10)' : 'var(--green-10)', 
+                      color: order.status === 'paid' ? 'var(--gold)' : 'var(--green)', 
                       padding: '4px 10px', 
                       borderRadius: 'var(--r-pill)', 
                       fontSize: '11px', 

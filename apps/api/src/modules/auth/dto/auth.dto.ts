@@ -89,3 +89,20 @@ export class VerifyMfaDto {
   @IsNotEmpty()
   mfaToken: string;
 }
+
+export class ChangePasswordDto {
+  @IsNotEmpty()
+  currentPassword: string;
+
+  @MinLength(8)
+  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/, {
+    message:
+      'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.',
+  })
+  newPassword: string;
+}
+
+export class DeleteAccountDto {
+  @IsNotEmpty()
+  password: string;
+}

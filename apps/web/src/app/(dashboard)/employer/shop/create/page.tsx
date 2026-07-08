@@ -201,6 +201,19 @@ export default function CreateProductPage() {
               </select>
             </div>
           </div>
+          
+          {/* USER-FACING DESCRIPTION (MUST DISPLAY) */}
+          {categories.find(c => c.id === form.categoryId)?.name === 'Other / Uncategorized' && (
+            <div className="bg-orange-900/20 border border-orange-500/30 p-4 rounded-xl mt-4">
+              <p className="text-sm text-orange-400 font-medium mb-1">
+                This section is for services or products that do not fit into existing categories.
+              </p>
+              <p className="text-sm text-orange-400 font-medium">
+                All listings must be strictly work-related, office-related, or business-related.
+                Non-professional or unrelated items will be removed.
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Pricing */}

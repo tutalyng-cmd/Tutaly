@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Notification } from './entities/support.entity';
 
+import { NotificationsGateway } from './notifications.gateway';
+
 function toPlain<T>(obj: T): T {
   return JSON.parse(JSON.stringify(obj));
 }
@@ -12,6 +14,7 @@ export class SupportService {
   constructor(
     @InjectRepository(Notification)
     private readonly notificationRepo: Repository<Notification>,
+    private readonly notificationsGateway: NotificationsGateway,
   ) {}
 
   // ─── Notifications ──────────────────────────────────────────────────
@@ -28,7 +31,12 @@ export class SupportService {
       message,
       link,
     });
-    return this.notificationRepo.save(notification);
+    const saved = await this.notificationRepo.save(notification);
+    
+    // Push real-time event to connected client
+    this.notificationsGateway.sendNotification(userId, toPlain(saved));
+    
+    return saved;
   }
 
   async getNotifications(userId: string, page = 1, limit = 20) {

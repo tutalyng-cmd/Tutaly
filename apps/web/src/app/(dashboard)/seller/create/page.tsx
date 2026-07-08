@@ -273,6 +273,19 @@ alert(err.response?.data?.message || 'Failed to create product');
               </select>
             </div>
           </div>
+          
+          {/* USER-FACING DESCRIPTION (MUST DISPLAY) */}
+          {categories.find(c => c.id === form.categoryId)?.name === 'Other / Uncategorized' && (
+            <div className="bg-orange-50 border border-orange-200 p-4 rounded-xl mt-4">
+              <p className="text-sm text-orange-800 font-medium mb-1">
+                This section is for services or products that do not fit into existing categories.
+              </p>
+              <p className="text-sm text-orange-800 font-medium">
+                All listings must be strictly work-related, office-related, or business-related.
+                Non-professional or unrelated items will be removed.
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Pricing */}

@@ -2,6 +2,7 @@ import { Module, Global } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SupportController } from './support.controller';
 import { SupportService } from './support.service';
+import { NotificationsGateway } from './notifications.gateway';
 import {
   Notification,
   Ad,
@@ -17,7 +18,7 @@ import { AuthModule } from '../auth/auth.module';
     AuthModule,
   ],
   controllers: [SupportController],
-  providers: [SupportService],
+  providers: [SupportService, NotificationsGateway],
   exports: [SupportService],
 })
 export class SupportModule {}

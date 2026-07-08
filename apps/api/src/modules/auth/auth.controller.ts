@@ -3,6 +3,8 @@ import {
   Post,
   Body,
   Get,
+  Put,
+  Delete,
   Query,
   Res,
   Req,
@@ -18,6 +20,8 @@ import {
   ForgotPasswordDto,
   ResetPasswordDto,
   VerifyMfaDto,
+  ChangePasswordDto,
+  DeleteAccountDto,
 } from './dto/auth.dto';
 import { Throttle } from '@nestjs/throttler';
 import { UserRole } from '../user/entities/user.entity';
@@ -140,5 +144,33 @@ export class AuthController {
       sameSite: 'strict' as const,
     });
     return { message: 'Logged out successfully.' };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('change-password')
+  async changePassword(
+    @NestRequest() req: AuthorizedRequest,
+    @Body() dto: ChangePasswordDto,
+  ) {
+    return this.authService.changePassword(req.user.sub, dto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete('account')
+  async deleteAccount(
+    @NestRequest() req: AuthorizedRequest,
+    @Body() dto: DeleteAccountDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const result = await this.authService.deleteAccount(req.user.sub, dto);
+    
+    // Clear cookies upon deletion
+    res.clearCookie('refreshToken', {
+      path: '/',
+      secure: true,
+      sameSite: 'strict' as const,
+    });
+
+    return result;
   }
 }

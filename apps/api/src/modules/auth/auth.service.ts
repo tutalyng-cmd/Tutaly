@@ -22,6 +22,8 @@ import {
   ForgotPasswordDto,
   ResetPasswordDto,
   VerifyMfaDto,
+  ChangePasswordDto,
+  DeleteAccountDto,
 } from './dto/auth.dto';
 
 @Injectable()
@@ -387,6 +389,74 @@ export class AuthService {
     } catch {
       throw new BadRequestException('Invalid or expired reset token.');
     }
+  }
+
+  // ─── ACCOUNT MANAGEMENT ──────────────────────────────
+  async changePassword(userId: string, dto: ChangePasswordDto) {
+    const user = await this.userRepo.findOne({
+      where: { id: userId },
+      select: ['id', 'password'],
+    });
+    if (!user) {
+      throw new BadRequestException('User not found.');
+    }
+
+    const isMatch = await bcrypt.compare(dto.currentPassword, user.password);
+    if (!isMatch) {
+      throw new BadRequestException('Incorrect current password.');
+    }
+
+    user.password = await bcrypt.hash(dto.newPassword, 12);
+    // Invalidate sessions by incrementing tokenVersion
+    user.tokenVersion += 1;
+    await this.userRepo.save(user);
+
+    // Also revoke tokens from Redis
+    await this.logout(userId);
+
+    return { message: 'Password changed successfully.' };
+  }
+
+  async deleteAccount(userId: string, dto: DeleteAccountDto) {
+    const user = await this.userRepo.findOne({
+      where: { id: userId },
+      select: [
+        'id',
+        'password',
+        'email',
+        'username',
+        'contactPhone',
+        'whatsappPhone',
+        'isActive',
+        'isDeleted',
+        'tokenVersion',
+      ],
+    });
+    if (!user) {
+      throw new BadRequestException('User not found.');
+    }
+
+    const isMatch = await bcrypt.compare(dto.password, user.password);
+    if (!isMatch) {
+      throw new BadRequestException('Incorrect password.');
+    }
+
+    // Anonymize and soft delete
+    user.isDeleted = true;
+    user.isActive = false;
+    user.email = `deleted_${user.id}@tutaly.com`;
+    user.username = `deleted_${user.id}`;
+    user.contactPhone = '';
+    user.whatsappPhone = '';
+    user.password = ''; // clear password hash completely
+    user.tokenVersion += 1;
+
+    await this.userRepo.save(user);
+
+    // Revoke tokens
+    await this.logout(userId);
+
+    return { message: 'Account permanently deleted and anonymized.' };
   }
 
   // ─── HELPERS ────────────────────────────────────────

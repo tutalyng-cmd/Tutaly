@@ -8,11 +8,5 @@
     "dev": "pnpm -r dev",
     "lint": "pnpm -r lint",
     "test": "pnpm -r test"
-  },
-  "pnpm": {
-    "overrides": {
-      "glob@<10": "11.0.0",
-      "inflight": "npm:lru-cache@^11.0.0"
-    }
   }
 }

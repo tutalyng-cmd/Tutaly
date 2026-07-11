@@ -35,6 +35,25 @@ import { ApplySellerDto } from './dto/apply-seller.dto';
 import { TokenService } from '../auth/token.service';
 import { SupportService } from '../support/support.service';
 import { PaymentGatewayFactory } from './gateways/payment-gateway.factory';
+
+export interface ReportIssueDto {
+  reason: string;
+  evidenceUrls?: string[];
+}
+
+export interface RequestQuoteDto {
+  productId: string;
+  requirements: string;
+  budgetRange?: string;
+  deadlineRequested?: string;
+}
+
+export interface RespondQuoteDto {
+  status: QuoteStatus;
+  quotedPrice?: number;
+  sellerNotes?: string;
+  expiresInDays?: number;
+}
 /**
  * Strips TypeORM entity metadata & circular references by
  * round-tripping through JSON.
@@ -98,8 +117,11 @@ export class ShopService {
       throw new BadRequestException('You already have a pending application.');
     }
 
+    const userRef = new User();
+    userRef.id = userId;
+
     const application = this.sellerAppRepo.create({
-      user: { id: userId } as any,
+      user: userRef,
       bio: dto.bio,
       categoryFocus: dto.categoryFocus,
       status: SellerApplicationStatus.PENDING,
@@ -137,8 +159,11 @@ export class ShopService {
       );
     }
 
+    const sellerRef = new User();
+    sellerRef.id = userId;
+
     const product = this.productRepo.create({
-      seller: { id: userId } as any,
+      seller: sellerRef,
       title: dto.title,
       description: dto.description,
       listingType: dto.listingType,
@@ -405,8 +430,11 @@ export class ShopService {
 
       const paymentRef = `TUT-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`;
 
+      const buyerRef = new User();
+      buyerRef.id = userId;
+
       const order = this.orderRepo.create({
-        buyer: { id: userId } as any,
+        buyer: buyerRef,
         product,
         seller: product.seller,
         amountPaid,
@@ -624,7 +652,7 @@ export class ShopService {
     };
   }
 
-  async reportIssue(orderId: string, buyerId: string, dto: any) {
+  async reportIssue(orderId: string, buyerId: string, dto: ReportIssueDto) {
     const order = await this.orderRepo.findOne({
       where: { id: orderId },
       relations: ['buyer'],
@@ -655,9 +683,14 @@ export class ShopService {
     order.escrowReleaseAt = null;
     await this.orderRepo.save(order);
 
+    const orderRef = new Order();
+    orderRef.id = orderId;
+    const raisedByRef = new User();
+    raisedByRef.id = buyerId;
+
     const dispute = this.disputeRepo.create({
-      order: { id: orderId } as any,
-      raisedBy: { id: buyerId } as any,
+      order: orderRef,
+      raisedBy: raisedByRef,
       reason: dto.reason,
       evidenceUrls: dto.evidenceUrls || [],
     });
@@ -772,7 +805,7 @@ export class ShopService {
 
   // ─── Quotes ────────────────────────────────────────────────────────
 
-  async requestQuote(buyerId: string, dto: any) {
+  async requestQuote(buyerId: string, dto: RequestQuoteDto) {
     const product = await this.productRepo.findOne({
       where: { id: dto.productId },
       relations: ['seller'],
@@ -784,10 +817,17 @@ export class ShopService {
       );
     }
 
+    const productRef = new ShopProduct();
+    productRef.id = dto.productId;
+    const buyerRef = new User();
+    buyerRef.id = buyerId;
+    const sellerRef = new User();
+    sellerRef.id = product.seller.id;
+
     const quote = this.quoteRepo.create({
-      product: { id: dto.productId } as any,
-      buyer: { id: buyerId } as any,
-      seller: { id: product.seller.id } as any,
+      product: productRef,
+      buyer: buyerRef,
+      seller: sellerRef,
       requirements: dto.requirements,
       budgetRange: dto.budgetRange,
       deadlineRequested: dto.deadlineRequested
@@ -804,7 +844,7 @@ export class ShopService {
     };
   }
 
-  async respondQuote(sellerId: string, quoteId: string, dto: any) {
+  async respondQuote(sellerId: string, quoteId: string, dto: RespondQuoteDto) {
     const quote = await this.quoteRepo.findOne({
       where: { id: quoteId },
       relations: ['seller', 'buyer', 'product'],
@@ -822,14 +862,14 @@ export class ShopService {
       if (!dto.quotedPrice)
         throw new BadRequestException('Must provide a quoted price');
       quote.quotedPrice = dto.quotedPrice;
-      quote.sellerNotes = dto.sellerNotes;
+      quote.sellerNotes = dto.sellerNotes || '';
       if (dto.expiresInDays) {
         const expires = new Date();
         expires.setDate(expires.getDate() + dto.expiresInDays);
         quote.expiresAt = expires;
       }
     } else {
-      quote.sellerNotes = dto.sellerNotes;
+      quote.sellerNotes = dto.sellerNotes || '';
     }
 
     await this.quoteRepo.save(quote);

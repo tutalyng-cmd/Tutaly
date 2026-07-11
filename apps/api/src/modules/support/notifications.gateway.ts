@@ -10,6 +10,12 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { Logger } from '@nestjs/common';
 
+export interface JwtPayload {
+  sub: string;
+  role?: string;
+  [key: string]: unknown;
+}
+
 @WebSocketGateway({
   cors: {
     origin: '*',
@@ -22,7 +28,7 @@ export class NotificationsGateway
   server: Server;
 
   private readonly logger = new Logger(NotificationsGateway.name);
-  
+
   // Map userId -> socketId
   private connectedUsers = new Map<string, string>();
 
@@ -34,7 +40,8 @@ export class NotificationsGateway
   handleConnection(client: Socket) {
     try {
       const authHeader = client.handshake.headers.authorization;
-      const token = authHeader?.split(' ')[1] || (client.handshake.query.token as string);
+      const token =
+        authHeader?.split(' ')[1] || (client.handshake.query.token as string);
 
       if (!token) {
         throw new WsException('Unauthorized');
@@ -45,34 +52,37 @@ export class NotificationsGateway
 
       if (payload && payload.sub) {
         this.connectedUsers.set(payload.sub, client.id);
-        
+
         // Attach user to client object
         client.data.user = payload;
-        
+
         // Join a personal room for this user
         client.join(`user_${payload.sub}`);
-        
-        this.logger.debug(`User ${payload.sub} connected (Socket: ${client.id})`);
+
+        this.logger.debug(
+          `User ${payload.sub} connected (Socket: ${client.id})`,
+        );
       } else {
         throw new WsException('Invalid token payload');
       }
     } catch (error) {
-      this.logger.warn(`Connection rejected: ${error.message}`);
+      this.logger.warn(`Connection rejected: ${(error as Error).message}`);
       client.disconnect(true);
     }
   }
 
   handleDisconnect(client: Socket) {
-    if (client.data.user?.sub) {
-      this.connectedUsers.delete(client.data.user.sub);
-      this.logger.debug(`User ${client.data.user.sub} disconnected`);
+    const user = client.data.user as JwtPayload | undefined;
+    if (user?.sub) {
+      this.connectedUsers.delete(user.sub);
+      this.logger.debug(`User ${user.sub} disconnected`);
     }
   }
 
   /**
    * Pushes a real-time notification to the connected user.
    */
-  sendNotification(userId: string, notification: any) {
+  sendNotification(userId: string, notification: Record<string, unknown>) {
     this.server.to(`user_${userId}`).emit('new_notification', notification);
   }
 }

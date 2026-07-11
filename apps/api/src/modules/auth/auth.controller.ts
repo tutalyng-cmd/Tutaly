@@ -163,7 +163,7 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const result = await this.authService.deleteAccount(req.user.sub, dto);
-    
+
     // Clear cookies upon deletion
     res.clearCookie('refreshToken', {
       path: '/',

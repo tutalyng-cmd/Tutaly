@@ -73,8 +73,10 @@ export class ConnectService {
   // ─── Posts ────────────────────────────────────────────────────────
 
   async createPost(userId: string, content: string, imageUrls?: string[]) {
+    const author = new User();
+    author.id = userId;
     const post = this.postRepo.create({
-      author: { id: userId } as any,
+      author,
       content,
       imageUrls: imageUrls || null,
     });
@@ -119,17 +121,15 @@ export class ConnectService {
           const total = await this.redisClient.zcard(feedKey);
 
           const mappedPosts = posts.map((p) => {
-            const {
-              password: _,
-              seekerProfile,
-              ...authorRest
-            } = p.author as any;
-            p.author = {
-              ...authorRest,
-              firstName: seekerProfile?.firstName,
-              lastName: seekerProfile?.lastName,
+            const { password: _, ...safeAuthor } = p.author;
+            return {
+              ...p,
+              author: {
+                ...safeAuthor,
+                firstName: p.author.seekerProfile?.firstName,
+                lastName: p.author.seekerProfile?.lastName,
+              },
             };
-            return p;
           });
 
           return { data: toPlain(mappedPosts), meta: { page, limit, total } };
@@ -160,13 +160,15 @@ export class ConnectService {
       .getManyAndCount();
 
     const mappedPosts = posts.map((p) => {
-      const { password: _, seekerProfile, ...authorRest } = p.author as any;
-      p.author = {
-        ...authorRest,
-        firstName: seekerProfile?.firstName,
-        lastName: seekerProfile?.lastName,
+      const { password: _, ...safeAuthor } = p.author;
+      return {
+        ...p,
+        author: {
+          ...safeAuthor,
+          firstName: p.author.seekerProfile?.firstName,
+          lastName: p.author.seekerProfile?.lastName,
+        },
       };
-      return p;
     });
 
     return { data: toPlain(mappedPosts), meta: { page, limit, total } };
@@ -183,9 +185,14 @@ export class ConnectService {
       return { success: true, message: 'Post unliked' };
     }
 
+    const postRef = new Post();
+    postRef.id = postId;
+    const userRef = new User();
+    userRef.id = userId;
+
     const like = this.likeRepo.create({
-      post: { id: postId } as any,
-      user: { id: userId } as any,
+      post: postRef,
+      user: userRef,
     });
     await this.likeRepo.save(like);
     await this.postRepo.increment({ id: postId }, 'likesCount', 1);
@@ -207,9 +214,14 @@ export class ConnectService {
   }
 
   async commentPost(userId: string, postId: string, body: string) {
+    const postRef = new Post();
+    postRef.id = postId;
+    const authorRef = new User();
+    authorRef.id = userId;
+
     const comment = this.commentRepo.create({
-      post: { id: postId } as any,
-      author: { id: userId } as any,
+      post: postRef,
+      author: authorRef,
       body,
     });
     await this.commentRepo.save(comment);
@@ -263,9 +275,14 @@ export class ConnectService {
       return { success: true, message: 'Follow request sent' };
     }
 
+    const followerRef = new User();
+    followerRef.id = followerId;
+    const followeeRef = new User();
+    followeeRef.id = followeeId;
+
     const follow = this.followRepo.create({
-      follower: { id: followerId } as any,
-      followee: { id: followeeId } as any,
+      follower: followerRef,
+      followee: followeeRef,
       status: FollowStatus.PENDING,
     });
     await this.followRepo.save(follow);
@@ -328,11 +345,11 @@ export class ConnectService {
     });
 
     const followers = data.map((f) => {
-      const { password: _, seekerProfile, ...user } = f.follower as any;
+      const { password: _, ...safeUser } = f.follower;
       return {
-        ...user,
-        firstName: seekerProfile?.firstName,
-        lastName: seekerProfile?.lastName,
+        ...safeUser,
+        firstName: f.follower.seekerProfile?.firstName,
+        lastName: f.follower.seekerProfile?.lastName,
       };
     });
 
@@ -348,11 +365,11 @@ export class ConnectService {
     });
 
     const following = data.map((f) => {
-      const { password: _, seekerProfile, ...user } = f.followee as any;
+      const { password: _, ...safeUser } = f.followee;
       return {
-        ...user,
-        firstName: seekerProfile?.firstName,
-        lastName: seekerProfile?.lastName,
+        ...safeUser,
+        firstName: f.followee.seekerProfile?.firstName,
+        lastName: f.followee.seekerProfile?.lastName,
       };
     });
 
@@ -369,15 +386,15 @@ export class ConnectService {
     });
 
     const mappedData = data.map((f) => {
-      const { password: _, seekerProfile, ...followerData } = f.follower as any;
+      const { password: _, ...followerData } = f.follower;
       return {
         id: f.id,
         status: f.status,
         createdAt: f.createdAt,
         follower: {
           ...followerData,
-          firstName: seekerProfile?.firstName,
-          lastName: seekerProfile?.lastName,
+          firstName: f.follower.seekerProfile?.firstName,
+          lastName: f.follower.seekerProfile?.lastName,
         },
       };
     });
@@ -410,7 +427,7 @@ export class ConnectService {
 
     // Deduplicate by conversation partner
     const seen = new Set<string>();
-    const uniqueConvos: any[] = [];
+    const uniqueConvos: { partner: User; lastMessage: Message }[] = [];
     for (const msg of conversations) {
       const partnerId =
         msg.sender.id === userId ? msg.receiver.id : msg.sender.id;
@@ -453,12 +470,12 @@ export class ConnectService {
     }
 
     const [data, total] = await query.getManyAndCount();
-    const safePeople = data.map((u: any) => {
-      const { password: _, seekerProfile, ...rest } = u;
+    const safePeople = data.map((u: User) => {
+      const { password: _, ...safeUser } = u;
       return {
-        ...rest,
-        firstName: seekerProfile?.firstName,
-        lastName: seekerProfile?.lastName,
+        ...safeUser,
+        firstName: u.seekerProfile?.firstName,
+        lastName: u.seekerProfile?.lastName,
       };
     });
     return { data: toPlain(safePeople), meta: { page, limit, total } };
@@ -467,9 +484,14 @@ export class ConnectService {
   // ─── DMs ────────────────────────────────────────────────────────────
 
   async sendMessage(senderId: string, receiverId: string, body: string) {
+    const senderRef = new User();
+    senderRef.id = senderId;
+    const receiverRef = new User();
+    receiverRef.id = receiverId;
+
     const message = this.messageRepo.create({
-      sender: { id: senderId } as any,
-      receiver: { id: receiverId } as any,
+      sender: senderRef,
+      receiver: receiverRef,
       body,
     });
     await this.messageRepo.save(message);
@@ -521,9 +543,14 @@ export class ConnectService {
       throw new BadRequestException('Post already saved');
     }
 
+    const userRef = new User();
+    userRef.id = userId;
+    const postRef = new Post();
+    postRef.id = postId;
+
     const save = this.postSaveRepo.create({
-      user: { id: userId } as any,
-      post: { id: postId } as any,
+      user: userRef,
+      post: postRef,
     });
     await this.postSaveRepo.save(save);
     return { success: true, message: 'Post saved' };
@@ -555,17 +582,15 @@ export class ConnectService {
       .getManyAndCount();
 
     const posts = data.map((s) => {
-      const {
-        password: _,
-        seekerProfile,
-        ...authorRest
-      } = s.post.author as any;
-      s.post.author = {
-        ...authorRest,
-        firstName: seekerProfile?.firstName,
-        lastName: seekerProfile?.lastName,
+      const { password: _, ...safeAuthor } = s.post.author;
+      return {
+        ...s.post,
+        author: {
+          ...safeAuthor,
+          firstName: s.post.author.seekerProfile?.firstName,
+          lastName: s.post.author.seekerProfile?.lastName,
+        },
       };
-      return s.post;
     });
 
     return { data: toPlain(posts), meta: { page, limit, total } };
@@ -574,8 +599,11 @@ export class ConnectService {
   // ─── Post Reports ───────────────────────────────────────────────────
 
   async reportPost(userId: string, postId: string, reason: string) {
+    const reporterRef = new User();
+    reporterRef.id = userId;
+
     const report = this.reportRepo.create({
-      reporter: { id: userId } as any,
+      reporter: reporterRef,
       targetType: ReportTargetType.POST,
       targetId: postId,
       reason,
@@ -618,14 +646,17 @@ export class ConnectService {
 
     if (!post) throw new NotFoundException('Post not found');
 
-    const { password: _, seekerProfile, ...authorRest } = post.author as any;
-    post.author = {
-      ...authorRest,
-      firstName: seekerProfile?.firstName,
-      lastName: seekerProfile?.lastName,
+    const { password: _, ...safeAuthor } = post.author;
+    const safePost = {
+      ...post,
+      author: {
+        ...safeAuthor,
+        firstName: post.author.seekerProfile?.firstName,
+        lastName: post.author.seekerProfile?.lastName,
+      },
     };
 
-    return toPlain(post);
+    return toPlain(safePost);
   }
 
   // ─── Public Profile ─────────────────────────────────────────────────
@@ -682,7 +713,7 @@ export class ConnectService {
       take: 5,
     });
 
-    const { password: _, ...userSafe } = user as any;
+    const { password: _, ...userSafe } = user;
     return toPlain({
       ...userSafe,
       firstName: user.seekerProfile?.firstName,

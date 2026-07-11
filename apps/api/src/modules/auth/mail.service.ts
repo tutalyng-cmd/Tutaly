@@ -20,7 +20,7 @@ export class MailService {
       hasPass: !!pass,
     });
 
-    const config: any = {
+    const config = {
       host,
       port,
       secure: port === 465,
@@ -32,7 +32,9 @@ export class MailService {
       family: 4,
     };
 
-    this.transporter = nodemailer.createTransport(config);
+    this.transporter = nodemailer.createTransport(
+      config as nodemailer.TransportOptions,
+    );
   }
 
   async sendVerificationEmail(to: string, token: string): Promise<void> {
@@ -71,7 +73,7 @@ export class MailService {
     } catch (error) {
       console.error(
         `[MAILER ERROR] Failed to send verification email to ${to}:`,
-        error.message,
+        (error as Error).message,
       );
     }
   }
@@ -112,7 +114,7 @@ export class MailService {
     } catch (error) {
       console.error(
         `[MAILER ERROR] Failed to send password reset email to ${to}:`,
-        error.message,
+        (error as Error).message,
       );
     }
   }
@@ -150,7 +152,7 @@ export class MailService {
     } catch (error) {
       console.error(
         `[MAILER ERROR] Failed to send MFA email to ${to}:`,
-        error.message,
+        (error as Error).message,
       );
     }
   }
@@ -192,7 +194,7 @@ export class MailService {
     } catch (error) {
       console.error(
         `[MAILER ERROR] Failed to send job approval email to ${to}:`,
-        error.message,
+        (error as Error).message,
       );
     }
   }
@@ -226,7 +228,7 @@ export class MailService {
     } catch (error) {
       console.error(
         `[MAILER ERROR] Failed to send broadcast email to ${to}:`,
-        error.message,
+        (error as Error).message,
       );
     }
   }
@@ -267,7 +269,7 @@ export class MailService {
     } catch (error) {
       console.error(
         `[MAILER ERROR] Failed to send email change verification to ${to}:`,
-        error.message,
+        (error as Error).message,
       );
     }
   }

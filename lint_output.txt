@@ -1,0 +1,818 @@
+Scope: 2 of 3 workspace projects
+apps/api lint$ eslint "{src,apps,libs,test}/**/*.ts" --fix
+apps/web lint$ eslint
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/admin/ads/create/page.tsx
+apps/web lint:   38:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   42:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   43:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/admin/ads/page.tsx
+apps/web lint:    81:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:    82:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+apps/web lint:    85:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   111:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   115:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   116:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+apps/web lint:   150:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   154:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   155:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/admin/announcements/page.tsx
+apps/web lint:    38:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:    42:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:    43:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+apps/web lint:    77:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:    81:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:    82:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+apps/web lint:    98:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   102:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   103:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/admin/disputes/page.tsx
+apps/web lint:   40:36  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/admin/emails/page.tsx
+apps/web lint:   37:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   41:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   42:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+apps/web lint:   80:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   84:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   85:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/admin/jobs/page.tsx
+apps/web lint:    33:36  warning  Unexpected any. Specify a different type                                                               @typescript-eslint/no-explicit-any
+apps/web lint:    37:50  warning  Unexpected any. Specify a different type                                                               @typescript-eslint/no-explicit-any
+apps/web lint:    53:36  warning  Unexpected any. Specify a different type                                                               @typescript-eslint/no-explicit-any
+apps/web lint:    69:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:    73:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:    74:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+apps/web lint:   100:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   104:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   105:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+apps/web lint:   121:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   125:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   126:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/admin/legal/[slug]/page.tsx
+apps/web lint:   30:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   34:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   35:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+apps/web lint:   66:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   70:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   71:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/admin/legal/page.tsx
+apps/web lint:   30:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   34:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   35:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/admin/orders/page.tsx
+apps/web lint:    70:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:    71:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+apps/web lint:    74:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   107:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   108:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+apps/web lint:   111:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   131:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   132:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+apps/web lint:   135:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   155:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   156:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+apps/web lint:   159:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   179:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   180:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+apps/web lint:   183:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/admin/page.tsx
+apps/web lint:   20:38  warning  Unexpected any. Specify a different type                                                               @typescript-eslint/no-explicit-any
+apps/web lint:   36:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   40:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   41:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/admin/products/page.tsx
+apps/web lint:   29:44  warning  Unexpected any. Specify a different type                                                               @typescript-eslint/no-explicit-any
+apps/web lint:   50:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   54:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   55:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+apps/web lint:   78:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   82:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   83:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/admin/revenue/page.tsx
+apps/web lint:   57:46  warning  Unexpected any. Specify a different type                                                               @typescript-eslint/no-explicit-any
+apps/web lint:   83:54  warning  Unexpected any. Specify a different type                                                               @typescript-eslint/no-explicit-any
+apps/web lint:   94:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   98:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   99:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/admin/sellers/page.tsx
+apps/web lint:    33:42  warning  Unexpected any. Specify a different type                                                               @typescript-eslint/no-explicit-any
+apps/web lint:    36:50  warning  Unexpected any. Specify a different type                                                               @typescript-eslint/no-explicit-any
+apps/web lint:    54:36  warning  Unexpected any. Specify a different type                                                               @typescript-eslint/no-explicit-any
+apps/web lint:    73:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:    77:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:    78:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+apps/web lint:   112:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   116:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   117:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/admin/users/page.tsx
+apps/web lint:   18:38  warning  Unexpected any. Specify a different type                                                               @typescript-eslint/no-explicit-any
+apps/web lint:   34:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   38:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   39:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+apps/web lint:   74:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   78:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   79:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/employer/ads/page.tsx
+apps/web lint:    5:8   warning  'Link' is defined but never used          @typescript-eslint/no-unused-vars
+apps/web lint:   35:43  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/employer/billing/page.tsx
+apps/web lint:   70:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint:   87:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/employer/jobs/[id]/applicants/page.tsx
+apps/web lint:    15:3   warning  'ChevronRight' is defined but never used     @typescript-eslint/no-unused-vars
+apps/web lint:    79:9   warning  'router' is assigned a value but never used  @typescript-eslint/no-unused-vars
+apps/web lint:   156:13  warning  'error' is assigned a value but never used   @typescript-eslint/no-unused-vars
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/employer/jobs/create/page.tsx
+apps/web lint:   111:22   warning  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+apps/web lint:   131:13   warning  'res' is assigned a value but never used                         @typescript-eslint/no-unused-vars
+apps/web lint:   140:24   warning  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+apps/web lint:   345:94   warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+apps/web lint:   345:108  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/employer/jobs/page.tsx
+apps/web lint:     6:10   warning  'Plus' is defined but never used                                 @typescript-eslint/no-unused-vars
+apps/web lint:     6:16   warning  'Users' is defined but never used                                @typescript-eslint/no-unused-vars
+apps/web lint:     6:23   warning  'Clock' is defined but never used                                @typescript-eslint/no-unused-vars
+apps/web lint:     6:30   warning  'CheckCircle' is defined but never used                          @typescript-eslint/no-unused-vars
+apps/web lint:     6:60   warning  'MoreVertical' is defined but never used                         @typescript-eslint/no-unused-vars
+apps/web lint:     6:74   warning  'Edit2' is defined but never used                                @typescript-eslint/no-unused-vars
+apps/web lint:     6:81   warning  'Eye' is defined but never used                                  @typescript-eslint/no-unused-vars
+apps/web lint:     6:103  warning  'Share2' is defined but never used                               @typescript-eslint/no-unused-vars
+apps/web lint:   130:52   warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+apps/web lint:   212:93   warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+apps/web lint:   212:113  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/employer/page.tsx
+apps/web lint:    6:55  warning  'Users' is defined but never used  @typescript-eslint/no-unused-vars
+apps/web lint:    6:62  warning  'Star' is defined but never used   @typescript-eslint/no-unused-vars
+apps/web lint:    6:68  warning  'Plus' is defined but never used   @typescript-eslint/no-unused-vars
+apps/web lint:   36:17  warning  'e' is defined but never used      @typescript-eslint/no-unused-vars
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/employer/profile/page.tsx
+apps/web lint:     6:19  warning  'Upload' is defined but never used                                                                                                                                                                                                                                                       @typescript-eslint/no-unused-vars
+apps/web lint:     6:27  warning  'Building2' is defined but never used                                                                                                                                                                                                                                                    @typescript-eslint/no-unused-vars
+apps/web lint:     6:38  warning  'CheckCircle2' is defined but never used                                                                                                                                                                                                                                                 @typescript-eslint/no-unused-vars
+apps/web lint:   156:17  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/employer/shop/create/page.tsx
+apps/web lint:   14:48  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint:   15:54  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint:   91:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/employer/shop/page.tsx
+apps/web lint:     7:3   warning  'Package' is defined but never used                                                                                   @typescript-eslint/no-unused-vars
+apps/web lint:    22:44  warning  Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+apps/web lint:    23:40  warning  Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+apps/web lint:    31:6   warning  React Hook useEffect has a missing dependency: 'checkSellerStatus'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+apps/web lint:    75:13  warning  'error' is assigned a value but never used                                                                            @typescript-eslint/no-unused-vars
+apps/web lint:    94:13  warning  'error' is assigned a value but never used                                                                            @typescript-eslint/no-unused-vars
+apps/web lint:   182:78  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                       react/no-unescaped-entities
+apps/web lint:   191:17  warning  Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+apps/web lint:   192:30  warning  Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+apps/web lint:   193:43  warning  Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+apps/web lint:   256:52  warning  Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+apps/web lint:   300:37  warning  Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/layout.tsx
+apps/web lint:    28:8   warning  'Image' is defined but never used         @typescript-eslint/no-unused-vars
+apps/web lint:   130:34  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint:   150:31  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/seeker/applications/page.tsx
+apps/web lint:    43:24  warning  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+apps/web lint:   121:54  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/seeker/orders/page.tsx
+apps/web lint:    10:76  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint:    20:40  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint:    52:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint:    68:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint:    85:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint:   114:31  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/seeker/profile/page.tsx
+apps/web lint:   120:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/seeker/saved/page.tsx
+apps/web lint:    9:46  warning  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+apps/web lint:   21:61  warning  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+apps/web lint:   36:14  warning  'err' is defined but never used                                  @typescript-eslint/no-unused-vars
+apps/web lint:   53:87  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+apps/web lint:   62:81  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/seeker/settings/page.tsx
+apps/web lint:    4:24  warning  'Lock' is defined but never used          @typescript-eslint/no-unused-vars
+apps/web lint:    4:35  warning  'Trash2' is defined but never used        @typescript-eslint/no-unused-vars
+apps/web lint:   53:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/seller/apply/page.tsx
+apps/web lint:   20:6   warning  React Hook useEffect has a missing dependency: 'checkStatus'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+apps/web lint:   53:21  warning  Unexpected any. Specify a different type                                                                        @typescript-eslint/no-explicit-any
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/seller/create/page.tsx
+apps/web lint:     6:10  warning  'X' is defined but never used                                    @typescript-eslint/no-unused-vars
+apps/web lint:    49:48  warning  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+apps/web lint:   108:22  warning  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+apps/web lint:   157:24  warning  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+apps/web lint:   200:49  warning  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+apps/web lint:   260:58  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+apps/web lint:   260:63  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+apps/web lint:   260:66  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+apps/web lint:   260:74  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/seller/earnings/page.tsx
+apps/web lint:   9:40  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/seller/orders/page.tsx
+apps/web lint:    6:19  warning  'Package' is defined but never used       @typescript-eslint/no-unused-vars
+apps/web lint:   18:40  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint:   48:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(dashboard)/seller/page.tsx
+apps/web lint:    19:44  warning  Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+apps/web lint:    20:40  warning  Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+apps/web lint:    25:6   warning  React Hook useEffect has a missing dependency: 'checkSellerStatus'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+apps/web lint:    86:76  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                       react/no-unescaped-entities
+apps/web lint:    93:17  warning  Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+apps/web lint:    94:30  warning  Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+apps/web lint:    95:9   warning  'pendingOrders' is assigned a value but never used                                                                    @typescript-eslint/no-unused-vars
+apps/web lint:    95:43  warning  Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+apps/web lint:    96:46  warning  Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+apps/web lint:   145:37  warning  Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+apps/web lint:   181:45  warning  Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(public)/jobs/error.tsx
+apps/web lint:    7:3   warning  'error' is defined but never used                                @typescript-eslint/no-unused-vars
+apps/web lint:   21:20  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(public)/jobs/page.tsx
+apps/web lint:   56:36  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint:   58:12  warning  'err' is defined but never used           @typescript-eslint/no-unused-vars
+apps/web lint:   66:12  warning  'err' is defined but never used           @typescript-eslint/no-unused-vars
+apps/web lint:   79:17  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(public)/join-community/page.tsx
+apps/web lint:   90:17   warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+apps/web lint:   90:170  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+apps/web lint:   90:200  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+apps/web lint:   90:209  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(public)/legal/[slug]/page.tsx
+apps/web lint:   24:12  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(public)/reviews/company/[name]/page.tsx
+apps/web lint:     3:10  warning  'notFound' is defined but never used      @typescript-eslint/no-unused-vars
+apps/web lint:     4:48  warning  'ArrowRight' is defined but never used    @typescript-eslint/no-unused-vars
+apps/web lint:    11:12  warning  'error' is defined but never used         @typescript-eslint/no-unused-vars
+apps/web lint:    20:12  warning  'error' is defined but never used         @typescript-eslint/no-unused-vars
+apps/web lint:   161:35  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(public)/reviews/page.tsx
+apps/web lint:    31:35  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint:   115:40  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(public)/reviews/search/page.tsx
+apps/web lint:    4:10  warning  'api' is defined but never used                                  @typescript-eslint/no-unused-vars
+apps/web lint:   15:35  warning  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+apps/web lint:   29:30  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+apps/web lint:   29:38  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+apps/web lint:   48:41  warning  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+apps/web lint:   70:54  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+apps/web lint:   70:85  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+apps/web lint:   70:93  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(public)/reviews/write/page.tsx
+apps/web lint:   88:13  warning  'error' is assigned a value but never used  @typescript-eslint/no-unused-vars
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(public)/salaries/error.tsx
+apps/web lint:    7:3   warning  'error' is defined but never used                                @typescript-eslint/no-unused-vars
+apps/web lint:   21:20  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(public)/salaries/page.tsx
+apps/web lint:   41:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint:   42:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint:   43:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint:   44:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(public)/salaries/submit/page.tsx
+apps/web lint:   36:61  warning  Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+apps/web lint:   47:13  warning  'error' is assigned a value but never used  @typescript-eslint/no-unused-vars
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(public)/shop/[id]/page.tsx
+apps/web lint:   15:42  warning  Unexpected any. Specify a different type                                                                         @typescript-eslint/no-explicit-any
+apps/web lint:   22:6   warning  React Hook useEffect has a missing dependency: 'fetchProduct'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(public)/shop/cart/page.tsx
+apps/web lint:   11:46   warning  Unexpected any. Specify a different type                                                                      @typescript-eslint/no-explicit-any
+apps/web lint:   16:6    warning  React Hook useEffect has a missing dependency: 'fetchCart'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+apps/web lint:   94:104  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                               react/no-unescaped-entities
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(public)/shop/checkout/page.tsx
+apps/web lint:   11:46  warning  Unexpected any. Specify a different type                                                                      @typescript-eslint/no-explicit-any
+apps/web lint:   18:6   warning  React Hook useEffect has a missing dependency: 'fetchCart'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+apps/web lint:   61:17  warning  Unexpected any. Specify a different type                                                                      @typescript-eslint/no-explicit-any
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/(public)/shop/page.tsx
+apps/web lint:    14:44   warning  Unexpected any. Specify a different type                                                                          @typescript-eslint/no-explicit-any
+apps/web lint:    18:18   warning  'setSearch' is assigned a value but never used                                                                    @typescript-eslint/no-unused-vars
+apps/web lint:    23:6    warning  React Hook useEffect has a missing dependency: 'fetchProducts'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+apps/web lint:    56:114  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                   react/no-unescaped-entities
+apps/web lint:   100:37   warning  Unexpected any. Specify a different type                                                                          @typescript-eslint/no-explicit-any
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/about/page.tsx
+apps/web lint:   32:94  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+apps/web lint:   45:94  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/auth/forgot-password/page.tsx
+apps/web lint:   33:9   warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+apps/web lint:   60:97  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                          react/no-unescaped-entities
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/auth/signin/page.tsx
+apps/web lint:   51:11   warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+apps/web lint:   56:13   warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                                                                                                                                                                                                                          react/no-unescaped-entities
+apps/web lint:   56:125  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                                                                                                                                                                                                                          react/no-unescaped-entities
+apps/web lint:   84:13   warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+apps/web lint:   89:16   warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                          react/no-unescaped-entities
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/auth/signup/page.tsx
+apps/web lint:    74:11  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+apps/web lint:    96:11  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+apps/web lint:   129:13  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/auth/verify-email/page.tsx
+apps/web lint:   37:9  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/blog/page.tsx
+apps/web lint:   36:112  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/careers/page.tsx
+apps/web lint:   78:65  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+apps/web lint:   79:69  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/community/discover/page.tsx
+apps/web lint:     5:28  warning  'Loader2' is defined but never used                                                                                                                                                                                                                                                      @typescript-eslint/no-unused-vars
+apps/web lint:   111:27  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/community/layout.tsx
+apps/web lint:     5:10  warning  'useRouter' is defined but never used                                                                                                                                                                                                                                                    @typescript-eslint/no-unused-vars
+apps/web lint:    15:3   warning  'UserPlus' is defined but never used                                                                                                                                                                                                                                                     @typescript-eslint/no-unused-vars
+apps/web lint:    22:56  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+apps/web lint:    23:50  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+apps/web lint:    79:30  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+apps/web lint:    85:34  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+apps/web lint:   109:19  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+apps/web lint:   158:23  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/community/messages/page.tsx
+apps/web lint:   110:23  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+apps/web lint:   125:34  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+apps/web lint:   127:14  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+apps/web lint:   158:91  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                          react/no-unescaped-entities
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/community/my-posts/page.tsx
+apps/web lint:   108:17  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/community/network/page.tsx
+apps/web lint:   5:28  warning  'UserX' is defined but never used        @typescript-eslint/no-unused-vars
+apps/web lint:   5:35  warning  'UserPlus' is defined but never used     @typescript-eslint/no-unused-vars
+apps/web lint:   5:52  warning  'ChevronDown' is defined but never used  @typescript-eslint/no-unused-vars
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/community/notifications/page.tsx
+apps/web lint:   5:10  warning  'Bell' is defined but never used   @typescript-eslint/no-unused-vars
+apps/web lint:   5:25  warning  'Check' is defined but never used  @typescript-eslint/no-unused-vars
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/community/page.tsx
+apps/web lint:    20:28  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+apps/web lint:    26:32  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+apps/web lint:    34:44  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+apps/web lint:    93:15  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+apps/web lint:   139:11  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+apps/web lint:   180:41  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+apps/web lint:   205:50  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+apps/web lint:   270:29  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+apps/web lint:   301:14  warning  'err' is defined but never used                                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+apps/web lint:   311:14  warning  'err' is defined but never used                                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+apps/web lint:   319:13  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+apps/web lint:   336:17  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/community/profile/[username]/page.tsx
+apps/web lint:     6:20  warning  'UserMinus' is defined but never used                                                                                                                                                                                                                                                    @typescript-eslint/no-unused-vars
+apps/web lint:     6:72  warning  'LinkIcon' is defined but never used                                                                                                                                                                                                                                                     @typescript-eslint/no-unused-vars
+apps/web lint:    11:42  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+apps/web lint:    23:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:    27:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:    28:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+apps/web lint:    45:6   warning  React Hook useEffect has a missing dependency: 'fetchProfile'. Either include it or remove the dependency array                                                                                                                                                                          react-hooks/exhaustive-deps
+apps/web lint:    53:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:    57:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:    58:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+apps/web lint:    96:19  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+apps/web lint:   158:42  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+apps/web lint:   163:19  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/community/saved/page.tsx
+apps/web lint:     5:32  warning  'Loader2' is defined but never used                                                                                                                                                                                                                                                      @typescript-eslint/no-unused-vars
+apps/web lint:    58:14  warning  'err' is defined but never used                                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+apps/web lint:    61:34  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+apps/web lint:    70:56  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                          react/no-unescaped-entities
+apps/web lint:    98:22  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                          react/no-unescaped-entities
+apps/web lint:   117:27  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+apps/web lint:   144:21  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/contact/page.tsx
+apps/web lint:   19:115  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/error.tsx
+apps/web lint:   26:13  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/not-found.tsx
+apps/web lint:   12:27  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+apps/web lint:   12:47  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+apps/web lint:   12:97  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/page.tsx
+apps/web lint:    29:36   warning  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+apps/web lint:    41:36   warning  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+apps/web lint:    45:12   warning  'error' is defined but never used                                @typescript-eslint/no-unused-vars
+apps/web lint:    52:36   warning  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+apps/web lint:    56:12   warning  'error' is defined but never used                                @typescript-eslint/no-unused-vars
+apps/web lint:    63:36   warning  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+apps/web lint:   197:58   warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+apps/web lint:   204:76   warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+apps/web lint:   224:118  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+apps/web lint:   318:35   warning  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+apps/web lint:   341:55   warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+apps/web lint:   341:70   warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+apps/web lint:   370:37   warning  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+apps/web lint:   417:118  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+apps/web lint:   492:56   warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+apps/web lint:   518:136  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+apps/web lint:   540:122  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/press/page.tsx
+apps/web lint:   48:122  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/app/sitemap.ts
+apps/web lint:   23:45  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/components/ads/AdCreationWizard.tsx
+apps/web lint:    69:16  warning  'err' is defined but never used           @typescript-eslint/no-unused-vars
+apps/web lint:    88:43  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint:   159:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/components/ads/FeaturedJobsCarousel.tsx
+apps/web lint:   8:32  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/components/ads/SidebarAd.tsx
+apps/web lint:   6:32  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/components/home/LiveFeed.tsx
+apps/web lint:   15:38  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/components/jobs/ApplyModal.tsx
+apps/web lint:   307:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   311:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+apps/web lint:   312:7  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/components/layout/AdBanner.tsx
+apps/web lint:   21:12  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/components/layout/Footer.tsx
+apps/web lint:   13:87  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+apps/web lint:   50:43  warning  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/components/layout/Navbar.tsx
+apps/web lint:   18:54  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint:   56:44  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint:   57:18  warning  'err' is defined but never used           @typescript-eslint/no-unused-vars
+apps/web lint: /home/uplix/Desktop/UPLIX/tutaly/apps/web/src/components/providers/CartProvider.tsx
+apps/web lint:   28:54  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/web lint: ✖ 344 problems (0 errors, 344 warnings)
+apps/web lint:   0 errors and 93 warnings potentially fixable with the `--fix` option.
+apps/web lint: Done
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/app.module.ts
+apps/api lint:   32:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/api lint:   59:11  warning  Unsafe assignment of an `any` value       @typescript-eslint/no-unsafe-assignment
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/common/decorators/raw-body.decorator.ts
+apps/api lint:   5:11  warning  Unsafe assignment of an `any` value              @typescript-eslint/no-unsafe-assignment
+apps/api lint:   6:5   warning  Unsafe return of a value of type `any`           @typescript-eslint/no-unsafe-return
+apps/api lint:   6:20  warning  Unsafe member access .rawBody on an `any` value  @typescript-eslint/no-unsafe-member-access
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/common/guards/jwt-auth.guard.ts
+apps/api lint:   30:13  warning  Unsafe assignment of an `any` value                   @typescript-eslint/no-unsafe-assignment
+apps/api lint:   35:13  warning  Unsafe assignment of an `any` value                   @typescript-eslint/no-unsafe-assignment
+apps/api lint:   37:18  warning  Unsafe member access .sub on an `any` value           @typescript-eslint/no-unsafe-member-access
+apps/api lint:   40:25  warning  Unsafe member access .length on an `any` value        @typescript-eslint/no-unsafe-member-access
+apps/api lint:   44:16  warning  Unsafe member access [0] on an `any` value            @typescript-eslint/no-unsafe-member-access
+apps/api lint:   44:44  warning  Unsafe member access .tokenVersion on an `any` value  @typescript-eslint/no-unsafe-member-access
+apps/api lint:   50:7   warning  Unsafe assignment of an `any` value                   @typescript-eslint/no-unsafe-assignment
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/common/guards/roles.guard.ts
+apps/api lint:   25:11  warning  Unsafe assignment of an `any` value           @typescript-eslint/no-unsafe-assignment
+apps/api lint:   30:55  warning  Unsafe member access .role on an `any` value  @typescript-eslint/no-unsafe-member-access
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/database/migrations/1777950000000-AdminDashboardPart2.ts
+apps/api lint:   76:13  warning  Unsafe assignment of an `any` value             @typescript-eslint/no-unsafe-assignment
+apps/api lint:   80:18  warning  Unsafe member access .length on an `any` value  @typescript-eslint/no-unsafe-member-access
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/main.ts
+apps/api lint:   62:1  warning  Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator  @typescript-eslint/no-floating-promises
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/admin/admin.service.ts
+apps/api lint:    42:3   warning  Unsafe return of a value of type `any`          @typescript-eslint/no-unsafe-return
+apps/api lint:    69:11  warning  Unsafe assignment of an `any` value             @typescript-eslint/no-unsafe-assignment
+apps/api lint:    82:11  warning  Unsafe assignment of an `any` value             @typescript-eslint/no-unsafe-assignment
+apps/api lint:   399:13  warning  Unsafe assignment of an `any` value             @typescript-eslint/no-unsafe-assignment
+apps/api lint:   401:18  warning  Unsafe member access .status on an `any` value  @typescript-eslint/no-unsafe-member-access
+apps/api lint:   401:44  warning  Unsafe member access .data on an `any` value    @typescript-eslint/no-unsafe-member-access
+apps/api lint:   409:95  warning  Unsafe member access .data on an `any` value    @typescript-eslint/no-unsafe-member-access
+apps/api lint:   422:28  warning  Unsafe member access .data on an `any` value    @typescript-eslint/no-unsafe-member-access
+apps/api lint:   423:13  warning  Unsafe assignment of an `any` value             @typescript-eslint/no-unsafe-assignment
+apps/api lint:   423:30  warning  Unsafe member access .data on an `any` value    @typescript-eslint/no-unsafe-member-access
+apps/api lint:   424:13  warning  Unsafe assignment of an `any` value             @typescript-eslint/no-unsafe-assignment
+apps/api lint:   424:28  warning  Unsafe member access .data on an `any` value    @typescript-eslint/no-unsafe-member-access
+apps/api lint:   425:13  warning  Unsafe assignment of an `any` value             @typescript-eslint/no-unsafe-assignment
+apps/api lint:   425:29  warning  Unsafe member access .data on an `any` value    @typescript-eslint/no-unsafe-member-access
+apps/api lint:   433:64  warning  Unsafe member access .data on an `any` value    @typescript-eslint/no-unsafe-member-access
+apps/api lint:   434:11  warning  Unsafe assignment of an `any` value             @typescript-eslint/no-unsafe-assignment
+apps/api lint:   434:33  warning  Unsafe member access .data on an `any` value    @typescript-eslint/no-unsafe-member-access
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/admin/services/advertising.service.ts
+apps/api lint:   12:3   warning  Unsafe return of a value of type `any`    @typescript-eslint/no-unsafe-return
+apps/api lint:   93:7   warning  Unsafe assignment of an `any` value       @typescript-eslint/no-unsafe-assignment
+apps/api lint:   93:38  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/admin/services/analytics.service.ts
+apps/api lint:   12:0  error  Parsing error: Declaration or statement expected
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/admin/services/announcements.service.ts
+apps/api lint:    7:3   warning  Unsafe return of a value of type `any`    @typescript-eslint/no-unsafe-return
+apps/api lint:   32:7   warning  Unsafe assignment of an `any` value       @typescript-eslint/no-unsafe-assignment
+apps/api lint:   32:37  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/admin/services/disputes-resolution.service.ts
+apps/api lint:   17:3  warning  Unsafe return of a value of type `any`  @typescript-eslint/no-unsafe-return
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/admin/services/email-broadcast.service.ts
+apps/api lint:   12:3   warning  Unsafe return of a value of type `any`           @typescript-eslint/no-unsafe-return
+apps/api lint:   38:39  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+apps/api lint:   59:7   warning  Unsafe assignment of an `any` value              @typescript-eslint/no-unsafe-assignment
+apps/api lint:   59:34  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+apps/api lint:   76:65  warning  Unsafe member access .message on an `any` value  @typescript-eslint/no-unsafe-member-access
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/admin/services/jobs-moderation.service.ts
+apps/api lint:   13:3  warning  Unsafe return of a value of type `any`  @typescript-eslint/no-unsafe-return
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/admin/services/legal-pages.service.ts
+apps/api lint:     7:3   warning  Unsafe return of a value of type `any`    @typescript-eslint/no-unsafe-return
+apps/api lint:   103:5   warning  Unsafe assignment of an `any` value       @typescript-eslint/no-unsafe-assignment
+apps/api lint:   103:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/admin/services/notification.service.ts
+apps/api lint:   32:7   warning  Unsafe assignment of an `any` value       @typescript-eslint/no-unsafe-assignment
+apps/api lint:   32:31  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/api lint:   59:7   warning  Unsafe assignment of an `any` value       @typescript-eslint/no-unsafe-assignment
+apps/api lint:   59:31  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/admin/services/reports-moderation.service.ts
+apps/api lint:   9:3  warning  Unsafe return of a value of type `any`  @typescript-eslint/no-unsafe-return
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/admin/services/revenue.service.ts
+apps/api lint:    43:3   warning  Unsafe return of a value of type `any`                                                  @typescript-eslint/no-unsafe-return
+apps/api lint:    68:11  warning  Unsafe assignment of an `any` value                                                     @typescript-eslint/no-unsafe-assignment
+apps/api lint:    76:11  warning  Unsafe assignment of an `any` value                                                     @typescript-eslint/no-unsafe-assignment
+apps/api lint:    88:11  warning  Unsafe assignment of type `any[]` to a variable of type `RevenueByGatewayResult[]`      @typescript-eslint/no-unsafe-assignment
+apps/api lint:   169:11  warning  Unsafe assignment of type `any[]` to a variable of type `RevenueTimeSeriesResult[]`     @typescript-eslint/no-unsafe-assignment
+apps/api lint:   194:11  warning  Unsafe assignment of an `any` value                                                     @typescript-eslint/no-unsafe-assignment
+apps/api lint:   199:11  warning  Unsafe assignment of an `any` value                                                     @typescript-eslint/no-unsafe-assignment
+apps/api lint:   211:11  warning  Unsafe assignment of type `any[]` to a variable of type `CommissionByCategoryResult[]`  @typescript-eslint/no-unsafe-assignment
+apps/api lint:   225:11  warning  Unsafe assignment of type `any[]` to a variable of type `CommissionBySellerResult[]`    @typescript-eslint/no-unsafe-assignment
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/admin/services/reviews-moderation.service.ts
+apps/api lint:   15:3  warning  Unsafe return of a value of type `any`  @typescript-eslint/no-unsafe-return
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/admin/services/sellers-moderation.service.ts
+apps/api lint:   12:3  warning  Unsafe return of a value of type `any`  @typescript-eslint/no-unsafe-return
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/admin/services/settings.service.ts
+apps/api lint:   25:5   warning  Unsafe return of a value of type `any`        @typescript-eslint/no-unsafe-return
+apps/api lint:   25:30  warning  Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+apps/api lint:   25:35  warning  Unsafe member access .rate on an `any` value  @typescript-eslint/no-unsafe-member-access
+apps/api lint:   78:42  warning  Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/admin/services/user-management.service.ts
+apps/api lint:   17:3  warning  Unsafe return of a value of type `any`  @typescript-eslint/no-unsafe-return
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/ads/controllers/ads-tracking.controller.ts
+apps/api lint:   11:32  warning  Unexpected any. Specify a different type                                @typescript-eslint/no-explicit-any
+apps/api lint:   18:11  warning  Unsafe assignment of an `any` value                                     @typescript-eslint/no-unsafe-assignment
+apps/api lint:   27:32  warning  Unexpected any. Specify a different type                                @typescript-eslint/no-explicit-any
+apps/api lint:   30:11  warning  Unsafe assignment of an `any` value                                     @typescript-eslint/no-unsafe-assignment
+apps/api lint:   30:33  warning  Unsafe member access .sub on an `any` value                             @typescript-eslint/no-unsafe-member-access
+apps/api lint:   31:57  warning  Unsafe argument of type `any` assigned to a parameter of type `string`  @typescript-eslint/no-unsafe-argument
+apps/api lint:   37:32  warning  Unexpected any. Specify a different type                                @typescript-eslint/no-explicit-any
+apps/api lint:   40:11  warning  Unsafe assignment of an `any` value                                     @typescript-eslint/no-unsafe-assignment
+apps/api lint:   40:33  warning  Unsafe member access .sub on an `any` value                             @typescript-eslint/no-unsafe-member-access
+apps/api lint:   41:52  warning  Unsafe argument of type `any` assigned to a parameter of type `string`  @typescript-eslint/no-unsafe-argument
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/ads/controllers/ads.controller.ts
+apps/api lint:    61:32  warning  Unexpected any. Specify a different type                                @typescript-eslint/no-explicit-any
+apps/api lint:    68:7   warning  Unsafe argument of type `any` assigned to a parameter of type `string`  @typescript-eslint/no-unsafe-argument
+apps/api lint:    68:16  warning  Unsafe member access .id on an `any` value                              @typescript-eslint/no-unsafe-member-access
+apps/api lint:    78:9   warning  Unsafe argument of type `any` assigned to a parameter of type `string`  @typescript-eslint/no-unsafe-argument
+apps/api lint:    78:18  warning  Unsafe member access .email on an `any` value                           @typescript-eslint/no-unsafe-member-access
+apps/api lint:    79:9   warning  Unsafe argument of type `any` assigned to a parameter of type `string`  @typescript-eslint/no-unsafe-argument
+apps/api lint:    79:18  warning  Unsafe member access .name on an `any` value                            @typescript-eslint/no-unsafe-member-access
+apps/api lint:    99:7   warning  Unsafe argument of type `any` assigned to a parameter of type `string`  @typescript-eslint/no-unsafe-argument
+apps/api lint:    99:11  warning  Unsafe member access .user on an `any` value                            @typescript-eslint/no-unsafe-member-access
+apps/api lint:   109:43  warning  Unsafe argument of type `any` assigned to a parameter of type `string`  @typescript-eslint/no-unsafe-argument
+apps/api lint:   109:47  warning  Unsafe member access .user on an `any` value                            @typescript-eslint/no-unsafe-member-access
+apps/api lint:   119:7   warning  Unsafe argument of type `any` assigned to a parameter of type `string`  @typescript-eslint/no-unsafe-argument
+apps/api lint:   119:11  warning  Unsafe member access .user on an `any` value                            @typescript-eslint/no-unsafe-member-access
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/ads/services/ads.service.ts
+apps/api lint:   54:5  warning  Unsafe assignment of type `SupabaseClient<any, any, "public", any, any>` to a variable of type `SupabaseClient<any, "public", "public", any, any>`  @typescript-eslint/no-unsafe-assignment
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/auth/auth.controller.ts
+apps/api lint:   103:11  warning  Unsafe assignment of an `any` value                                     @typescript-eslint/no-unsafe-assignment
+apps/api lint:   108:62  warning  Unsafe argument of type `any` assigned to a parameter of type `string`  @typescript-eslint/no-unsafe-argument
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/auth/auth.service.ts
+apps/api lint:    76:15  warning  Unsafe assignment of an `any` value                               @typescript-eslint/no-unsafe-assignment
+apps/api lint:    77:28  warning  Unsafe member access .success on an `any` value                   @typescript-eslint/no-unsafe-member-access
+apps/api lint:   110:15  warning  The two values in this comparison do not have a shared enum type  @typescript-eslint/no-unsafe-enum-comparison
+apps/api lint:   153:15  warning  Unsafe member access .message on an `any` value                   @typescript-eslint/no-unsafe-member-access
+apps/api lint:   287:13  warning  Unsafe assignment of an `any` value                               @typescript-eslint/no-unsafe-assignment
+apps/api lint:   291:59  warning  Unsafe assignment of an `any` value                               @typescript-eslint/no-unsafe-assignment
+apps/api lint:   291:71  warning  Unsafe member access .sub on an `any` value                       @typescript-eslint/no-unsafe-member-access
+apps/api lint:   312:13  warning  Unsafe assignment of an `any` value                               @typescript-eslint/no-unsafe-assignment
+apps/api lint:   316:59  warning  Unsafe assignment of an `any` value                               @typescript-eslint/no-unsafe-assignment
+apps/api lint:   316:71  warning  Unsafe member access .sub on an `any` value                       @typescript-eslint/no-unsafe-member-access
+apps/api lint:   381:13  warning  Unsafe assignment of an `any` value                               @typescript-eslint/no-unsafe-assignment
+apps/api lint:   385:19  warning  Unsafe member access .type on an `any` value                      @typescript-eslint/no-unsafe-member-access
+apps/api lint:   389:59  warning  Unsafe assignment of an `any` value                               @typescript-eslint/no-unsafe-assignment
+apps/api lint:   389:71  warning  Unsafe member access .sub on an `any` value                       @typescript-eslint/no-unsafe-member-access
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/auth/mail.service.ts
+apps/api lint:    23:19  warning  Unexpected any. Specify a different type                                            @typescript-eslint/no-explicit-any
+apps/api lint:    35:51  warning  Unsafe argument of type `any` assigned to a parameter of type `SMTPPool | Options`  @typescript-eslint/no-unsafe-argument
+apps/api lint:    74:15  warning  Unsafe member access .message on an `any` value                                     @typescript-eslint/no-unsafe-member-access
+apps/api lint:   115:15  warning  Unsafe member access .message on an `any` value                                     @typescript-eslint/no-unsafe-member-access
+apps/api lint:   153:15  warning  Unsafe member access .message on an `any` value                                     @typescript-eslint/no-unsafe-member-access
+apps/api lint:   195:15  warning  Unsafe member access .message on an `any` value                                     @typescript-eslint/no-unsafe-member-access
+apps/api lint:   229:15  warning  Unsafe member access .message on an `any` value                                     @typescript-eslint/no-unsafe-member-access
+apps/api lint:   270:15  warning  Unsafe member access .message on an `any` value                                     @typescript-eslint/no-unsafe-member-access
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/billing/controllers/billing.controller.ts
+apps/api lint:   25:59  warning  Unexpected any. Specify a different type                                @typescript-eslint/no-explicit-any
+apps/api lint:   26:55  warning  Unsafe argument of type `any` assigned to a parameter of type `string`  @typescript-eslint/no-unsafe-argument
+apps/api lint:   26:64  warning  Unsafe member access .sub on an `any` value                             @typescript-eslint/no-unsafe-member-access
+apps/api lint:   32:32  warning  Unexpected any. Specify a different type                                @typescript-eslint/no-explicit-any
+apps/api lint:   37:7   warning  Unsafe argument of type `any` assigned to a parameter of type `string`  @typescript-eslint/no-unsafe-argument
+apps/api lint:   37:16  warning  Unsafe member access .sub on an `any` value                             @typescript-eslint/no-unsafe-member-access
+apps/api lint:   53:55  warning  Unexpected any. Specify a different type                                @typescript-eslint/no-explicit-any
+apps/api lint:   54:51  warning  Unsafe argument of type `any` assigned to a parameter of type `string`  @typescript-eslint/no-unsafe-argument
+apps/api lint:   54:60  warning  Unsafe member access .sub on an `any` value                             @typescript-eslint/no-unsafe-member-access
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/connect/connect.service.ts
+apps/api lint:    28:3   warning  Unsafe return of a value of type `any`                                               @typescript-eslint/no-unsafe-return
+apps/api lint:    61:17  warning  Unsafe member access .message on an `any` value                                      @typescript-eslint/no-unsafe-member-access
+apps/api lint:   124:21  error    'password' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+apps/api lint:   163:15  error    'password' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+apps/api lint:   348:15  error    'password' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+apps/api lint:   368:15  error    'password' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+apps/api lint:   389:15  error    'password' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+apps/api lint:   474:15  error    'password' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+apps/api lint:   585:15  error    'password' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+apps/api lint:   649:13  error    'password' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+apps/api lint:   700:24  warning  Unsafe member access .privacy on an `any` value                                      @typescript-eslint/no-unsafe-member-access
+apps/api lint:   716:13  error    'password' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/job/job.controller.ts
+apps/api lint:    41:5   warning  Unsafe return of a value of type `Promise<any>`                               @typescript-eslint/no-unsafe-return
+apps/api lint:   139:30  warning  Unexpected any. Specify a different type                                      @typescript-eslint/no-explicit-any
+apps/api lint:   140:11  warning  Unsafe assignment of an `any` value                                           @typescript-eslint/no-unsafe-assignment
+apps/api lint:   144:46  warning  Unsafe argument of type `any` assigned to a parameter of type `CreateJobDto`  @typescript-eslint/no-unsafe-argument
+apps/api lint:   147:32  warning  Unexpected any. Specify a different type                                      @typescript-eslint/no-explicit-any
+apps/api lint:   149:22  warning  Unsafe member access .isFeatured on an `any` value                            @typescript-eslint/no-unsafe-member-access
+apps/api lint:   149:49  warning  Unsafe member access .isUrgent on an `any` value                              @typescript-eslint/no-unsafe-member-access
+apps/api lint:   162:25  warning  Unsafe member access .isFeatured on an `any` value                            @typescript-eslint/no-unsafe-member-access
+apps/api lint:   163:25  warning  Unsafe member access .isUrgent on an `any` value                              @typescript-eslint/no-unsafe-member-access
+apps/api lint:   170:11  warning  Unsafe argument of type `any` assigned to a parameter of type `string`        @typescript-eslint/no-unsafe-argument
+apps/api lint:   180:7   warning  Unsafe assignment of an `any` value                                           @typescript-eslint/no-unsafe-assignment
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/job/job.service.ts
+apps/api lint:    51:5   warning  Unsafe assignment of type `SupabaseClient<any, any, "public", any, any>` to a variable of type `SupabaseClient<any, "public", "public", any, any>`                                                                                                                                                                                          @typescript-eslint/no-unsafe-assignment
+apps/api lint:    95:19  warning  Unsafe return of a value of type `any`                                                                                                                                                                                                                                                                                                      @typescript-eslint/no-unsafe-return
+apps/api lint:   148:24  warning  A method that is not declared with `this: void` may cause unintentional scoping of `this` when separated from its object.
+apps/api lint: Consider using an arrow function or explicitly `.bind()`ing the method to avoid calling the method with an unintended `this` value. 
+apps/api lint: If a function does not access `this`, it can be annotated with `this: void`  @typescript-eslint/unbound-method
+apps/api lint:   178:49  warning  Unsafe return of a value of type `any`                                                                                                                                                                                                                                                                                                      @typescript-eslint/no-unsafe-return
+apps/api lint:   178:51  warning  Unsafe member access .industry on an `any` value                                                                                                                                                                                                                                                                                            @typescript-eslint/no-unsafe-member-access
+apps/api lint:   197:22  warning  Computed name [country] resolves to an `any` value                                                                                                                                                                                                                                                                                          @typescript-eslint/no-unsafe-member-access
+apps/api lint:   197:42  warning  Computed name [country] resolves to an `any` value                                                                                                                                                                                                                                                                                          @typescript-eslint/no-unsafe-member-access
+apps/api lint:   200:24  warning  Computed name [country] resolves to an `any` value                                                                                                                                                                                                                                                                                          @typescript-eslint/no-unsafe-member-access
+apps/api lint:   200:33  warning  Computed name [state] resolves to an `any` value                                                                                                                                                                                                                                                                                            @typescript-eslint/no-unsafe-member-access
+apps/api lint:   200:51  warning  Computed name [country] resolves to an `any` value                                                                                                                                                                                                                                                                                          @typescript-eslint/no-unsafe-member-access
+apps/api lint:   200:60  warning  Computed name [state] resolves to an `any` value                                                                                                                                                                                                                                                                                            @typescript-eslint/no-unsafe-member-access
+apps/api lint:   201:32  warning  Computed name [country] resolves to an `any` value                                                                                                                                                                                                                                                                                          @typescript-eslint/no-unsafe-member-access
+apps/api lint:   201:41  warning  Computed name [state] resolves to an `any` value                                                                                                                                                                                                                                                                                            @typescript-eslint/no-unsafe-member-access
+apps/api lint:   201:57  warning  Unsafe argument of type `any` assigned to a parameter of type `string`                                                                                                                                                                                                                                                                      @typescript-eslint/no-unsafe-argument
+apps/api lint:   202:21  warning  Computed name [country] resolves to an `any` value                                                                                                                                                                                                                                                                                          @typescript-eslint/no-unsafe-member-access
+apps/api lint:   202:30  warning  Computed name [state] resolves to an `any` value                                                                                                                                                                                                                                                                                            @typescript-eslint/no-unsafe-member-access
+apps/api lint:   202:42  warning  Unsafe argument of type `any` assigned to a parameter of type `string`                                                                                                                                                                                                                                                                      @typescript-eslint/no-unsafe-argument
+apps/api lint:   235:9   warning  The two values in this comparison do not have a shared enum type                                                                                                                                                                                                                                                                            @typescript-eslint/no-unsafe-enum-comparison
+apps/api lint:   242:9   warning  The two values in this comparison do not have a shared enum type                                                                                                                                                                                                                                                                            @typescript-eslint/no-unsafe-enum-comparison
+apps/api lint:   258:9   warning  The two values in this comparison do not have a shared enum type                                                                                                                                                                                                                                                                            @typescript-eslint/no-unsafe-enum-comparison
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/review/review.controller.ts
+apps/api lint:   28:25  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+apps/api lint:   34:13  warning  Unsafe member access .headers on an `any` value  @typescript-eslint/no-unsafe-member-access
+apps/api lint:   41:7   warning  Unsafe assignment of an `any` value              @typescript-eslint/no-unsafe-assignment
+apps/api lint:   41:18  warning  Unsafe member access .user on an `any` value     @typescript-eslint/no-unsafe-member-access
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/review/review.service.ts
+apps/api lint:    23:11  warning  Unexpected any. Specify a different type                                                      @typescript-eslint/no-explicit-any
+apps/api lint:    48:23  warning  Unexpected any. Specify a different type                                                      @typescript-eslint/no-explicit-any
+apps/api lint:    54:18  warning  Unsafe member access .user on an `any` value                                                  @typescript-eslint/no-unsafe-member-access
+apps/api lint:    54:27  warning  Unsafe assignment of an `any` value                                                           @typescript-eslint/no-unsafe-assignment
+apps/api lint:    54:36  warning  Unsafe member access .sub on an `any` value                                                   @typescript-eslint/no-unsafe-member-access
+apps/api lint:    57:43  warning  Unsafe argument of type `any` assigned to a parameter of type `DeepPartial<CompanyReview>[]`  @typescript-eslint/no-unsafe-argument
+apps/api lint:    64:11  warning  Unsafe assignment of an `any` value                                                           @typescript-eslint/no-unsafe-assignment
+apps/api lint:    80:25  warning  Unsafe member access .totalReviews on an `any` value                                          @typescript-eslint/no-unsafe-member-access
+apps/api lint:    85:30  warning  Unsafe argument of type `any` assigned to a parameter of type `string`                        @typescript-eslint/no-unsafe-argument
+apps/api lint:    85:36  warning  Unsafe member access .totalReviews on an `any` value                                          @typescript-eslint/no-unsafe-member-access
+apps/api lint:    86:30  warning  Unsafe argument of type `any` assigned to a parameter of type `string`                        @typescript-eslint/no-unsafe-argument
+apps/api lint:    86:36  warning  Unsafe member access .avgOverall on an `any` value                                            @typescript-eslint/no-unsafe-member-access
+apps/api lint:    87:31  warning  Unsafe argument of type `any` assigned to a parameter of type `string`                        @typescript-eslint/no-unsafe-argument
+apps/api lint:    87:37  warning  Unsafe member access .avgWorkLife on an `any` value                                           @typescript-eslint/no-unsafe-member-access
+apps/api lint:    88:26  warning  Unsafe argument of type `any` assigned to a parameter of type `string`                        @typescript-eslint/no-unsafe-argument
+apps/api lint:    88:32  warning  Unsafe member access .avgPay on an `any` value                                                @typescript-eslint/no-unsafe-member-access
+apps/api lint:    89:33  warning  Unsafe argument of type `any` assigned to a parameter of type `string`                        @typescript-eslint/no-unsafe-argument
+apps/api lint:    89:39  warning  Unsafe member access .avgManagement on an `any` value                                         @typescript-eslint/no-unsafe-member-access
+apps/api lint:    90:30  warning  Unsafe argument of type `any` assigned to a parameter of type `string`                        @typescript-eslint/no-unsafe-argument
+apps/api lint:    90:36  warning  Unsafe member access .avgCulture on an `any` value                                            @typescript-eslint/no-unsafe-member-access
+apps/api lint:    91:39  warning  Unsafe argument of type `any` assigned to a parameter of type `string`                        @typescript-eslint/no-unsafe-argument
+apps/api lint:    91:45  warning  Unsafe member access .recommendPercentage on an `any` value                                   @typescript-eslint/no-unsafe-member-access
+apps/api lint:   136:7   warning  Unsafe assignment of an `any` value                                                           @typescript-eslint/no-unsafe-assignment
+apps/api lint:   136:25  warning  Unsafe member access .companyName on an `any` value                                           @typescript-eslint/no-unsafe-member-access
+apps/api lint:   137:30  warning  Unsafe argument of type `any` assigned to a parameter of type `string`                        @typescript-eslint/no-unsafe-argument
+apps/api lint:   137:35  warning  Unsafe member access .totalReviews on an `any` value                                          @typescript-eslint/no-unsafe-member-access
+apps/api lint:   138:30  warning  Unsafe argument of type `any` assigned to a parameter of type `string`                        @typescript-eslint/no-unsafe-argument
+apps/api lint:   138:35  warning  Unsafe member access .avgOverall on an `any` value                                            @typescript-eslint/no-unsafe-member-access
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/salary/salary.service.ts
+apps/api lint:   45:34  warning  Unsafe argument of type `any` assigned to a parameter of type `string`  @typescript-eslint/no-unsafe-argument
+apps/api lint:   45:39  warning  Unsafe member access .totalSubmissions on an `any` value                @typescript-eslint/no-unsafe-member-access
+apps/api lint:   46:29  warning  Unsafe argument of type `any` assigned to a parameter of type `string`  @typescript-eslint/no-unsafe-argument
+apps/api lint:   46:34  warning  Unsafe member access .avgSalary on an `any` value                       @typescript-eslint/no-unsafe-member-access
+apps/api lint:   47:29  warning  Unsafe argument of type `any` assigned to a parameter of type `string`  @typescript-eslint/no-unsafe-argument
+apps/api lint:   47:34  warning  Unsafe member access .minSalary on an `any` value                       @typescript-eslint/no-unsafe-member-access
+apps/api lint:   48:29  warning  Unsafe argument of type `any` assigned to a parameter of type `string`  @typescript-eslint/no-unsafe-argument
+apps/api lint:   48:34  warning  Unsafe member access .maxSalary on an `any` value                       @typescript-eslint/no-unsafe-member-access
+apps/api lint:   49:7   warning  Unsafe assignment of an `any` value                                     @typescript-eslint/no-unsafe-assignment
+apps/api lint:   49:22  warning  Unsafe member access .currency on an `any` value                        @typescript-eslint/no-unsafe-member-access
+apps/api lint:   50:7   warning  Unsafe assignment of an `any` value                                     @typescript-eslint/no-unsafe-assignment
+apps/api lint:   50:26  warning  Unsafe member access .salaryPeriod on an `any` value                    @typescript-eslint/no-unsafe-member-access
+apps/api lint:   68:7   warning  Unsafe assignment of an `any` value                                     @typescript-eslint/no-unsafe-assignment
+apps/api lint:   68:18  warning  Unsafe member access .role on an `any` value                            @typescript-eslint/no-unsafe-member-access
+apps/api lint:   69:34  warning  Unsafe argument of type `any` assigned to a parameter of type `string`  @typescript-eslint/no-unsafe-argument
+apps/api lint:   69:39  warning  Unsafe member access .totalSubmissions on an `any` value                @typescript-eslint/no-unsafe-member-access
+apps/api lint:   70:29  warning  Unsafe argument of type `any` assigned to a parameter of type `string`  @typescript-eslint/no-unsafe-argument
+apps/api lint:   70:34  warning  Unsafe member access .minSalary on an `any` value                       @typescript-eslint/no-unsafe-member-access
+apps/api lint:   71:29  warning  Unsafe argument of type `any` assigned to a parameter of type `string`  @typescript-eslint/no-unsafe-argument
+apps/api lint:   71:34  warning  Unsafe member access .maxSalary on an `any` value                       @typescript-eslint/no-unsafe-member-access
+apps/api lint:   72:29  warning  Unsafe argument of type `any` assigned to a parameter of type `string`  @typescript-eslint/no-unsafe-argument
+apps/api lint:   72:34  warning  Unsafe member access .avgSalary on an `any` value                       @typescript-eslint/no-unsafe-member-access
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/shop/controllers/ratings-disputes-earnings.controller.ts
+apps/api lint:   82:7   warning  Unsafe argument of type `any` assigned to a parameter of type `DisputeStatus | undefined`  @typescript-eslint/no-unsafe-argument
+apps/api lint:   82:17  warning  Unexpected any. Specify a different type                                                   @typescript-eslint/no-explicit-any
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/shop/dto/webhook.dto.ts
+apps/api lint:    26:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/api lint:   130:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/shop/entities/payment-audit.entity.ts
+apps/api lint:   34:35  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/shop/entities/shop.entity.ts
+apps/api lint:   116:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/shop/gateways/flutterwave.gateway.ts
+apps/api lint:   75:13  warning  Unsafe assignment of an `any` value              @typescript-eslint/no-unsafe-assignment
+apps/api lint:   77:18  warning  Unsafe member access .status on an `any` value   @typescript-eslint/no-unsafe-member-access
+apps/api lint:   84:11  warning  Unsafe assignment of an `any` value              @typescript-eslint/no-unsafe-assignment
+apps/api lint:   84:31  warning  Unsafe member access .data on an `any` value     @typescript-eslint/no-unsafe-member-access
+apps/api lint:   94:56  warning  Unsafe member access .message on an `any` value  @typescript-eslint/no-unsafe-member-access
+apps/api lint:   99:47  warning  Unsafe member access .message on an `any` value  @typescript-eslint/no-unsafe-member-access
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/shop/gateways/paystack.gateway.ts
+apps/api lint:   72:13  warning  Unsafe assignment of an `any` value              @typescript-eslint/no-unsafe-assignment
+apps/api lint:   74:18  warning  Unsafe member access .status on an `any` value   @typescript-eslint/no-unsafe-member-access
+apps/api lint:   79:11  warning  Unsafe assignment of an `any` value              @typescript-eslint/no-unsafe-assignment
+apps/api lint:   79:31  warning  Unsafe member access .data on an `any` value     @typescript-eslint/no-unsafe-member-access
+apps/api lint:   89:53  warning  Unsafe member access .message on an `any` value  @typescript-eslint/no-unsafe-member-access
+apps/api lint:   94:44  warning  Unsafe member access .message on an `any` value  @typescript-eslint/no-unsafe-member-access
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/shop/guards/seller.guard.ts
+apps/api lint:   19:11  warning  Unsafe assignment of an `any` value           @typescript-eslint/no-unsafe-assignment
+apps/api lint:   20:11  warning  Unsafe assignment of an `any` value           @typescript-eslint/no-unsafe-assignment
+apps/api lint:   20:28  warning  Unsafe member access .user on an `any` value  @typescript-eslint/no-unsafe-member-access
+apps/api lint:   26:57  warning  Unsafe assignment of an `any` value           @typescript-eslint/no-unsafe-assignment
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/shop/services/payment-audit.service.ts
+apps/api lint:    55:37  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/api lint:    83:38  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/api lint:   110:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/shop/services/payment-idempotency.service.ts
+apps/api lint:   15:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/api lint:   60:21  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/api lint:   89:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/shop/services/physical-order.service.ts
+apps/api lint:   208:17  warning  Unsafe member access .message on an `any` value  @typescript-eslint/no-unsafe-member-access
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/shop/services/ratings-disputes-earnings.service.ts
+apps/api lint:    98:7   warning  Unsafe assignment of an `any` value                                                                   @typescript-eslint/no-unsafe-assignment
+apps/api lint:    98:37  warning  Unexpected any. Specify a different type                                                              @typescript-eslint/no-explicit-any
+apps/api lint:    99:7   warning  Unsafe assignment of an `any` value                                                                   @typescript-eslint/no-unsafe-assignment
+apps/api lint:    99:33  warning  Unexpected any. Specify a different type                                                              @typescript-eslint/no-explicit-any
+apps/api lint:   158:56  warning  Unsafe argument of type `any` assigned to a parameter of type `_QueryDeepPartialEntity<ShopProduct>`  @typescript-eslint/no-unsafe-argument
+apps/api lint:   162:12  warning  Unexpected any. Specify a different type                                                              @typescript-eslint/no-explicit-any
+apps/api lint:   180:54  warning  Unsafe argument of type `any` assigned to a parameter of type `_QueryDeepPartialEntity<ShopProduct>`  @typescript-eslint/no-unsafe-argument
+apps/api lint:   184:10  warning  Unexpected any. Specify a different type                                                              @typescript-eslint/no-explicit-any
+apps/api lint:   243:7   warning  Unsafe assignment of an `any` value                                                                   @typescript-eslint/no-unsafe-assignment
+apps/api lint:   243:33  warning  Unexpected any. Specify a different type                                                              @typescript-eslint/no-explicit-any
+apps/api lint:   244:7   warning  Unsafe assignment of an `any` value                                                                   @typescript-eslint/no-unsafe-assignment
+apps/api lint:   244:36  warning  Unexpected any. Specify a different type                                                              @typescript-eslint/no-explicit-any
+apps/api lint:   299:5   warning  Unsafe assignment of an `any` value                                                                   @typescript-eslint/no-unsafe-assignment
+apps/api lint:   299:45  warning  Unexpected any. Specify a different type                                                              @typescript-eslint/no-explicit-any
+apps/api lint:   515:29  warning  Unexpected any. Specify a different type                                                              @typescript-eslint/no-explicit-any
+apps/api lint:   535:37  warning  Unexpected any. Specify a different type                                                              @typescript-eslint/no-explicit-any
+apps/api lint:   536:38  warning  Unexpected any. Specify a different type                                                              @typescript-eslint/no-explicit-any
+apps/api lint:   552:26  warning  Unsafe member access .volume on an `any` value                                                        @typescript-eslint/no-unsafe-member-access
+apps/api lint:   553:26  warning  Unsafe member access .commission on an `any` value                                                    @typescript-eslint/no-unsafe-member-access
+apps/api lint:   554:26  warning  Unsafe member access .transactionCount on an `any` value                                              @typescript-eslint/no-unsafe-member-access
+apps/api lint:   560:28  warning  Unsafe member access .volume on an `any` value                                                        @typescript-eslint/no-unsafe-member-access
+apps/api lint:   561:28  warning  Unsafe member access .commission on an `any` value                                                    @typescript-eslint/no-unsafe-member-access
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/shop/shop.controller.ts
+apps/api lint:    74:21  warning  The two values in this comparison do not have a shared enum type                @typescript-eslint/no-unsafe-enum-comparison
+apps/api lint:   225:58  warning  Unsafe argument of type `any` assigned to a parameter of type `PaymentGateway`  @typescript-eslint/no-unsafe-argument
+apps/api lint:   233:37  warning  Unexpected any. Specify a different type                                        @typescript-eslint/no-explicit-any
+apps/api lint:   234:40  warning  Unexpected any. Specify a different type                                        @typescript-eslint/no-explicit-any
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/shop/shop.service.ts
+apps/api lint:    62:3   warning  Unsafe return of a value of type `any`                                                                                                              @typescript-eslint/no-unsafe-return
+apps/api lint:    91:5   warning  Unsafe assignment of type `SupabaseClient<any, any, "public", any, any>` to a variable of type `SupabaseClient<any, "public", "public", any, any>`  @typescript-eslint/no-unsafe-assignment
+apps/api lint:   492:29  warning  Unexpected any. Specify a different type                                                                                                            @typescript-eslint/no-explicit-any
+apps/api lint:   493:29  warning  Unexpected any. Specify a different type                                                                                                            @typescript-eslint/no-explicit-any
+apps/api lint:   513:9   warning  Unsafe argument of type `any` assigned to a parameter of type `Record<string, any>`                                                                 @typescript-eslint/no-unsafe-argument
+apps/api lint:   513:23  warning  Unsafe member access .meta on an `any` value                                                                                                        @typescript-eslint/no-unsafe-member-access
+apps/api lint:   513:45  warning  Unsafe member access .metadata on an `any` value                                                                                                    @typescript-eslint/no-unsafe-member-access
+apps/api lint:   524:26  warning  Unexpected any. Specify a different type                                                                                                            @typescript-eslint/no-explicit-any
+apps/api lint:   537:13  warning  Unsafe assignment of an `any` value                                                                                                                 @typescript-eslint/no-unsafe-assignment
+apps/api lint:   537:24  warning  Unsafe call of an `any` typed value                                                                                                                 @typescript-eslint/no-unsafe-call
+apps/api lint:   537:24  warning  Unsafe call of an `any` typed value                                                                                                                 @typescript-eslint/no-unsafe-call
+apps/api lint:   537:48  warning  Unsafe member access .split on an `any` value                                                                                                       @typescript-eslint/no-unsafe-member-access
+apps/api lint:   537:59  warning  Unsafe member access .filter on an `any` value                                                                                                      @typescript-eslint/no-unsafe-member-access
+apps/api lint:   542:20  warning  Unsafe assignment of an `any` value                                                                                                                 @typescript-eslint/no-unsafe-assignment
+apps/api lint:   542:24  warning  Unsafe call of an `any` typed value                                                                                                                 @typescript-eslint/no-unsafe-call
+apps/api lint:   542:32  warning  Unsafe member access .trim on an `any` value                                                                                                        @typescript-eslint/no-unsafe-member-access
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/support/notifications.gateway.ts
+apps/api lint:   45:13  warning  Unsafe assignment of an `any` value                                                                                                                                 @typescript-eslint/no-unsafe-assignment
+apps/api lint:   47:30  warning  Unsafe member access .sub on an `any` value                                                                                                                         @typescript-eslint/no-unsafe-member-access
+apps/api lint:   48:33  warning  Unsafe argument of type `any` assigned to a parameter of type `string`                                                                                              @typescript-eslint/no-unsafe-argument
+apps/api lint:   48:41  warning  Unsafe member access .sub on an `any` value                                                                                                                         @typescript-eslint/no-unsafe-member-access
+apps/api lint:   51:9   warning  Unsafe assignment of an `any` value                                                                                                                                 @typescript-eslint/no-unsafe-assignment
+apps/api lint:   51:21  warning  Unsafe member access .user on an `any` value                                                                                                                        @typescript-eslint/no-unsafe-member-access
+apps/api lint:   54:9   warning  Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator  @typescript-eslint/no-floating-promises
+apps/api lint:   54:37  warning  Unsafe member access .sub on an `any` value                                                                                                                         @typescript-eslint/no-unsafe-member-access
+apps/api lint:   57:27  warning  Unsafe member access .sub on an `any` value                                                                                                                         @typescript-eslint/no-unsafe-member-access
+apps/api lint:   63:54  warning  Unsafe member access .message on an `any` value                                                                                                                     @typescript-eslint/no-unsafe-member-access
+apps/api lint:   69:21  warning  Unsafe member access .user on an `any` value                                                                                                                        @typescript-eslint/no-unsafe-member-access
+apps/api lint:   70:34  warning  Unsafe argument of type `any` assigned to a parameter of type `string`                                                                                              @typescript-eslint/no-unsafe-argument
+apps/api lint:   70:46  warning  Unsafe member access .user on an `any` value                                                                                                                        @typescript-eslint/no-unsafe-member-access
+apps/api lint:   71:45  warning  Unsafe member access .user on an `any` value                                                                                                                        @typescript-eslint/no-unsafe-member-access
+apps/api lint:   78:50  warning  Unexpected any. Specify a different type                                                                                                                            @typescript-eslint/no-explicit-any
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/support/support.service.ts
+apps/api lint:    9:3   warning  Unsafe return of a value of type `any`    @typescript-eslint/no-unsafe-return
+apps/api lint:   29:7   warning  Unsafe assignment of an `any` value       @typescript-eslint/no-unsafe-assignment
+apps/api lint:   29:31  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/user/controllers/user-settings.controller.ts
+apps/api lint:    95:18  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/api lint:   110:18  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/user/entities/user.entity.ts
+apps/api lint:   80:13  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/user/services/account-settings.service.ts
+apps/api lint:    85:13  warning  Unsafe assignment of an `any` value               @typescript-eslint/no-unsafe-assignment
+apps/api lint:    89:19  warning  Unsafe member access .type on an `any` value      @typescript-eslint/no-unsafe-member-access
+apps/api lint:    93:59  warning  Unsafe assignment of an `any` value               @typescript-eslint/no-unsafe-assignment
+apps/api lint:    93:71  warning  Unsafe member access .sub on an `any` value       @typescript-eslint/no-unsafe-member-access
+apps/api lint:    94:50  warning  Unsafe member access .newEmail on an `any` value  @typescript-eslint/no-unsafe-member-access
+apps/api lint:   198:52  warning  Unexpected any. Specify a different type          @typescript-eslint/no-explicit-any
+apps/api lint:   200:5   warning  Unsafe assignment of an `any` value               @typescript-eslint/no-unsafe-assignment
+apps/api lint:   211:51  warning  Unexpected any. Specify a different type          @typescript-eslint/no-explicit-any
+apps/api lint:   213:5   warning  Unsafe assignment of an `any` value               @typescript-eslint/no-unsafe-assignment
+apps/api lint: /home/uplix/Desktop/UPLIX/tutaly/apps/api/src/modules/user/user.service.ts
+apps/api lint:   25:5  warning  Unsafe assignment of type `SupabaseClient<any, any, "public", any, any>` to a variable of type `SupabaseClient<any, "public", "public", any, any>`  @typescript-eslint/no-unsafe-assignment
+apps/api lint: ✖ 328 problems (10 errors, 318 warnings)
+apps/api lint: Failed
+/home/uplix/Desktop/UPLIX/tutaly/apps/api:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  api@0.0.1 lint: `eslint "{src,apps,libs,test}/**/*.ts" --fix`
+Exit status 1

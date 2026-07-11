@@ -4,6 +4,23 @@ import { Repository } from 'typeorm';
 import { SalaryReview } from '../review/entities/review.entity';
 import { CreateSalaryDto } from './dto/create-salary.dto';
 
+export interface SalaryAggregateResult {
+  totalSubmissions: string;
+  avgSalary: string;
+  minSalary: string;
+  maxSalary: string;
+  currency: string;
+  salaryPeriod: string;
+}
+
+export interface PopularRoleResult {
+  role: string;
+  totalSubmissions: string;
+  minSalary: string;
+  maxSalary: string;
+  avgSalary: string;
+}
+
 @Injectable()
 export class SalaryService {
   constructor(
@@ -41,7 +58,10 @@ export class SalaryService {
       .addGroupBy('salary.salaryPeriod')
       .getRawMany();
 
-    return stats.map((stat) => ({
+    const typedStats: SalaryAggregateResult[] =
+      stats as unknown as SalaryAggregateResult[];
+
+    return typedStats.map((stat) => ({
       totalSubmissions: parseInt(stat.totalSubmissions),
       avgSalary: parseFloat(stat.avgSalary).toFixed(2),
       minSalary: parseFloat(stat.minSalary).toFixed(2),
@@ -64,7 +84,10 @@ export class SalaryService {
       .limit(limit)
       .getRawMany();
 
-    return stats.map((stat) => ({
+    const typedStats: PopularRoleResult[] =
+      stats as unknown as PopularRoleResult[];
+
+    return typedStats.map((stat) => ({
       role: stat.role,
       totalSubmissions: parseInt(stat.totalSubmissions),
       minSalary: parseFloat(stat.minSalary).toFixed(2),

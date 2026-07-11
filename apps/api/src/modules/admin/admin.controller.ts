@@ -23,10 +23,13 @@ import { JobsModerationService } from './services/jobs-moderation.service';
 import { ReviewsModerationService } from './services/reviews-moderation.service';
 import { SellersModerationService } from './services/sellers-moderation.service';
 import { ReportsModerationService } from './services/reports-moderation.service';
+import { JobStatus } from '../job/entities/job.entity';
+import { ReviewStatus } from '../review/entities/review.entity';
 import {
   DisputesResolutionService,
   DisputeResolution,
 } from './services/disputes-resolution.service';
+import { DisputeStatus } from '../shop/entities/order.entity';
 import { RevenueService } from './services/revenue.service';
 import { AnalyticsService } from './services/analytics.service';
 import {
@@ -95,7 +98,7 @@ export class AdminController {
       parseInt(page || '1', 10),
       parseInt(limit || '20', 10),
       search,
-      role as any,
+      role as UserRole,
       status as UserStatus,
     );
   }
@@ -165,7 +168,7 @@ export class AdminController {
     return this.jobsModerationService.getAllJobs(
       parseInt(page || '1', 10),
       parseInt(limit || '20', 10),
-      status as any,
+      status as JobStatus,
       employerId,
     );
   }
@@ -218,7 +221,7 @@ export class AdminController {
     return this.reviewsModerationService.getAllReviews(
       parseInt(page || '1', 10),
       parseInt(limit || '20', 10),
-      status as any,
+      status as ReviewStatus,
       companyName,
     );
   }
@@ -323,7 +326,7 @@ export class AdminController {
     return this.adminService.getDisputes(
       parseInt(page || '1', 10),
       parseInt(limit || '20', 10),
-      status as any,
+      status as DisputeStatus,
     );
   }
 
@@ -699,7 +702,7 @@ export class AdminController {
 
   @Patch('cookies/settings')
   async updateCookieSettings(
-    @Body('categories') categories: any[],
+    @Body('categories') categories: Record<string, unknown>[],
     @NestRequest() req: AuthenticatedRequest,
   ) {
     if (!categories || !Array.isArray(categories)) {

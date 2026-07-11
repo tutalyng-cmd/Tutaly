@@ -9,6 +9,22 @@ import { CompanyReview, ReviewStatus } from './entities/review.entity';
 import { CreateReviewDto } from './dto/create-review.dto';
 import * as crypto from 'crypto';
 
+export interface ReviewAggregateResult {
+  totalReviews: string;
+  avgOverall: string;
+  avgWorkLife: string;
+  avgPay: string;
+  avgManagement: string;
+  avgCulture: string;
+  recommendPercentage: string;
+}
+
+export interface ReviewSearchResult {
+  companyName: string;
+  totalReviews: string;
+  avgOverall: string;
+}
+
 @Injectable()
 export class ReviewService {
   constructor(
@@ -20,7 +36,7 @@ export class ReviewService {
     dto: CreateReviewDto,
     clientIp: string,
     userAgent: string,
-    user: any = null,
+    user: Record<string, any> | null = null,
   ) {
     // Generate a hash to prevent spam (guest submission tracking)
     const hashInput = `${clientIp}-${userAgent}-${new Date().toDateString()}`;
@@ -45,13 +61,13 @@ export class ReviewService {
       }
     }
 
-    const reviewData: any = {
+    const reviewData: Partial<CompanyReview> = {
       ...dto,
       submitterHash,
       status: ReviewStatus.PENDING,
     };
     if (user) {
-      reviewData.user = { id: user.sub };
+      reviewData.user = { id: user.sub } as any; // TypeORM relation
     }
 
     const review = this.reviewRepo.create(reviewData);
@@ -77,20 +93,22 @@ export class ReviewService {
       )
       .getRawOne();
 
-    if (!stats || stats.totalReviews === '0') {
+    const typedStats: ReviewAggregateResult | undefined = stats;
+
+    if (!typedStats || typedStats.totalReviews === '0') {
       return null;
     }
 
     return {
-      totalReviews: parseInt(stats.totalReviews),
-      avgOverall: parseFloat(stats.avgOverall).toFixed(1),
-      avgWorkLife: parseFloat(stats.avgWorkLife || '0').toFixed(1),
-      avgPay: parseFloat(stats.avgPay || '0').toFixed(1),
-      avgManagement: parseFloat(stats.avgManagement || '0').toFixed(1),
-      avgCulture: parseFloat(stats.avgCulture || '0').toFixed(1),
-      recommendPercentage: parseFloat(stats.recommendPercentage || '0').toFixed(
-        0,
-      ),
+      totalReviews: parseInt(typedStats.totalReviews),
+      avgOverall: parseFloat(typedStats.avgOverall).toFixed(1),
+      avgWorkLife: parseFloat(typedStats.avgWorkLife || '0').toFixed(1),
+      avgPay: parseFloat(typedStats.avgPay || '0').toFixed(1),
+      avgManagement: parseFloat(typedStats.avgManagement || '0').toFixed(1),
+      avgCulture: parseFloat(typedStats.avgCulture || '0').toFixed(1),
+      recommendPercentage: parseFloat(
+        typedStats.recommendPercentage || '0',
+      ).toFixed(0),
     };
   }
 
@@ -132,7 +150,9 @@ export class ReviewService {
       .limit(10)
       .getRawMany();
 
-    return stats.map((stat) => ({
+    const typedStats: ReviewSearchResult[] = stats;
+
+    return typedStats.map((stat) => ({
       companyName: stat.companyName,
       totalReviews: parseInt(stat.totalReviews),
       avgOverall: parseFloat(stat.avgOverall).toFixed(1),

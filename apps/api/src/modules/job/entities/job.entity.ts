@@ -103,6 +103,21 @@ export class Job extends BaseEntity {
   @Column({ type: 'timestamp', nullable: true })
   deadline: Date;
 
+  @Column({ default: 0 })
+  view_count: number;
+
+  @Column({ nullable: true })
+  featured_until: Date;
+
+  @Column({
+    type: 'tsvector',
+    nullable: true,
+    insert: false,
+    update: false,
+    select: false,
+  })
+  search_vector: string;
+
   @ManyToOne(() => User)
   employer: User;
 }

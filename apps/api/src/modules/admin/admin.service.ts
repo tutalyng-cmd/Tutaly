@@ -5,7 +5,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, FindOptionsWhere } from 'typeorm';
 import { User, UserRole, SellerStatus } from '../user/entities/user.entity';
 import { Job, JobStatus } from '../job/entities/job.entity';
 import {
@@ -22,6 +22,16 @@ import {
 } from '../support/entities/support.entity';
 import { ShopProduct } from '../shop/entities/shop.entity';
 import { CompanyReview, ReviewStatus } from '../review/entities/review.entity';
+
+export interface ResolveDisputeDto {
+  status: DisputeStatus;
+  resolutionNotes?: string;
+}
+
+interface DashboardOrdersResult {
+  totalRevenue: string;
+  totalCommission: string;
+}
 
 /**
  * Strips TypeORM entity metadata & circular references by
@@ -69,6 +79,8 @@ export class AdminService {
       .addSelect('SUM(order.commissionAmount)', 'totalCommission')
       .getRawOne();
 
+    const typedOrders = orders as unknown as DashboardOrdersResult | undefined;
+
     const pendingJobsCount = await this.jobRepo.count({
       where: { status: JobStatus.PENDING_REVIEW },
     });
@@ -86,8 +98,8 @@ export class AdminService {
     return {
       totalUsers,
       activeJobs,
-      totalRevenue: Number(orders?.totalRevenue || 0),
-      totalCommission: Number(orders?.totalCommission || 0),
+      totalRevenue: Number(typedOrders?.totalRevenue || 0),
+      totalCommission: Number(typedOrders?.totalCommission || 0),
       pendingJobsCount,
       pendingSellersCount,
       flaggedOrdersCount,
@@ -158,10 +170,9 @@ export class AdminService {
   }
 
   async getAllJobs(page = 1, limit = 20, status?: string) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const where: any = {};
+    const where: FindOptionsWhere<Job> = {};
     if (status) {
-      where.status = status;
+      where.status = status as JobStatus;
     }
 
     const [jobs, total] = await this.jobRepo.findAndCount({
@@ -184,10 +195,9 @@ export class AdminService {
   }
 
   async getAllSellerApplications(page = 1, limit = 20, status?: string) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const where: any = {};
+    const where: FindOptionsWhere<SellerApplication> = {};
     if (status) {
-      where.status = status;
+      where.status = status as SellerApplicationStatus;
     }
 
     const [data, total] = await this.sellerAppRepo.findAndCount({
@@ -221,7 +231,9 @@ export class AdminService {
     if (!application) throw new NotFoundException('Application not found');
 
     application.status = status;
-    application.reviewedBy = { id: adminId } as any;
+    const admin = new User();
+    admin.id = adminId;
+    application.reviewedBy = admin;
     await this.sellerAppRepo.save(application);
 
     // Update user's sellerStatus
@@ -293,8 +305,7 @@ export class AdminService {
   }
 
   async getAllProducts(page = 1, limit = 20, isActive?: boolean) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const where: any = {};
+    const where: FindOptionsWhere<ShopProduct> = {};
     if (typeof isActive === 'boolean') {
       where.isActive = isActive;
     }
@@ -319,10 +330,9 @@ export class AdminService {
   }
 
   async getAllOrders(page = 1, limit = 20, status?: string) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const where: any = {};
+    const where: FindOptionsWhere<Order> = {};
     if (status) {
-      where.status = status;
+      where.status = status as OrderStatus;
     }
 
     const [orders, total] = await this.orderRepo.findAndCount({
@@ -386,7 +396,10 @@ export class AdminService {
           },
         },
       );
-      const result = await response.json();
+      const result = (await response.json()) as {
+        status?: boolean;
+        data?: Record<string, any>;
+      };
 
       if (result.status === true && result.data?.status === 'success') {
         // Payment was successful — update order
@@ -409,10 +422,10 @@ export class AdminService {
           newStatus: order.status,
           message: `Payment confirmed by Paystack. Order updated to ${order.status}.`,
           gatewayData: {
-            amount: result.data.amount / 100,
-            currency: result.data.currency,
-            paidAt: result.data.paid_at,
-            channel: result.data.channel,
+            amount: Number(result.data?.amount) / 100,
+            currency: String(result.data?.currency),
+            paidAt: String(result.data?.paid_at),
+            channel: String(result.data?.channel),
           },
         };
       } else {
@@ -421,13 +434,13 @@ export class AdminService {
           success: true,
           verified: false,
           message: `Paystack reports this payment as "${result.data?.status || 'unknown'}". No changes made.`,
-          gatewayStatus: result.data?.status || 'unknown',
+          gatewayStatus: String(result.data?.status || 'unknown'),
         };
       }
     } catch (error) {
       this.logger.error(
         `Failed to verify payment for order ${orderId}:`,
-        error,
+        (error as Error).message,
       );
       throw new BadRequestException(
         'Failed to reach Paystack API. Please try again.',
@@ -519,7 +532,11 @@ export class AdminService {
     };
   }
 
-  async resolveDispute(disputeId: string, adminId: string, dto: any) {
+  async resolveDispute(
+    disputeId: string,
+    adminId: string,
+    dto: ResolveDisputeDto,
+  ) {
     const dispute = await this.disputeRepo.findOne({
       where: { id: disputeId },
       relations: ['order'],
@@ -531,8 +548,12 @@ export class AdminService {
     }
 
     dispute.status = dto.status;
-    dispute.resolutionNotes = dto.resolutionNotes;
-    dispute.resolvedBy = { id: adminId } as User;
+    if (dto.resolutionNotes) {
+      dispute.resolutionNotes = dto.resolutionNotes;
+    }
+    const resolvedAdmin = new User();
+    resolvedAdmin.id = adminId;
+    dispute.resolvedBy = resolvedAdmin;
     dispute.resolvedAt = new Date();
 
     const order = await this.orderRepo.findOne({

@@ -16,6 +16,22 @@ import { Currency } from '../../shop/entities/shop.entity';
 import { NotificationService } from '../../admin/services/notification.service';
 import { NotificationType } from '../../admin/entities/notification.entity';
 
+export interface CampaignAdvertiser {
+  id: string;
+  email: string;
+  name: string;
+}
+
+export interface CampaignJob {
+  id: string;
+  title: string;
+}
+
+export type AdCampaignWithDetails = AdCampaign & {
+  advertiser: CampaignAdvertiser | null;
+  job: CampaignJob | null;
+};
+
 @Injectable()
 export class AdsService {
   private supabase: SupabaseClient;
@@ -79,7 +95,7 @@ export class AdsService {
           paymentRef: reference,
           amountPaid: campaign.total_budget,
           currency: campaign.currency as Currency,
-        } as any,
+        },
       ],
     });
   }
@@ -117,36 +133,43 @@ export class AdsService {
 
   async getActiveAd(
     placement: string,
-    currentUser?: any,
+    currentUser?: unknown,
   ): Promise<AdCampaign | null> {
     const now = new Date();
 
     let query = this.campaignRepo
       .createQueryBuilder('c')
       .where('c.status = :status', { status: CampaignStatus.ACTIVE })
-      .andWhere('c.placements @> :placement', { placement: JSON.stringify([placement]) })
+      .andWhere('c.placements @> :placement', {
+        placement: JSON.stringify([placement]),
+      })
       .andWhere('c.starts_at <= :now', { now })
       .andWhere('(c.ends_at IS NULL OR c.ends_at >= :now)', { now })
       .andWhere('c.total_spent < c.total_budget');
 
     // Apply targeting filters if user is logged in
-    if (currentUser) {
-      if (currentUser.state) {
+    if (
+      currentUser &&
+      typeof currentUser === 'object' &&
+      currentUser !== null
+    ) {
+      const user = currentUser as Record<string, unknown>;
+      if (user.state) {
         query = query.andWhere(
           '(c.target_states IS NULL OR c.target_states @> :state)',
-          { state: JSON.stringify([currentUser.state]) },
+          { state: JSON.stringify([user.state]) },
         );
       }
-      if (currentUser.industry) {
+      if (user.industry) {
         query = query.andWhere(
           '(c.target_industries IS NULL OR c.target_industries @> :industry)',
-          { industry: JSON.stringify([currentUser.industry]) },
+          { industry: JSON.stringify([user.industry]) },
         );
       }
-      if (currentUser.role) {
+      if (user.role) {
         query = query.andWhere(
           '(c.target_user_types IS NULL OR c.target_user_types @> :role)',
-          { role: JSON.stringify([currentUser.role]) },
+          { role: JSON.stringify([user.role]) },
         );
       }
     }
@@ -317,8 +340,8 @@ export class AdsService {
     return this.campaignRepo.save(campaign);
   }
 
-  async getMyCampaigns(advertiserId: string): Promise<any[]> {
-    const campaigns = await this.campaignRepo.find({
+  async getMyCampaigns(advertiserId: string): Promise<AdCampaignWithDetails[]> {
+    const campaigns: AdCampaign[] = await this.campaignRepo.find({
       where: { advertiser_id: advertiserId },
       order: { createdAt: 'DESC' },
     });
@@ -329,20 +352,20 @@ export class AdsService {
 
   private async attachDetailsToCampaigns(
     campaigns: AdCampaign[],
-  ): Promise<any[]> {
+  ): Promise<AdCampaignWithDetails[]> {
     if (campaigns.length === 0) return [];
 
     const userIds = [...new Set(campaigns.map((c) => c.advertiser_id))];
     const jobIds = [...new Set(campaigns.map((c) => c.job_id).filter(Boolean))];
 
-    const users = userIds.length
+    const users: CampaignAdvertiser[] = userIds.length
       ? await this.entityManager.query(
           `SELECT id, email, name FROM users WHERE id = ANY($1)`,
           [userIds],
         )
       : [];
 
-    const jobs = jobIds.length
+    const jobs: CampaignJob[] = jobIds.length
       ? await this.entityManager.query(
           `SELECT id, title FROM jobs WHERE id = ANY($1)`,
           [jobIds],
@@ -356,8 +379,8 @@ export class AdsService {
     }));
   }
 
-  async getPendingQueue(): Promise<any[]> {
-    const campaigns = await this.campaignRepo.find({
+  async getPendingQueue(): Promise<AdCampaignWithDetails[]> {
+    const campaigns: AdCampaign[] = await this.campaignRepo.find({
       where: { status: CampaignStatus.PENDING_REVIEW },
       order: { createdAt: 'ASC' },
     });
@@ -411,8 +434,8 @@ export class AdsService {
     return campaign;
   }
 
-  async getAllCampaigns(): Promise<any[]> {
-    const campaigns = await this.campaignRepo.find({
+  async getAllCampaigns(): Promise<AdCampaignWithDetails[]> {
+    const campaigns: AdCampaign[] = await this.campaignRepo.find({
       order: { createdAt: 'DESC' },
     });
     return this.attachDetailsToCampaigns(campaigns);

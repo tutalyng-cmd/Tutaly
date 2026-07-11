@@ -6,6 +6,7 @@ import {
   PaymentResponse,
   WebhookResult,
 } from '../interfaces/payment-gateway.interface';
+import { Currency } from '../entities/shop.entity';
 
 @Injectable()
 export class StripeGateway implements IPaymentGateway {
@@ -17,7 +18,7 @@ export class StripeGateway implements IPaymentGateway {
     const secretKey = process.env.STRIPE_SECRET_KEY || '';
     if (secretKey) {
       this.stripe = new Stripe(secretKey, {
-        apiVersion: '2023-10-16' as any,
+        apiVersion: '2023-10-16',
       });
     } else {
       this.logger.warn('STRIPE_SECRET_KEY not configured');
@@ -77,36 +78,39 @@ export class StripeGateway implements IPaymentGateway {
         paymentLink: session.url || undefined,
         reference: payload.reference,
         orders: payload.orders.map((o) => ({
-          id: o.id,
-          paymentRef: o.paymentRef,
+          id: o.id as string,
+          paymentRef: o.paymentRef as string,
           amount: Number(o.amountPaid),
-          currency: o.currency,
+          currency: o.currency as Currency,
         })),
       };
-    } catch (error: any) {
+    } catch (error) {
       this.logger.error('Stripe payment initialization failed:', error);
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Payment link generation failed';
       return {
         success: false,
         gateway: this.getName(),
         reference: payload.reference,
-        error: error.message || 'Payment link generation failed',
+        error: errorMessage,
         message: 'Orders created. Stripe payment link could not be generated.',
         orders: payload.orders.map((o) => ({
-          id: o.id,
-          paymentRef: o.paymentRef,
+          id: o.id as string,
+          paymentRef: o.paymentRef as string,
           amount: Number(o.amountPaid),
-          currency: o.currency,
+          currency: o.currency as Currency,
         })),
       };
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/require-await
-  async verifyWebhookSignature(
-    headers: Record<string, any>,
-    body: any,
+  verifyWebhookSignature(
+    headers: Record<string, string>,
+    body: unknown,
     rawBody?: Buffer,
-  ): Promise<boolean> {
+  ): boolean {
     const signature = headers['stripe-signature'];
     if (!signature) {
       this.logger.warn('Stripe webhook missing stripe-signature header');
@@ -132,25 +136,22 @@ export class StripeGateway implements IPaymentGateway {
         this.webhookSecret,
       );
       return true;
-    } catch (error: any) {
-      this.logger.warn(
-        `Stripe webhook signature verification failed: ${error.message}`,
-      );
+    } catch (error) {
+      const msg =
+        error instanceof Error ? error.message : 'Unknown verification error';
+      this.logger.warn(`Stripe webhook signature verification failed: ${msg}`);
       return false;
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/require-await
-  async handleWebhookEvent(
-    payload: Record<string, any>,
-  ): Promise<WebhookResult> {
+  handleWebhookEvent(payload: unknown): WebhookResult {
     // The payload is already constructed and verified by verifyWebhookSignature if called properly
     // However, constructEvent returns the typed event. If we just receive the parsed JSON body here:
-    const event = payload;
+    const event = payload as Stripe.Event;
 
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object;
-      const reference = session.client_reference_id;
+      const reference = session.client_reference_id || undefined;
 
       this.logger.debug(`Stripe charge successful: ${reference}`);
       return {

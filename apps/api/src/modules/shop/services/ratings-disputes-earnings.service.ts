@@ -94,9 +94,14 @@ export class RatingsDisputesEarningsService {
     }
 
     // Create rating
+    const productRef = new ShopProduct();
+    productRef.id = productId;
+    const buyerRef = new User();
+    buyerRef.id = buyerId;
+
     const rating = this.ratingRepo.create({
-      product: { id: productId } as any,
-      buyer: { id: buyerId } as any,
+      product: productRef,
+      buyer: buyerRef,
       rating: dto.rating,
       comment: dto.comment,
       isVerifiedPurchase: true,
@@ -159,7 +164,7 @@ export class RatingsDisputesEarningsService {
         averageRating: 0,
         totalRatings: 0,
         ratingDistribution: {},
-      } as any);
+      } as Partial<ShopProduct>);
       return;
     }
 
@@ -181,7 +186,7 @@ export class RatingsDisputesEarningsService {
       averageRating,
       totalRatings,
       ratingDistribution: distribution,
-    } as any);
+    } as Partial<ShopProduct>);
 
     this.logger.debug(
       `Recalculated rating for product ${productId}: ${averageRating} (${totalRatings} ratings)`,
@@ -239,9 +244,14 @@ export class RatingsDisputesEarningsService {
     }
 
     // Create dispute
+    const orderRef = new Order();
+    orderRef.id = orderId;
+    const raisedByRef = new User();
+    raisedByRef.id = buyerId;
+
     const dispute = this.disputeRepo.create({
-      order: { id: orderId } as any,
-      raisedBy: { id: buyerId } as any,
+      order: orderRef,
+      raisedBy: raisedByRef,
       reason: dto.reason,
       evidenceUrls: dto.evidenceUrls,
       status: DisputeStatus.OPEN,
@@ -296,7 +306,9 @@ export class RatingsDisputesEarningsService {
     }
 
     dispute.resolutionNotes = dto.resolutionNotes;
-    dispute.resolvedBy = { id: adminId } as any;
+    const adminRef = new User();
+    adminRef.id = adminId;
+    dispute.resolvedBy = adminRef;
     dispute.resolvedAt = new Date();
 
     const savedDispute = await this.disputeRepo.save(dispute);
@@ -512,7 +524,7 @@ export class RatingsDisputesEarningsService {
   async getAdminRevenueReport(
     startDate: Date,
     endDate: Date,
-  ): Promise<Record<string, any>> {
+  ): Promise<Record<string, unknown>> {
     const orders = await this.orderRepo.find({
       where: {
         status: OrderStatus.COMPLETED,
@@ -532,8 +544,12 @@ export class RatingsDisputesEarningsService {
       };
     }
 
-    const byGateway: Record<string, any> = {};
-    const byCurrency: Record<string, any> = {};
+    const byGateway: Record<
+      string,
+      { volume: number; commission: number; transactionCount: number }
+    > = {};
+    const byCurrency: Record<string, { volume: number; commission: number }> =
+      {};
     let totalGross = 0;
     let totalCommission = 0;
 

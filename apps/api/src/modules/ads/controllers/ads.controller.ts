@@ -16,6 +16,31 @@ import { JwtAuthGuard } from '../../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../../common/guards/roles.guard';
 import { Roles } from '../../../common/decorators/roles.decorator';
 import { UserRole } from '../../user/entities/user.entity';
+import { AdCampaign } from '../entities/ad-campaign.entity';
+import { PaymentResponse } from '../../shop/interfaces/payment-gateway.interface';
+
+export interface AuthRequest {
+  user: {
+    id: string;
+    sub: string;
+    email?: string;
+    name?: string;
+  };
+}
+
+export interface EstimateReachDto {
+  daily_budget: number;
+  format: string;
+  target_countries?: string[];
+  target_states?: string[];
+  target_industries?: string[];
+  target_roles?: string[];
+  target_user_types?: string[];
+}
+
+export interface CreateCampaignDto extends Partial<AdCampaign> {
+  paymentGateway?: string;
+}
 
 @Controller('ads/campaigns')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -27,7 +52,7 @@ export class AdsController {
 
   @Post('estimate-reach')
   @Roles(UserRole.EMPLOYER, UserRole.ADMIN)
-  estimateReach(@Body() body: any) {
+  estimateReach(@Body() body: EstimateReachDto) {
     return this.adsService.estimateReach({
       daily_budget: body.daily_budget,
       format: body.format,
@@ -41,7 +66,10 @@ export class AdsController {
 
   @Post()
   @Roles(UserRole.EMPLOYER, UserRole.ADMIN) // Block 'seeker'
-  async createCampaign(@Req() req, @Body() body: any) {
+  async createCampaign(
+    @Req() req: AuthRequest,
+    @Body() body: CreateCampaignDto,
+  ) {
     const { paymentGateway, ...campaignData } = body;
 
     // Create the campaign
@@ -51,7 +79,7 @@ export class AdsController {
     );
 
     // If paymentGateway is provided, initialize payment immediately
-    let paymentInitialization: any = null;
+    let paymentInitialization: PaymentResponse | null = null;
     if (paymentGateway && campaign.total_budget > 0) {
       paymentInitialization = await this.adsService.initializeAdPayment(
         campaign.id,
@@ -71,7 +99,10 @@ export class AdsController {
   @Post('upload-creative')
   @Roles(UserRole.EMPLOYER, UserRole.ADMIN)
   @UseInterceptors(FileInterceptor('file'))
-  async uploadCreative(@Req() req, @UploadedFile() file: Express.Multer.File) {
+  async uploadCreative(
+    @Req() req: AuthRequest,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
     if (!file) {
       throw new BadRequestException('No file provided');
     }
@@ -86,13 +117,13 @@ export class AdsController {
 
   @Get()
   @Roles(UserRole.EMPLOYER, UserRole.ADMIN)
-  async getMyCampaigns(@Req() req) {
+  async getMyCampaigns(@Req() req: AuthRequest) {
     return this.adsService.getMyCampaigns(req.user.sub);
   }
 
   @Get('alerts')
   @Roles(UserRole.EMPLOYER, UserRole.ADMIN)
-  async getAdAlerts(@Req() req) {
+  async getAdAlerts(@Req() req: AuthRequest) {
     // Fetch all notifications for user, then filter ad-specific types
     // Note: this is a simple implementation. In a real scenario, we would add a method
     // to NotificationService to query specific types directly.

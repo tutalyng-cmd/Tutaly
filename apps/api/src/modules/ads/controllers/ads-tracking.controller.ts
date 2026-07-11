@@ -6,7 +6,10 @@ export class AdsTrackingController {
   constructor(private readonly adsService: AdsService) {}
 
   @Get('active')
-  async getActiveAd(@Query('placement') placement: string, @Req() req: any) {
+  async getActiveAd(
+    @Query('placement') placement: string,
+    @Req() req: Record<string, any>,
+  ) {
     if (!placement) {
       return { error: 'Placement is required' };
     }
@@ -21,7 +24,7 @@ export class AdsTrackingController {
   @Post('impression')
   async logImpression(
     @Body('campaignId') campaignId: string,
-    @Req() req: any,
+    @Req() req: Record<string, any>,
     @Ip() ip: string,
   ) {
     const visitorId = req.user?.sub || 'guest';
@@ -31,7 +34,7 @@ export class AdsTrackingController {
   @Post('click')
   async logClick(
     @Body('campaignId') campaignId: string,
-    @Req() req: any,
+    @Req() req: Record<string, any>,
     @Ip() ip: string,
   ) {
     const visitorId = req.user?.sub || 'guest';

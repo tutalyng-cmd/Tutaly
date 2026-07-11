@@ -3,6 +3,42 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Order, OrderStatus } from '../../shop/entities/order.entity';
 
+export interface RevenueTotalsResult {
+  grossRevenue: string | number;
+  totalCommission: string | number;
+  totalSellerPayables: string | number;
+  totalOrders: string | number;
+}
+
+export interface RevenueByGatewayResult {
+  gateway: string;
+  grossRevenue: string | number;
+  commission: string | number;
+  orderCount: string | number;
+}
+
+export interface RevenueTimeSeriesResult {
+  period: string;
+  grossRevenue: string | number;
+  commission: string | number;
+  orderCount: string | number;
+}
+
+export interface CommissionTotalResult {
+  total: string | number;
+}
+
+export interface CommissionByCategoryResult {
+  category: string;
+  commission: string | number;
+}
+
+export interface CommissionBySellerResult {
+  sellerId: string;
+  email: string;
+  commission: string | number;
+}
+
 function toPlain<T>(obj: T): T {
   return JSON.parse(JSON.stringify(obj));
 }
@@ -37,6 +73,7 @@ export class RevenueService {
       .addSelect('SUM(o.sellerEarnings)', 'totalSellerPayables')
       .addSelect('COUNT(o.id)', 'totalOrders')
       .getRawOne();
+    const typedTotals: RevenueTotalsResult | undefined = totals;
 
     // Breakdown by gateway
     const byGateway = await this.orderRepo
@@ -48,13 +85,14 @@ export class RevenueService {
       .addSelect('COUNT(o.id)', 'orderCount')
       .groupBy('o.paymentGateway')
       .getRawMany();
+    const typedByGateway: RevenueByGatewayResult[] = byGateway;
 
     return {
-      grossRevenue: Number(totals?.grossRevenue || 0),
-      totalCommission: Number(totals?.totalCommission || 0),
-      totalSellerPayables: Number(totals?.totalSellerPayables || 0),
-      totalOrders: Number(totals?.totalOrders || 0),
-      byGateway: byGateway.map((g) => ({
+      grossRevenue: Number(typedTotals?.grossRevenue || 0),
+      totalCommission: Number(typedTotals?.totalCommission || 0),
+      totalSellerPayables: Number(typedTotals?.totalSellerPayables || 0),
+      totalOrders: Number(typedTotals?.totalOrders || 0),
+      byGateway: typedByGateway.map((g) => ({
         gateway: g.gateway,
         grossRevenue: Number(g.grossRevenue || 0),
         commission: Number(g.commission || 0),
@@ -128,10 +166,11 @@ export class RevenueService {
       .groupBy('period')
       .orderBy('period', 'ASC')
       .getRawMany();
+    const typedData: RevenueTimeSeriesResult[] = data;
 
     return {
       period,
-      data: data.map((d) => ({
+      data: typedData.map((d) => ({
         period: d.period,
         grossRevenue: Number(d.grossRevenue || 0),
         commission: Number(d.commission || 0),
@@ -157,6 +196,7 @@ export class RevenueService {
       .where('o.status IN (:...statuses)', { statuses: completedStatuses })
       .select('SUM(o.commissionAmount)', 'total')
       .getRawOne();
+    const typedTotalEarned: CommissionTotalResult | undefined = totalEarned;
 
     // In a full implementation, categories would come from the product.
     // Assuming product has a category string.
@@ -168,6 +208,7 @@ export class RevenueService {
       .addSelect('SUM(o.commissionAmount)', 'commission')
       .groupBy('p.category')
       .getRawMany();
+    const typedPerCategory: CommissionByCategoryResult[] = perCategory;
 
     const perSeller = await this.orderRepo
       .createQueryBuilder('o')
@@ -181,14 +222,15 @@ export class RevenueService {
       .orderBy('"commission"', 'DESC')
       .limit(20)
       .getRawMany();
+    const typedPerSeller: CommissionBySellerResult[] = perSeller;
 
     return {
-      totalEarned: Number(totalEarned?.total || 0),
-      perCategory: perCategory.map((c) => ({
+      totalEarned: Number(typedTotalEarned?.total || 0),
+      perCategory: typedPerCategory.map((c) => ({
         category: c.category || 'Uncategorized',
         commission: Number(c.commission || 0),
       })),
-      perSeller: perSeller.map((s) => ({
+      perSeller: typedPerSeller.map((s) => ({
         sellerId: s.sellerId,
         email: s.email,
         commission: Number(s.commission || 0),

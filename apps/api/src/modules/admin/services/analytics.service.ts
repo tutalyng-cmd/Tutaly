@@ -10,6 +10,59 @@ import {
   ReviewStatus,
 } from '../../review/entities/review.entity';
 
+export interface UserGrowthResult {
+  month: string;
+  count: string | number;
+  role: UserRole;
+}
+
+export interface TopIndustryResult {
+  industry: string;
+  jobCount: string | number;
+}
+
+export interface JobsByMonthResult {
+  month: string;
+  count: string | number;
+}
+
+export interface TransactionStatsResult {
+  totalTransactions: string | number;
+  avgOrderValue: string | number;
+  totalVolume: string | number;
+}
+
+export interface VolumeByMonthResult {
+  month: string;
+  count: string | number;
+  volume: string | number;
+}
+
+export interface TopProductResult {
+  productId: string;
+  title: string;
+  salesCount: string | number;
+  totalRevenue: string | number;
+}
+
+export interface TopSellerResult {
+  sellerId: string;
+  email: string;
+  salesCount: string | number;
+  totalEarnings: string | number;
+}
+
+export interface TopCompanyResult {
+  companyName: string;
+  reviewCount: string | number;
+  avgRating: string | number;
+}
+
+export interface ReviewsByMonthResult {
+  month: string;
+  count: string | number;
+}
+
 @Injectable()
 export class AnalyticsService {
   private readonly logger = new Logger(AnalyticsService.name);
@@ -48,6 +101,13 @@ export class AnalyticsService {
       .addGroupBy('u.role')
       .orderBy('month', 'ASC')
       .getRawMany();
+    const typedRegistrations = (
+      registrationsByMonth as unknown as Record<string, unknown>[]
+    ).map((d) => ({
+      month: String(d.month),
+      role: String(d.role),
+      count: Number(d.count),
+    }));
 
     // Retention metrics (mocked/simplified calculation)
     // A real implementation would calculate cohort retention.
@@ -70,11 +130,7 @@ export class AnalyticsService {
         activeUsersLast30Days,
         retentionRate,
       },
-      registrationsByMonth: registrationsByMonth.map((r) => ({
-        month: r.month,
-        role: r.role,
-        count: Number(r.count),
-      })),
+      registrationsByMonth: typedRegistrations,
     };
   }
 
@@ -100,6 +156,12 @@ export class AnalyticsService {
       .orderBy('"jobCount"', 'DESC')
       .limit(10)
       .getRawMany();
+    const typedTopIndustries = (
+      topIndustries as unknown as Record<string, unknown>[]
+    ).map((d) => ({
+      industry: String(d.industry),
+      jobCount: Number(d.jobCount),
+    }));
 
     // Jobs posted over the last 12 months
     const jobsByMonth = await this.jobRepo
@@ -110,19 +172,19 @@ export class AnalyticsService {
       .groupBy('month')
       .orderBy('month', 'ASC')
       .getRawMany();
+    const typedJobsByMonth = (
+      jobsByMonth as unknown as Record<string, unknown>[]
+    ).map((d) => ({
+      month: String(d.month),
+      count: Number(d.count),
+    }));
 
     return {
       totalJobs,
       totalApplications,
       avgApplicationsPerJob,
-      topIndustries: topIndustries.map((i) => ({
-        industry: i.industry,
-        jobCount: Number(i.jobCount),
-      })),
-      jobsByMonth: jobsByMonth.map((j) => ({
-        month: j.month,
-        count: Number(j.count),
-      })),
+      topIndustries: typedTopIndustries,
+      jobsByMonth: typedJobsByMonth,
     };
   }
 
@@ -146,6 +208,7 @@ export class AnalyticsService {
       .addSelect('AVG(o.amountPaid)', 'avgOrderValue')
       .addSelect('SUM(o.amountPaid)', 'totalVolume')
       .getRawOne();
+    const typedStats: TransactionStatsResult | undefined = stats;
 
     // Transaction volume over last 12 months
     const volumeByMonth = await this.orderRepo
@@ -158,6 +221,13 @@ export class AnalyticsService {
       .groupBy('month')
       .orderBy('month', 'ASC')
       .getRawMany();
+    const typedVolumeByMonth = (
+      volumeByMonth as unknown as Record<string, unknown>[]
+    ).map((d) => ({
+      month: String(d.month),
+      count: Number(d.count),
+      volume: Number(d.volume || 0),
+    }));
 
     // Top selling products
     const topProducts = await this.orderRepo
@@ -173,6 +243,14 @@ export class AnalyticsService {
       .orderBy('"salesCount"', 'DESC')
       .limit(10)
       .getRawMany();
+    const typedTopProducts = (
+      topProducts as unknown as Record<string, unknown>[]
+    ).map((d) => ({
+      productId: String(d.productId),
+      title: String(d.title),
+      salesCount: Number(d.salesCount),
+      totalRevenue: Number(d.totalRevenue || 0),
+    }));
 
     // Top sellers
     const topSellers = await this.orderRepo
@@ -188,28 +266,23 @@ export class AnalyticsService {
       .orderBy('"salesCount"', 'DESC')
       .limit(10)
       .getRawMany();
+    const typedTopSellers = (
+      topSellers as unknown as Record<string, unknown>[]
+    ).map((d) => ({
+      sellerId: String(d.sellerId),
+      email: String(d.email),
+      salesCount: Number(d.salesCount),
+      totalEarnings: Number(d.totalEarnings || 0),
+    }));
 
     return {
-      totalTransactions: Number(stats?.totalTransactions || 0),
-      avgOrderValue: Math.round(Number(stats?.avgOrderValue || 0) * 100) / 100,
-      totalVolume: Number(stats?.totalVolume || 0),
-      volumeByMonth: volumeByMonth.map((v) => ({
-        month: v.month,
-        count: Number(v.count),
-        volume: Number(v.volume || 0),
-      })),
-      topProducts: topProducts.map((p) => ({
-        productId: p.productId,
-        title: p.title,
-        salesCount: Number(p.salesCount),
-        totalRevenue: Number(p.totalRevenue || 0),
-      })),
-      topSellers: topSellers.map((s) => ({
-        sellerId: s.sellerId,
-        email: s.email,
-        salesCount: Number(s.salesCount),
-        totalEarnings: Number(s.totalEarnings || 0),
-      })),
+      totalTransactions: Number(typedStats?.totalTransactions || 0),
+      avgOrderValue:
+        Math.round(Number(typedStats?.avgOrderValue || 0) * 100) / 100,
+      totalVolume: Number(typedStats?.totalVolume || 0),
+      volumeByMonth: typedVolumeByMonth,
+      topProducts: typedTopProducts,
+      topSellers: typedTopSellers,
     };
   }
 
@@ -245,6 +318,13 @@ export class AnalyticsService {
       .orderBy('"reviewCount"', 'DESC')
       .limit(10)
       .getRawMany();
+    const typedTopCompanies = (
+      topCompanies as unknown as Record<string, unknown>[]
+    ).map((d) => ({
+      companyName: String(d.companyName),
+      reviewCount: Number(d.reviewCount),
+      avgRating: Math.round(Number(d.avgRating || 0) * 100) / 100,
+    }));
 
     // Reviews submitted over the last 12 months
     const reviewsByMonth = await this.reviewRepo
@@ -255,6 +335,12 @@ export class AnalyticsService {
       .groupBy('month')
       .orderBy('month', 'ASC')
       .getRawMany();
+    const typedReviewsByMonth = (
+      reviewsByMonth as unknown as Record<string, unknown>[]
+    ).map((d) => ({
+      month: String(d.month),
+      count: Number(d.count),
+    }));
 
     return {
       totalReviews,
@@ -262,12 +348,12 @@ export class AnalyticsService {
       pendingReviews,
       rejectedReviews,
       approvalRate,
-      topCompanies: topCompanies.map((c) => ({
+      topCompanies: typedTopCompanies.map((c) => ({
         companyName: c.companyName,
         reviewCount: Number(c.reviewCount),
         avgRating: Math.round(Number(c.avgRating || 0) * 100) / 100,
       })),
-      reviewsByMonth: reviewsByMonth.map((r) => ({
+      reviewsByMonth: typedReviewsByMonth.map((r) => ({
         month: r.month,
         count: Number(r.count),
       })),

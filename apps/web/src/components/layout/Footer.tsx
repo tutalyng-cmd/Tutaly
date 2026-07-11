@@ -36,10 +36,10 @@ export default function Footer() {
           <nav aria-label="For employers">
             <div className="footer__col-title">For employers</div>
             <ul className="footer__links">
-              <li><Link href="/employers">Post a job</Link></li>
+              <li><Link href="/free-job-posting">Post a job</Link></li>
               <li><Link href="/pricing">Pricing</Link></li>
               <li><Link href="/advertise">Advertise</Link></li>
-              <li><Link href="/employer/dashboard">Dashboard</Link></li>
+              <li><Link href="/employer">Dashboard</Link></li>
             </ul>
           </nav>
           <nav aria-label="Company links">

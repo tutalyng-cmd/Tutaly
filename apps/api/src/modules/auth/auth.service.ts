@@ -73,7 +73,10 @@ export class AuthService {
             body: `secret=${recaptchaSecret}&response=${dto.recaptchaToken}`,
           },
         );
-        const recaptchaData = await recaptchaRes.json();
+        const recaptchaData = (await recaptchaRes.json()) as Record<
+          string,
+          unknown
+        >;
         if (!recaptchaData.success) {
           throw new BadRequestException(
             'reCAPTCHA verification failed. Please try again.',
@@ -86,9 +89,17 @@ export class AuthService {
         where: { email: dto.email },
       });
       if (existing) {
-        throw new ConflictException(
-          'An account with this email already exists.',
-        );
+        if (!existing.isEmailVerified) {
+          const verifyToken = this.generateVerificationToken(existing.id);
+          await this.mailService.sendVerificationEmail(
+            existing.email,
+            verifyToken,
+          );
+        }
+        return {
+          message:
+            'Registration successful. Please check your email to verify your account.',
+        };
       }
 
       // 3. Hash password
@@ -98,7 +109,7 @@ export class AuthService {
       const user = this.userRepo.create({
         email: dto.email,
         password: hashedPassword,
-        role: dto.role === 'admin' ? UserRole.SEEKER : dto.role, // prevent admin registration
+        role: (dto.role as string) === 'admin' ? UserRole.SEEKER : dto.role, // prevent admin registration
         dateOfBirth: dob,
         tosAgreedAt: new Date(),
         isMfaEnabled: false, // MFA no longer mandatory for employers by default
@@ -129,7 +140,6 @@ export class AuthService {
       return {
         message:
           'Registration successful. Please check your email to verify your account.',
-        userId: user.id,
       };
     } catch (error) {
       console.error('[Auth] Registration failed:', error);
@@ -141,7 +151,7 @@ export class AuthService {
         throw error;
       }
       throw new InternalServerErrorException(
-        error.message || 'Registration failed unexpectedly',
+        (error as Error).message || 'Registration failed unexpectedly',
       );
     }
   }

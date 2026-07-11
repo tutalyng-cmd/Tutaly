@@ -6,6 +6,19 @@ import {
   PaymentResponse,
   WebhookResult,
 } from '../interfaces/payment-gateway.interface';
+import { Currency } from '../entities/shop.entity';
+
+export interface PaystackWebhookPayload {
+  event: string;
+  data: {
+    reference: string;
+    status: string;
+    amount: number;
+    customer: {
+      email: string;
+    };
+  };
+}
 
 @Injectable()
 export class PaystackGateway implements IPaymentGateway {
@@ -67,10 +80,10 @@ export class PaystackGateway implements IPaymentGateway {
           paymentLink: result.data.authorization_url,
           reference: payload.reference,
           orders: payload.orders.map((o) => ({
-            id: o.id,
-            paymentRef: o.paymentRef,
+            id: o.id as string,
+            paymentRef: o.paymentRef as string,
             amount: Number(o.amountPaid),
-            currency: o.currency,
+            currency: o.currency as Currency,
           })),
         };
       } else {
@@ -92,21 +105,20 @@ export class PaystackGateway implements IPaymentGateway {
         message:
           'Orders created. Paystack payment link could not be generated (check API keys).',
         orders: payload.orders.map((o) => ({
-          id: o.id,
-          paymentRef: o.paymentRef,
+          id: o.id as string,
+          paymentRef: o.paymentRef as string,
           amount: Number(o.amountPaid),
-          currency: o.currency,
+          currency: o.currency as Currency,
         })),
       };
     }
   }
 
-  async verifyWebhookSignature(
-    headers: Record<string, any>,
-    _body: any,
+  verifyWebhookSignature(
+    headers: Record<string, string>,
+    _body: unknown,
     rawBody?: Buffer,
-  ): Promise<boolean> {
-    await Promise.resolve();
+  ): boolean {
     const signature = headers['x-paystack-signature'];
     if (!signature) {
       this.logger.warn('Paystack webhook missing x-paystack-signature header');
@@ -143,11 +155,8 @@ export class PaystackGateway implements IPaymentGateway {
     }
   }
 
-  async handleWebhookEvent(
-    payload: Record<string, any>,
-  ): Promise<WebhookResult> {
-    await Promise.resolve();
-    const { event, data } = payload;
+  handleWebhookEvent(payload: unknown): WebhookResult {
+    const { event, data } = payload as PaystackWebhookPayload;
 
     if (event === 'charge.success' && data.status === 'success') {
       this.logger.debug(`Paystack charge successful: ${data.reference}`);

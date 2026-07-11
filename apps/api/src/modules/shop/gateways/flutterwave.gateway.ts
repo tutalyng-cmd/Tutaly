@@ -5,6 +5,21 @@ import {
   PaymentResponse,
   WebhookResult,
 } from '../interfaces/payment-gateway.interface';
+import { Currency } from '../entities/shop.entity';
+
+export interface FlutterwaveWebhookPayload {
+  event: string;
+  data: {
+    id: number;
+    status: string;
+    tx_ref: string;
+    amount: number;
+    currency: string;
+    customer: {
+      email: string;
+    };
+  };
+}
 
 @Injectable()
 export class FlutterwaveGateway implements IPaymentGateway {
@@ -70,10 +85,10 @@ export class FlutterwaveGateway implements IPaymentGateway {
           paymentLink: result.data.link,
           reference: payload.reference,
           orders: payload.orders.map((o) => ({
-            id: o.id,
-            paymentRef: o.paymentRef,
+            id: o.id as string,
+            paymentRef: o.paymentRef as string,
             amount: Number(o.amountPaid),
-            currency: o.currency,
+            currency: o.currency as Currency,
           })),
         };
       } else {
@@ -95,21 +110,20 @@ export class FlutterwaveGateway implements IPaymentGateway {
         message:
           'Orders created. Flutterwave payment link could not be generated (check API keys).',
         orders: payload.orders.map((o) => ({
-          id: o.id,
-          paymentRef: o.paymentRef,
+          id: o.id as string,
+          paymentRef: o.paymentRef as string,
           amount: Number(o.amountPaid),
-          currency: o.currency,
+          currency: o.currency as Currency,
         })),
       };
     }
   }
 
-  async verifyWebhookSignature(
-    headers: Record<string, any>,
-    _body: any,
+  verifyWebhookSignature(
+    headers: Record<string, string>,
+    _body: unknown,
     _rawBody?: Buffer,
-  ): Promise<boolean> {
-    await Promise.resolve();
+  ): boolean {
     const verifHash = headers['verif-hash'];
     if (!verifHash) {
       this.logger.warn('Flutterwave webhook missing verif-hash header');
@@ -129,11 +143,8 @@ export class FlutterwaveGateway implements IPaymentGateway {
     return isValid;
   }
 
-  async handleWebhookEvent(
-    payload: Record<string, any>,
-  ): Promise<WebhookResult> {
-    await Promise.resolve();
-    const { event, data } = payload;
+  handleWebhookEvent(payload: unknown): WebhookResult {
+    const { event, data } = payload as FlutterwaveWebhookPayload;
 
     if (event === 'charge.completed' && data.status === 'successful') {
       this.logger.debug(`Flutterwave charge completed: ${data.tx_ref}`);

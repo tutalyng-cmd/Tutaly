@@ -92,7 +92,11 @@ export class JobService {
     const cacheKey = `jobs:public:${JSON.stringify(query)}`;
     if (status === JobStatus.ACTIVE) {
       const cached = await this.tokenService.getJobCache(cacheKey);
-      if (cached) return JSON.parse(cached);
+      if (cached)
+        return JSON.parse(cached) as {
+          items: Record<string, unknown>[];
+          meta: Record<string, unknown>;
+        };
     }
 
     const qb = this.jobRepo
@@ -175,7 +179,10 @@ export class JobService {
       .andWhere("job.industry != ''")
       .getRawMany();
 
-    const industries = industriesRaw.map((r) => r.industry).sort();
+    const typedIndustries = industriesRaw as unknown as Array<{
+      industry: string;
+    }>;
+    const industries = typedIndustries.map((r) => r.industry).sort();
 
     // Get cascading locations (country -> state -> area)
     const locationsRaw = await this.jobRepo
@@ -190,9 +197,14 @@ export class JobService {
       .addGroupBy('job.area')
       .getRawMany();
 
+    const typedLocations = locationsRaw as unknown as Array<{
+      country: string;
+      state: string;
+      area: string;
+    }>;
     const locations: Record<string, Record<string, string[]>> = {};
 
-    locationsRaw.forEach(({ country, state, area }) => {
+    typedLocations.forEach(({ country, state, area }) => {
       if (!country) return;
       if (!locations[country]) locations[country] = {};
 

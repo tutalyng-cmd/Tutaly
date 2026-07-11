@@ -5,13 +5,13 @@ import { Order } from '../entities/order.entity';
  * Normalized payment payload for all gateways
  */
 export interface PaymentPayload {
-  orders: Order[];
+  orders: Partial<Order>[];
   totalAmount: number;
   currency: Currency;
   customerEmail: string;
   customerName: string;
   redirectUrl: string;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
   reference: string;
 }
 
@@ -56,16 +56,16 @@ export interface IPaymentGateway {
    * Verify webhook signature/authenticity
    */
   verifyWebhookSignature(
-    headers: Record<string, any>,
-    body: any,
+    headers: Record<string, string>,
+    body: unknown,
     rawBody?: Buffer,
-  ): Promise<boolean>;
+  ): Promise<boolean> | boolean;
 
   /**
    * Handle webhook event from payment gateway
    * Should extract payment reference and metadata, return processed result
    */
-  handleWebhookEvent(payload: Record<string, any>): Promise<WebhookResult>;
+  handleWebhookEvent(payload: unknown): Promise<WebhookResult> | WebhookResult;
 
   /**
    * Get gateway name for logging/debugging

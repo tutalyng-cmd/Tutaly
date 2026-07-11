@@ -32,10 +32,13 @@ export class SupportService {
       link,
     });
     const saved = await this.notificationRepo.save(notification);
-    
+
     // Push real-time event to connected client
-    this.notificationsGateway.sendNotification(userId, toPlain(saved));
-    
+    this.notificationsGateway.sendNotification(
+      userId,
+      toPlain(saved) as unknown as Record<string, unknown>,
+    );
+
     return saved;
   }
 

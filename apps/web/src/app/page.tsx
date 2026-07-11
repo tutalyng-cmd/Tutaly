@@ -2,6 +2,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Search } from 'lucide-react';
 import HeroSearch from '@/components/home/HeroSearch';
+import Reveal from '@/components/motion/Reveal';
+import { StaggerContainer, StaggerItem } from '@/components/motion/Stagger';
+import AnimatedNumber from '@/components/motion/AnimatedNumber';
 import { serverFetch } from '@/lib/server-fetch';
 import AdBanner from '@/components/layout/AdBanner';
 interface Job {
@@ -126,22 +129,22 @@ export default async function Home() {
               {/* Stats */}
               <div className="hero__proof" role="list" aria-label="Platform statistics">
                 <div className="hero__proof-item" role="listitem">
-                  <span className="hero__proof-num">{stats.activeJobs.toLocaleString()}+</span>
+                  <span className="hero__proof-num"><AnimatedNumber value={stats.activeJobs} />+</span>
                   <span className="hero__proof-label">Active jobs</span>
                 </div>
                 <div className="hero__proof-divider" aria-hidden="true"></div>
                 <div className="hero__proof-item" role="listitem">
-                  <span className="hero__proof-num">{stats.companiesReviewed.toLocaleString()}+</span>
+                  <span className="hero__proof-num"><AnimatedNumber value={stats.companiesReviewed} />+</span>
                   <span className="hero__proof-label">Companies reviewed</span>
                 </div>
                 <div className="hero__proof-divider" aria-hidden="true"></div>
                 <div className="hero__proof-item" role="listitem">
-                  <span className="hero__proof-num">{stats.countriesRepresented.toLocaleString()}+</span>
+                  <span className="hero__proof-num"><AnimatedNumber value={stats.countriesRepresented} />+</span>
                   <span className="hero__proof-label">Countries represented</span>
                 </div>
                 <div className="hero__proof-divider" aria-hidden="true"></div>
                 <div className="hero__proof-item" role="listitem">
-                  <span className="hero__proof-num">{stats.professionals.toLocaleString()}+</span>
+                  <span className="hero__proof-num"><AnimatedNumber value={stats.professionals} />+</span>
                   <span className="hero__proof-label">Professionals</span>
                 </div>
               </div>
@@ -161,57 +164,45 @@ export default async function Home() {
       <AdBanner placement="homepage_top" />
 
       {/* ── LOGOS ──────────────────────────────────────────────────── */}
-      <div className="logos" aria-label="Companies hiring on Tutaly">
-        <div className="container">
-          <p className="logos__label">Trusted by professionals at</p>
-          <div className="logos__row" role="list">
-            <span className="logos__item" role="listitem">Flutterwave</span>
-            <span className="logos__item" role="listitem">Andela</span>
-            <span className="logos__item" role="listitem">Paystack</span>
-            <span className="logos__item" role="listitem">Interswitch</span>
-            <span className="logos__item" role="listitem">Cowrywise</span>
-            <span className="logos__item" role="listitem">Carbon</span>
-            <span className="logos__item" role="listitem">PiggyVest</span>
-          </div>
-        </div>
-      </div>
+
 
       {/* ── FOR PROFESSIONALS ─────────────────────────────────────── */}
       <section className="section" id="jobs" aria-labelledby="features-title">
-        <div className="container">
+        <Reveal className="container">
           <div className="reveal visible">
             <div className="section__label">For professionals</div>
             <h2 className="section__title" id="features-title">Everything your career needs.<br />One platform.</h2>
             <p className="section__subtitle">Stop switching between five different apps. Tutaly is the job board, salary database, review site, and professional network in one.</p>
           </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center reveal visible mt-12">
-            <div className="space-y-6">
-              <div className="feat bg-white/50 backdrop-blur-sm p-6 rounded-2xl shadow-sm border border-c100 hover:shadow-md transition-shadow">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mt-12">
+            <StaggerContainer className="space-y-6">
+              <StaggerItem className="feat bg-white/50 backdrop-blur-sm p-6 rounded-2xl shadow-sm border border-c100 hover:shadow-md transition-shadow premium-hover">
                 <div className="feat__icon feat__icon--blue" aria-hidden="true">💼</div>
                 <h3 className="feat__title">Find the right job</h3>
                 <p className="feat__body">Thousands of roles across major hubs and remote-first companies worldwide. Filter by salary, company size, industry, and experience level.</p>
                 <Link href="/jobs" className="feat__link">Browse jobs &rarr;</Link>
-              </div>
-              <div className="feat bg-white/50 backdrop-blur-sm p-6 rounded-2xl shadow-sm border border-c100 hover:shadow-md transition-shadow">
+              </StaggerItem>
+              <StaggerItem className="feat bg-white/50 backdrop-blur-sm p-6 rounded-2xl shadow-sm border border-c100 hover:shadow-md transition-shadow">
                 <div className="feat__icon feat__icon--green" aria-hidden="true">₦</div>
                 <h3 className="feat__title">Know what you're worth</h3>
                 <p className="feat__body">Real salary data from verified professionals. See what your role pays at every company before you walk into a negotiation.</p>
                 <Link href="/salaries" className="feat__link">Check your salary &rarr;</Link>
-              </div>
-              <div className="feat bg-white/50 backdrop-blur-sm p-6 rounded-2xl shadow-sm border border-c100 hover:shadow-md transition-shadow">
-                <div className="feat__icon feat__icon--gold" aria-hidden="true">⭐</div>
+              </StaggerItem>
+
+              <StaggerItem className="feat bg-white/50 backdrop-blur-sm p-6 rounded-2xl shadow-sm border border-c100 hover:shadow-md transition-shadow premium-hover">
+                <div className="feat__icon feat__icon--teal" aria-hidden="true">⭐</div>
                 <h3 className="feat__title">Read honest reviews</h3>
                 <p className="feat__body">Anonymous reviews from people who've worked there. Culture, management, growth — the real picture, not the PR one.</p>
                 <Link href="/reviews" className="feat__link">Read reviews &rarr;</Link>
-              </div>
-            </div>
-            
-            <div className="hidden lg:block relative rounded-3xl overflow-hidden shadow-2xl shadow-blue-900/10 border border-white/20 h-full" style={{ minHeight: '500px' }}>
+              </StaggerItem>
+            </StaggerContainer>
+
+            <div className="hidden lg:block relative rounded-3xl overflow-hidden shadow-2xl shadow-blue-900/10 border border-white/20 h-full premium-hover" style={{ minHeight: '500px' }}>
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent z-10 mix-blend-overlay"></div>
               <Image src="/images/feature.png" alt="Professional working" layout="fill" objectFit="cover" className="transform hover:scale-105 transition-transform duration-700" />
             </div>
           </div>
-        </div>
+        </Reveal>
       </section>
 
       {/* ── SALARY INTELLIGENCE ────────────────────────────────────── */}
@@ -277,44 +268,46 @@ export default async function Home() {
 
       {featuredJobs.length > 0 && (
         <section className="section pb-4">
-          <div className="container">
+          <Reveal className="container">
             <h2 className="section__title mb-8" style={{ fontSize: '24px' }}>Featured Opportunities</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {featuredJobs.slice(0, 6).map((job) => (
-                <Link href={`/jobs?jobId=${job.id}`} key={job.id} className="feat bg-white/50 backdrop-blur-sm p-6 rounded-2xl shadow-sm border border-c100 hover:shadow-md transition-shadow">
-                  <div className="flex justify-between items-start mb-4">
-                    <h3 className="feat__title mb-0">{job.title}</h3>
-                    {job.employer?.email && (
-                      <div className="w-8 h-8 rounded-full bg-blue-10 flex items-center justify-center text-blue text-xs font-bold">
-                        {job.employer.email.charAt(0).toUpperCase()}
-                      </div>
-                    )}
-                  </div>
-                  <div className="text-sm text-c400 mb-4">{job.jobType} &middot; {job.workMode} &middot; {job.country}</div>
-                  <div className="font-mono text-c100 font-bold">
-                    {job.minSalary && job.maxSalary 
-                      ? `${CURRENCY_SYMBOLS[job.currency] || job.currency}${(job.minSalary/1000).toFixed(0)}K - ${(job.maxSalary/1000).toFixed(0)}K`
-                      : 'Salary negotiable'}
-                  </div>
-                </Link>
+                <StaggerItem key={job.id} className="premium-hover">
+                  <Link href={`/jobs?jobId=${job.id}`} className="feat bg-white/50 backdrop-blur-sm p-6 rounded-2xl shadow-sm border border-c100 hover:shadow-md transition-shadow h-full block">
+                    <div className="flex justify-between items-start mb-4">
+                      <h3 className="feat__title mb-0">{job.title}</h3>
+                      {job.employer?.email && (
+                        <div className="w-8 h-8 rounded-full bg-blue-10 flex items-center justify-center text-blue text-xs font-bold">
+                          {job.employer.email.charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                    </div>
+                    <div className="text-sm text-c400 mb-4">{job.jobType} &middot; {job.workMode} &middot; {job.country}</div>
+                    <div className="font-mono text-c100 font-bold">
+                      {job.minSalary && job.maxSalary
+                        ? `${CURRENCY_SYMBOLS[job.currency] || job.currency}${(job.minSalary / 1000).toFixed(0)}K - ${(job.maxSalary / 1000).toFixed(0)}K`
+                        : 'Salary negotiable'}
+                    </div>
+                  </Link>
+                </StaggerItem>
               ))}
-            </div>
+            </StaggerContainer>
             <div className="mt-8 text-center">
-               <Link href="/jobs" className="btn btn--ghost">View all jobs</Link>
+              <Link href="/jobs" className="btn btn--ghost">View all jobs</Link>
             </div>
-          </div>
+          </Reveal>
         </section>
       )}
 
       {/* ── REVIEWS ────────────────────────────────────────────────── */}
       <section className="section" id="reviews" aria-labelledby="reviews-title">
-        <div className="container">
+        <Reveal className="container">
           <div className="reveal visible text-center max-w-layout-md mx-auto mb-14">
             <div className="section__label justify-center">Company reviews</div>
             <h2 className="section__title" id="reviews-title">The honest version of the job description.</h2>
             <p className="text-base text-c300 leading-relaxed">Before you say yes to an offer, hear from people who already said yes — and what happened after.</p>
           </div>
-          <div className="reviews-row reveal visible">
+          <StaggerContainer className="reviews-row reveal visible">
             {reviews.map((review: any, idx: number) => {
               const COLORS = [
                 { background: 'var(--green-10)', color: 'var(--green)' },
@@ -325,35 +318,37 @@ export default async function Home() {
               const initials = review.companyName ? review.companyName.charAt(0).toUpperCase() : 'C';
 
               return (
-                <article key={review.id} className="review-card">
-                  <div className="review-card__header">
-                    <div className="review-card__logo" style={{ backgroundColor: style.background, color: style.color }}>{initials}</div>
-                    <div>
-                      <div className="review-card__company">{review.companyName}</div>
-                      <div className="review-card__stars" aria-label={`Rating: ${review.ratingOverall} out of 5`}>
-                        {Array.from({length: 5}).map((_, i) => (
-                          <span key={i} className={i < Number(review.ratingOverall) ? 'star' : 'star star--empty'}>★</span>
-                        ))}
-                        <span className="review-card__score">{review.ratingOverall}</span>
+                <StaggerItem key={review.id} className="premium-hover h-full">
+                  <article className="review-card h-full">
+                    <div className="review-card__header">
+                      <div className="review-card__logo" style={{ backgroundColor: style.background, color: style.color }}>{initials}</div>
+                      <div>
+                        <div className="review-card__company">{review.companyName}</div>
+                        <div className="review-card__stars" aria-label={`Rating: ${review.ratingOverall} out of 5`}>
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <span key={i} className={i < Number(review.ratingOverall) ? 'star' : 'star star--empty'}>★</span>
+                          ))}
+                          <span className="review-card__score">{review.ratingOverall}</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="review-card__title">"{review.title}"</div>
-                  <p className="review-card__quote line-clamp-4">{review.pros || review.cons || "An honest review from an employee."}</p>
-                  <div className="review-card__meta">
-                    <span className="review-card__role">{review.department} &middot; {review.location}</span>
-                    <span className={`review-card__rec ${review.recommend ? 'review-card__rec--yes' : 'text-c400'}`}>
-                      {review.recommend ? 'Recommends' : 'No recommend'}
-                    </span>
-                  </div>
-                </article>
+                    <div className="review-card__title">"{review.title}"</div>
+                    <p className="review-card__quote line-clamp-4">{review.pros || review.cons || "An honest review from an employee."}</p>
+                    <div className="review-card__meta">
+                      <span className="review-card__role">{review.department} &middot; {review.location}</span>
+                      <span className={`review-card__rec ${review.recommend ? 'review-card__rec--yes' : 'text-c400'}`}>
+                        {review.recommend ? 'Recommends' : 'No recommend'}
+                      </span>
+                    </div>
+                  </article>
+                </StaggerItem>
               );
             })}
-          </div>
-          <div className="text-center reveal visible">
+          </StaggerContainer>
+          <div className="text-center reveal visible mt-8">
             <Link href="/reviews" className="btn btn--ghost btn--lg">Read 12,000+ company reviews</Link>
           </div>
-        </div>
+        </Reveal>
       </section>
 
       {/* ── SHOP ─────────────────────────────────────────────── */}

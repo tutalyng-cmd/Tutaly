@@ -60,14 +60,6 @@ async function fetchJobs(searchParams: { [key: string]: string | string[] | unde
   }
 }
 
-async function fetchJobDetail(jobId: string): Promise<Job | null> {
-  try {
-    return await serverFetch<Job>(`jobs/${jobId}`, { cache: 'no-store' });
-  } catch (err) {
-    return null;
-  }
-}
-
 export default async function JobsPage(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
@@ -80,13 +72,6 @@ export default async function JobsPage(props: {
   ]);
   
   const filterMeta = filterMetaRes || { industries: [], locations: {} };
-  const selectedJobId = searchParams.jobId ? String(searchParams.jobId) : null;
-
-  // Fetch full detail for selected job
-  let selectedJob: Job | null = null;
-  if (selectedJobId) {
-    selectedJob = jobs.find((j: Job) => j.id === selectedJobId) || await fetchJobDetail(selectedJobId);
-  }
 
   // Build clean searchParams object for child component
   const cleanParams: Record<string, string> = {};
@@ -138,7 +123,6 @@ export default async function JobsPage(props: {
             <JobResultsWithDetail
               jobs={jobs}
               meta={meta}
-              selectedJob={selectedJob}
               searchParams={cleanParams}
             />
           </Suspense>

@@ -68,18 +68,18 @@ async function fetchStats() {
       next: { revalidate: 300 }
     });
     return res?.data || {
-      activeJobs: 48000,
-      companiesReviewed: 12000,
-      countriesRepresented: 35,
-      professionals: 190000
+      activeJobs: 0,
+      companiesReviewed: 0,
+      countriesRepresented: 0,
+      professionals: 0
     };
   } catch (error) {
     console.error('Failed to fetch stats:', error);
     return {
-      activeJobs: 48000,
-      companiesReviewed: 12000,
-      countriesRepresented: 35,
-      professionals: 190000
+      activeJobs: 0,
+      companiesReviewed: 0,
+      countriesRepresented: 0,
+      professionals: 0
     };
   }
 }
@@ -273,7 +273,7 @@ export default async function Home() {
             <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {featuredJobs.slice(0, 6).map((job) => (
                 <StaggerItem key={job.id} className="premium-hover">
-                  <Link href={`/jobs?jobId=${job.id}`} className="feat bg-white/50 backdrop-blur-sm p-6 rounded-2xl shadow-sm border border-c100 hover:shadow-md transition-shadow h-full block">
+                  <Link href={`/jobs/${job.id}`} className="feat bg-white/50 backdrop-blur-sm p-6 rounded-2xl shadow-sm border border-c100 hover:shadow-md transition-shadow h-full block">
                     <div className="flex justify-between items-start mb-4">
                       <h3 className="feat__title mb-0">{job.title}</h3>
                       {job.employer?.email && (

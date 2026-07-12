@@ -14,7 +14,8 @@ function formatTimeAgo(dateStr: string): string {
   return `${Math.floor(diffDays / 30)}mo ago`;
 }
 
-export default async function JobDetailPage({ params }: { params: { id: string } }) {
+export default async function JobDetailPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   let job;
   try {
     job = await serverFetch<any>(`jobs/${params.id}`, { cache: 'no-store' });

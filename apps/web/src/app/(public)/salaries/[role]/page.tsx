@@ -7,7 +7,8 @@ function formatMoney(num: number) {
   return num.toString();
 }
 
-export default async function SalaryRolePage({ params }: { params: { role: string } }) {
+export default async function SalaryRolePage(props: { params: Promise<{ role: string }> }) {
+  const params = await props.params;
   // Decode role from URL (e.g., product-manager -> Product Manager)
   const roleName = params.role
     .split('-')

@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Metadata } from 'next';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Company Reviews',
@@ -7,6 +8,7 @@ export const metadata: Metadata = {
 };
 
 import { serverFetch } from '@/lib/server-fetch';
+import { INDUSTRIES } from '@/lib/constants';
 function StarRating({ rating }: { rating: number }) {
   const full = Math.floor(rating);
   const stars = [];
@@ -50,16 +52,21 @@ export default async function ReviewsPage(props: {
           <div className="page-header__eyebrow">The Call Out</div>
           <h1 className="page-header__title">Hold them accountable. Know before you sign.</h1>
           <p className="page-header__sub">12,000+ companies. Real reviews about work ethics and pay, anonymous by default.</p>
-          <form action="/reviews/search" className="company-search" role="search" aria-label="Company search" style={{ marginTop: '20px' }}>
-            <input
-              type="text"
-              name="q"
-              placeholder="Search a company..."
-              aria-label="Search companies"
-              required
-            />
-            <button type="submit">Search</button>
-          </form>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '20px', flexWrap: 'wrap' }}>
+            <form action="/reviews/search" className="company-search" role="search" aria-label="Company search" style={{ flex: 1, margin: 0, minWidth: '300px' }}>
+              <input
+                type="text"
+                name="q"
+                placeholder="Search a company..."
+                aria-label="Search companies"
+                required
+              />
+              <button type="submit">Search</button>
+            </form>
+            <Link href="/reviews/write" className="btn btn--primary" style={{ flexShrink: 0, height: '48px', padding: '0 24px', display: 'flex', alignItems: 'center' }}>
+              Add a Review
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -80,10 +87,9 @@ export default async function ReviewsPage(props: {
             </div>
             <div className="filter-group">
               <div className="filter-group__label">Industry</div>
-              <label className="filter-option"><span className="filter-checkbox"></span> Fintech <span className="filter-count">2,140</span></label>
-              <label className="filter-option"><span className="filter-checkbox"></span> Tech &amp; Software <span className="filter-count">3,620</span></label>
-              <label className="filter-option"><span className="filter-checkbox"></span> Healthcare <span className="filter-count">980</span></label>
-              <label className="filter-option"><span className="filter-checkbox"></span> Logistics <span className="filter-count">740</span></label>
+              {INDUSTRIES.map(ind => (
+                <label key={ind} className="filter-option"><span className="filter-checkbox"></span> {ind} <span className="filter-count"></span></label>
+              ))}
             </div>
             <div className="filter-group">
               <div className="filter-group__label">Company size</div>

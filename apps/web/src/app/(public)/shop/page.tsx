@@ -102,8 +102,10 @@ export default function ShopPage() {
               return (
                 <Link key={product.id} href={`/shop/${product.id}`} className="market-card" style={{ display: 'block' }}>
                   <article>
-                    <div className="market-card__thumb" style={{ background: typeInfo.color }}>
-                      {typeInfo.icon}
+                    <div className="market-card__thumb" style={{ background: product.imageUrls?.[0] ? '#f5f5f5' : typeInfo.color }}>
+                      {product.imageUrls?.[0] && (
+                        <img src={product.imageUrls[0]} alt={product.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      )}
                       {product.isBestseller && (
                         <span className={`market-card__badge ${typeInfo.tagClass}`}>Bestseller</span>
                       )}

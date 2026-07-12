@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
 import { ShieldCheck, Loader2 } from 'lucide-react';
 import { Country, State } from 'country-state-city';
+import { INDUSTRIES } from '@/lib/constants';
 
 export default function SubmitSalaryPage() {
   const router = useRouter();
@@ -146,12 +147,9 @@ export default function SubmitSalaryPage() {
                 <div className="form-field">
                   <label className="form-label" htmlFor="s-industry">Industry</label>
                   <select className="input" id="s-industry" name="industry" value={formData.industry} onChange={handleChange}>
-                    <option value="Fintech">Fintech</option>
-                    <option value="Tech & Software">Tech &amp; Software</option>
-                    <option value="Healthcare">Healthcare</option>
-                    <option value="E-commerce">E-commerce</option>
-                    <option value="Logistics">Logistics</option>
-                    <option value="Other">Other</option>
+                    {INDUSTRIES.map(ind => (
+                      <option key={ind} value={ind}>{ind}</option>
+                    ))}
                   </select>
                 </div>
               </div>

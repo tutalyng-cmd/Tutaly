@@ -21,8 +21,6 @@ export class ReportsModerationService {
     const [data, total] = await this.reportRepo
       .createQueryBuilder('report')
       .leftJoinAndSelect('report.reporter', 'reporter')
-      .leftJoinAndSelect('report.post', 'post')
-      .leftJoinAndSelect('post.author', 'author')
       .where('report.status = :status', { status: ReportStatus.PENDING })
       .orderBy('report.createdAt', 'ASC')
       .skip((page - 1) * limit)
@@ -35,18 +33,17 @@ export class ReportsModerationService {
   async removeContent(reportId: string): Promise<void> {
     const report = await this.reportRepo.findOne({
       where: { id: reportId },
-      relations: ['post'],
     });
     if (!report) throw new NotFoundException('Report not found');
 
     // Soft delete the reported post
-    if (report.post) {
-      await this.postRepo.softDelete({ id: report.post.id });
+    if (report.targetType === 'post' && report.targetId) {
+      await this.postRepo.softDelete({ id: report.targetId });
     }
 
     await this.reportRepo.update(
       { id: reportId },
-      { status: ReportStatus.RESOLVED },
+      { status: ReportStatus.REVIEWED_ACTIONED },
     );
   }
 
@@ -56,14 +53,14 @@ export class ReportsModerationService {
 
     await this.reportRepo.update(
       { id: reportId },
-      { status: ReportStatus.REVIEWED },
+      { status: ReportStatus.REVIEWED_DISMISSED },
     );
   }
 
   async bulkDismissReports(reportIds: string[]): Promise<void> {
     await this.reportRepo.update(
       { id: In(reportIds) },
-      { status: ReportStatus.REVIEWED },
+      { status: ReportStatus.REVIEWED_DISMISSED },
     );
   }
 

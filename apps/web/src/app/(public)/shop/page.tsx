@@ -102,7 +102,7 @@ export default function ShopPage() {
               return (
                 <Link key={product.id} href={`/shop/${product.id}`} className="market-card" style={{ display: 'block' }}>
                   <article>
-                    <div className="market-card__thumb" style={{ background: product.imageUrls?.[0] ? '#f5f5f5' : typeInfo.color }}>
+                    <div className="market-card__thumb" style={{ background: product.imageUrls?.[0] ? 'var(--c-50)' : typeInfo.color }}>
                       {product.imageUrls?.[0] && (
                         <img src={product.imageUrls[0]} alt={product.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                       )}

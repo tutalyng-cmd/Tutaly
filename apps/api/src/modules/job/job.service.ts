@@ -495,11 +495,13 @@ export class JobService {
     const { employer, ...jobData } = job;
     return {
       ...jobData,
-      employer: employer ? { 
-        id: employer.id, 
-        email: employer.email,
-        companyName: employer.employerProfile?.companyName
-      } : null,
+      employer: employer
+        ? {
+            id: employer.id,
+            email: employer.email,
+            companyName: employer.employerProfile?.companyName,
+          }
+        : null,
     };
   }
 

@@ -14,7 +14,7 @@ export class AppController {
   async getPlatformStats() {
     return {
       success: true,
-      data: await this.appService.getPlatformStats()
+      data: await this.appService.getPlatformStats(),
     };
   }
 }

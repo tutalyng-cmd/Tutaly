@@ -221,7 +221,6 @@ export class ShopController {
     @NestRequest() req: AuthenticatedRequest,
     @Body('gateway') gateway?: string,
   ) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return this.shopService.createCheckout(req.user.sub, gateway as any);
   }
 

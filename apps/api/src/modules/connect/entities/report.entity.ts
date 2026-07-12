@@ -6,42 +6,49 @@ import {
   CreateDateColumn,
   Index,
 } from 'typeorm';
-import { Post } from './post.entity';
 import { User } from '../../user/entities/user.entity';
 
 export enum ReportStatus {
   PENDING = 'pending',
-  REVIEWED = 'reviewed',
-  RESOLVED = 'resolved',
+  REVIEWED_ACTIONED = 'reviewed_actioned',
+  REVIEWED_DISMISSED = 'reviewed_dismissed',
 }
 
 export enum ReportReason {
-  INAPPROPRIATE = 'inappropriate',
   SPAM = 'spam',
   HARASSMENT = 'harassment',
   MISINFORMATION = 'misinformation',
-  COPYRIGHT = 'copyright',
+  INAPPROPRIATE_CONTENT = 'inappropriate_content',
   OTHER = 'other',
 }
 
+export enum ReportTargetType {
+  POST = 'post',
+  COMMENT = 'comment',
+  USER = 'user',
+}
+
 @Entity('reports')
-@Index(['post', 'status'])
+@Index(['targetType', 'targetId'])
 @Index(['status', 'createdAt'])
 export class Report {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Post, (post) => post.reports, { onDelete: 'CASCADE' })
-  post: Post;
-
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
   reporter: User;
+
+  @Column({ type: 'enum', enum: ReportTargetType })
+  targetType: ReportTargetType;
+
+  @Column('uuid')
+  targetId: string;
 
   @Column('enum', { enum: ReportReason })
   reason: ReportReason;
 
   @Column('text', { nullable: true })
-  description?: string;
+  details?: string;
 
   @Column('enum', { enum: ReportStatus, default: ReportStatus.PENDING })
   status: ReportStatus;

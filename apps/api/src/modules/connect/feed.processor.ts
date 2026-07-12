@@ -2,7 +2,8 @@ import { Process, Processor } from '@nestjs/bull';
 import type { Job } from 'bull';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Follow, FollowStatus } from './entities/connect.entity';
+
+import { Follow, FollowStatus } from './entities/follow.entity';
 import Redis from 'ioredis';
 import { ConfigService } from '@nestjs/config';
 
@@ -27,7 +28,7 @@ export class FeedProcessor {
 
     // Find all accepted followers of the author
     const followers = await this.followRepo.find({
-      where: { followee: { id: authorId }, status: FollowStatus.ACCEPTED },
+      where: { following: { id: authorId }, status: FollowStatus.ACCEPTED },
       relations: ['follower'],
     });
 

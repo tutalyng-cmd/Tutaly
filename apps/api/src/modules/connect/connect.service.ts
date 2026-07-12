@@ -10,17 +10,16 @@ import { InjectQueue } from '@nestjs/bull';
 import type { Queue } from 'bull';
 import Redis from 'ioredis';
 import { User } from '../user/entities/user.entity';
-import {
-  Post,
-  PostLike,
-  PostComment,
-  Follow,
-  FollowStatus,
-  Message,
-  Report,
-  ReportTargetType,
-  PostSave,
-} from './entities/connect.entity';
+import { Post } from './entities/post.entity';
+import { PostLike } from './entities/post-like.entity';
+import { PostComment } from './entities/post-comment.entity';
+import { Follow, FollowStatus } from './entities/follow.entity';
+import { Message } from './entities/message.entity';
+import { Report } from './entities/report.entity';
+import { SavedPost as PostSave } from './entities/saved-post.entity';
+import { Block } from './entities/block.entity';
+import { ConnectNotification } from './entities/connect-notification.entity';
+import { PostMedia, MediaType } from './entities/post-media.entity';
 import { ConfigService } from '@nestjs/config';
 import { SupportService } from '../support/support.service';
 
@@ -44,6 +43,8 @@ export class ConnectService {
     @InjectRepository(PostSave)
     private readonly postSaveRepo: Repository<PostSave>,
     @InjectRepository(Report) private readonly reportRepo: Repository<Report>,
+    @InjectRepository(Block) private readonly blockRepo: Repository<Block>,
+    @InjectRepository(ConnectNotification) private readonly connectNotificationRepo: Repository<ConnectNotification>,
     @InjectQueue('feed-fanout') private feedQueue: Queue,
     private configService: ConfigService,
     private supportService: SupportService,
@@ -72,15 +73,32 @@ export class ConnectService {
 
   // ─── Posts ────────────────────────────────────────────────────────
 
-  async createPost(userId: string, content: string, imageUrls?: string[]) {
+  async createPost(
+    userId: string,
+    dto: import('./dto/create-post.dto').CreatePostDto,
+  ) {
     const author = new User();
     author.id = userId;
     const post = this.postRepo.create({
       author,
-      content,
-      imageUrls: imageUrls || null,
+      body: dto.body,
+      visibility: dto.visibility,
     });
     await this.postRepo.save(post);
+
+    if (dto.imageUrls && dto.imageUrls.length > 0) {
+      const mediaRepo = this.postRepo.manager.getRepository(PostMedia);
+      const mediaRecords = dto.imageUrls.map((url, index) => {
+        return mediaRepo.create({
+          post: post,
+          mediaUrl: url,
+          mediaType: MediaType.IMAGE,
+          orderIndex: index,
+        });
+      });
+      await mediaRepo.save(mediaRecords);
+      // TODO: enqueue image processing job to strip EXIF and move to public CDN
+    }
 
     // Queue fan-out job (fire-and-forget — don't block post creation if Redis is down)
     try {
@@ -144,9 +162,9 @@ export class ConnectService {
     // DB fallback: get posts from people this user follows + own posts
     const followedUsers = await this.followRepo.find({
       where: { follower: { id: userId }, status: FollowStatus.ACCEPTED },
-      relations: ['followee'],
+      relations: ['following'],
     });
-    const followedIds = followedUsers.map((f) => f.followee.id);
+    const followedIds = followedUsers.map((f) => f.following.id);
     followedIds.push(userId); // include own posts
 
     const [posts, total] = await this.postRepo
@@ -213,16 +231,27 @@ export class ConnectService {
     return { success: true, message: 'Post liked' };
   }
 
-  async commentPost(userId: string, postId: string, body: string) {
+  async commentPost(
+    userId: string,
+    postId: string,
+    dto: import('./dto/create-comment.dto').CreateCommentDto,
+  ) {
     const postRef = new Post();
     postRef.id = postId;
     const authorRef = new User();
     authorRef.id = userId;
 
+    let parentCommentRef: PostComment | undefined = undefined;
+    if (dto.parentCommentId) {
+      parentCommentRef = new PostComment();
+      parentCommentRef.id = dto.parentCommentId;
+    }
+
     const comment = this.commentRepo.create({
       post: postRef,
       author: authorRef,
-      body,
+      body: dto.content,
+      parentComment: parentCommentRef,
     });
     await this.commentRepo.save(comment);
     await this.postRepo.increment({ id: postId }, 'commentsCount', 1);
@@ -256,12 +285,12 @@ export class ConnectService {
 
   // ─── Network (Follows) ─────────────────────────────────────────────
 
-  async followUser(followerId: string, followeeId: string) {
-    if (followerId === followeeId)
+  async followUser(followerId: string, followingId: string) {
+    if (followerId === followingId)
       throw new BadRequestException('Cannot follow yourself');
 
     const existing = await this.followRepo.findOne({
-      where: { follower: { id: followerId }, followee: { id: followeeId } },
+      where: { follower: { id: followerId }, following: { id: followingId } },
     });
 
     if (existing) {
@@ -277,18 +306,18 @@ export class ConnectService {
 
     const followerRef = new User();
     followerRef.id = followerId;
-    const followeeRef = new User();
-    followeeRef.id = followeeId;
+    const followingRef = new User();
+    followingRef.id = followingId;
 
     const follow = this.followRepo.create({
       follower: followerRef,
-      followee: followeeRef,
+      following: followingRef,
       status: FollowStatus.PENDING,
     });
     await this.followRepo.save(follow);
 
     await this.supportService.createNotification(
-      followeeId,
+      followingId,
       'follow_request',
       `Someone requested to follow you.`,
       `/connect/profile/${followerId}`,
@@ -299,7 +328,7 @@ export class ConnectService {
 
   async acceptFollow(userId: string, followerId: string) {
     const follow = await this.followRepo.findOne({
-      where: { follower: { id: followerId }, followee: { id: userId } },
+      where: { follower: { id: followerId }, following: { id: userId } },
     });
     if (!follow) throw new NotFoundException('Follow request not found');
 
@@ -318,7 +347,7 @@ export class ConnectService {
 
   async rejectFollow(userId: string, followerId: string) {
     const follow = await this.followRepo.findOne({
-      where: { follower: { id: followerId }, followee: { id: userId } },
+      where: { follower: { id: followerId }, following: { id: userId } },
     });
     if (!follow) throw new NotFoundException('Follow request not found');
 
@@ -327,9 +356,9 @@ export class ConnectService {
     return { success: true, message: 'Follow request rejected' };
   }
 
-  async unfollowUser(followerId: string, followeeId: string) {
+  async unfollowUser(followerId: string, followingId: string) {
     const follow = await this.followRepo.findOne({
-      where: { follower: { id: followerId }, followee: { id: followeeId } },
+      where: { follower: { id: followerId }, following: { id: followingId } },
     });
     if (!follow) throw new NotFoundException('Not following this user');
     await this.followRepo.remove(follow);
@@ -338,7 +367,7 @@ export class ConnectService {
 
   async getFollowers(userId: string, page = 1, limit = 20) {
     const [data, total] = await this.followRepo.findAndCount({
-      where: { followee: { id: userId }, status: FollowStatus.ACCEPTED },
+      where: { following: { id: userId }, status: FollowStatus.ACCEPTED },
       relations: ['follower', 'follower.seekerProfile'],
       skip: (page - 1) * limit,
       take: limit,
@@ -359,17 +388,17 @@ export class ConnectService {
   async getFollowing(userId: string, page = 1, limit = 20) {
     const [data, total] = await this.followRepo.findAndCount({
       where: { follower: { id: userId }, status: FollowStatus.ACCEPTED },
-      relations: ['followee', 'followee.seekerProfile'],
+      relations: ['following', 'following.seekerProfile'],
       skip: (page - 1) * limit,
       take: limit,
     });
 
     const following = data.map((f) => {
-      const { password: _, ...safeUser } = f.followee;
+      const { password: _, ...safeUser } = f.following;
       return {
         ...safeUser,
-        firstName: f.followee.seekerProfile?.firstName,
-        lastName: f.followee.seekerProfile?.lastName,
+        firstName: f.following.seekerProfile?.firstName,
+        lastName: f.following.seekerProfile?.lastName,
       };
     });
 
@@ -378,7 +407,7 @@ export class ConnectService {
 
   async getPendingFollowRequests(userId: string, page = 1, limit = 20) {
     const [data, total] = await this.followRepo.findAndCount({
-      where: { followee: { id: userId }, status: FollowStatus.PENDING },
+      where: { following: { id: userId }, status: FollowStatus.PENDING },
       relations: ['follower', 'follower.seekerProfile'],
       order: { createdAt: 'DESC' },
       skip: (page - 1) * limit,
@@ -447,9 +476,9 @@ export class ConnectService {
     // Users not already followed by this user
     const following = await this.followRepo.find({
       where: { follower: { id: userId } },
-      relations: ['followee'],
+      relations: ['following'],
     });
-    const followedIds = following.map((f) => f.followee.id);
+    const followedIds = following.map((f) => f.following.id);
     followedIds.push(userId); // exclude self
 
     const query = this.userRepo
@@ -598,18 +627,26 @@ export class ConnectService {
 
   // ─── Post Reports ───────────────────────────────────────────────────
 
-  async reportPost(userId: string, postId: string, reason: string) {
+  async reportContent(
+    userId: string,
+    dto: import('./dto/create-report.dto').CreateReportDto,
+  ) {
     const reporterRef = new User();
     reporterRef.id = userId;
 
     const report = this.reportRepo.create({
       reporter: reporterRef,
-      targetType: ReportTargetType.POST,
-      targetId: postId,
-      reason,
+      targetType: dto.targetType,
+      targetId: dto.targetId,
+      reason: dto.reason,
+      details: dto.details,
     });
     await this.reportRepo.save(report);
-    return { success: true, message: 'Post reported', data: toPlain(report) };
+    return {
+      success: true,
+      message: 'Content reported successfully',
+      data: toPlain(report),
+    };
   }
 
   // ─── Post Comments (Delete) ──────────────────────────────────────────
@@ -676,7 +713,7 @@ export class ConnectService {
       where: { author: { id: user.id } },
     });
     const followersCount = await this.followRepo.count({
-      where: { followee: { id: user.id }, status: FollowStatus.ACCEPTED },
+      where: { following: { id: user.id }, status: FollowStatus.ACCEPTED },
     });
     const followingCount = await this.followRepo.count({
       where: { follower: { id: user.id }, status: FollowStatus.ACCEPTED },
@@ -690,7 +727,7 @@ export class ConnectService {
       const connection = await this.followRepo.findOne({
         where: {
           follower: { id: requesterId },
-          followee: { id: user.id },
+          following: { id: user.id },
           status: FollowStatus.ACCEPTED,
         },
       });
@@ -724,5 +761,61 @@ export class ConnectService {
       followingCount,
       recentPosts,
     });
+  }
+
+  // ─── Blocks ─────────────────────────────────────────────────────────
+
+  async blockUser(userId: string, blockedId: string) {
+    if (userId === blockedId) {
+      throw new BadRequestException('You cannot block yourself');
+    }
+
+    const block = await this.blockRepo.findOne({
+      where: { blocker: { id: userId }, blocked: { id: blockedId } },
+    });
+
+    if (block) {
+      return { success: true, message: 'User already blocked' };
+    }
+
+    const newBlock = this.blockRepo.create({
+      blocker: { id: userId } as User,
+      blocked: { id: blockedId } as User,
+    });
+    await this.blockRepo.save(newBlock);
+
+    // Unfollow each other if blocked
+    await this.followRepo.delete([
+      { follower: { id: userId }, following: { id: blockedId } },
+      { follower: { id: blockedId }, following: { id: userId } },
+    ]);
+
+    return { success: true, message: 'User blocked successfully' };
+  }
+
+  async unblockUser(userId: string, blockedId: string) {
+    await this.blockRepo.delete({
+      blocker: { id: userId },
+      blocked: { id: blockedId },
+    });
+    return { success: true, message: 'User unblocked successfully' };
+  }
+
+  async getBlockedUsers(userId: string, page = 1, limit = 20) {
+    const [blocks, total] = await this.blockRepo.findAndCount({
+      where: { blocker: { id: userId } },
+      relations: ['blocked', 'blocked.seekerProfile'],
+      take: limit,
+      skip: (page - 1) * limit,
+    });
+
+    const data = blocks.map((b) => ({
+      id: b.blocked.id,
+      firstName: b.blocked.seekerProfile?.firstName,
+      lastName: b.blocked.seekerProfile?.lastName,
+      avatarUrl: b.blocked.seekerProfile?.avatarUrl,
+    }));
+
+    return { data, meta: { page, limit, total } };
   }
 }

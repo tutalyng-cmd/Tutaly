@@ -12,6 +12,9 @@ import {
 } from '@nestjs/common';
 import { ConnectService } from './connect.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { CreatePostDto } from './dto/create-post.dto';
+import { CreateCommentDto } from './dto/create-comment.dto';
+import { CreateReportDto } from './dto/create-report.dto';
 
 interface AuthenticatedRequest {
   user: { sub: string; email: string; role: string };
@@ -25,10 +28,9 @@ export class ConnectController {
   @Post('posts')
   async createPost(
     @NestRequest() req: AuthenticatedRequest,
-    @Body('content') content: string,
-    @Body('imageUrls') imageUrls?: string[],
+    @Body() dto: CreatePostDto,
   ) {
-    return this.connectService.createPost(req.user.sub, content, imageUrls);
+    return this.connectService.createPost(req.user.sub, dto);
   }
 
   @Get('feed')
@@ -56,9 +58,9 @@ export class ConnectController {
   async commentPost(
     @Param('id') id: string,
     @NestRequest() req: AuthenticatedRequest,
-    @Body('body') body: string,
+    @Body() dto: CreateCommentDto,
   ) {
-    return this.connectService.commentPost(req.user.sub, id, body);
+    return this.connectService.commentPost(req.user.sub, id, dto);
   }
 
   @Get('posts/:id/comments')
@@ -232,13 +234,12 @@ export class ConnectController {
     );
   }
 
-  @Post('posts/:id/report')
-  async reportPost(
-    @Param('id') id: string,
+  @Post('report')
+  async reportContent(
     @NestRequest() req: AuthenticatedRequest,
-    @Body('reason') reason: string,
+    @Body() dto: CreateReportDto,
   ) {
-    return this.connectService.reportPost(req.user.sub, id, reason);
+    return this.connectService.reportContent(req.user.sub, dto);
   }
 
   @Delete('posts/:postId/comments/:commentId')
@@ -261,5 +262,34 @@ export class ConnectController {
     @NestRequest() req: AuthenticatedRequest,
   ) {
     return this.connectService.getPublicProfile(username, req.user.sub);
+  }
+
+  @Post('blocks/:id')
+  async blockUser(
+    @Param('id') id: string,
+    @NestRequest() req: AuthenticatedRequest,
+  ) {
+    return this.connectService.blockUser(req.user.sub, id);
+  }
+
+  @Delete('blocks/:id')
+  async unblockUser(
+    @Param('id') id: string,
+    @NestRequest() req: AuthenticatedRequest,
+  ) {
+    return this.connectService.unblockUser(req.user.sub, id);
+  }
+
+  @Get('blocks')
+  async getBlockedUsers(
+    @NestRequest() req: AuthenticatedRequest,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
+    return this.connectService.getBlockedUsers(
+      req.user.sub,
+      parseInt(page || '1', 10),
+      parseInt(limit || '20', 10),
+    );
   }
 }

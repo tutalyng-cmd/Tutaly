@@ -6,12 +6,14 @@ import {
   CreateDateColumn,
   Index,
   Unique,
+  Check,
 } from 'typeorm';
 import { User } from '../../user/entities/user.entity';
 
 export enum FollowStatus {
   PENDING = 'pending',
   ACCEPTED = 'accepted',
+  REJECTED = 'rejected',
 }
 
 export enum FollowApprovalSetting {
@@ -23,6 +25,9 @@ export enum FollowApprovalSetting {
 @Unique(['follower', 'following'])
 @Index(['follower', 'status'])
 @Index(['following', 'status'])
+@Index(['follower'])
+@Index(['following'])
+@Check('"followerId" != "followingId"')
 export class Follow {
   @PrimaryGeneratedColumn('uuid')
   id: string;

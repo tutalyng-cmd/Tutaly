@@ -6,13 +6,19 @@ import {
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
+  DeleteDateColumn,
   Index,
 } from 'typeorm';
 import { User } from '../../user/entities/user.entity';
 import { PostComment } from './post-comment.entity';
 import { PostLike } from './post-like.entity';
+import { PostMedia } from './post-media.entity';
 import { SavedPost } from './saved-post.entity';
-import { Report } from './report.entity';
+
+export enum PostVisibility {
+  PUBLIC = 'public',
+  CONNECTIONS_ONLY = 'connections_only',
+}
 
 @Entity('posts')
 @Index(['author', 'createdAt'])
@@ -25,10 +31,14 @@ export class Post {
   author: User;
 
   @Column('text')
-  content: string;
+  body: string;
 
-  @Column('varchar', { array: true, nullable: true })
-  imageUrls?: string[] | null; // Multiple images from Supabase Storage
+  @Column({
+    type: 'enum',
+    enum: PostVisibility,
+    default: PostVisibility.PUBLIC,
+  })
+  visibility: PostVisibility;
 
   @Column('integer', { default: 0 })
   likesCount: number;
@@ -47,11 +57,17 @@ export class Post {
   @OneToMany(() => PostLike, (like) => like.post, { cascade: ['remove'] })
   likes: PostLike[];
 
+  @OneToMany(() => PostMedia, (media) => media.post, { cascade: ['remove'] })
+  media: PostMedia[];
+
   @OneToMany(() => SavedPost, (saved) => saved.post, { cascade: ['remove'] })
   savedBy: SavedPost[];
 
-  @OneToMany(() => Report, (report) => report.post, { cascade: ['remove'] })
-  reports: Report[];
+  @Column('timestamp', { nullable: true })
+  editedAt: Date | null;
+
+  @DeleteDateColumn()
+  deletedAt: Date;
 
   @CreateDateColumn()
   createdAt: Date;

@@ -3,11 +3,15 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
+  OneToMany,
   CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
   Index,
 } from 'typeorm';
 import { Post } from './post.entity';
 import { User } from '../../user/entities/user.entity';
+import { CommentLike } from './comment-like.entity';
 
 @Entity('post_comments')
 @Index(['post', 'createdAt'])
@@ -21,12 +25,30 @@ export class PostComment {
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
   author: User;
 
+  @ManyToOne(() => PostComment, (comment) => comment.replies, {
+    nullable: true,
+    onDelete: 'CASCADE',
+  })
+  parentComment: PostComment | null;
+
+  @OneToMany(() => PostComment, (comment) => comment.parentComment)
+  replies: PostComment[];
+
   @Column('text')
-  content: string;
+  body: string;
+
+  @Column('integer', { default: 0 })
+  likesCount: number;
+
+  @OneToMany(() => CommentLike, (like) => like.comment, { cascade: ['remove'] })
+  likes: CommentLike[];
 
   @CreateDateColumn()
   createdAt: Date;
 
-  @Column('timestamp', { nullable: true })
+  @UpdateDateColumn()
   updatedAt: Date;
+
+  @DeleteDateColumn()
+  deletedAt: Date;
 }

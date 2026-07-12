@@ -141,7 +141,7 @@ export default function SavedPostsPage() {
                 <p className="text-c800 text-sm leading-relaxed whitespace-pre-wrap mb-4">{post.content}</p>
 
                 {displayImage && (
-                  <div className="rounded-xl overflow-hidden mb-4 bg-c100 flex justify-center relative min-h-[200px]">
+                  <div className="rounded-xl overflow-hidden mb-4 bg-c100 flex justify-center relative" style={{ minHeight: '200px' }}>
                     <Image src={displayImage} alt="Post content" fill className="object-contain" unoptimized />
                   </div>
                 )}

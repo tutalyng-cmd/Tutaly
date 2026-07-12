@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { apiAuth } from '@/lib/api';
 import { Loader2, Upload, Building2, CheckCircle2 } from 'lucide-react';
@@ -26,34 +26,35 @@ export default function EmployerProfilePage() {
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const token = localStorage.getItem('access_token');
-        if (!token) return;
-        const res = await apiAuth.withToken(token).get('/user/employer/profile');
-        setProfile({
-          companyName: res.data.companyName || '',
-          industry: res.data.industry || '',
-          companySize: res.data.companySize || '201–1,000 employees',
-          website: res.data.website || '',
-          companyBio: res.data.companyBio || '',
-          city: res.data.city || '',
-          founded: res.data.founded || '',
-          linkedin: res.data.linkedin || '',
-          twitter: res.data.twitter || '',
-          logoUrl: res.data.logoUrl || '',
-          logoSignedUrl: res.data.logoSignedUrl || '',
-          isVerified: res.data.isVerified || false,
-        });
-      } catch (err) {
-        console.error('Failed to load employer profile', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProfile();
+  const fetchProfile = useCallback(async () => {
+    try {
+      const token = localStorage.getItem('access_token');
+      if (!token) return;
+      const res = await apiAuth.withToken(token).get('/user/employer/profile');
+      setProfile({
+        companyName: res.data.companyName || '',
+        industry: res.data.industry || '',
+        companySize: res.data.companySize || '201–1,000 employees',
+        website: res.data.website || '',
+        companyBio: res.data.companyBio || '',
+        city: res.data.city || '',
+        founded: res.data.founded || '',
+        linkedin: res.data.linkedin || '',
+        twitter: res.data.twitter || '',
+        logoUrl: res.data.logoUrl || '',
+        logoSignedUrl: res.data.logoSignedUrl || '',
+        isVerified: res.data.isVerified || false,
+      });
+    } catch (err) {
+      console.error('Failed to load employer profile', err);
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;

@@ -288,16 +288,16 @@ export default function JobResultsWithDetail({
         </main>
 
         {/* ─── Desktop: Job Detail Panel ─── */}
-        <aside className="hidden lg:block w-[450px] shrink-0 sticky top-24 pb-8">
+        <aside className="hidden lg:block shrink-0 sticky top-24 pb-8" style={{ width: '450px' }}>
           {selectedJob ? (
             <JobDetailPanel job={selectedJob} />
           ) : (
-            <div className="bg-white p-12 rounded-2xl shadow-sm border border-c200 min-h-[500px] flex flex-col items-center justify-center text-center">
+            <div className="bg-white p-12 rounded-2xl shadow-sm border border-c200 flex flex-col items-center justify-center text-center" style={{ minHeight: '500px' }}>
               <div className="w-16 h-16 bg-c100 rounded-full flex items-center justify-center mb-6">
                 <Briefcase className="w-8 h-8 text-c400" />
               </div>
               <h3 className="text-lg font-bold text-c900 mb-2">Select a job</h3>
-              <p className="text-c500 leading-relaxed max-w-[250px]">
+              <p className="text-c500 leading-relaxed" style={{ maxWidth: '250px' }}>
                 Click on any listing on the left to see the full description and apply.
               </p>
             </div>

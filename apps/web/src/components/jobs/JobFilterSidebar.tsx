@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Country, State, City } from 'country-state-city';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface FilterMeta {
   industries: string[];
@@ -25,6 +26,15 @@ export default function JobFilterSidebar({ filterMeta }: { filterMeta?: FilterMe
   const [minSalary, setMinSalary] = useState(searchParams.get('minSalary') || '');
   const [maxSalary, setMaxSalary] = useState(searchParams.get('maxSalary') || '');
   const [datePosted, setDatePosted] = useState(searchParams.get('datePosted') || '');
+
+  // Filter visibility state (open by default, closed on mobile via effect)
+  const [isOpen, setIsOpen] = useState(true);
+
+  useEffect(() => {
+    if (window.innerWidth < 768) {
+      setIsOpen(false);
+    }
+  }, []);
 
   // Cascading location data
   const industriesList = useMemo(() => filterMeta?.industries || [], [filterMeta?.industries]);
@@ -69,6 +79,9 @@ export default function JobFilterSidebar({ filterMeta }: { filterMeta?: FilterMe
     if (datePosted) params.set('datePosted', datePosted);
 
     router.push(`/jobs?${params.toString()}`);
+    if (window.innerWidth < 768) {
+      setIsOpen(false);
+    }
   };
 
   const handleClear = () => {
@@ -86,20 +99,28 @@ export default function JobFilterSidebar({ filterMeta }: { filterMeta?: FilterMe
     router.push('/jobs');
   };
 
-  const [isOpen, setIsOpen] = useState(false);
-
   return (
     <>
       <button 
-        className="md:hidden w-full mb-6 btn btn--ghost flex justify-between items-center bg-c800 border border-c700" 
+        className="w-full mb-6 btn btn--ghost flex justify-between items-center bg-c800 border border-c700 premium-hover" 
         onClick={() => setIsOpen(!isOpen)}
       >
         <span>{isOpen ? 'Hide Filters' : 'Show Filters'}</span>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d={isOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>
+          <path d="M19 9l-7 7-7-7" />
         </svg>
       </button>
-      <aside className={`filters ${isOpen ? 'block' : 'hidden md:block'}`} aria-label="Job filters">
+      
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.aside 
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="filters overflow-hidden" 
+            aria-label="Job filters"
+          >
       <div className="filters__header">
         <span className="filters__title">Filters</span>
         <span className="filters__clear" onClick={handleClear}>Clear all</span>
@@ -236,11 +257,13 @@ export default function JobFilterSidebar({ filterMeta }: { filterMeta?: FilterMe
       </div>
 
       <div className="mt-6">
-        <button onClick={handleApply} className="btn btn--primary w-full">
+        <button onClick={handleApply} className="btn btn--primary w-full premium-hover">
           Apply Filters
         </button>
       </div>
-    </aside>
+          </motion.aside>
+        )}
+      </AnimatePresence>
     </>
   );
 }

@@ -73,10 +73,7 @@ export class AuthService {
             body: `secret=${recaptchaSecret}&response=${dto.recaptchaToken}`,
           },
         );
-        const recaptchaData = (await recaptchaRes.json()) as Record<
-          string,
-          unknown
-        >;
+        const recaptchaData = (await recaptchaRes.json()) as { success: boolean };
         if (!recaptchaData.success) {
           throw new BadRequestException(
             'reCAPTCHA verification failed. Please try again.',

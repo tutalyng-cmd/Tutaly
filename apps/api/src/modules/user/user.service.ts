@@ -12,7 +12,7 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 @Injectable()
 export class UserService {
-  private supabase: SupabaseClient;
+  private supabase: ReturnType<typeof createClient>;
 
   constructor(
     @InjectRepository(User)

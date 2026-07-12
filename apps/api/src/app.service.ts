@@ -38,7 +38,7 @@ export class AppService {
           countriesRepresented: parseInt(totalCountries, 10) || 0,
           professionals: parseInt(totalProfessionals, 10) || 0,
         };
-      } catch (err2) {
+      } catch {
         return {
           activeJobs: 0,
           companiesReviewed: 0,

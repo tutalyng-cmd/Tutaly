@@ -222,8 +222,8 @@ export default function BuyerOrdersPage() {
 
       {/* Dispute Modal */}
       {disputeOrderId && (
-        <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center">
-          <div className="bg-white p-6 rounded-xl w-[90%] max-w-[500px] shadow-xl">
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-xl w-full max-w-lg mx-4 shadow-xl">
             <h2 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '16px' }}>Report an Issue</h2>
             
             <div style={{ marginBottom: '16px' }}>

@@ -52,7 +52,6 @@ export default function DashboardLayout({
       items: [
         { name: 'Overview', href: '/employer', icon: LayoutDashboard },
         { name: 'Job Postings', href: '/employer/jobs', icon: Briefcase },
-        { name: 'Applicants', href: '/employer/applicants', icon: Users2 },
         { name: 'Ad Campaigns', href: '/employer/ads', icon: Megaphone },
       ]
     },

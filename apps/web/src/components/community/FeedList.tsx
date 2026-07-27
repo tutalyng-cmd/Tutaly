@@ -108,7 +108,7 @@ export function FeedList({ initialPosts = [], currentUser, feedType, profileId }
           <p className="dash-empty__desc">
             Sign in to share your thoughts, photos, and connect with other professionals.
           </p>
-          <a href="/auth/sign-in" className="btn btn--primary btn--sm inline-block">
+          <a href="/auth/signin" className="btn btn--primary btn--sm inline-block">
             Sign In
           </a>
         </div>
@@ -139,7 +139,7 @@ export function FeedList({ initialPosts = [], currentUser, feedType, profileId }
           <p className="dash-empty__desc" style={{ marginBottom: '16px' }}>
             Sign in to share your thoughts, photos, and connect with other professionals.
           </p>
-          <a href="/auth/sign-in" className="btn btn--primary btn--sm inline-block">
+          <a href="/auth/signin" className="btn btn--primary btn--sm inline-block">
             Sign In
           </a>
         </div>

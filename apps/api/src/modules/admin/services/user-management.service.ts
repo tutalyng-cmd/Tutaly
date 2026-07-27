@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User, UserRole, SellerStatus } from '../../user/entities/user.entity';
+import { User, UserRole } from '../../user/entities/user.entity';
 import { SeekerProfile } from '../../user/entities/seeker-profile.entity';
 import { EmployerProfile } from '../../user/entities/employer-profile.entity';
 import { Post } from '../../connect/entities/post.entity';
@@ -77,7 +77,7 @@ export class UserManagementService {
   async getUserDetail(userId: string) {
     const user = await this.userRepo.findOne({
       where: { id: userId },
-      relations: ['seekerProfile', 'employerProfile'],
+      relations: ['seekerProfile', 'employerProfile', 'sellerProfile'],
     });
 
     if (!user) throw new NotFoundException('User not found');
@@ -98,7 +98,10 @@ export class UserManagementService {
   }
 
   async updateUserStatus(userId: string, status: UserStatus): Promise<void> {
-    const user = await this.userRepo.findOne({ where: { id: userId } });
+    const user = await this.userRepo.findOne({ 
+      where: { id: userId },
+      relations: ['sellerProfile']
+    });
     if (!user) throw new NotFoundException('User not found');
 
     if (status === UserStatus.SUSPENDED) {
@@ -153,7 +156,7 @@ export class UserManagementService {
       }
 
       // Remove all seller listings if applicable
-      if (user.sellerStatus !== SellerStatus.NONE) {
+      if (user.sellerProfile) {
         await this.postRepo.delete({ author: { id: userId } });
       }
 

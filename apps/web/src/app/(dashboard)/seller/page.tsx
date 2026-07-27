@@ -45,6 +45,8 @@ export default function SellerShopPage() {
 
         if (status === 'approved') {
           await fetchSellerData(token);
+        } else {
+          window.location.href = '/seller/apply';
         }
       } catch (err) {
         console.error('Failed to check seller status', err);
@@ -70,24 +72,7 @@ export default function SellerShopPage() {
     );
   }
 
-  if (sellerStatus === 'none' || sellerStatus === 'rejected') {
-    if (typeof window !== 'undefined') {
-      window.location.href = '/seller/apply';
-    }
-    return null;
-  }
 
-  if (sellerStatus === 'pending') {
-    return (
-      <div className="dash-empty mt-10">
-        <div className="dash-empty__icon" style={{ background: 'var(--c-700)' }}>⏳</div>
-        <div className="dash-empty__title">Application Under Review</div>
-        <div className="dash-empty__desc">
-          Your seller application is being reviewed by the Tutaly team. You'll be notified once a decision is made.
-        </div>
-      </div>
-    );
-  }
 
   const totalRevenue = orders
     .filter((o: any) => o.status === 'completed')

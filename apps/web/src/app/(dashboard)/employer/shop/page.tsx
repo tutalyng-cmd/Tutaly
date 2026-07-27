@@ -69,7 +69,8 @@ export default function SellerShopPage() {
       const token = localStorage.getItem('access_token');
       if (!token) return;
       await apiAuth.withToken(token).post('/shop/seller/apply', applyForm);
-      setSellerStatus('pending');
+      setSellerStatus('approved');
+      await fetchSellerData(token);
     } catch (e) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const error = e as any;
@@ -167,21 +168,6 @@ alert(err.response?.data?.message || 'Failed to mark as delivered');
             Submit Application
           </button>
         </form>
-      </div>
-    );
-  }
-
-  // Application pending
-  if (sellerStatus === 'pending') {
-    return (
-      <div className="max-w-2xl">
-        <div className="dcard text-center py-12">
-          <Clock className="w-16 h-16 mx-auto mb-6 opacity-80" style={{ color: 'var(--gold)' }} />
-          <h2 className="text-xl font-bold mb-3" style={{ color: 'var(--c-100)' }}>Application Under Review</h2>
-          <p className="max-w-md mx-auto" style={{ color: 'var(--c-400)', fontSize: '14px' }}>
-            Your seller application is being reviewed by the Tutaly team. You'll be notified once a decision is made.
-          </p>
-        </div>
       </div>
     );
   }

@@ -48,10 +48,9 @@ export default function ApplySellerPage() {
     try {
       const token = localStorage.getItem('access_token');
       await apiAuth.withToken(token!).post('/shop/seller/apply', formData);
-      alert('Application submitted successfully!');
-      setStatus('pending');
+      router.push('/seller');
     } catch (error: any) {
-      alert(error.response?.data?.message || 'Failed to submit application');
+      alert(error.response?.data?.message || 'Failed to create profile');
     } finally {
       setLoading(false);
     }
@@ -65,65 +64,30 @@ export default function ApplySellerPage() {
     );
   }
 
-  if (status === 'pending') {
-    return (
-      <div className="dash-empty mt-12 max-w-2xl mx-auto border border-c100 rounded-2xl shadow-sm bg-white p-8">
-        <div className="dash-empty__icon !bg-blueL text-blue mb-6"><Loader2 className="w-8 h-8 animate-spin" /></div>
-        <div className="dash-empty__title text-2xl font-bold text-c900 mb-4">Application Under Review</div>
-        <div className="dash-empty__desc text-c600 mb-8">
-          Your application to become a seller on Tutaly is currently being reviewed by our admin team. We will notify you once a decision has been made.
-        </div>
-        <button
-          onClick={() => router.back()}
-          className="btn btn--secondary"
-        >
-          Go Back
-        </button>
-      </div>
-    );
-  }
-
-  if (status === 'rejected') {
-    return (
-      <div className="dash-empty mt-12 max-w-2xl mx-auto border border-c100 rounded-2xl shadow-sm bg-white p-8">
-        <div className="dash-empty__icon !bg-red !bg-opacity-10 text-red mb-6"><CheckCircle className="w-8 h-8" /></div>
-        <div className="dash-empty__title text-2xl font-bold text-c900 mb-4">Application Rejected</div>
-        <div className="dash-empty__desc text-c600 mb-8">
-          Unfortunately, your application to become a seller was not approved at this time.
-        </div>
-        <button
-          onClick={() => router.back()}
-          className="btn btn--secondary"
-        >
-          Go Back
-        </button>
-      </div>
-    );
-  }
 
   return (
     <div className="max-w-3xl mx-auto py-8">
-      <div className="page-header bg-greenL rounded-2xl p-8 mb-8">
+      <div className="page-header rounded-2xl p-8 mb-8" style={{ background: 'var(--c-800)', border: '1px solid var(--c-700)' }}>
         <div className="flex items-center gap-4">
           <div className="w-16 h-16 bg-green text-white rounded-xl flex items-center justify-center shadow-md">
             <Store className="w-8 h-8" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-c900 mb-2">Become a Tutaly Seller</h1>
-            <p className="text-c700 max-w-xl text-lg">
+            <h1 className="text-3xl font-bold text-c100 mb-2">Become a Tutaly Seller</h1>
+            <p className="text-c300 max-w-xl text-lg">
               Join the Tutaly shop and start selling your digital products, physical goods, and professional services to thousands of users.
             </p>
           </div>
         </div>
       </div>
 
-      <div className="dcard">
+      <div className="dcard" style={{ background: 'var(--c-800)', border: '1px solid var(--c-700)' }}>
         <div className="p-6 sm:p-8">
-          <h2 className="text-xl font-bold text-c900 mb-6">Seller Application</h2>
+          <h2 className="text-xl font-bold text-c100 mb-6">Seller Application</h2>
           
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-semibold text-c900 mb-2">
+              <label className="block text-sm font-semibold text-c100 mb-2">
                 Business Bio / About You
               </label>
               <textarea
@@ -135,12 +99,12 @@ export default function ApplySellerPage() {
                 onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
               />
               <p className="mt-2 text-sm text-c500">
-                This helps our team understand your business and approve your application faster.
+                This helps our buyers understand your business.
               </p>
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-c900 mb-2">
+              <label className="block text-sm font-semibold text-c100 mb-2">
                 Primary Category Focus
               </label>
               <input
@@ -163,7 +127,7 @@ export default function ApplySellerPage() {
                   <Loader2 className="w-5 h-5 animate-spin mx-auto" />
                 ) : (
                   <>
-                    Submit Application <ArrowRight className="w-5 h-5 ml-2" />
+                    Create Profile <ArrowRight className="w-5 h-5 ml-2" />
                   </>
                 )}
               </button>

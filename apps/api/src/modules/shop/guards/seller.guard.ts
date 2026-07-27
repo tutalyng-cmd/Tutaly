@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User, SellerStatus } from '../../user/entities/user.entity';
+import { User } from '../../user/entities/user.entity';
 
 @Injectable()
 export class SellerGuard implements CanActivate {
@@ -23,10 +23,13 @@ export class SellerGuard implements CanActivate {
       throw new ForbiddenException('Authentication required.');
     }
 
-    const user = await this.userRepo.findOne({ where: { id: userId } });
-    if (!user || user.sellerStatus !== SellerStatus.APPROVED) {
+    const user = await this.userRepo.findOne({
+      where: { id: userId },
+      relations: ['sellerProfile'],
+    });
+    if (!user || !user.sellerProfile) {
       throw new ForbiddenException(
-        'You must be an approved seller to perform this action. Apply at /shop/seller/apply.',
+        'You must have a seller profile to perform this action. Apply at /shop/seller/apply.',
       );
     }
 

@@ -69,30 +69,3 @@ export class Notification extends BaseEntity {
   link: string;
 }
 
-export enum SellerApplicationStatus {
-  PENDING = 'pending',
-  APPROVED = 'approved',
-  REJECTED = 'rejected',
-}
-
-@Entity('seller_applications')
-export class SellerApplication extends BaseEntity {
-  @ManyToOne(() => User)
-  user: User;
-
-  @Column('text')
-  bio: string;
-
-  @Column()
-  categoryFocus: string;
-
-  @Column({
-    type: 'enum',
-    enum: SellerApplicationStatus,
-    default: SellerApplicationStatus.PENDING,
-  })
-  status: SellerApplicationStatus;
-
-  @ManyToOne(() => User, { nullable: true })
-  reviewedBy: User;
-}

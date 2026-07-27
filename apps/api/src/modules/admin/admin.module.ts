@@ -8,7 +8,7 @@ import { NotificationService } from './services/notification.service';
 import { UserManagementService } from './services/user-management.service';
 import { JobsModerationService } from './services/jobs-moderation.service';
 import { ReviewsModerationService } from './services/reviews-moderation.service';
-import { SellersModerationService } from './services/sellers-moderation.service';
+
 import { ReportsModerationService } from './services/reports-moderation.service';
 import { DisputesResolutionService } from './services/disputes-resolution.service';
 import { RevenueService } from './services/revenue.service';
@@ -26,7 +26,7 @@ import { UserSettings } from '../user/entities/user-settings.entity';
 import { Job, Application } from '../job/entities/job.entity';
 import { Order, OrderDispute } from '../shop/entities/order.entity';
 import {
-  SellerApplication,
+
   LegalPage,
   Ad,
 } from '../support/entities/support.entity';
@@ -51,7 +51,7 @@ import { AuthModule } from '../auth/auth.module';
       Application,
       Order,
       OrderDispute,
-      SellerApplication,
+
       ShopProduct,
       CompanyReview,
       Post,
@@ -73,7 +73,6 @@ import { AuthModule } from '../auth/auth.module';
     UserManagementService,
     JobsModerationService,
     ReviewsModerationService,
-    SellersModerationService,
     ReportsModerationService,
     DisputesResolutionService,
     RevenueService,

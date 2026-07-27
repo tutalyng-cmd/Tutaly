@@ -24,11 +24,8 @@ import {
   QuoteStatus,
   OrderDispute,
 } from './entities/order.entity';
-import { User, SellerStatus } from '../user/entities/user.entity';
-import {
-  SellerApplication,
-  SellerApplicationStatus,
-} from '../support/entities/support.entity';
+import { User } from '../user/entities/user.entity';
+import { SellerProfile } from './entities/seller-profile.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ApplySellerDto } from './dto/apply-seller.dto';
@@ -74,8 +71,8 @@ export class ShopService {
     private readonly orderRepo: Repository<Order>,
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
-    @InjectRepository(SellerApplication)
-    private readonly sellerAppRepo: Repository<SellerApplication>,
+    @InjectRepository(SellerProfile)
+    private readonly sellerProfileRepo: Repository<SellerProfile>,
     @InjectRepository(ShopCategory)
     private readonly categoryRepo: Repository<ShopCategory>,
     @InjectRepository(ShopSubcategory)
@@ -97,52 +94,37 @@ export class ShopService {
   // ─── Seller Application Flow ──────────────────────────────────────
 
   async applySeller(userId: string, dto: ApplySellerDto) {
-    const user = await this.userRepo.findOne({ where: { id: userId } });
+    const user = await this.userRepo.findOne({
+      where: { id: userId },
+      relations: ['sellerProfile'],
+    });
     if (!user) throw new NotFoundException('User not found');
 
-    if (user.sellerStatus === SellerStatus.APPROVED) {
-      throw new BadRequestException('You are already an approved seller.');
-    }
-    if (user.sellerStatus === SellerStatus.PENDING) {
-      throw new BadRequestException(
-        'Your seller application is already pending review.',
-      );
+    if (user.sellerProfile) {
+      throw new BadRequestException('You are already a seller.');
     }
 
-    // Check for existing pending application
-    const existing = await this.sellerAppRepo.findOne({
-      where: { user: { id: userId }, status: SellerApplicationStatus.PENDING },
-    });
-    if (existing) {
-      throw new BadRequestException('You already have a pending application.');
-    }
-
-    const userRef = new User();
-    userRef.id = userId;
-
-    const application = this.sellerAppRepo.create({
-      user: userRef,
+    const profile = this.sellerProfileRepo.create({
+      user: { id: userId } as User,
       bio: dto.bio,
       categoryFocus: dto.categoryFocus,
-      status: SellerApplicationStatus.PENDING,
     });
 
-    await this.sellerAppRepo.save(application);
-
-    // Update user status
-    user.sellerStatus = SellerStatus.PENDING;
-    await this.userRepo.save(user);
+    await this.sellerProfileRepo.save(profile);
 
     return {
       success: true,
-      message: 'Seller application submitted. Awaiting admin review.',
+      message: 'Seller profile created successfully.',
     };
   }
 
   async getSellerStatus(userId: string) {
-    const user = await this.userRepo.findOne({ where: { id: userId } });
+    const user = await this.userRepo.findOne({
+      where: { id: userId },
+      relations: ['sellerProfile'],
+    });
     if (!user) throw new NotFoundException('User not found');
-    return { sellerStatus: user.sellerStatus };
+    return { sellerStatus: user.sellerProfile ? 'approved' : 'none' };
   }
 
   // ─── Product CRUD ──────────────────────────────────────────────────

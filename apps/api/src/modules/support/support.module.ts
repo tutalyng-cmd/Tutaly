@@ -7,14 +7,14 @@ import {
   Notification,
   Ad,
   LegalPage,
-  SellerApplication,
+
 } from './entities/support.entity';
 import { AuthModule } from '../auth/auth.module';
 
 @Global()
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Notification, Ad, LegalPage, SellerApplication]),
+    TypeOrmModule.forFeature([Notification, Ad, LegalPage]),
     AuthModule,
   ],
   controllers: [SupportController],

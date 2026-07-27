@@ -171,9 +171,7 @@ export default function DashboardLayout({
       <aside className="dash-sidebar" aria-label="Dashboard navigation">
         <div className="dash-sidebar__logo">
           <Link href="/">
-            <div style={{ fontSize: '20px', fontWeight: 800, color: 'var(--c-100)', letterSpacing: '-0.02em' }}>
-              Tutaly<span style={{ color: 'var(--blue-l)' }}>.</span>
-            </div>
+            <Image src="/logo.png" alt="Tutaly" width={140} height={40} className="h-8 w-auto object-contain" />
           </Link>
         </div>
 

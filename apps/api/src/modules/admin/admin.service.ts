@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, FindOptionsWhere } from 'typeorm';
-import { User, UserRole, SellerStatus } from '../user/entities/user.entity';
+import { User, UserRole } from '../user/entities/user.entity';
 import { Job, JobStatus } from '../job/entities/job.entity';
 import {
   Order,
@@ -16,10 +16,6 @@ import {
   DisputeStatus,
 } from '../shop/entities/order.entity';
 import { ListingType } from '../shop/entities/shop.entity';
-import {
-  SellerApplication,
-  SellerApplicationStatus,
-} from '../support/entities/support.entity';
 import { ShopProduct } from '../shop/entities/shop.entity';
 import { CompanyReview, ReviewStatus } from '../review/entities/review.entity';
 
@@ -49,8 +45,6 @@ export class AdminService {
     @InjectRepository(User) private readonly userRepo: Repository<User>,
     @InjectRepository(Job) private readonly jobRepo: Repository<Job>,
     @InjectRepository(Order) private readonly orderRepo: Repository<Order>,
-    @InjectRepository(SellerApplication)
-    private readonly sellerAppRepo: Repository<SellerApplication>,
     @InjectRepository(ShopProduct)
     private readonly productRepo: Repository<ShopProduct>,
     @InjectRepository(OrderDispute)
@@ -84,9 +78,6 @@ export class AdminService {
     const pendingJobsCount = await this.jobRepo.count({
       where: { status: JobStatus.PENDING_REVIEW },
     });
-    const pendingSellersCount = await this.userRepo.count({
-      where: { sellerStatus: SellerStatus.PENDING },
-    });
     const flaggedOrdersCount = await this.orderRepo.count({
       where: { status: OrderStatus.FLAGGED },
     });
@@ -101,7 +92,6 @@ export class AdminService {
       totalRevenue: Number(typedOrders?.totalRevenue || 0),
       totalCommission: Number(typedOrders?.totalCommission || 0),
       pendingJobsCount,
-      pendingSellersCount,
       flaggedOrdersCount,
       totalProducts,
       openDisputesCount,
@@ -192,60 +182,6 @@ export class AdminService {
         totalPages: Math.ceil(total / limit),
       },
     };
-  }
-
-  async getAllSellerApplications(page = 1, limit = 20, status?: string) {
-    const where: FindOptionsWhere<SellerApplication> = {};
-    if (status) {
-      where.status = status as SellerApplicationStatus;
-    }
-
-    const [data, total] = await this.sellerAppRepo.findAndCount({
-      where,
-      relations: ['user', 'reviewedBy'],
-      skip: (page - 1) * limit,
-      take: limit,
-      order: { createdAt: 'DESC' },
-    });
-
-    return {
-      items: toPlain(data),
-      meta: {
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-      },
-    };
-  }
-
-  async updateSellerApplication(
-    applicationId: string,
-    status: SellerApplicationStatus,
-    adminId: string,
-  ) {
-    const application = await this.sellerAppRepo.findOne({
-      where: { id: applicationId },
-      relations: ['user'],
-    });
-    if (!application) throw new NotFoundException('Application not found');
-
-    application.status = status;
-    const admin = new User();
-    admin.id = adminId;
-    application.reviewedBy = admin;
-    await this.sellerAppRepo.save(application);
-
-    // Update user's sellerStatus
-    const user = application.user;
-    if (status === SellerApplicationStatus.APPROVED) {
-      user.sellerStatus = SellerStatus.APPROVED;
-    } else if (status === SellerApplicationStatus.REJECTED) {
-      user.sellerStatus = SellerStatus.REJECTED;
-    }
-    await this.userRepo.save(user);
-
-    return { success: true, message: `Seller application ${status}.` };
   }
 
   async getFlaggedOrders(page = 1, limit = 20) {

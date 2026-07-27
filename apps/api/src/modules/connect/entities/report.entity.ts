@@ -26,6 +26,7 @@ export enum ReportTargetType {
   POST = 'post',
   COMMENT = 'comment',
   USER = 'user',
+  LISTING = 'listing',
 }
 
 @Entity('reports')

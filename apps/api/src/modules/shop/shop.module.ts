@@ -24,7 +24,7 @@ import { PaymentTransactionAudit } from './entities/payment-audit.entity';
 import { ProductRating } from './entities/product-rating.entity';
 import { User } from '../user/entities/user.entity';
 import { SeekerProfile } from '../user/entities/seeker-profile.entity';
-import { SellerApplication } from '../support/entities/support.entity';
+import { SellerProfile } from './entities/seller-profile.entity';
 import { AuthModule } from '../auth/auth.module';
 
 // Payment Gateway Services
@@ -51,7 +51,7 @@ import { PaymentAuditService } from './services/payment-audit.service';
       ProductRating,
       User,
       SeekerProfile,
-      SellerApplication,
+      SellerProfile,
     ]),
     ScheduleModule.forRoot(),
     AuthModule,

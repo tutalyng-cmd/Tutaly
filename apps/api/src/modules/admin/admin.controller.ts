@@ -21,7 +21,7 @@ import {
 } from './services/user-management.service';
 import { JobsModerationService } from './services/jobs-moderation.service';
 import { ReviewsModerationService } from './services/reviews-moderation.service';
-import { SellersModerationService } from './services/sellers-moderation.service';
+
 import { ReportsModerationService } from './services/reports-moderation.service';
 import { JobStatus } from '../job/entities/job.entity';
 import { ReviewStatus } from '../review/entities/review.entity';
@@ -61,7 +61,7 @@ export class AdminController {
     private readonly userManagementService: UserManagementService,
     private readonly jobsModerationService: JobsModerationService,
     private readonly reviewsModerationService: ReviewsModerationService,
-    private readonly sellersModerationService: SellersModerationService,
+
     private readonly reportsModerationService: ReportsModerationService,
     private readonly disputesResolutionService: DisputesResolutionService,
     private readonly revenueService: RevenueService,
@@ -227,47 +227,7 @@ export class AdminController {
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // SELLERS MODERATION
-  // ═══════════════════════════════════════════════════════════════════════════
 
-  @Get('queue/sellers')
-  async getPendingSellerApplications(
-    @Query('page') page?: string,
-    @Query('limit') limit?: string,
-  ) {
-    return this.sellersModerationService.getPendingSellerApplications(
-      parseInt(page || '1', 10),
-      parseInt(limit || '20', 10),
-    );
-  }
-
-  @Patch('sellers/:id')
-  async approveOrRejectSeller(
-    @Param('id', ParseUUIDPipe) userId: string,
-    @Body('action') action: 'approve' | 'reject',
-    @Body('reason') reason?: string,
-  ) {
-    if (action === 'approve') {
-      await this.sellersModerationService.approveSeller(userId);
-      return { success: true, message: 'Seller application approved' };
-    } else if (action === 'reject') {
-      await this.sellersModerationService.rejectSeller(userId, reason);
-      return { success: true, message: 'Seller application rejected' };
-    }
-  }
-
-  @Get('sellers')
-  async getActiveSellerApplications(
-    @Query('page') page?: string,
-    @Query('limit') limit?: string,
-  ) {
-    return this.sellersModerationService.getActiveSellerApplications(
-      parseInt(page || '1', 10),
-      parseInt(limit || '20', 10),
-    );
-  }
-
-  // ═══════════════════════════════════════════════════════════════════════════
   // REPORTS MODERATION
   // ═══════════════════════════════════════════════════════════════════════════
 

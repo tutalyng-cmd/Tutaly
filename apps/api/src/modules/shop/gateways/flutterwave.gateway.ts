@@ -32,6 +32,59 @@ export class FlutterwaveGateway implements IPaymentGateway {
     return 'flutterwave';
   }
 
+  async refundPayment(paymentRef: string, amount?: number): Promise<boolean> {
+    if (!this.secretKey) {
+      this.logger.error('FLUTTER_WAVE_SECRET_KEY not configured for refunds');
+      return false;
+    }
+
+    // Since we don't have the Flutterwave internal transaction ID saved, we have to look it up by tx_ref first, 
+    // or assume we use the v3 API endpoint for refunds by tx_ref if available.
+    // For standard Flutterwave v3, refunds are initiated by transaction ID. We will assume we can hit the refund endpoint.
+    // Actually, Flutterwave refunds require the transaction ID (which we don't save). 
+    // We'd either need to query the transaction by tx_ref to get its ID, then refund.
+    try {
+      // 1. Get Transaction by tx_ref
+      const verifyRes = await fetch(`https://api.flutterwave.com/v3/transactions/verify_by_reference?tx_ref=${paymentRef}`, {
+        method: 'GET',
+        headers: { Authorization: `Bearer ${this.secretKey}` },
+      });
+      const verifyData = await verifyRes.json();
+      
+      if (verifyData.status !== 'success' || !verifyData.data?.id) {
+        this.logger.error(`Cannot refund: unable to find Flutterwave tx for ref ${paymentRef}`);
+        return false;
+      }
+      
+      const flwTransactionId = verifyData.data.id;
+
+      // 2. Process Refund
+      const payload: any = {};
+      if (amount) payload.amount = amount;
+
+      const refundRes = await fetch(`https://api.flutterwave.com/v3/transactions/${flwTransactionId}/refund`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${this.secretKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const refundData = await refundRes.json();
+      if (refundData.status === 'success') {
+        this.logger.log(`Successfully refunded transaction ${paymentRef}`);
+        return true;
+      } else {
+        this.logger.error(`Refund failed for ${paymentRef}: ${refundData.message}`);
+        return false;
+      }
+    } catch (error: any) {
+      this.logger.error(`Refund exception for ${paymentRef}: ${error.message}`);
+      return false;
+    }
+  }
+
   async initializePayment(payload: PaymentPayload): Promise<PaymentResponse> {
     if (!this.secretKey) {
       this.logger.warn('FLUTTER_WAVE_SECRET_KEY not configured');

@@ -29,6 +29,41 @@ export class StripeGateway implements IPaymentGateway {
     return 'stripe';
   }
 
+  async refundPayment(paymentRef: string, amount?: number): Promise<boolean> {
+    if (!this.stripe) {
+      this.logger.error('Stripe not configured for refunds');
+      return false;
+    }
+
+    try {
+      // First, we need to retrieve the PaymentIntent by its reference (or assume paymentRef IS the PaymentIntent ID)
+      // If we save the checkout session ID as paymentRef, we must retrieve the checkout session to get the PaymentIntent
+      const session = await this.stripe.checkout.sessions.retrieve(paymentRef);
+      const paymentIntentId = session.payment_intent as string;
+      
+      if (!paymentIntentId) {
+         this.logger.error(`No payment intent found for Stripe session ${paymentRef}`);
+         return false;
+      }
+
+      const payload: any = { payment_intent: paymentIntentId };
+      if (amount) payload.amount = amount * 100; // Stripe takes cents
+
+      const refund = await this.stripe.refunds.create(payload);
+
+      if (refund.status === 'succeeded' || refund.status === 'pending') {
+        this.logger.log(`Successfully refunded Stripe transaction ${paymentRef}`);
+        return true;
+      } else {
+        this.logger.error(`Stripe refund failed for ${paymentRef}: ${refund.status}`);
+        return false;
+      }
+    } catch (error: any) {
+      this.logger.error(`Stripe refund exception for ${paymentRef}: ${error.message}`);
+      return false;
+    }
+  }
+
   async initializePayment(payload: PaymentPayload): Promise<PaymentResponse> {
     if (!this.stripe) {
       return {

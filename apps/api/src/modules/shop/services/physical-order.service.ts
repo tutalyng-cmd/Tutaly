@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Cron, CronExpression } from '@nestjs/schedule';
 import { Order, OrderStatus } from '../entities/order.entity';
 import { ShopProduct, ListingType } from '../entities/shop.entity';
 
@@ -76,7 +75,7 @@ export class PhysicalOrderService {
 
     // Schedule auto-confirm in 48 hours
     const autoConfirmTime = new Date(Date.now() + 48 * 60 * 60 * 1000);
-    order.autoConfirmScheduledAt = autoConfirmTime;
+    order.escrowReleaseAt = autoConfirmTime;
 
     await this.orderRepo.save(order);
 
@@ -166,7 +165,7 @@ export class PhysicalOrderService {
       quantity: order.quantity,
       deliveredAt: order.deliveredAt || undefined,
       confirmedAt: order.confirmedAt || undefined,
-      autoConfirmScheduledAt: order.autoConfirmScheduledAt || undefined,
+      escrowReleaseAt: order.escrowReleaseAt || undefined,
       productTitle: order.product?.title,
       productImage: order.product?.imageUrls?.[0],
       buyerName: order.buyer?.email?.split('@')[0],
@@ -174,42 +173,6 @@ export class PhysicalOrderService {
     };
   }
 
-  /**
-   * Bull cron job - runs every hour to check for auto-confirm
-   * Auto-confirms any order that passed 48hr window without buyer confirmation
-   */
-  @Cron(CronExpression.EVERY_HOUR)
-  async autoConfirmDeliveredOrders(): Promise<void> {
-    const now = new Date();
-
-    // Find all orders with auto-confirm scheduled in the past
-    const ordersToAutoConfirm = await this.orderRepo
-      .createQueryBuilder('order')
-      .where('order.status = :status', { status: OrderStatus.DELIVERED })
-      .andWhere('order.auto_confirm_scheduled_at <= :now', { now })
-      .getMany();
-
-    for (const order of ordersToAutoConfirm) {
-      try {
-        order.status = OrderStatus.CONFIRMED;
-        order.confirmedAt = now;
-        order.earningsReleasedAt = now;
-
-        await this.orderRepo.save(order);
-
-        this.logger.log(
-          `Order ${order.id} auto-confirmed after 48hr window expired`,
-        );
-
-        // TODO: Send notification to buyer
-      } catch (error) {
-        this.logger.error(
-          `Failed to auto-confirm order ${order.id}:`,
-          error.message,
-        );
-      }
-    }
-  }
 
   /**
    * Get seller's physical orders (for dashboard)

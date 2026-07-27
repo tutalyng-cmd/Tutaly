@@ -24,7 +24,7 @@ export class OrderStatusDto {
   quantity: number;
   deliveredAt?: Date;
   confirmedAt?: Date;
-  autoConfirmScheduledAt?: Date;
+  escrowReleaseAt?: Date;
   productTitle: string;
   productImage?: string;
   buyerName?: string;

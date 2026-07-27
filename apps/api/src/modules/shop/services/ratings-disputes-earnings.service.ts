@@ -5,11 +5,16 @@ import {
   NotFoundException,
   ForbiddenException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { InjectQueue } from '@nestjs/bull';
+import type { Queue } from 'bull';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Between } from 'typeorm';
 import { Order, OrderStatus } from '../entities/order.entity';
 import { ShopProduct } from '../entities/shop.entity';
 import { ProductRating } from '../entities/product-rating.entity';
+import { PaymentGatewayFactory } from '../gateways/payment-gateway.factory';
 import {
   QuoteRequest,
   OrderDispute,
@@ -32,6 +37,7 @@ import {
 @Injectable()
 export class RatingsDisputesEarningsService {
   private readonly logger = new Logger(RatingsDisputesEarningsService.name);
+  private supabase: SupabaseClient;
 
   constructor(
     @InjectRepository(ProductRating)
@@ -46,7 +52,17 @@ export class RatingsDisputesEarningsService {
     private readonly quoteRepo: Repository<QuoteRequest>,
     @InjectRepository(OrderDispute)
     private readonly disputeRepo: Repository<OrderDispute>,
-  ) {}
+    private readonly paymentGatewayFactory: PaymentGatewayFactory,
+    private readonly configService: ConfigService,
+    @InjectQueue('image-processing') private readonly imageQueue: Queue,
+  ) {
+    const supabaseUrl = this.configService.get<string>('SUPABASE_URL');
+    const supabaseKey = this.configService.get<string>('SUPABASE_SERVICE_KEY');
+    
+    if (supabaseUrl && supabaseKey) {
+      this.supabase = createClient(supabaseUrl, supabaseKey);
+    }
+  }
 
   // ─── PRODUCT RATINGS ────────────────────────────────────────────
 
@@ -203,73 +219,101 @@ export class RatingsDisputesEarningsService {
     buyerId: string,
     dto: CreateDisputeDto,
   ): Promise<OrderDispute> {
-    // Verify order exists and buyer is the one raising dispute
-    const order = await this.orderRepo.findOne({
-      where: { id: orderId },
-      relations: ['buyer', 'seller'],
-    });
+    return this.orderRepo.manager.transaction(async (manager) => {
+      // Find order with pessimistic lock using inner join to avoid Postgres outer join lock error
+      const order = await manager.createQueryBuilder(Order, 'order')
+        .innerJoinAndSelect('order.buyer', 'buyer')
+        .innerJoinAndSelect('order.seller', 'seller')
+        .where('order.id = :orderId', { orderId })
+        .setLock('pessimistic_write')
+        .getOne();
 
-    if (!order) {
-      throw new NotFoundException('Order not found');
-    }
+      if (!order) {
+        throw new NotFoundException('Order not found');
+      }
 
-    if (order.buyer.id !== buyerId) {
-      throw new ForbiddenException('Only the buyer can raise a dispute');
-    }
+      if (order.buyer.id !== buyerId) {
+        throw new ForbiddenException('Only the buyer can raise a dispute');
+      }
 
-    if (order.status !== OrderStatus.COMPLETED) {
-      throw new BadRequestException(
-        'Disputes can only be raised for completed orders',
-      );
-    }
-
-    // Check 48-hour window
-    if (order.deliveryConfirmedAt) {
-      const hoursSinceCompletion =
-        (Date.now() - order.deliveryConfirmedAt.getTime()) / (1000 * 60 * 60);
-      if (hoursSinceCompletion > 48) {
+      if (![OrderStatus.PAID, OrderStatus.DELIVERED, OrderStatus.COMPLETED].includes(order.status)) {
         throw new BadRequestException(
-          'Disputes can only be raised within 48 hours of order completion',
+          'Disputes can only be raised for paid, delivered or completed orders',
         );
       }
-    }
 
-    // Check for existing dispute
-    const existingDispute = await this.disputeRepo.findOne({
-      where: { order: { id: orderId } },
+      // Check 48-hour window
+      if (order.deliveryConfirmedAt) {
+        const hoursSinceCompletion =
+          (Date.now() - order.deliveryConfirmedAt.getTime()) / (1000 * 60 * 60);
+        if (hoursSinceCompletion > 48) {
+          throw new BadRequestException(
+            'Disputes can only be raised within 48 hours of order completion',
+          );
+        }
+      }
+
+      // Check for existing dispute
+      const existingDispute = await manager.findOne(OrderDispute, {
+        where: { order: { id: orderId } },
+      });
+
+      if (existingDispute) {
+        throw new BadRequestException('A dispute already exists for this order');
+      }
+
+      // Validate evidenceUrls and enqueue for moderation
+      if (dto.evidenceUrls && dto.evidenceUrls.length > 0) {
+        for (const url of dto.evidenceUrls) {
+          // Check if it's from the approved presigned URL pipeline
+          if (!url.startsWith(`disputes/${orderId}/${buyerId}-`)) {
+            throw new BadRequestException('Invalid evidence URL provided');
+          }
+          
+          // Get a temporary public read URL for the worker to download
+          const { data } = await this.supabase.storage
+            .from('disputes')
+            .createSignedUrl(url.replace('disputes/', ''), 60 * 60);
+            
+          if (data?.signedUrl) {
+            // Enqueue into existing moderation pipeline
+            await this.imageQueue.add('process-image', {
+              mediaId: url,
+              url: data.signedUrl,
+            });
+          }
+        }
+      }
+
+      // Create dispute
+      const orderRef = new Order();
+      orderRef.id = orderId;
+      const raisedByRef = new User();
+      raisedByRef.id = buyerId;
+
+      const dispute = manager.create(OrderDispute, {
+        order: orderRef,
+        raisedBy: raisedByRef,
+        reason: dto.reason,
+        evidenceUrls: dto.evidenceUrls,
+        status: DisputeStatus.OPEN,
+      });
+
+      const savedDispute = await manager.save(dispute);
+
+      // Flag order for admin review and pause escrow timer
+      await manager.update(
+        Order,
+        { id: orderId },
+        { status: OrderStatus.FLAGGED, escrowReleaseAt: null },
+      );
+
+      // TODO: Notify seller via SendGrid
+
+      this.logger.log(`Dispute created for order ${orderId} by buyer ${buyerId}`);
+
+      return savedDispute;
     });
-
-    if (existingDispute) {
-      throw new BadRequestException('A dispute already exists for this order');
-    }
-
-    // Create dispute
-    const orderRef = new Order();
-    orderRef.id = orderId;
-    const raisedByRef = new User();
-    raisedByRef.id = buyerId;
-
-    const dispute = this.disputeRepo.create({
-      order: orderRef,
-      raisedBy: raisedByRef,
-      reason: dto.reason,
-      evidenceUrls: dto.evidenceUrls,
-      status: DisputeStatus.OPEN,
-    });
-
-    const savedDispute = await this.disputeRepo.save(dispute);
-
-    // Flag order for admin review
-    await this.orderRepo.update(
-      { id: orderId },
-      { status: OrderStatus.FLAGGED },
-    );
-
-    // TODO: Notify seller via SendGrid
-
-    this.logger.log(`Dispute created for order ${orderId} by buyer ${buyerId}`);
-
-    return savedDispute;
   }
 
   /**
@@ -326,15 +370,23 @@ export class RatingsDisputesEarningsService {
    * Initiate refund to buyer (calls payment gateway)
    */
   private async initiateRefund(order: Order, adminId: string): Promise<void> {
-    // TODO: Call payment gateway refund API
-    // - Paystack: POST /refund
-    // - Flutterwave: POST /refunds
+    if (!order.paymentRef || !order.paymentGateway) {
+      this.logger.error(`Cannot refund order ${order.id}: missing paymentRef or paymentGateway`);
+      throw new BadRequestException('Order is missing payment reference and cannot be automatically refunded.');
+    }
+
+    const gateway = this.paymentGatewayFactory.create(order.paymentGateway);
+    const refundSuccess = await gateway.refundPayment(order.paymentRef, Number(order.amountPaid));
+
+    if (!refundSuccess) {
+      throw new BadRequestException('Failed to process refund with the payment gateway. Order status not changed.');
+    }
 
     order.status = OrderStatus.REFUNDED;
     await this.orderRepo.save(order);
 
     this.logger.log(
-      `Refund initiated for order ${order.id} by admin ${adminId}`,
+      `Refund successful for order ${order.id} by admin ${adminId}`,
     );
   }
 
@@ -347,6 +399,58 @@ export class RatingsDisputesEarningsService {
     await this.orderRepo.save(order);
 
     this.logger.log(`Seller earnings released for order ${order.id}`);
+  }
+
+  /**
+   * Generate a presigned URL for dispute evidence upload
+   */
+  async generateDisputePresignedUrl(
+    orderId: string,
+    userId: string,
+    fileName: string,
+  ) {
+    if (!this.supabase) {
+      throw new BadRequestException('Storage service is not configured');
+    }
+
+    const order = await this.orderRepo.findOne({
+      where: { id: orderId },
+      relations: ['buyer'],
+    });
+
+    if (!order) throw new NotFoundException('Order not found');
+    if (order.buyer.id !== userId) {
+      throw new ForbiddenException('Only the buyer can upload dispute evidence');
+    }
+
+    // Only allow specific extensions (images and pdfs)
+    const allowedExtensions = ['jpg', 'jpeg', 'png', 'pdf'];
+    const ext = fileName.split('.').pop()?.toLowerCase();
+    if (!ext || !allowedExtensions.includes(ext)) {
+      throw new BadRequestException('Invalid file type. Only JPG, PNG, and PDF are allowed.');
+    }
+
+    // Use a specific bucket, default to 'disputes' if not specified, 
+    // but the system has 'products', 'users', 'community' etc. We'll use 'disputes'
+    const bucket = 'disputes';
+    const filePath = `${orderId}/${userId}-${Date.now()}.${ext}`;
+
+    const { data, error } = await this.supabase.storage
+      .from(bucket)
+      .createSignedUploadUrl(filePath);
+
+    if (error || !data) {
+      this.logger.error(`Failed to generate presigned URL: ${error?.message}`);
+      throw new BadRequestException('Failed to generate upload URL');
+    }
+
+    return {
+      uploadUrl: data.signedUrl,
+      path: filePath,
+      // The public or signed read URL will be generated when reading, 
+      // but we return the storage path for the frontend to submit in createDispute
+      evidenceUrl: `${bucket}/${filePath}`, 
+    };
   }
 
   /**

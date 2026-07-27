@@ -58,6 +58,23 @@ export class RatingsDisputesEarningsController {
 
   // ─── ORDER DISPUTES ──────────────────────────────────────────
 
+  @Post('orders/:id/dispute/upload-url')
+  @UseGuards(JwtAuthGuard)
+  async getDisputeUploadUrl(
+    @Param('id') orderId: string,
+    @NestRequest() req: AuthenticatedRequest,
+    @Body('fileName') fileName: string,
+  ) {
+    if (!fileName) {
+      throw new BadRequestException('fileName is required');
+    }
+    return this.ratingsService.generateDisputePresignedUrl(
+      orderId,
+      req.user.sub,
+      fileName,
+    );
+  }
+
   @Post('orders/:id/dispute')
   @UseGuards(JwtAuthGuard)
   async createDispute(

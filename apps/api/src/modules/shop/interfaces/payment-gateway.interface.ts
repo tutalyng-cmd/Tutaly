@@ -53,6 +53,11 @@ export interface IPaymentGateway {
   initializePayment(payload: PaymentPayload): Promise<PaymentResponse>;
 
   /**
+   * Refund a payment (full or partial)
+   */
+  refundPayment(paymentRef: string, amount?: number): Promise<boolean>;
+
+  /**
    * Verify webhook signature/authenticity
    */
   verifyWebhookSignature(

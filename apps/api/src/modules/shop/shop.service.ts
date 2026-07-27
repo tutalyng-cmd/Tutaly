@@ -30,6 +30,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ApplySellerDto } from './dto/apply-seller.dto';
 import { TokenService } from '../auth/token.service';
+import { MailService } from '../auth/mail.service';
 import { SupportService } from '../support/support.service';
 import { PaymentGatewayFactory } from './gateways/payment-gateway.factory';
 
@@ -82,6 +83,7 @@ export class ShopService {
     @InjectRepository(OrderDispute)
     private readonly disputeRepo: Repository<OrderDispute>,
     private readonly tokenService: TokenService,
+    private readonly mailService: MailService,
     private readonly supportService: SupportService,
     private readonly paymentFactory: PaymentGatewayFactory,
   ) {
@@ -693,22 +695,59 @@ export class ShopService {
   // Called by Bull cron job
   async autoReleaseExpiredEscrows() {
     const now = new Date();
-    const expiredOrders = await this.orderRepo
+    // Find IDs first
+    const expiredOrderIds = await this.orderRepo
       .createQueryBuilder('order')
-      .leftJoinAndSelect('order.product', 'product')
+      .select('order.id')
       .where('order.status IN (:...statuses)', {
         statuses: [OrderStatus.PAID, OrderStatus.DELIVERED],
       })
       .andWhere('order.escrowReleaseAt <= :now', { now })
       .getMany();
 
-    for (const order of expiredOrders) {
-      order.status = OrderStatus.COMPLETED;
-      order.earningsReleasedAt = new Date();
-      await this.orderRepo.save(order);
+    let releasedCount = 0;
+
+    for (const { id } of expiredOrderIds) {
+      await this.orderRepo.manager.transaction(async (manager) => {
+        // Lock the row to prevent race conditions with createDispute using inner join
+        const order = await manager.createQueryBuilder(Order, 'order')
+          .innerJoinAndSelect('order.product', 'product')
+          .innerJoinAndSelect('order.buyer', 'buyer')
+          .where('order.id = :id', { id })
+          .setLock('pessimistic_write')
+          .getOne();
+
+        if (!order) return;
+
+        // Verify state hasn't changed while waiting for lock
+        if (![OrderStatus.PAID, OrderStatus.DELIVERED].includes(order.status)) return;
+        if (!order.escrowReleaseAt || order.escrowReleaseAt > now) return;
+
+        if (order.product?.listingType === ListingType.PHYSICAL) {
+          order.status = OrderStatus.CONFIRMED;
+          order.confirmedAt = new Date();
+        } else {
+          order.status = OrderStatus.COMPLETED;
+        }
+        
+        order.earningsReleasedAt = new Date();
+        await manager.save(order);
+        releasedCount++;
+
+        // Send SendGrid notification
+        if (order.buyer?.email) {
+          await this.mailService.sendOrderAutoConfirmedEmail(
+            order.buyer.email,
+            order.id,
+            order.product?.title || 'Unknown Product',
+          );
+        }
+        
+        this.logger.log(`Order ${order.id} auto-confirmed/completed after 48hr window expired`);
+      });
     }
 
-    return { released: expiredOrders.length };
+    return { released: releasedCount };
   }
 
   // ─── Signed Download URL ──────────────────────────────────────────

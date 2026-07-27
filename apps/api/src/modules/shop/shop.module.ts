@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ScheduleModule } from '@nestjs/schedule';
+import { BullModule } from '@nestjs/bull';
 import { ShopController } from './shop.controller';
 import { RatingsDisputesEarningsController } from './controllers/ratings-disputes-earnings.controller';
 import { PhysicalOrdersController } from './controllers/physical-orders.controller';
@@ -54,6 +55,9 @@ import { PaymentAuditService } from './services/payment-audit.service';
       SellerProfile,
     ]),
     ScheduleModule.forRoot(),
+    BullModule.registerQueue({
+      name: 'image-processing',
+    }),
     AuthModule,
   ],
   controllers: [

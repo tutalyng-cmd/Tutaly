@@ -50,12 +50,7 @@ export default function SellerEarningsPage() {
       <div className="page-header flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6" style={{ borderBottom: 'none', padding: '0 0 10px 0' }}>
         <div>
           <h1 className="text-2xl font-bold" style={{ color: 'var(--c-100)' }}>Earnings & Payouts</h1>
-          <p className="text-sm" style={{ color: 'var(--c-500)' }}>Manage your revenue and request withdrawals.</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <button className="btn btn--primary">
-            <Building className="w-4 h-4 mr-2" /> Request Payout
-          </button>
+          <p className="text-sm" style={{ color: 'var(--c-500)' }}>Manage your revenue and track your payouts.</p>
         </div>
       </div>
 
@@ -96,6 +91,55 @@ export default function SellerEarningsPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
+          <div className="dcard mb-6">
+            <div className="dcard__header border-b border-c700 pb-4 mb-4">
+              <div>
+                <div className="dcard__title text-gold">Upcoming Clearances</div>
+                <div className="dcard__sub">Funds pending 48-hour escrow release</div>
+              </div>
+            </div>
+
+            {orders.filter(o => o.status === 'delivered' || o.status === 'flagged').length === 0 ? (
+              <div className="dash-empty py-6">
+                <div className="dash-empty__title text-c500 text-sm">No funds currently pending clearance</div>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {orders
+                  .filter(o => o.status === 'delivered' || o.status === 'flagged')
+                  .sort((a, b) => new Date(a.escrowReleaseAt || 0).getTime() - new Date(b.escrowReleaseAt || 0).getTime())
+                  .map((order) => {
+                    const isFlagged = order.status === 'flagged';
+                    return (
+                      <div key={order.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-lg border border-c700 bg-c800">
+                        <div className="flex items-center gap-3 mb-2 sm:mb-0">
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${isFlagged ? 'bg-red-900 text-red-400' : 'bg-gold-10 text-gold'}`}>
+                            {isFlagged ? <span className="text-lg">!</span> : <Loader2 className="w-4 h-4 animate-spin" />}
+                          </div>
+                          <div>
+                            <div className="text-sm font-semibold text-c100">{order.product?.title || 'Order'} #{order.id.slice(0, 8)}</div>
+                            <div className="text-xs text-c500">Delivered: {new Date(order.deliveredAt || order.createdAt).toLocaleDateString()}</div>
+                          </div>
+                        </div>
+                        <div className="text-left sm:text-right">
+                          <div className="font-mono text-sm font-bold text-c100">{formatPrice(order.sellerEarnings || order.amountPaid || order.total, order.currency)}</div>
+                          {isFlagged ? (
+                            <div className="text-xs font-bold text-red-400 uppercase tracking-wider mt-1 bg-red-900/30 px-2 py-0.5 rounded inline-block">
+                              Paused - Disputed
+                            </div>
+                          ) : (
+                            <div className="text-xs font-semibold text-gold mt-1">
+                              Clears: {order.escrowReleaseAt ? new Date(order.escrowReleaseAt).toLocaleString() : 'Pending'}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+              </div>
+            )}
+          </div>
+
           <div className="dcard">
             <div className="dcard__header border-b border-c700 pb-4 mb-4">
               <div>

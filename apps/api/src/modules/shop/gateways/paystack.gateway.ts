@@ -29,6 +29,39 @@ export class PaystackGateway implements IPaymentGateway {
     return 'paystack';
   }
 
+  async refundPayment(paymentRef: string, amount?: number): Promise<boolean> {
+    if (!this.secretKey) {
+      this.logger.error('PAYSTACK_SECRET_KEY not configured for refunds');
+      return false;
+    }
+
+    try {
+      const payload: any = { transaction: paymentRef };
+      if (amount) payload.amount = amount * 100; // Paystack takes kobo
+
+      const response = await fetch('https://api.paystack.co/refund', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${this.secretKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+      if (data.status === true) {
+        this.logger.log(`Successfully refunded transaction ${paymentRef}`);
+        return true;
+      } else {
+        this.logger.error(`Refund failed for ${paymentRef}: ${data.message}`);
+        return false;
+      }
+    } catch (error: any) {
+      this.logger.error(`Refund exception for ${paymentRef}: ${error.message}`);
+      return false;
+    }
+  }
+
   async initializePayment(payload: PaymentPayload): Promise<PaymentResponse> {
     if (!this.secretKey) {
       this.logger.warn('PAYSTACK_SECRET_KEY not configured');

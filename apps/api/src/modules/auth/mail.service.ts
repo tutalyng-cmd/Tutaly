@@ -232,6 +232,50 @@ export class MailService {
       );
     }
   }
+
+  async sendOrderAutoConfirmedEmail(
+    to: string,
+    orderId: string,
+    productTitle: string,
+  ): Promise<void> {
+    const orderUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard/purchases/${orderId}`;
+    console.log(`[MAILER MOCK] Auto-confirm email for ${to}, order: ${orderId}`);
+
+    try {
+      await this.transporter.sendMail({
+        from: `"Tutaly Support" <${this.fromEmail}>`,
+        to,
+        subject: 'Your Tutaly Order was Auto-Confirmed',
+        html: `
+          <div style="font-family: 'Inter', sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px;">
+            <div style="text-align: center; margin-bottom: 30px;">
+              <h1 style="color: #0D1B2A; font-size: 28px; margin: 0;">Tutaly</h1>
+            </div>
+            <div style="background: #f8f9fa; border-radius: 12px; padding: 32px;">
+              <h2 style="color: #0D1B2A; margin-top: 0;">Order Auto-Confirmed</h2>
+              <p style="color: #4a5568; font-size: 16px; line-height: 1.6;">
+                Your order for <strong>${productTitle}</strong> has passed the 48-hour delivery window and has been automatically confirmed. 
+                Funds have been released to the seller.
+              </p>
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="${orderUrl}" 
+                   style="background: #1D9E75; color: white; padding: 14px 32px; border-radius: 8px; 
+                          text-decoration: none; font-weight: 600; font-size: 16px; display: inline-block;">
+                  View Order
+                </a>
+              </div>
+            </div>
+          </div>
+        `,
+      });
+    } catch (error) {
+      console.error(
+        `[MAILER ERROR] Failed to send auto-confirm email to ${to}:`,
+        (error as Error).message,
+      );
+    }
+  }
+
   async sendEmailChangeVerification(to: string, token: string): Promise<void> {
     const verificationUrl = `http://localhost:3000/verify-email-change?token=${token}`;
     console.log(

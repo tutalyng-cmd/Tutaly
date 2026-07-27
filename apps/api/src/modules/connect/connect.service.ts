@@ -44,7 +44,8 @@ export class ConnectService {
     private readonly postSaveRepo: Repository<PostSave>,
     @InjectRepository(Report) private readonly reportRepo: Repository<Report>,
     @InjectRepository(Block) private readonly blockRepo: Repository<Block>,
-    @InjectRepository(ConnectNotification) private readonly connectNotificationRepo: Repository<ConnectNotification>,
+    @InjectRepository(ConnectNotification)
+    private readonly connectNotificationRepo: Repository<ConnectNotification>,
     @InjectQueue('feed-fanout') private feedQueue: Queue,
     private configService: ConfigService,
     private supportService: SupportService,

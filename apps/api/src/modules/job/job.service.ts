@@ -477,14 +477,15 @@ export class JobService {
       savedJobsCount,
       profileViews: 0,
       profileStrength,
-      recentApplications: recentApplications.map(app => ({
+      recentApplications: recentApplications.map((app) => ({
         id: app.id,
         status: app.status,
         appliedAt: app.createdAt,
         jobTitle: app.job?.title,
         jobLocation: app.job?.state ? `${app.job.state}, Nigeria` : 'Remote',
-        companyName: app.job?.employer?.employerProfile?.companyName || 'Unknown Company',
-      }))
+        companyName:
+          app.job?.employer?.employerProfile?.companyName || 'Unknown Company',
+      })),
     };
   }
 

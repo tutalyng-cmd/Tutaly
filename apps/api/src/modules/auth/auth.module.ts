@@ -17,7 +17,13 @@ import { LinkedInStrategy } from './strategies/linkedin.strategy';
     JwtModule.register({}), // Secrets are passed per-sign call
   ],
   controllers: [AuthController],
-  providers: [AuthService, MailService, TokenService, GoogleStrategy, LinkedInStrategy],
+  providers: [
+    AuthService,
+    MailService,
+    TokenService,
+    GoogleStrategy,
+    LinkedInStrategy,
+  ],
   exports: [AuthService, JwtModule, MailService, TokenService],
 })
 export class AuthModule {}

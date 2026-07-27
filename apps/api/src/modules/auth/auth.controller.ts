@@ -181,7 +181,7 @@ export class AuthController {
   }
 
   // ─── OAUTH ──────────────────────────────────────────
-  
+
   @Get('google')
   @UseGuards(AuthGuard('google'))
   async googleAuth() {
@@ -190,13 +190,19 @@ export class AuthController {
 
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
-  async googleAuthRedirect(@Req() req: Request & { user: any }, @Res() res: Response) {
+  async googleAuthRedirect(
+    @Req() req: Request & { user: any },
+    @Res() res: Response,
+  ) {
     const user = await this.authService.validateOAuthUser(req.user);
     const refreshToken = this.authService.generateRefreshToken(user);
-    
+
     // Store refresh token
-    await (this.authService as any).tokenService.storeRefreshToken(user.id, refreshToken);
-    
+    await (this.authService as any).tokenService.storeRefreshToken(
+      user.id,
+      refreshToken,
+    );
+
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: true,
@@ -204,7 +210,7 @@ export class AuthController {
       maxAge: 7 * 24 * 60 * 60 * 1000,
       path: '/',
     });
-    
+
     const webUrl = this.configService.get('WEB_URL') || 'http://localhost:3000';
     res.redirect(`${webUrl}/auth/oauth-success`);
   }
@@ -217,13 +223,19 @@ export class AuthController {
 
   @Get('linkedin/callback')
   @UseGuards(AuthGuard('linkedin'))
-  async linkedinAuthRedirect(@Req() req: Request & { user: any }, @Res() res: Response) {
+  async linkedinAuthRedirect(
+    @Req() req: Request & { user: any },
+    @Res() res: Response,
+  ) {
     const user = await this.authService.validateOAuthUser(req.user);
     const refreshToken = this.authService.generateRefreshToken(user);
-    
+
     // Store refresh token
-    await (this.authService as any).tokenService.storeRefreshToken(user.id, refreshToken);
-    
+    await (this.authService as any).tokenService.storeRefreshToken(
+      user.id,
+      refreshToken,
+    );
+
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: true,
@@ -231,7 +243,7 @@ export class AuthController {
       maxAge: 7 * 24 * 60 * 60 * 1000,
       path: '/',
     });
-    
+
     const webUrl = this.configService.get('WEB_URL') || 'http://localhost:3000';
     res.redirect(`${webUrl}/auth/oauth-success`);
   }

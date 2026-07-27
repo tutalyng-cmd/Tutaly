@@ -110,7 +110,7 @@ export function PostComposer({ onPostCreated, currentUser }: PostComposerProps) 
   };
 
   return (
-    <div className="rounded-2xl bg-white p-5 shadow-sm border border-gray-100 mb-6">
+    <div className="p-5 mb-6" style={{ background: 'var(--c-800)', border: '1px solid var(--c-700)', borderRadius: 'var(--r-lg)' }}>
       <div className="flex gap-4">
         {currentUser?.avatarUrl ? (
           <img src={currentUser.avatarUrl} alt="Avatar" className="h-10 w-10 shrink-0 rounded-full object-cover" />

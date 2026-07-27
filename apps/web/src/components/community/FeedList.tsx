@@ -92,29 +92,59 @@ export function FeedList({ initialPosts = [], currentUser, feedType, profileId }
   if (loading) {
     return (
       <div className="flex justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-navy" />
+        <Loader2 className="h-8 w-8 animate-spin text-c300" />
       </div>
     );
   }
 
   if (posts.length === 0) {
+    if (!currentUser) {
+      return (
+        <div className="dash-empty">
+          <div className="dash-empty__icon">
+            <span className="text-2xl">👋</span>
+          </div>
+          <h3 className="dash-empty__title">Join the conversation</h3>
+          <p className="dash-empty__desc">
+            Sign in to share your thoughts, photos, and connect with other professionals.
+          </p>
+          <a href="/auth/sign-in" className="btn btn--primary btn--sm inline-block">
+            Sign In
+          </a>
+        </div>
+      );
+    }
+
     return (
-      <div className="rounded-2xl bg-white p-12 text-center shadow-sm border border-gray-100">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-50">
+      <div className="dash-empty">
+        <div className="dash-empty__icon">
           <span className="text-2xl">👋</span>
         </div>
-        <h3 className="mb-2 text-lg font-semibold text-gray-900">No posts yet</h3>
-        <p className="text-gray-500">
-          {feedType === 'following' 
-            ? "You aren't following anyone yet, or they haven't posted." 
-            : "Be the first to share something with the community!"}
+        <h3 className="dash-empty__title">Your feed is empty</h3>
+        <p className="dash-empty__desc">
+          Follow professionals and companies to see updates here.
         </p>
+        <a href="/community/discover" className="btn btn--ghost btn--sm inline-block">
+          Discover
+        </a>
       </div>
     );
   }
 
   return (
     <div className="space-y-4">
+      {!currentUser && (
+        <div className="dash-empty" style={{ padding: '24px', textAlign: 'center' }}>
+          <h3 className="dash-empty__title">Join the conversation</h3>
+          <p className="dash-empty__desc" style={{ marginBottom: '16px' }}>
+            Sign in to share your thoughts, photos, and connect with other professionals.
+          </p>
+          <a href="/auth/sign-in" className="btn btn--primary btn--sm inline-block">
+            Sign In
+          </a>
+        </div>
+      )}
+
       {posts.map((post, index) => {
         if (index === posts.length - 1) {
           return (

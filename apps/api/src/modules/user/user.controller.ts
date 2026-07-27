@@ -33,13 +33,36 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard)
   @Get('me')
-  getMe(@NestRequest() req: AuthenticatedRequest) {
-    // Return standard token properties required by the dashboard router
+  async getMe(@NestRequest() req: AuthenticatedRequest) {
+    const userId = req.user.sub;
+    const role = req.user.role;
+    let profileData: any = {};
+
+    try {
+      if (role === UserRole.SEEKER) {
+        const profile = await this.userService.getSeekerProfile(userId);
+        profileData = {
+          firstName: profile.firstName,
+          lastName: profile.lastName,
+          avatar: (profile as any).avatarSignedUrl || profile.avatarUrl,
+        };
+      } else if (role === UserRole.EMPLOYER) {
+        const profile = await this.userService.getEmployerProfile(userId);
+        profileData = {
+          firstName: profile.companyName,
+          avatar: (profile as any).logoSignedUrl || profile.logoUrl,
+        };
+      }
+    } catch (e) {
+      // Ignore if profile fetch fails
+    }
+
     return {
       data: {
-        id: req.user.sub,
+        id: userId,
         email: req.user.email,
-        role: req.user.role,
+        role: role,
+        ...profileData,
       },
     };
   }

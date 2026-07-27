@@ -101,7 +101,7 @@ export function PostCard({ post, currentUserId, onDelete, onLikeToggle }: PostCa
   };
 
   return (
-    <div className="rounded-2xl bg-white p-5 shadow-sm border border-gray-100 mb-4 transition-shadow hover:shadow-md">
+    <div className="p-5 mb-4 transition-shadow hover:shadow-md" style={{ background: 'var(--c-800)', border: '1px solid var(--c-700)', borderRadius: 'var(--r-lg)' }}>
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-3">
           {post.author?.avatarUrl ? (
@@ -128,7 +128,7 @@ export function PostCard({ post, currentUserId, onDelete, onLikeToggle }: PostCa
           </button>
 
           {showMenu && (
-            <div className="absolute right-0 top-full z-10 mt-1 w-48 overflow-hidden rounded-xl bg-white py-1 shadow-lg border border-gray-100">
+            <div className="absolute right-0 top-full z-10 mt-1 w-48 overflow-hidden py-1 shadow-lg" style={{ background: 'var(--c-800)', border: '1px solid var(--c-700)', borderRadius: 'var(--r-lg)' }}>
               {isAuthor ? (
                 <button
                   onClick={() => { setShowMenu(false); handleDelete(); }}

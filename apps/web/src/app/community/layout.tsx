@@ -78,13 +78,14 @@ export default function ConnectLayout({ children }: { children: React.ReactNode 
 
   const getInitials = (user: any) => {
     if (!user) return 'U';
-    if (user.firstName && user.lastName) return `${user.firstName[0]}${user.lastName[0]}`;
+    if (user.firstName && user.lastName) return `${user.firstName[0]}${user.lastName[0]}`.toUpperCase();
     return (user.firstName || user.username || user.email || 'U')[0].toUpperCase();
   };
 
   const getAuthorName = (author: any) => {
     if (!author) return 'Loading...';
     if (author.firstName && author.lastName) return `${author.firstName} ${author.lastName}`;
+    if (author.firstName) return author.firstName;
     return author.username || author.email?.split('@')[0] || 'User';
   };
 

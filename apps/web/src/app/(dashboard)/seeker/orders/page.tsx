@@ -95,7 +95,7 @@ export default function BuyerOrdersPage() {
       const token = localStorage.getItem('access_token');
       if (!token) return;
       
-      let evidenceUrls: string[] = [];
+      const evidenceUrls: string[] = [];
       
       if (disputeFile) {
         // 1. Get Presigned URL
@@ -222,15 +222,8 @@ export default function BuyerOrdersPage() {
 
       {/* Dispute Modal */}
       {disputeOrderId && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 100,
-          display: 'flex', alignItems: 'center', justifyContent: 'center'
-        }}>
-          <div style={{
-            background: 'white', padding: '24px', borderRadius: '12px',
-            width: '90%', maxWidth: '500px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)'
-          }}>
+        <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center">
+          <div className="bg-white p-6 rounded-xl w-[90%] max-w-[500px] shadow-xl">
             <h2 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '16px' }}>Report an Issue</h2>
             
             <div style={{ marginBottom: '16px' }}>

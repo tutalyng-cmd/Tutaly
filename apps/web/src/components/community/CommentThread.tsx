@@ -63,7 +63,7 @@ export function CommentThread({ postId, comments, onCommentAdded }: CommentThrea
   };
 
   return (
-    <div className="mt-4 border-t pt-4">
+    <div className="mt-4 border-t border-c700 pt-4">
       {/* Comment List */}
       <div className="space-y-4 mb-4">
         {comments.map((comment) => (
@@ -71,23 +71,23 @@ export function CommentThread({ postId, comments, onCommentAdded }: CommentThrea
             {comment.author.avatarUrl ? (
               <img src={comment.author.avatarUrl} alt="Avatar" className="h-8 w-8 rounded-full object-cover" />
             ) : (
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-navy text-xs font-semibold text-white">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue text-xs font-semibold text-white">
                 {getInitials(comment.author)}
               </div>
             )}
-            <div className="flex-1 rounded-2xl bg-gray-50 px-4 py-2">
+            <div className="flex-1 rounded-2xl bg-c700 px-4 py-2">
               <div className="flex items-center justify-between">
-                <span className="font-semibold text-sm text-gray-900">{getAuthorName(comment.author)}</span>
-                <span className="text-xs text-gray-500">
+                <span className="font-semibold text-sm text-c100">{getAuthorName(comment.author)}</span>
+                <span className="text-xs text-c500">
                   {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })}
                 </span>
               </div>
-              <p className="mt-1 text-sm text-gray-700 whitespace-pre-wrap">{comment.content}</p>
+              <p className="mt-1 text-sm text-c200 whitespace-pre-wrap">{comment.content}</p>
             </div>
           </div>
         ))}
         {comments.length === 0 && (
-          <p className="text-sm text-gray-500 text-center py-2">No comments yet. Be the first to share your thoughts!</p>
+          <p className="text-sm text-c500 text-center py-2">No comments yet. Be the first to share your thoughts!</p>
         )}
       </div>
 
@@ -97,7 +97,7 @@ export function CommentThread({ postId, comments, onCommentAdded }: CommentThrea
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
           placeholder="Write a comment..."
-          className="flex-1 resize-none overflow-hidden rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm focus:border-navy focus:bg-white focus:outline-none focus:ring-1 focus:ring-navy"
+          className="flex-1 resize-none overflow-hidden rounded-xl border border-c600 bg-c800 px-4 py-3 text-sm text-c100 placeholder:text-c500 focus:border-blue focus:outline-none"
           rows={1}
           onInput={(e) => {
             const target = e.target as HTMLTextAreaElement;
@@ -109,7 +109,7 @@ export function CommentThread({ postId, comments, onCommentAdded }: CommentThrea
         <button
           type="submit"
           disabled={!newComment.trim() || isSubmitting}
-          className="flex h-11 w-11 items-center justify-center rounded-full bg-navy text-white hover:bg-navy-700 disabled:opacity-50 transition-colors shrink-0"
+          className="flex h-11 w-11 items-center justify-center rounded-full bg-blue text-white hover:bg-blueH disabled:opacity-50 transition-colors shrink-0"
         >
           {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
         </button>

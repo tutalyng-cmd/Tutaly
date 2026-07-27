@@ -101,19 +101,19 @@ export function PostCard({ post, currentUserId, onDelete, onLikeToggle }: PostCa
   };
 
   return (
-    <div className="p-5 mb-4 transition-shadow hover:shadow-md" style={{ background: 'var(--c-800)', border: '1px solid var(--c-700)', borderRadius: 'var(--r-lg)' }}>
+    <div className="p-5 mb-4 transition-shadow hover:shadow-md bg-c800 border border-c700 rounded-xl">
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-3">
           {post.author?.avatarUrl ? (
             <img src={post.author.avatarUrl} alt="Avatar" className="h-10 w-10 rounded-full object-cover" />
           ) : (
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-navy text-sm font-semibold text-white">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue text-sm font-semibold text-white">
               {getInitials(post.author)}
             </div>
           )}
           <div>
-            <h3 className="font-semibold text-gray-900">{getAuthorName(post.author)}</h3>
-            <p className="text-xs text-gray-500">
+            <h3 className="font-semibold text-c100">{getAuthorName(post.author)}</h3>
+            <p className="text-xs text-c500">
               {post.createdAt ? formatDistanceToNow(new Date(post.createdAt), { addSuffix: true }) : 'Just now'}
             </p>
           </div>
@@ -122,17 +122,17 @@ export function PostCard({ post, currentUserId, onDelete, onLikeToggle }: PostCa
         <div className="relative">
           <button 
             onClick={() => setShowMenu(!showMenu)}
-            className="rounded-full p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
+            className="rounded-full p-2 text-c500 hover:bg-c700 hover:text-c100 transition-colors"
           >
             <MoreHorizontal className="h-5 w-5" />
           </button>
 
           {showMenu && (
-            <div className="absolute right-0 top-full z-10 mt-1 w-48 overflow-hidden py-1 shadow-lg" style={{ background: 'var(--c-800)', border: '1px solid var(--c-700)', borderRadius: 'var(--r-lg)' }}>
+            <div className="absolute right-0 top-full z-10 mt-1 w-48 overflow-hidden py-1 shadow-lg bg-c800 border border-c700 rounded-xl">
               {isAuthor ? (
                 <button
                   onClick={() => { setShowMenu(false); handleDelete(); }}
-                  className="flex w-full items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                  className="flex w-full items-center gap-2 px-4 py-2 text-sm text-red hover:bg-c700"
                 >
                   <Trash2 className="h-4 w-4" /> Delete Post
                 </button>
@@ -140,13 +140,13 @@ export function PostCard({ post, currentUserId, onDelete, onLikeToggle }: PostCa
                 <>
                   <button
                     onClick={() => { setShowMenu(false); setReportModalOpen(true); }}
-                    className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    className="flex w-full items-center gap-2 px-4 py-2 text-sm text-c200 hover:bg-c700"
                   >
                     <Flag className="h-4 w-4" /> Report Post
                   </button>
                   <button
                     onClick={() => { setShowMenu(false); handleBlockUser(); }}
-                    className="flex w-full items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 border-t border-gray-100"
+                    className="flex w-full items-center gap-2 px-4 py-2 text-sm text-red hover:bg-c700 border-t border-c600"
                   >
                     <ShieldBan className="h-4 w-4" /> Block User
                   </button>
@@ -157,7 +157,7 @@ export function PostCard({ post, currentUserId, onDelete, onLikeToggle }: PostCa
         </div>
       </div>
 
-      <div className="mt-4 text-gray-800 whitespace-pre-wrap leading-relaxed">{post.body || post.content}</div>
+      <div className="mt-4 text-c100 whitespace-pre-wrap leading-relaxed">{post.body || post.content}</div>
 
       {post.media && post.media.length > 0 && (
         <ImageGrid images={post.media} />
@@ -168,24 +168,24 @@ export function PostCard({ post, currentUserId, onDelete, onLikeToggle }: PostCa
         <ImageGrid images={post.imageUrls.map((url: string, i: number) => ({ mediaUrl: url, orderIndex: i }))} />
       )}
 
-      <div className="mt-4 flex items-center justify-between border-t pt-4">
+      <div className="mt-4 flex items-center justify-between border-t border-c700 pt-4">
         <div className="flex items-center gap-4">
           <button 
             onClick={handleLike}
-            className={`flex items-center gap-1.5 text-sm font-medium transition-colors ${isLiked ? 'text-red-500' : 'text-gray-500 hover:text-gray-700'}`}
+            className={`flex items-center gap-1.5 text-sm font-medium transition-colors ${isLiked ? 'text-red' : 'text-c400 hover:text-c100'}`}
           >
-            <Heart className={`h-5 w-5 ${isLiked ? 'fill-current' : ''}`} />
+            <Heart className={`h-5 w-5 ${isLiked ? 'fill-current text-red' : ''}`} />
             <span>{post.likesCount || 0}</span>
           </button>
           <button 
             onClick={handleToggleComments}
-            className="flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors"
+            className="flex items-center gap-1.5 text-sm font-medium text-c400 hover:text-c100 transition-colors"
           >
             <MessageSquare className="h-5 w-5" />
             <span>{post.commentsCount || 0}</span>
           </button>
         </div>
-        <button className="flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors">
+        <button className="flex items-center gap-1.5 text-sm font-medium text-c400 hover:text-c100 transition-colors">
           <Share2 className="h-5 w-5" />
           <span>Share</span>
         </button>
@@ -193,7 +193,7 @@ export function PostCard({ post, currentUserId, onDelete, onLikeToggle }: PostCa
 
       {showComments && (
         loadingComments ? (
-          <div className="py-4 text-center text-sm text-gray-500">Loading comments...</div>
+          <div className="py-4 text-center text-sm text-c500">Loading comments...</div>
         ) : (
           <CommentThread 
             postId={post.id} 

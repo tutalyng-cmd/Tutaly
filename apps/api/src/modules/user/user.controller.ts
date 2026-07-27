@@ -53,7 +53,7 @@ export class UserController {
           avatar: (profile as any).logoSignedUrl || profile.logoUrl,
         };
       }
-    } catch (e) {
+    } catch {
       // Ignore if profile fetch fails
     }
 

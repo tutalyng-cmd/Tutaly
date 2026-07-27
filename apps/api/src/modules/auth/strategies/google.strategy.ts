@@ -8,7 +8,8 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   constructor(private configService: ConfigService) {
     super({
       clientID: configService.get<string>('GOOGLE_CLIENT_ID') || 'fallback',
-      clientSecret: configService.get<string>('GOOGLE_CLIENT_SECRET') || 'fallback',
+      clientSecret:
+        configService.get<string>('GOOGLE_CLIENT_SECRET') || 'fallback',
       callbackURL: `${configService.get<string>('API_URL') || 'http://localhost:3001'}/auth/google/callback`,
       scope: ['email', 'profile'],
     });
@@ -21,7 +22,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     done: VerifyCallback,
   ): any {
     const { id, name, emails, photos } = profile;
-    
+
     const user = {
       providerId: id,
       provider: 'google',
@@ -30,7 +31,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       lastName: name?.familyName,
       picture: photos?.[0]?.value,
     };
-    
+
     done(null, user);
   }
 }

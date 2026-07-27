@@ -519,7 +519,10 @@ export class AuthService {
 
     if (existing) {
       // If found by email, link the provider if it's their first time using this OAuth
-      if (!existing.providerId && existing.authProvider === AuthProvider.LOCAL) {
+      if (
+        !existing.providerId &&
+        existing.authProvider === AuthProvider.LOCAL
+      ) {
         existing.authProvider = profile.provider as AuthProvider;
         existing.providerId = profile.providerId;
         await this.userRepo.save(existing);
@@ -552,9 +555,13 @@ export class AuthService {
     }
 
     const dob = new Date(dto.dateOfBirth);
-    const age = Math.floor((Date.now() - dob.getTime()) / (365.25 * 24 * 60 * 60 * 1000));
+    const age = Math.floor(
+      (Date.now() - dob.getTime()) / (365.25 * 24 * 60 * 60 * 1000),
+    );
     if (age < 18) {
-      throw new BadRequestException('You must be at least 18 years old to register.');
+      throw new BadRequestException(
+        'You must be at least 18 years old to register.',
+      );
     }
 
     user.role = dto.role;

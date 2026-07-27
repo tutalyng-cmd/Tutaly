@@ -8,7 +8,8 @@ export class LinkedInStrategy extends PassportStrategy(Strategy, 'linkedin') {
   constructor(private configService: ConfigService) {
     super({
       clientID: configService.get<string>('LINKEDIN_CLIENT_ID') || 'fallback',
-      clientSecret: configService.get<string>('LINKEDIN_CLIENT_SECRET') || 'fallback',
+      clientSecret:
+        configService.get<string>('LINKEDIN_CLIENT_SECRET') || 'fallback',
       callbackURL: `${configService.get<string>('API_URL') || 'http://localhost:3001'}/auth/linkedin/callback`,
       scope: ['r_emailaddress', 'r_liteprofile'],
     });
@@ -21,7 +22,7 @@ export class LinkedInStrategy extends PassportStrategy(Strategy, 'linkedin') {
     done: any,
   ): any {
     const { id, name, emails, photos } = profile;
-    
+
     const user = {
       providerId: id,
       provider: 'linkedin',
@@ -30,7 +31,7 @@ export class LinkedInStrategy extends PassportStrategy(Strategy, 'linkedin') {
       lastName: name?.familyName,
       picture: photos?.[0]?.value,
     };
-    
+
     done(null, user);
   }
 }

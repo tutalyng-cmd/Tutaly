@@ -21,6 +21,7 @@ export default function ConnectLayout({ children }: { children: React.ReactNode 
   const [unreadCount, setUnreadCount] = useState(0);
   const [suggestedUsers, setSuggestedUsers] = useState<any[]>([]);
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const [isLoadingUser, setIsLoadingUser] = useState(true);
 
   useEffect(() => {
     let isMounted = true;
@@ -50,12 +51,17 @@ export default function ConnectLayout({ children }: { children: React.ReactNode 
     const fetchUser = async () => {
       try {
         const token = localStorage.getItem('access_token');
-        if (!token) return;
+        if (!token) {
+          setIsLoadingUser(false);
+          return;
+        }
         const res = await apiAuth.withToken(token).get('/user/me');
         if (isMounted) {
           setCurrentUser(res.data?.data);
         }
-      } catch { /* ignore */ }
+      } catch { /* ignore */ } finally {
+        if (isMounted) setIsLoadingUser(false);
+      }
     };
 
     doFetch();
@@ -90,8 +96,8 @@ export default function ConnectLayout({ children }: { children: React.ReactNode 
   };
 
   return (
-    <div className="page-shell">
-      <header className="page-header" style={{ paddingTop: '64px' }}>
+    <div className="page-shell pt-16">
+      <header className="page-header">
         <div className="container">
           <div className="page-header__eyebrow">Connect</div>
           <h1 className="page-header__title">Build your professional network.</h1>
@@ -104,43 +110,53 @@ export default function ConnectLayout({ children }: { children: React.ReactNode 
           
           {/* LEFT: PROFILE */}
           <aside aria-label="Your profile" className="hidden lg:block">
-            <div className="profile-card">
-              {currentUser?.avatar ? (
-                <div className="profile-card__avatar" style={{ background: 'transparent' }}>
-                  <img src={currentUser.avatar} alt="Avatar" className="w-full h-full object-cover rounded-full" />
-                </div>
-              ) : (
-                <div className="profile-card__avatar">{getInitials(currentUser)}</div>
-              )}
-              <div className="profile-card__name">{getAuthorName(currentUser)}</div>
-              <div className="profile-card__title">{currentUser?.title || 'Professional · Tutaly Member'}</div>
-              <div className="profile-card__stats">
-                <div className="profile-card__stat">
-                  <div className="profile-card__stat-num">0</div>
-                  <div className="profile-card__stat-label">Connections</div>
-                </div>
-                <div className="profile-card__stat">
-                  <div className="profile-card__stat-num">0</div>
-                  <div className="profile-card__stat-label">Posts</div>
+            {!currentUser && !isLoadingUser ? (
+              <div className="profile-card text-center">
+                <h3 className="font-bold text-c100 mb-2">Join Tutaly</h3>
+                <p className="text-xs text-c400 mb-4">Connect with professionals and discover opportunities.</p>
+                <Link href="/auth/signin" className="btn btn--primary btn--sm w-full block text-center">Sign In</Link>
+              </div>
+            ) : (
+              <div className="profile-card">
+                {currentUser?.avatar ? (
+                  <div className="profile-card__avatar" style={{ background: 'transparent' }}>
+                    <img src={currentUser.avatar} alt="Avatar" className="w-full h-full object-cover rounded-full" />
+                  </div>
+                ) : (
+                  <div className="profile-card__avatar">{isLoadingUser ? '?' : getInitials(currentUser)}</div>
+                )}
+                <div className="profile-card__name">{getAuthorName(currentUser)}</div>
+                <div className="profile-card__title">{currentUser?.title || 'Professional · Tutaly Member'}</div>
+                <div className="profile-card__stats">
+                  <div className="profile-card__stat">
+                    <div className="profile-card__stat-num">0</div>
+                    <div className="profile-card__stat-label">Connections</div>
+                  </div>
+                  <div className="profile-card__stat">
+                    <div className="profile-card__stat-num">0</div>
+                    <div className="profile-card__stat-label">Posts</div>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
 
-            <div className="suggest-card" style={{ marginTop: '16px' }}>
-              <div className="suggest-card__title">Shortcuts</div>
-              <Link href="/community/my-posts" className="suggest-row block hover:bg-c700 p-2 rounded-lg transition-colors">
-                <div className="flex items-center gap-2">
-                  <PenSquare className="w-4 h-4 text-c400" />
-                  <span className="text-sm font-medium text-c200">My Posts</span>
-                </div>
-              </Link>
-              <Link href="/community/saved" className="suggest-row block hover:bg-c700 p-2 rounded-lg transition-colors">
-                <div className="flex items-center gap-2">
-                  <BookMarked className="w-4 h-4 text-c400" />
-                  <span className="text-sm font-medium text-c200">Saved Posts</span>
-                </div>
-              </Link>
-            </div>
+            {currentUser && (
+              <div className="suggest-card" style={{ marginTop: '16px' }}>
+                <div className="suggest-card__title">Shortcuts</div>
+                <Link href="/community/my-posts" className="suggest-row block hover:bg-c700 p-2 rounded-lg transition-colors">
+                  <div className="flex items-center gap-2">
+                    <PenSquare className="w-4 h-4 text-c400" />
+                    <span className="text-sm font-medium text-c200">My Posts</span>
+                  </div>
+                </Link>
+                <Link href="/community/saved" className="suggest-row block hover:bg-c700 p-2 rounded-lg transition-colors">
+                  <div className="flex items-center gap-2">
+                    <BookMarked className="w-4 h-4 text-c400" />
+                    <span className="text-sm font-medium text-c200">Saved Posts</span>
+                  </div>
+                </Link>
+              </div>
+            )}
           </aside>
 
           {/* CENTER: FEED */}

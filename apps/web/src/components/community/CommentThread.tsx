@@ -63,9 +63,32 @@ export function CommentThread({ postId, comments, onCommentAdded }: CommentThrea
   };
 
   return (
-    <div className="mt-4 border-t border-c700 pt-4">
+    <div className="mt-4 border-t border-c700 pt-4 flex flex-col gap-4">
+      {/* Input */}
+      <form onSubmit={handleSubmit} className="flex items-end gap-2">
+        <textarea
+          value={newComment}
+          onChange={(e) => setNewComment(e.target.value)}
+          placeholder="Write a comment..."
+          className="flex-1 resize-y min-h-[44px] max-h-32 overflow-y-auto rounded-xl border border-c600 bg-c800 px-4 py-3 text-sm text-c100 placeholder:text-c500 focus:border-blue focus:outline-none"
+          rows={1}
+          onInput={(e) => {
+            const target = e.target as HTMLTextAreaElement;
+            target.style.height = 'auto';
+            target.style.height = `${Math.min(target.scrollHeight, 128)}px`;
+          }}
+        />
+        <button
+          type="submit"
+          disabled={!newComment.trim() || isSubmitting}
+          className="flex h-11 w-11 items-center justify-center rounded-full bg-blue text-white hover:bg-blueH disabled:opacity-50 transition-colors shrink-0"
+        >
+          {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
+        </button>
+      </form>
+
       {/* Comment List */}
-      <div className="space-y-4 mb-4">
+      <div className="space-y-4">
         {comments.map((comment) => (
           <div key={comment.id} className="flex gap-3">
             {comment.author.avatarUrl ? (
@@ -90,30 +113,6 @@ export function CommentThread({ postId, comments, onCommentAdded }: CommentThrea
           <p className="text-sm text-c500 text-center py-2">No comments yet. Be the first to share your thoughts!</p>
         )}
       </div>
-
-      {/* Input */}
-      <form onSubmit={handleSubmit} className="flex items-end gap-2">
-        <textarea
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-          placeholder="Write a comment..."
-          className="flex-1 resize-none overflow-hidden rounded-xl border border-c600 bg-c800 px-4 py-3 text-sm text-c100 placeholder:text-c500 focus:border-blue focus:outline-none"
-          rows={1}
-          onInput={(e) => {
-            const target = e.target as HTMLTextAreaElement;
-            target.style.height = 'auto';
-            target.style.height = `${Math.min(target.scrollHeight, 120)}px`;
-          }}
-          disabled={isSubmitting}
-        />
-        <button
-          type="submit"
-          disabled={!newComment.trim() || isSubmitting}
-          className="flex h-11 w-11 items-center justify-center rounded-full bg-blue text-white hover:bg-blueH disabled:opacity-50 transition-colors shrink-0"
-        >
-          {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
-        </button>
-      </form>
     </div>
   );
 }

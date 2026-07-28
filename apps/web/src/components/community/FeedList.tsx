@@ -133,18 +133,6 @@ export function FeedList({ initialPosts = [], currentUser, feedType, profileId }
 
   return (
     <div className="space-y-4">
-      {!currentUser && (
-        <div className="dash-empty" style={{ padding: '24px', textAlign: 'center' }}>
-          <h3 className="dash-empty__title">Join the conversation</h3>
-          <p className="dash-empty__desc" style={{ marginBottom: '16px' }}>
-            Sign in to share your thoughts, photos, and connect with other professionals.
-          </p>
-          <a href="/auth/signin" className="btn btn--primary btn--sm inline-block">
-            Sign In
-          </a>
-        </div>
-      )}
-
       {posts.map((post, index) => {
         if (index === posts.length - 1) {
           return (

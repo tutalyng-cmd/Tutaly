@@ -57,6 +57,9 @@ export class User extends BaseEntity {
   @Column({ default: false })
   isMfaEnabled: boolean;
 
+  @Column({ default: false })
+  isTestAccount: boolean;
+
 
 
   @Column({ type: 'enum', enum: AuthProvider, default: AuthProvider.LOCAL })

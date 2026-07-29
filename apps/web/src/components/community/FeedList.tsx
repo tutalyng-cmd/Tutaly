@@ -122,7 +122,7 @@ export function FeedList({ initialPosts = [], currentUser, feedType, profileId }
         </div>
         <h3 className="dash-empty__title">Your feed is empty</h3>
         <p className="dash-empty__desc">
-          Follow professionals and companies to see updates here.
+          Follow professionals and companies to build your feed
         </p>
         <a href="/community/discover" className="btn btn--ghost btn--sm inline-block">
           Discover

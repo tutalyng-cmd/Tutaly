@@ -491,6 +491,7 @@ export class ConnectService {
       .andWhere(
         `(settings.privacy->>'showInDiscover' IS NULL OR settings.privacy->>'showInDiscover' != 'false')`,
       )
+      .andWhere('user.isTestAccount = false')
       .orderBy('user.createdAt', 'DESC')
       .skip((page - 1) * limit)
       .take(limit);

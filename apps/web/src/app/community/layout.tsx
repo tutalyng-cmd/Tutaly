@@ -177,8 +177,10 @@ export default function ConnectLayout({ children }: { children: React.ReactNode 
                       <div className="suggest-avatar" style={{ background: 'var(--blue)' }}>{getInitials(user)}</div>
                     )}
                     <div className="suggest-info">
-                      <div className="suggest-name">
-                        <Link href={`/community/profile/${user.username || user.id}`}>{getAuthorName(user)}</Link>
+                      <div className="suggest-name" title={getAuthorName(user)}>
+                        <Link href={`/community/profile/${user.username || user.id}`} className="block truncate">
+                          {getAuthorName(user)}
+                        </Link>
                       </div>
                       <div className="suggest-role">{user.title || 'Professional'}</div>
                     </div>

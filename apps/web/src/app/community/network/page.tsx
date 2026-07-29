@@ -105,8 +105,8 @@ export default function NetworkPage() {
   return (
     <div className="max-w-3xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-c900">Your Network</h1>
-        <p className="text-c500 text-sm mt-1">Manage your professional connections</p>
+        <h1 className="text-2xl font-bold text-c100">Your Network</h1>
+        <p className="text-c400 text-sm mt-1">Manage your professional connections</p>
       </div>
 
       {/* Stats Cards */}
@@ -115,17 +115,17 @@ export default function NetworkPage() {
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`bg-white rounded-2xl border p-4 text-center transition-all ${
+            className={`bg-c800/80 backdrop-blur-sm rounded-2xl border p-4 text-center transition-all ${
               activeTab === tab.key
-                ? 'border-green shadow-md ring-1 ring-green'
-                : 'border-c100 hover:border-c200 hover:shadow-sm'
+                ? 'border-blue shadow-glow-blue ring-1 ring-blue'
+                : 'border-c700 hover:border-c600 hover:shadow-sm'
             }`}
           >
-            <tab.icon className={`w-5 h-5 mx-auto mb-2 ${activeTab === tab.key ? 'text-green' : 'text-c400'}`} />
-            <p className={`text-2xl font-bold ${activeTab === tab.key ? 'text-green' : 'text-c900'}`}>
+            <tab.icon className={`w-5 h-5 mx-auto mb-2 ${activeTab === tab.key ? 'text-blue' : 'text-c400'}`} />
+            <p className={`text-2xl font-bold ${activeTab === tab.key ? 'text-blue' : 'text-c100'}`}>
               {tab.count}
             </p>
-            <p className="text-xs text-c500 mt-0.5">{tab.label}</p>
+            <p className="text-xs text-c400 mt-0.5">{tab.label}</p>
             {tab.key === 'pending' && tab.count > 0 && (
               <span className="inline-block mt-1.5 bg-red text-white text-xs font-bold px-2 py-0.5 rounded-full">
                 {tab.count} new
@@ -139,12 +139,12 @@ export default function NetworkPage() {
       {loading ? (
         <div className="space-y-3">
           {[1, 2, 3].map(i => (
-            <div key={i} className="bg-white rounded-2xl border border-c100 p-4 animate-pulse">
+            <div key={i} className="bg-c800/80 backdrop-blur-sm rounded-2xl border border-c700 p-4 animate-pulse">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-c200 rounded-full" />
+                <div className="w-12 h-12 bg-c700 rounded-full" />
                 <div className="space-y-2 flex-1">
-                  <div className="h-4 bg-c200 rounded w-1/3" />
-                  <div className="h-3 bg-c100 rounded w-1/5" />
+                  <div className="h-4 bg-c700 rounded w-1/3" />
+                  <div className="h-3 bg-c600 rounded w-1/5" />
                 </div>
               </div>
             </div>
@@ -159,26 +159,26 @@ export default function NetworkPage() {
             ) : (
               <div className="space-y-3">
                 {pending.map((req) => (
-                  <div key={req.follower.id} className="bg-white rounded-2xl border border-c100 p-4 hover:shadow-sm transition-all">
+                  <div key={req.follower.id} className="bg-c800/80 backdrop-blur-sm rounded-2xl border border-c700 p-4 hover:border-c600 hover:shadow-sm transition-all">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-gold shadow-glow-gold flex items-center justify-center text-white font-bold text-base shrink-0">
+                      <div className="w-12 h-12 rounded-full bg-gold shadow-glow-gold flex items-center justify-center text-c900 font-bold text-base shrink-0">
                         {getInitial(req.follower)}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-c900">{getName(req.follower)}</p>
+                        <p className="text-sm font-bold text-c100">{getName(req.follower)}</p>
                         <p className="text-xs text-c400">Wants to follow you</p>
                       </div>
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => handleAccept(req.follower.id)}
-                          className="flex items-center gap-1 text-sm font-semibold text-white bg-green hover:bg-green px-3 py-1.5 rounded-xl transition-colors"
+                          className="flex items-center gap-1 text-sm font-bold text-white bg-blue hover:bg-blueH px-3 py-1.5 rounded-xl transition-colors shadow-glow-blue active:scale-95"
                         >
                           <UserCheck className="w-3.5 h-3.5" />
                           Accept
                         </button>
                         <button
                           onClick={() => handleReject(req.follower.id)}
-                          className="text-sm font-medium text-c500 bg-c100 hover:bg-c200 px-3 py-1.5 rounded-xl transition-colors"
+                          className="text-sm font-bold text-c100 bg-c700 hover:bg-c600 px-3 py-1.5 rounded-xl transition-colors active:scale-95 border border-c600"
                         >
                           Decline
                         </button>
@@ -210,17 +210,17 @@ export default function NetworkPage() {
             ) : (
               <div className="space-y-3">
                 {following.map((person) => (
-                  <div key={person.id} className="bg-white rounded-2xl border border-c100 p-4 hover:shadow-sm transition-all">
+                  <div key={person.id} className="bg-c800/80 backdrop-blur-sm rounded-2xl border border-c700 p-4 hover:border-c600 hover:shadow-sm transition-all">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-green flex items-center justify-center text-white font-bold text-base shrink-0">
+                      <div className="w-12 h-12 rounded-full bg-blue shadow-glow-blue flex items-center justify-center text-white font-bold text-base shrink-0">
                         {getInitial(person)}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-c900">{getName(person)}</p>
+                        <p className="text-sm font-bold text-c100">{getName(person)}</p>
                       </div>
                       <button
                         onClick={() => handleUnfollow(person.id)}
-                        className="text-sm font-medium text-c500 bg-c100 hover:bg-red hover:text-red px-3 py-1.5 rounded-xl transition-colors"
+                        className="text-sm font-bold text-c100 bg-c700 hover:bg-red/20 hover:text-red hover:border-red border border-c600 px-3 py-1.5 rounded-xl transition-colors"
                       >
                         Unfollow
                       </button>
@@ -238,12 +238,12 @@ export default function NetworkPage() {
 
 function EmptyState({ icon: Icon, title, subtitle }: { icon: React.ElementType; title: string; subtitle: string }) {
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-c100 p-12 text-center">
-      <div className="w-16 h-16 bg-c100 rounded-full flex items-center justify-center mx-auto mb-4">
+    <div className="bg-c800/80 backdrop-blur-sm rounded-2xl shadow-sm border border-c700 p-12 text-center">
+      <div className="w-16 h-16 bg-c700 rounded-full flex items-center justify-center mx-auto mb-4">
         <Icon className="w-8 h-8 text-c400" />
       </div>
-      <h3 className="text-lg font-bold text-c900 mb-2">{title}</h3>
-      <p className="text-c500 text-sm">{subtitle}</p>
+      <h3 className="text-lg font-bold text-c100 mb-2">{title}</h3>
+      <p className="text-c400 text-sm">{subtitle}</p>
     </div>
   );
 }
@@ -255,13 +255,13 @@ function PersonCard({ person, getName, getInitial, gradient }: {
   gradient: string;
 }) {
   return (
-    <div className="bg-white rounded-2xl border border-c100 p-4 hover:shadow-sm transition-all">
+    <div className="bg-c800/80 backdrop-blur-sm rounded-2xl border border-c700 p-4 hover:border-c600 hover:shadow-sm transition-all">
       <div className="flex items-center gap-4 mb-4">
         <div className={`w-12 h-12 rounded-full ${gradient} flex items-center justify-center text-white font-bold text-base shrink-0`}>
           {getInitial(person)}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-c900">{getName(person)}</p>
+          <p className="text-sm font-bold text-c100">{getName(person)}</p>
         </div>
       </div>
     </div>

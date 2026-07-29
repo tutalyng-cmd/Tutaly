@@ -67,38 +67,38 @@ export default function SavedPostsPage() {
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-c900">Saved Posts</h1>
-        <p className="text-sm text-c500 mt-1">Posts you've bookmarked to read later</p>
+        <h1 className="text-2xl font-bold text-c100">Saved Posts</h1>
+        <p className="text-sm text-c400 mt-1">Posts you've bookmarked to read later</p>
       </div>
 
       {loading ? (
         <div className="space-y-4">
           {[1, 2].map(i => (
-            <div key={i} className="bg-white rounded-2xl shadow-sm border border-c100 p-5 animate-pulse">
+            <div key={i} className="bg-c800/80 backdrop-blur-sm rounded-2xl shadow-sm border border-c700 p-5 animate-pulse">
               <div className="flex gap-3 items-center mb-4">
-                <div className="w-10 h-10 bg-c200 rounded-full" />
+                <div className="w-10 h-10 bg-c700 rounded-full" />
                 <div className="space-y-2 flex-1">
-                  <div className="h-4 bg-c200 rounded w-1/3" />
-                  <div className="h-3 bg-c100 rounded w-1/5" />
+                  <div className="h-4 bg-c700 rounded w-1/3" />
+                  <div className="h-3 bg-c600 rounded w-1/5" />
                 </div>
               </div>
               <div className="space-y-2">
-                <div className="h-4 bg-c100 rounded w-full" />
-                <div className="h-4 bg-c100 rounded w-4/5" />
+                <div className="h-4 bg-c700 rounded w-full" />
+                <div className="h-4 bg-c600 rounded w-4/5" />
               </div>
             </div>
           ))}
         </div>
       ) : posts.length === 0 ? (
-        <div className="bg-white rounded-2xl shadow-sm border border-c100 p-12 text-center">
-          <div className="w-16 h-16 bg-c100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <div className="bg-c800/80 backdrop-blur-sm rounded-2xl shadow-sm border border-c700 p-12 text-center">
+          <div className="w-16 h-16 bg-c700 rounded-full flex items-center justify-center mx-auto mb-4">
             <BookmarkCheck className="w-8 h-8 text-c400" />
           </div>
-          <h3 className="text-lg font-bold text-c900 mb-2">No saved posts</h3>
-          <p className="text-c500 text-sm max-w-sm mx-auto">
+          <h3 className="text-lg font-bold text-c100 mb-2">No saved posts</h3>
+          <p className="text-c400 text-sm max-w-sm mx-auto">
             You haven't saved any posts yet. Bookmark interesting posts from your feed to find them here.
           </p>
-          <Link href="/community" className="mt-6 inline-block text-sm font-semibold text-green bg-green hover:bg-green px-5 py-2.5 rounded-xl transition-colors">
+          <Link href="/community" className="mt-6 inline-block text-sm font-bold text-white bg-blue hover:bg-blueH px-5 py-2.5 rounded-xl transition-colors shadow-glow-blue active:scale-95">
             Go to Feed
           </Link>
         </div>
@@ -109,11 +109,11 @@ export default function SavedPostsPage() {
             const displayImage = post.imageUrls?.[0] || post.imageUrl;
 
             return (
-              <div key={post.id} className="bg-white rounded-2xl shadow-sm border border-c100 p-5 hover:shadow-md transition-shadow relative">
+              <div key={post.id} className="bg-c800/80 backdrop-blur-sm rounded-2xl shadow-sm border border-c700 p-5 hover:border-c600 transition-all relative">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-3">
                     <Link href={authorProfileLink}>
-                      <div className="relative w-10 h-10 rounded-full bg-green flex items-center justify-center text-white font-bold text-sm overflow-hidden shrink-0">
+                      <div className="relative w-10 h-10 rounded-full bg-c600 flex items-center justify-center text-c100 font-bold text-sm overflow-hidden shrink-0">
                         {post.author.avatar ? (
                           <Image src={post.author.avatar} alt="avatar" fill className="object-cover" unoptimized />
                         ) : (
@@ -122,7 +122,7 @@ export default function SavedPostsPage() {
                       </div>
                     </Link>
                     <div>
-                      <Link href={authorProfileLink} className="text-sm font-semibold text-c900 hover:underline">
+                      <Link href={authorProfileLink} className="text-sm font-bold text-c100 hover:underline">
                         {getAuthorName(post.author)}
                       </Link>
                       <p className="text-xs text-c400">{new Date(post.createdAt).toLocaleDateString()}</p>
@@ -131,22 +131,22 @@ export default function SavedPostsPage() {
 
                   <button 
                     onClick={() => handleUnsave(post.id)}
-                    className="p-1.5 text-green hover:bg-green rounded-lg transition-colors"
+                    className="p-1.5 text-blue-l hover:text-blue hover:bg-blue/10 rounded-lg transition-colors"
                     title="Remove from saved"
                   >
                     <BookmarkX className="w-5 h-5" />
                   </button>
                 </div>
 
-                <p className="text-c800 text-sm leading-relaxed whitespace-pre-wrap mb-4">{post.content}</p>
+                <p className="text-c200 text-sm leading-relaxed whitespace-pre-wrap mb-4">{post.content}</p>
 
                 {displayImage && (
-                  <div className="rounded-xl overflow-hidden mb-4 bg-c100 flex justify-center relative" style={{ minHeight: '200px' }}>
+                  <div className="rounded-xl overflow-hidden mb-4 bg-c900/50 flex justify-center relative" style={{ minHeight: '200px' }}>
                     <Image src={displayImage} alt="Post content" fill className="object-contain" unoptimized />
                   </div>
                 )}
 
-                <div className="flex items-center gap-6 pt-3 border-t border-c100">
+                <div className="flex items-center gap-6 pt-3 border-t border-c700">
                   <div className="flex items-center gap-1.5 text-c400 text-sm">
                     <Heart className="w-4 h-4" />
                     <span>{post.likesCount || 0}</span>
@@ -164,7 +164,7 @@ export default function SavedPostsPage() {
 
       {hasMore && !loading && posts.length > 0 && (
         <div className="text-center pt-4 pb-8">
-          <button onClick={loadMore} className="bg-white border border-c200 text-c700 px-6 py-2 rounded-xl text-sm font-semibold hover:bg-c100 transition-colors shadow-sm">
+          <button onClick={loadMore} className="bg-c800/80 backdrop-blur-sm border border-c700 text-c100 px-6 py-2 rounded-xl text-sm font-bold hover:bg-c700 transition-colors shadow-sm">
             Load More
           </button>
         </div>

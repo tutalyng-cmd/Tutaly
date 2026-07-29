@@ -63,15 +63,20 @@ alert(err?.response?.data?.message || 'Failed to follow user');
   };
 
   if (loading) {
-    return <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-green" /></div>;
+    return (
+      <div className="max-w-3xl mx-auto space-y-6">
+        <div className="bg-c800/80 backdrop-blur-sm rounded-2xl border border-c700 h-96 animate-pulse" />
+        <div className="bg-c800/80 backdrop-blur-sm rounded-2xl border border-c700 h-32 animate-pulse" />
+      </div>
+    );
   }
 
   if (error || !profile) {
     return (
       <div className="max-w-3xl mx-auto py-20 text-center">
-        <h2 className="text-2xl font-bold text-c900 mb-2">Profile not found</h2>
-        <p className="text-c500 mb-6">{error || "The user you are looking for doesn't exist or is private."}</p>
-        <Link href="/community" className="text-green font-semibold hover:underline">Return to Feed</Link>
+        <h2 className="text-2xl font-bold text-c100 mb-2">Profile not found</h2>
+        <p className="text-c400 mb-6">{error || "The user you are looking for doesn't exist or is private."}</p>
+        <Link href="/community" className="text-blue font-semibold hover:underline">Return to Feed</Link>
       </div>
     );
   }
@@ -82,20 +87,20 @@ alert(err?.response?.data?.message || 'Failed to follow user');
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       {/* Profile Header */}
-      <div className="bg-white rounded-2xl shadow-sm border border-c100 overflow-hidden">
+      <div className="bg-c800/80 backdrop-blur-sm rounded-2xl shadow-sm border border-c700 overflow-hidden">
         {/* Cover Photo Placeholder */}
-        <div className="h-48 bg-green w-full relative">
+        <div className="h-48 bg-c700 w-full relative">
           {/* We could render cover image here if it was available */}
         </div>
         
         <div className="px-6 sm:px-8 pb-8 relative">
           <div className="flex justify-between items-end mb-4">
             <div className="-mt-16 relative">
-              <div className="w-32 h-32 rounded-full border-4 border-white bg-white shadow-md overflow-hidden flex justify-center items-center">
+              <div className="w-32 h-32 rounded-full border-4 border-c800 bg-c700 shadow-md overflow-hidden flex justify-center items-center">
                 {profile.avatar ? (
                   <img src={profile.avatar} alt="Avatar" className="w-full h-full object-cover" />
                 ) : (
-                  <div className="w-full h-full bg-green text-white flex items-center justify-center text-4xl font-bold">
+                  <div className="w-full h-full bg-c600 text-c100 flex items-center justify-center text-4xl font-bold">
                     {displayName[0].toUpperCase()}
                   </div>
                 )}
@@ -105,10 +110,10 @@ alert(err?.response?.data?.message || 'Failed to follow user');
             <div className="flex gap-3 pt-4">
               {!isOwner && (
                 <>
-                  <button onClick={handleFollow} className="bg-green text-white px-5 py-2 rounded-xl text-sm font-semibold hover:bg-green transition-colors flex items-center gap-2">
+                  <button onClick={handleFollow} className="bg-blue text-white px-5 py-2 rounded-xl text-sm font-semibold hover:bg-blueH transition-colors flex items-center gap-2">
                     <UserPlus className="w-4 h-4" /> Follow
                   </button>
-                  <Link href={`/community/messages`} className="bg-white border border-c200 text-c700 px-5 py-2 rounded-xl text-sm font-semibold hover:bg-c100 transition-colors flex items-center gap-2">
+                  <Link href={`/community/messages`} className="bg-c700 border border-c600 text-c100 px-5 py-2 rounded-xl text-sm font-semibold hover:bg-c600 transition-colors flex items-center gap-2">
                     <MessageCircle className="w-4 h-4" /> Message
                   </Link>
                 </>
@@ -117,10 +122,10 @@ alert(err?.response?.data?.message || 'Failed to follow user');
           </div>
 
           <div>
-            <h1 className="text-2xl font-bold text-c900">{displayName}</h1>
-            <p className="text-c500">@{profile.username || profile.email?.split('@')[0]}</p>
+            <h1 className="text-2xl font-bold text-c100">{displayName}</h1>
+            <p className="text-c400">@{profile.username || profile.email?.split('@')[0]}</p>
             
-            <p className="mt-4 text-c800 leading-relaxed max-w-2xl">
+            <p className="mt-4 text-c200 leading-relaxed max-w-2xl">
               {profile.bio || 'This user has not set up a bio yet.'}
             </p>
 
@@ -133,18 +138,18 @@ alert(err?.response?.data?.message || 'Failed to follow user');
               </div>
             </div>
 
-            <div className="flex items-center gap-6 mt-6 pt-6 border-t border-c100">
+            <div className="flex items-center gap-6 mt-6 pt-6 border-t border-c700">
               <div className="text-center">
-                <span className="block text-lg font-bold text-c900">{profile.postsCount || 0}</span>
-                <span className="text-sm text-c500">Posts</span>
+                <span className="block text-lg font-bold text-c100">{profile.postsCount || 0}</span>
+                <span className="text-sm text-c400">Posts</span>
               </div>
               <div className="text-center">
-                <span className="block text-lg font-bold text-c900">{profile.followersCount || 0}</span>
-                <span className="text-sm text-c500">Followers</span>
+                <span className="block text-lg font-bold text-c100">{profile.followersCount || 0}</span>
+                <span className="text-sm text-c400">Followers</span>
               </div>
               <div className="text-center">
-                <span className="block text-lg font-bold text-c900">{profile.followingCount || 0}</span>
-                <span className="text-sm text-c500">Following</span>
+                <span className="block text-lg font-bold text-c100">{profile.followingCount || 0}</span>
+                <span className="text-sm text-c400">Following</span>
               </div>
             </div>
           </div>
@@ -153,11 +158,11 @@ alert(err?.response?.data?.message || 'Failed to follow user');
 
       {/* Recent Posts */}
       <div className="space-y-4">
-        <h3 className="text-lg font-bold text-c900 px-2">Recent Posts</h3>
+        <h3 className="text-lg font-bold text-c100 px-2">Recent Posts</h3>
         {profile.recentPosts && profile.recentPosts.length > 0 ? (
           profile.recentPosts.map((post: any) => (
-            <div key={post.id} className="bg-white rounded-2xl shadow-sm border border-c100 p-5">
-              <p className="text-c800 text-sm leading-relaxed whitespace-pre-wrap mb-4">{post.content}</p>
+            <div key={post.id} className="bg-c800/80 backdrop-blur-sm shadow-sm border border-c700 rounded-2xl p-5">
+              <p className="text-c200 text-sm leading-relaxed whitespace-pre-wrap mb-4">{post.content}</p>
               {post.imageUrls?.[0] && (
                 <div className="rounded-xl overflow-hidden mb-4">
                   <img src={post.imageUrls[0]} alt="Post" className="max-w-full max-h-64 object-contain" />
@@ -167,7 +172,7 @@ alert(err?.response?.data?.message || 'Failed to follow user');
             </div>
           ))
         ) : (
-          <div className="bg-white rounded-2xl shadow-sm border border-c100 p-8 text-center text-c500 text-sm">
+          <div className="bg-c800/80 backdrop-blur-sm rounded-2xl shadow-sm border border-c700 p-8 text-center text-c400 text-sm">
             No posts found for this user.
           </div>
         )}

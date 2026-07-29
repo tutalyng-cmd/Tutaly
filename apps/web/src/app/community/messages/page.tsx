@@ -130,12 +130,12 @@ export default function MessagesPage() {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-c100 flex overflow-hidden" style={{ height: 'calc(100dvh - 120px)', minHeight: '600px' }}>
+    <div className="bg-c800/80 backdrop-blur-sm rounded-2xl shadow-sm border border-c700 flex overflow-hidden" style={{ height: 'calc(100dvh - 120px)', minHeight: '600px' }}>
       
       {/* Left Panel: Conversations List */}
-      <div className={`w-full lg:w-1/3 flex flex-col border-r border-c100 ${selectedPartner ? 'hidden lg:flex' : 'flex'}`}>
-        <div className="p-4 border-b border-c100">
-          <h1 className="text-xl font-bold text-c900">Messages</h1>
+      <div className={`w-full lg:w-1/3 flex flex-col border-r border-c700 ${selectedPartner ? 'hidden lg:flex' : 'flex'}`}>
+        <div className="p-4 border-b border-c700">
+          <h1 className="text-xl font-bold text-c100">Messages</h1>
         </div>
         
         <div className="flex-1 overflow-y-auto">
@@ -143,40 +143,40 @@ export default function MessagesPage() {
             <div className="p-4 space-y-3">
               {[1, 2, 3].map(i => (
                 <div key={i} className="flex items-center gap-3 animate-pulse">
-                  <div className="w-12 h-12 bg-c200 rounded-full shrink-0" />
+                  <div className="w-12 h-12 bg-c700 rounded-full shrink-0" />
                   <div className="space-y-2 flex-1">
-                    <div className="h-4 bg-c200 rounded w-1/3" />
-                    <div className="h-3 bg-c100 rounded w-2/3" />
+                    <div className="h-4 bg-c700 rounded w-1/3" />
+                    <div className="h-3 bg-c600 rounded w-2/3" />
                   </div>
                 </div>
               ))}
             </div>
           ) : conversations.length === 0 ? (
             <div className="p-8 text-center flex flex-col items-center">
-              <MessageCircle className="w-10 h-10 text-c300 mb-3" />
-              <p className="text-sm font-semibold text-c900">No messages yet</p>
-              <p className="text-xs text-c500 mt-1 mb-4">Start a conversation from someone's profile.</p>
-              <Link href="/community/discover" className="text-xs font-semibold text-green bg-green hover:bg-green px-4 py-2 rounded-xl transition-colors">
+              <MessageCircle className="w-10 h-10 text-c400 mb-3" />
+              <p className="text-sm font-bold text-c100">No messages yet</p>
+              <p className="text-xs text-c400 mt-1 mb-4">Start a conversation from someone's profile.</p>
+              <Link href="/community/discover" className="text-xs font-bold text-c100 bg-c700 hover:bg-c600 px-4 py-2 rounded-xl transition-colors">
                 Discover People
               </Link>
             </div>
           ) : (
-            <div className="divide-y divide-c100">
+            <div className="divide-y divide-c700">
               {conversations.map((convo) => (
                 <button
                   key={convo.partner.id}
                   onClick={() => openConversation(convo.partner)}
-                  className={`w-full p-4 flex items-center gap-3 hover:bg-c100 transition-colors text-left ${selectedPartner?.id === convo.partner.id ? 'bg-green/50' : ''}`}
+                  className={`w-full p-4 flex items-center gap-3 hover:bg-c700/50 transition-colors text-left ${selectedPartner?.id === convo.partner.id ? 'bg-c700/80' : ''}`}
                 >
-                  <div className="w-12 h-12 rounded-full bg-green flex items-center justify-center text-white font-bold text-base shrink-0 overflow-hidden">
+                  <div className="w-12 h-12 rounded-full bg-c600 flex items-center justify-center text-c100 font-bold text-base shrink-0 overflow-hidden">
                     {renderAvatar(convo.partner)}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
-                      <p className="text-sm font-semibold text-c900 truncate pr-2">{getName(convo.partner)}</p>
+                      <p className="text-sm font-bold text-c100 truncate pr-2">{getName(convo.partner)}</p>
                       <span className="text-xs text-c400 shrink-0">{timeAgo(convo.lastMessage.createdAt)}</span>
                     </div>
-                    <p className="text-xs text-c500 truncate mt-0.5">
+                    <p className="text-xs text-c400 truncate mt-0.5">
                       {convo.lastMessage.sender.id === currentUserId ? 'You: ' : ''}
                       {convo.lastMessage.body}
                     </p>
@@ -189,28 +189,28 @@ export default function MessagesPage() {
       </div>
 
       {/* Right Panel: Chat Window */}
-      <div className={`w-full lg:w-2/3 flex flex-col bg-c100/30 ${!selectedPartner ? 'hidden lg:flex' : 'flex'}`}>
+      <div className={`w-full lg:w-2/3 flex flex-col bg-transparent ${!selectedPartner ? 'hidden lg:flex' : 'flex'}`}>
         {!selectedPartner ? (
           <div className="flex-1 flex flex-col items-center justify-center text-center p-8">
-            <MessageCircle className="w-16 h-16 text-c200 mb-4" />
-            <h2 className="text-lg font-bold text-c900 mb-1">Your Messages</h2>
-            <p className="text-sm text-c500 max-w-sm">Select a conversation from the list to start messaging.</p>
+            <MessageCircle className="w-16 h-16 text-c500 mb-4" />
+            <h2 className="text-lg font-bold text-c100 mb-1">Your Messages</h2>
+            <p className="text-sm text-c400 max-w-sm">Select a conversation from the list to start messaging.</p>
           </div>
         ) : (
           <>
             {/* Chat Header */}
-            <div className="flex items-center gap-3 px-6 py-4 border-b border-c100 bg-white">
-              <button onClick={() => setSelectedPartner(null)} className="lg:hidden text-c400 hover:text-c600 p-1.5 -ml-2 rounded-lg hover:bg-c100 transition-colors">
+            <div className="flex items-center gap-3 px-6 py-4 border-b border-c700 bg-c800/50">
+              <button onClick={() => setSelectedPartner(null)} className="lg:hidden text-c400 hover:text-c200 p-1.5 -ml-2 rounded-lg hover:bg-c700 transition-colors">
                 <ArrowLeft className="w-5 h-5" />
               </button>
               <Link href={`/community/profile/${selectedPartner.username || selectedPartner.id}`} className="shrink-0">
-                <div className="w-10 h-10 rounded-full bg-green flex items-center justify-center text-white font-bold text-sm overflow-hidden">
+                <div className="w-10 h-10 rounded-full bg-c600 flex items-center justify-center text-c100 font-bold text-sm overflow-hidden">
                   {renderAvatar(selectedPartner)}
                 </div>
               </Link>
               <div>
                 <Link href={`/community/profile/${selectedPartner.username || selectedPartner.id}`} className="hover:underline">
-                  <p className="text-sm font-semibold text-c900">{getName(selectedPartner)}</p>
+                  <p className="text-sm font-bold text-c100">{getName(selectedPartner)}</p>
                 </Link>
               </div>
             </div>
@@ -219,7 +219,7 @@ export default function MessagesPage() {
             <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
               {loadingMessages ? (
                 <div className="flex items-center justify-center h-full">
-                  <div className="w-6 h-6 border-2 border-green border-t-transparent rounded-full animate-spin" />
+                  <div className="w-6 h-6 border-2 border-blue border-t-transparent rounded-full animate-spin" />
                 </div>
               ) : messages.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-center">
@@ -232,11 +232,11 @@ export default function MessagesPage() {
                     <div key={msg.id} className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
                       <div className={`max-w-md px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
                         isMine
-                          ? 'bg-green text-white rounded-br-sm'
-                          : 'bg-white text-c800 border border-c200 rounded-bl-sm shadow-sm'
+                          ? 'bg-blue text-white rounded-br-sm shadow-glow-blue'
+                          : 'bg-c700 text-c100 border border-c600 rounded-bl-sm shadow-sm'
                       }`}>
                         <p>{msg.body}</p>
-                        <p className={`text-xs mt-1 text-right ${isMine ? 'text-green' : 'text-c400'}`}>
+                        <p className={`text-xs mt-1 text-right ${isMine ? 'text-blue-l text-opacity-80' : 'text-c400'}`}>
                           {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </p>
                       </div>
@@ -248,7 +248,7 @@ export default function MessagesPage() {
             </div>
 
             {/* Input Area */}
-            <div className="p-4 border-t border-c100 bg-white">
+            <div className="p-4 border-t border-c700 bg-c800/50">
               <div className="flex items-center gap-2">
                 <input
                   type="text"
@@ -256,12 +256,12 @@ export default function MessagesPage() {
                   onChange={(e) => setNewMessage(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
                   placeholder="Type a message..."
-                  className="flex-1 bg-c100 border border-c200 rounded-xl px-4 py-3 text-sm text-c900 placeholder-gray-400 focus:ring-2 focus:ring-green focus:border-transparent transition-all"
+                  className="flex-1 bg-c900/50 border border-c600 rounded-xl px-4 py-3 text-sm text-c100 placeholder-c500 focus:ring-2 focus:ring-blue focus:border-transparent transition-all outline-none"
                 />
                 <button
                   onClick={handleSend}
                   disabled={sending || !newMessage.trim()}
-                  className="bg-green text-white p-3 rounded-xl hover:bg-green disabled:opacity-40 transition-colors shadow-sm"
+                  className="bg-blue text-white p-3 rounded-xl hover:bg-blueH disabled:opacity-40 transition-colors shadow-glow-blue active:scale-95"
                 >
                   <Send className="w-5 h-5" />
                 </button>

@@ -68,31 +68,31 @@ export default function DiscoverPage() {
   return (
     <div className="max-w-3xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-c900">Discover People</h1>
-        <p className="text-c500 text-sm mt-1">Find professionals to grow your network</p>
+        <h1 className="text-2xl font-bold text-c100">Discover People</h1>
+        <p className="text-c400 text-sm mt-1">Find professionals to grow your network</p>
       </div>
 
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {[1, 2, 3, 4, 5, 6].map(i => (
-            <div key={i} className="bg-white rounded-2xl border border-c100 p-5 animate-pulse">
+            <div key={i} className="bg-c800/80 backdrop-blur-sm rounded-2xl border border-c700 p-5 animate-pulse">
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 bg-c200 rounded-full" />
+                <div className="w-14 h-14 bg-c700 rounded-full" />
                 <div className="space-y-2 flex-1">
-                  <div className="h-4 bg-c200 rounded w-2/3" />
-                  <div className="h-3 bg-c100 rounded w-1/3" />
+                  <div className="h-4 bg-c700 rounded w-2/3" />
+                  <div className="h-3 bg-c600 rounded w-1/3" />
                 </div>
               </div>
             </div>
           ))}
         </div>
       ) : people.length === 0 ? (
-        <div className="bg-white rounded-2xl shadow-sm border border-c100 p-12 text-center">
-          <div className="w-16 h-16 bg-c100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <div className="bg-c800/80 backdrop-blur-sm rounded-2xl shadow-sm border border-c700 p-12 text-center">
+          <div className="w-16 h-16 bg-c700 rounded-full flex items-center justify-center mx-auto mb-4">
             <Search className="w-8 h-8 text-c400" />
           </div>
-          <h3 className="text-lg font-bold text-c900 mb-2">No one to discover</h3>
-          <p className="text-c500 text-sm">You&apos;re already following everyone! Check back later.</p>
+          <h3 className="text-lg font-bold text-c100 mb-2">No one to discover</h3>
+          <p className="text-c400 text-sm">You&apos;re already following everyone! Check back later.</p>
         </div>
       ) : (
         <>
@@ -102,7 +102,7 @@ export default function DiscoverPage() {
               return (
                 <div
                   key={person.id}
-                  className="bg-white rounded-2xl shadow-sm border border-c100 p-5 hover:shadow-md hover:border-green transition-all group"
+                  className="bg-c800/80 backdrop-blur-sm rounded-2xl shadow-sm border border-c700 p-5 hover:shadow-md hover:border-blue transition-all group"
                 >
                   <div className="flex items-center gap-4">
                     <Link href={profileLink} className="shrink-0">
@@ -116,18 +116,18 @@ export default function DiscoverPage() {
                     </Link>
                     <div className="flex-1 min-w-0">
                       <Link href={profileLink} className="block hover:underline">
-                        <p className="text-sm font-semibold text-c900 truncate">{getName(person)}</p>
+                        <p className="text-sm font-bold text-c100 truncate">{getName(person)}</p>
                       </Link>
                       <p className="text-xs text-c400 capitalize">{person.role}</p>
                     </div>
                     {following.has(person.id) ? (
-                      <span className="text-xs font-medium text-green bg-green px-3 py-1.5 rounded-full">
+                      <span className="text-xs font-bold text-c100 bg-c700 px-3 py-1.5 rounded-full">
                         Requested
                       </span>
                     ) : (
                       <button
                         onClick={() => handleFollow(person.id)}
-                        className="flex items-center gap-1.5 text-sm font-semibold text-green bg-green hover:bg-green px-3 py-1.5 rounded-full transition-colors"
+                        className="flex items-center gap-1.5 text-sm font-bold text-white bg-blue hover:bg-blueH px-3 py-1.5 rounded-pill transition-colors shadow-glow-blue active:scale-95"
                       >
                         <UserPlus className="w-3.5 h-3.5" />
                         Follow
@@ -144,14 +144,14 @@ export default function DiscoverPage() {
               <button
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="px-4 py-2 text-sm font-medium text-c600 bg-white border border-c200 rounded-xl hover:bg-c100 disabled:opacity-40 transition-colors"
+                className="px-4 py-2 text-sm font-bold text-c100 bg-c800/80 backdrop-blur-sm border border-c700 rounded-xl hover:bg-c700 disabled:opacity-40 transition-colors"
               >
                 Previous
               </button>
               <button
                 onClick={() => setPage(p => p + 1)}
                 disabled={people.length < 20}
-                className="px-4 py-2 text-sm font-medium text-white bg-green rounded-xl hover:bg-green disabled:opacity-40 transition-colors"
+                className="px-4 py-2 text-sm font-bold text-white bg-blue rounded-xl hover:bg-blueH shadow-glow-blue disabled:opacity-40 transition-colors"
               >
                 Next
               </button>

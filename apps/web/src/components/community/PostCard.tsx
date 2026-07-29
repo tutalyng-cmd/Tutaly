@@ -101,19 +101,19 @@ export function PostCard({ post, currentUserId, onDelete, onLikeToggle }: PostCa
   };
 
   return (
-    <div className="p-5 mb-4 transition-shadow hover:shadow-md bg-c800 border border-c700 rounded-xl">
+    <div className="p-5 mb-5 bg-c800/80 backdrop-blur-sm border border-c700 rounded-2xl transition-all duration-200 hover:border-c600 hover:shadow-lg group">
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-3">
           {post.author?.avatarUrl ? (
             <img src={post.author.avatarUrl} alt="Avatar" className="h-10 w-10 rounded-full object-cover" />
           ) : (
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue text-sm font-semibold text-white">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-c700 text-sm font-bold text-c100 ring-2 ring-c800 shadow-sm">
               {getInitials(post.author)}
             </div>
           )}
           <div>
-            <h3 className="font-semibold text-c100">{getAuthorName(post.author)}</h3>
-            <p className="text-xs text-c500">
+            <h3 className="font-bold text-c100 leading-tight">{getAuthorName(post.author)}</h3>
+            <p className="text-[13px] text-c400 mt-0.5 font-medium">
               {post.createdAt ? formatDistanceToNow(new Date(post.createdAt), { addSuffix: true }) : 'Just now'}
             </p>
           </div>
@@ -122,7 +122,7 @@ export function PostCard({ post, currentUserId, onDelete, onLikeToggle }: PostCa
         <div className="relative">
           <button 
             onClick={() => setShowMenu(!showMenu)}
-            className="rounded-full p-2 text-c500 hover:bg-c700 hover:text-c100 transition-colors"
+            className="rounded-full p-2 text-c500 hover:bg-c700/50 hover:text-c200 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
           >
             <MoreHorizontal className="h-5 w-5" />
           </button>
@@ -157,7 +157,7 @@ export function PostCard({ post, currentUserId, onDelete, onLikeToggle }: PostCa
         </div>
       </div>
 
-      <div className="mt-4 text-c100 whitespace-pre-wrap leading-relaxed">{post.body || post.content}</div>
+      <div className="mt-3.5 text-[15px] text-c200 whitespace-pre-wrap leading-relaxed font-normal">{post.body || post.content}</div>
 
       {post.media && post.media.length > 0 && (
         <ImageGrid images={post.media} />

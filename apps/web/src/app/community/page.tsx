@@ -39,16 +39,16 @@ export default function CommunityPage() {
 
   return (
     <div className="space-y-6">
-      <div className="app-tabs mb-4">
+      <div className="flex p-1 bg-c800/80 backdrop-blur-sm border border-c700 rounded-xl w-full max-w-sm mb-6 shadow-sm">
         <button 
           onClick={() => setActiveTab('global')}
-          className={`app-tab ${activeTab === 'global' ? 'active' : ''}`}
+          className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all duration-200 ${activeTab === 'global' ? 'bg-c700 text-c100 shadow-sm ring-1 ring-c600/50' : 'text-c400 hover:text-c200 hover:bg-c700/30'}`}
         >
           Global
         </button>
         <button 
           onClick={() => setActiveTab('following')}
-          className={`app-tab ${activeTab === 'following' ? 'active' : ''}`}
+          className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all duration-200 ${activeTab === 'following' ? 'bg-c700 text-c100 shadow-sm ring-1 ring-c600/50' : 'text-c400 hover:text-c200 hover:bg-c700/30'}`}
         >
           Following
         </button>

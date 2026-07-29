@@ -31,8 +31,11 @@ export default function CommunityPage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-c300" />
+      <div className="space-y-6">
+        <div className="flex p-1 bg-c800/80 border border-c700 rounded-xl w-full max-w-sm mb-6 h-[46px] animate-pulse" />
+        <div className="bg-c800/80 border border-c700 rounded-2xl h-[120px] animate-pulse mb-6" />
+        <div className="bg-c800/80 border border-c700 rounded-2xl h-[300px] animate-pulse" />
+        <div className="bg-c800/80 border border-c700 rounded-2xl h-[250px] animate-pulse" />
       </div>
     );
   }

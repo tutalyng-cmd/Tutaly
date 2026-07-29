@@ -113,7 +113,7 @@ export function PostCard({ post, currentUserId, onDelete, onLikeToggle }: PostCa
           )}
           <div>
             <h3 className="font-bold text-c100 leading-tight">{getAuthorName(post.author)}</h3>
-            <p className="text-[13px] text-c400 mt-0.5 font-medium">
+            <p className="text-sm text-c400 mt-0.5 font-medium">
               {post.createdAt ? formatDistanceToNow(new Date(post.createdAt), { addSuffix: true }) : 'Just now'}
             </p>
           </div>
@@ -157,7 +157,7 @@ export function PostCard({ post, currentUserId, onDelete, onLikeToggle }: PostCa
         </div>
       </div>
 
-      <div className="mt-3.5 text-[15px] text-c200 whitespace-pre-wrap leading-relaxed font-normal">{post.body || post.content}</div>
+      <div className="mt-3.5 text-base text-c200 whitespace-pre-wrap leading-relaxed font-normal">{post.body || post.content}</div>
 
       {post.media && post.media.length > 0 && (
         <ImageGrid images={post.media} />

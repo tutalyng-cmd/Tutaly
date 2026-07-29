@@ -110,12 +110,12 @@ export function PostComposer({ onPostCreated, currentUser }: PostComposerProps) 
   };
 
   return (
-    <div className="p-5 mb-6" style={{ background: 'var(--c-800)', border: '1px solid var(--c-700)', borderRadius: 'var(--r-lg)' }}>
+    <div className="p-5 mb-6 bg-c800/80 backdrop-blur-sm border border-c700 rounded-2xl shadow-sm">
       <div className="flex gap-4">
         {currentUser?.avatarUrl ? (
           <img src={currentUser.avatarUrl} alt="Avatar" className="h-10 w-10 shrink-0 rounded-full object-cover" />
         ) : (
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-navy text-sm font-semibold text-white">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-c700 text-sm font-bold text-c100 ring-2 ring-c800 shadow-sm">
             {getInitials(currentUser)}
           </div>
         )}
@@ -125,7 +125,7 @@ export function PostComposer({ onPostCreated, currentUser }: PostComposerProps) 
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder="Share your thoughts, ask a question, or post an update..."
-            className="w-full resize-none overflow-hidden bg-transparent pt-2 text-gray-800 placeholder-gray-400 focus:outline-none min-h-16"
+            className="w-full resize-none overflow-hidden bg-transparent pt-2 text-c100 placeholder-c400 focus:outline-none min-h-16 text-[15px] leading-relaxed"
             onInput={(e) => {
               const target = e.target as HTMLTextAreaElement;
               target.style.height = 'auto';
@@ -151,7 +151,7 @@ export function PostComposer({ onPostCreated, currentUser }: PostComposerProps) 
             </div>
           )}
           
-          <div className="mt-4 flex items-center justify-between border-t pt-3">
+          <div className="mt-4 flex items-center justify-between border-t border-c700 pt-3">
             <div className="flex gap-2">
               <input 
                 type="file" 
@@ -165,9 +165,9 @@ export function PostComposer({ onPostCreated, currentUser }: PostComposerProps) 
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isSubmitting || selectedImages.length >= 4}
-                className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-50 transition-colors"
+                className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-c300 hover:bg-c700/50 hover:text-c100 disabled:opacity-50 transition-colors"
               >
-                <ImagePlus className="h-5 w-5 text-teal" />
+                <ImagePlus className="h-5 w-5 text-blue" />
                 <span className="hidden sm:inline">Photo</span>
               </button>
             </div>
@@ -175,7 +175,7 @@ export function PostComposer({ onPostCreated, currentUser }: PostComposerProps) 
             <button
               type="submit"
               disabled={(!content.trim() && selectedImages.length === 0) || isSubmitting}
-              className="flex items-center gap-2 rounded-full bg-navy px-6 py-2 text-sm font-medium text-white hover:bg-navy-700 disabled:opacity-50 transition-all shadow-sm active:scale-95"
+              className="flex items-center gap-2 rounded-pill bg-blue px-6 py-2 text-sm font-bold text-white hover:bg-blueH disabled:opacity-50 transition-all shadow-glow-blue active:scale-95"
             >
               {isSubmitting ? (
                 <Loader2 className="h-4 w-4 animate-spin" />

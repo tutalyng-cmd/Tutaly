@@ -119,8 +119,8 @@ export default function ConnectLayout({ children }: { children: React.ReactNode 
             ) : (
               <div className="profile-card">
                 {currentUser?.avatar ? (
-                  <div className="profile-card__avatar" style={{ background: 'transparent' }}>
-                    <img src={currentUser.avatar} alt="Avatar" className="w-full h-full object-cover rounded-full" />
+                  <div className="profile-card__avatar relative overflow-hidden bg-c800 rounded-full border-2 border-c700">
+                    <img src={currentUser.avatar} alt="Avatar" className="w-full h-full object-cover" />
                   </div>
                 ) : (
                   <div className="profile-card__avatar">{isLoadingUser ? '?' : getInitials(currentUser)}</div>
@@ -141,7 +141,7 @@ export default function ConnectLayout({ children }: { children: React.ReactNode 
             )}
 
             {currentUser && (
-              <div className="suggest-card" style={{ marginTop: '16px' }}>
+              <div className="mt-4 bg-c800/80 backdrop-blur-sm border border-c700 rounded-xl p-4 shadow-sm">
                 <div className="suggest-card__title">Shortcuts</div>
                 <Link href="/community/my-posts" className="suggest-row block hover:bg-c700 p-2 rounded-lg transition-colors">
                   <div className="flex items-center gap-2">
@@ -170,33 +170,37 @@ export default function ConnectLayout({ children }: { children: React.ReactNode 
               <div className="suggest-card">
                 <div className="suggest-card__title">People to follow</div>
                 {suggestedUsers.map(user => (
-                  <div key={user.id} className="suggest-row">
+                  <div key={user.id} className="flex items-center gap-3 py-2">
                     {user.avatar ? (
-                      <img src={user.avatar} alt="Avatar" className="suggest-avatar object-cover" />
+                      <img src={user.avatar} alt="Avatar" className="h-9 w-9 rounded-full object-cover" />
                     ) : (
-                      <div className="suggest-avatar" style={{ background: 'var(--blue)' }}>{getInitials(user)}</div>
+                      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-c700 text-sm font-bold text-c100 shrink-0">
+                        {getInitials(user)}
+                      </div>
                     )}
-                    <div className="suggest-info">
-                      <div className="suggest-name" title={getAuthorName(user)}>
-                        <Link href={`/community/profile/${user.username || user.id}`} className="block truncate">
+                    <div className="flex-1 min-w-0">
+                      <div className="font-semibold text-[13px] text-c100 truncate" title={getAuthorName(user)}>
+                        <Link href={`/community/profile/${user.username || user.id}`} className="hover:underline">
                           {getAuthorName(user)}
                         </Link>
                       </div>
-                      <div className="suggest-role">{user.title || 'Professional'}</div>
+                      <div className="text-[11px] text-c400 truncate">{user.title || 'Professional'}</div>
                     </div>
-                    <span className="suggest-follow">Follow</span>
+                    <button className="shrink-0 rounded-pill bg-c700 hover:bg-c600 px-3 py-1 text-xs font-bold text-c100 transition-colors">
+                      Follow
+                    </button>
                   </div>
                 ))}
               </div>
             )}
 
-            <div className="suggest-card">
+            <div className="suggest-card border border-c700 bg-c800/80 shadow-sm backdrop-blur-sm">
               <div className="suggest-card__title">Trending topics</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <a href="/community/discover?q=RemoteWork" style={{ fontSize: '12px', color: 'var(--c-300)' }}>#RemoteWork</a>
-                <a href="/community/discover?q=SalaryTransparency" style={{ fontSize: '12px', color: 'var(--c-300)' }}>#SalaryTransparency</a>
-                <a href="/community/discover?q=FintechHiring" style={{ fontSize: '12px', color: 'var(--c-300)' }}>#FintechHiring</a>
-                <a href="/community/discover?q=CareerGrowth" style={{ fontSize: '12px', color: 'var(--c-300)' }}>#CareerGrowth</a>
+              <div className="flex flex-col gap-2.5">
+                <a href="/community/discover?q=RemoteWork" className="text-xs font-medium text-c300 hover:text-blue transition-colors">#RemoteWork</a>
+                <a href="/community/discover?q=SalaryTransparency" className="text-xs font-medium text-c300 hover:text-blue transition-colors">#SalaryTransparency</a>
+                <a href="/community/discover?q=FintechHiring" className="text-xs font-medium text-c300 hover:text-blue transition-colors">#FintechHiring</a>
+                <a href="/community/discover?q=CareerGrowth" className="text-xs font-medium text-c300 hover:text-blue transition-colors">#CareerGrowth</a>
               </div>
             </div>
 

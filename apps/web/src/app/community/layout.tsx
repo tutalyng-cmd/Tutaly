@@ -179,12 +179,12 @@ export default function ConnectLayout({ children }: { children: React.ReactNode 
                       </div>
                     )}
                     <div className="flex-1 min-w-0">
-                      <div className="font-semibold text-[13px] text-c100 truncate" title={getAuthorName(user)}>
+                      <div className="font-semibold text-sm text-c100 truncate" title={getAuthorName(user)}>
                         <Link href={`/community/profile/${user.username || user.id}`} className="hover:underline">
                           {getAuthorName(user)}
                         </Link>
                       </div>
-                      <div className="text-[11px] text-c400 truncate">{user.title || 'Professional'}</div>
+                      <div className="text-xs text-c400 truncate">{user.title || 'Professional'}</div>
                     </div>
                     <button className="shrink-0 rounded-pill bg-c700 hover:bg-c600 px-3 py-1 text-xs font-bold text-c100 transition-colors">
                       Follow

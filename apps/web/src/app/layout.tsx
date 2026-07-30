@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import MainLayout from "@/components/layout/MainLayout";
 import { CartProvider } from "@/components/providers/CartProvider";
+import SmoothScroll from "@/components/motion/SmoothScroll";
 
 const inter = Inter({
   variable: "--font",
@@ -38,16 +39,19 @@ export const metadata: Metadata = {
   },
 };
 
-import SmoothScroll from "@/components/motion/SmoothScroll";
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${jetbrains.variable}`}>
-      <body className="flex flex-col min-h-screen bg-c900 text-c200">
+    <html lang="en" className={`${inter.variable} ${jetbrains.variable}`} style={{ backgroundColor: '#1A1C1E' }}>
+      <head>
+        <style dangerouslySetInnerHTML={{ __html: `
+          html, body { background-color: #1A1C1E !important; }
+        `}} />
+      </head>
+      <body className="flex flex-col min-h-screen bg-c900 text-c200" style={{ backgroundColor: '#1A1C1E' }}>
         <SmoothScroll>
           <CartProvider>
             <MainLayout>{children}</MainLayout>

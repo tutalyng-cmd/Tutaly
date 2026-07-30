@@ -45,13 +45,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${jetbrains.variable}`} style={{ backgroundColor: '#1A1C1E' }}>
-      <head>
-        <style dangerouslySetInnerHTML={{ __html: `
-          html, body { background-color: #1A1C1E !important; }
-        `}} />
-      </head>
-      <body className="flex flex-col min-h-screen bg-c900 text-c200" style={{ backgroundColor: '#1A1C1E' }}>
+    <html lang="en" className={`${inter.variable} ${jetbrains.variable}`}>
+      <body className="flex flex-col min-h-screen bg-c900 text-c200">
         <SmoothScroll>
           <CartProvider>
             <MainLayout>{children}</MainLayout>

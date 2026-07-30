@@ -8,23 +8,35 @@ import {
   IsOptional,
   MaxLength,
   MinLength,
+  IsUUID,
 } from 'class-validator';
 
 export class CreateReviewDto {
+  @IsUUID()
+  @IsNotEmpty()
+  company_id: string;
+
   @IsString()
   @IsNotEmpty()
-  @MaxLength(100)
-  companyName: string;
+  @MaxLength(150)
+  jobTitle: string;
 
   @IsString()
   @IsOptional()
-  @MaxLength(100)
-  sector?: string;
+  @MaxLength(150)
+  jobLocation?: string;
+
+  @IsBoolean()
+  isCurrentEmployee: boolean;
+
+  @IsOptional()
+  @IsNumber()
+  employmentEndYear?: number;
 
   @IsString()
-  @IsOptional()
-  @MaxLength(100)
-  position?: string;
+  @IsNotEmpty()
+  @MaxLength(255)
+  reviewTitle: string;
 
   @IsNumber()
   @Min(1)
@@ -68,7 +80,8 @@ export class CreateReviewDto {
   cons: string;
 
   @IsBoolean()
-  recommend: boolean;
+  @IsOptional()
+  recommend?: boolean;
 
   @IsString()
   @IsNotEmpty()

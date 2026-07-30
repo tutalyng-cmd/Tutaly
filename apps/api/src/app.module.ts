@@ -15,6 +15,7 @@ import { SupportModule } from './modules/support/support.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { AdsModule } from './modules/ads/ads.module';
 import { BillingModule } from './modules/billing/billing.module';
+import { CompanyModule } from './modules/company/company.module';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 
@@ -73,6 +74,7 @@ import { APP_GUARD } from '@nestjs/core';
     AdminModule,
     AdsModule,
     BillingModule,
+    CompanyModule,
     ThrottlerModule.forRoot([
       {
         name: 'short',

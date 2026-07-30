@@ -6,30 +6,19 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CompanyReview, ReviewStatus } from './entities/review.entity';
+import { ReviewResponse } from './entities/review-response.entity';
 import { CreateReviewDto } from './dto/create-review.dto';
+import { CompanyService } from '../company/company.service';
 import * as crypto from 'crypto';
-
-export interface ReviewAggregateResult {
-  totalReviews: string;
-  avgOverall: string;
-  avgWorkLife: string;
-  avgPay: string;
-  avgManagement: string;
-  avgCulture: string;
-  recommendPercentage: string;
-}
-
-export interface ReviewSearchResult {
-  companyName: string;
-  totalReviews: string;
-  avgOverall: string;
-}
 
 @Injectable()
 export class ReviewService {
   constructor(
     @InjectRepository(CompanyReview)
     private readonly reviewRepo: Repository<CompanyReview>,
+    @InjectRepository(ReviewResponse)
+    private readonly responseRepo: Repository<ReviewResponse>,
+    private readonly companyService: CompanyService,
   ) {}
 
   async create(
@@ -38,16 +27,14 @@ export class ReviewService {
     userAgent: string,
     user: Record<string, any> | null = null,
   ) {
-    // Generate a hash to prevent spam (guest submission tracking)
     const hashInput = `${clientIp}-${userAgent}-${new Date().toDateString()}`;
     const submitterHash = crypto
       .createHash('sha256')
       .update(hashInput)
       .digest('hex');
 
-    // Basic rate limiting: Check if same hash submitted recently
     const recentReview = await this.reviewRepo.findOne({
-      where: { submitterHash, companyName: dto.companyName },
+      where: { submitterHash, company_id: dto.company_id },
       order: { createdAt: 'DESC' },
     });
 
@@ -67,7 +54,7 @@ export class ReviewService {
       status: ReviewStatus.PENDING,
     };
     if (user) {
-      reviewData.user = { id: user.sub } as any; // TypeORM relation
+      reviewData.user = { id: user.sub } as any;
     }
 
     const review = this.reviewRepo.create(reviewData);
@@ -76,45 +63,9 @@ export class ReviewService {
     return { success: true, message: 'Review submitted and pending approval.' };
   }
 
-  async getCompanyAggregates(companyName: string) {
-    const stats = await this.reviewRepo
-      .createQueryBuilder('review')
-      .where('review.companyName = :companyName', { companyName })
-      .andWhere('review.status = :status', { status: ReviewStatus.APPROVED })
-      .select('COUNT(*)', 'totalReviews')
-      .addSelect('AVG(review.ratingOverall)', 'avgOverall')
-      .addSelect('AVG(review.ratingWorkLife)', 'avgWorkLife')
-      .addSelect('AVG(review.ratingPay)', 'avgPay')
-      .addSelect('AVG(review.ratingManagement)', 'avgManagement')
-      .addSelect('AVG(review.ratingCulture)', 'avgCulture')
-      .addSelect(
-        'SUM(CASE WHEN review.recommend = true THEN 1 ELSE 0 END) * 100.0 / COUNT(*)',
-        'recommendPercentage',
-      )
-      .getRawOne();
-
-    const typedStats: ReviewAggregateResult | undefined = stats;
-
-    if (!typedStats || typedStats.totalReviews === '0') {
-      return null;
-    }
-
-    return {
-      totalReviews: parseInt(typedStats.totalReviews),
-      avgOverall: parseFloat(typedStats.avgOverall).toFixed(1),
-      avgWorkLife: parseFloat(typedStats.avgWorkLife || '0').toFixed(1),
-      avgPay: parseFloat(typedStats.avgPay || '0').toFixed(1),
-      avgManagement: parseFloat(typedStats.avgManagement || '0').toFixed(1),
-      avgCulture: parseFloat(typedStats.avgCulture || '0').toFixed(1),
-      recommendPercentage: parseFloat(
-        typedStats.recommendPercentage || '0',
-      ).toFixed(0),
-    };
-  }
-
-  async getApprovedReviews(companyName: string, page = 1, limit = 10) {
+  async getApprovedReviewsByCompany(companyId: string, page = 1, limit = 10) {
     const [data, total] = await this.reviewRepo.findAndCount({
-      where: { companyName, status: ReviewStatus.APPROVED },
+      where: { company_id: companyId, status: ReviewStatus.APPROVED },
       order: { createdAt: 'DESC' },
       take: limit,
       skip: (page - 1) * limit,
@@ -126,6 +77,7 @@ export class ReviewService {
   async getRecentGlobalReviews(page = 1, limit = 10) {
     const [data, total] = await this.reviewRepo.findAndCount({
       where: { status: ReviewStatus.APPROVED },
+      relations: ['company'],
       order: { createdAt: 'DESC' },
       take: limit,
       skip: (page - 1) * limit,
@@ -134,34 +86,10 @@ export class ReviewService {
     return { data, meta: { page, limit, total } };
   }
 
-  async searchCompanies(query: string) {
-    if (!query) return [];
-
-    // Group by companyName, match by ilike
-    const stats = await this.reviewRepo
-      .createQueryBuilder('review')
-      .select('review.companyName', 'companyName')
-      .addSelect('COUNT(*)', 'totalReviews')
-      .addSelect('AVG(review.ratingOverall)', 'avgOverall')
-      .where('review.status = :status', { status: ReviewStatus.APPROVED })
-      .andWhere('review.companyName ILIKE :query', { query: `%${query}%` })
-      .groupBy('review.companyName')
-      .orderBy('"totalReviews"', 'DESC')
-      .limit(10)
-      .getRawMany();
-
-    const typedStats: ReviewSearchResult[] = stats;
-
-    return typedStats.map((stat) => ({
-      companyName: stat.companyName,
-      totalReviews: parseInt(stat.totalReviews),
-      avgOverall: parseFloat(stat.avgOverall).toFixed(1),
-    }));
-  }
-
   async getPendingReviews(page = 1, limit = 10) {
     const [data, total] = await this.reviewRepo.findAndCount({
       where: { status: ReviewStatus.PENDING },
+      relations: ['company'],
       order: { createdAt: 'ASC' },
       take: limit,
       skip: (page - 1) * limit,
@@ -177,6 +105,27 @@ export class ReviewService {
     }
     review.status = status;
     await this.reviewRepo.save(review);
+
+    if (status === ReviewStatus.APPROVED && review.company_id) {
+      await this.companyService.recalculateAggregates(review.company_id);
+    }
+
     return { success: true, message: `Review status updated to ${status}` };
+  }
+
+  async addEmployerResponse(reviewId: string, employerId: string, responseText: string) {
+    const review = await this.reviewRepo.findOne({ where: { id: reviewId } });
+    if (!review) {
+      throw new NotFoundException('Review not found');
+    }
+
+    const response = this.responseRepo.create({
+      review_id: reviewId,
+      employer_user_id: employerId,
+      responseText,
+    });
+
+    await this.responseRepo.save(response);
+    return { success: true, message: 'Response added successfully' };
   }
 }

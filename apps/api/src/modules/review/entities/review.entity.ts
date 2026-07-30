@@ -1,6 +1,7 @@
-import { Entity, Column, ManyToOne, Index } from 'typeorm';
+import { Entity, Column, ManyToOne, Index, JoinColumn } from 'typeorm';
 import { BaseEntity } from '../../../common/entities/base.entity';
 import { User } from '../../user/entities/user.entity';
+import { Company } from '../../company/entities/company.entity';
 
 export enum ReviewStatus {
   PENDING = 'pending',
@@ -10,15 +11,30 @@ export enum ReviewStatus {
 
 @Entity('company_reviews')
 export class CompanyReview extends BaseEntity {
-  @Column()
+  @ManyToOne(() => Company, (company) => company.reviews, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'company_id' })
+  company: Company;
+
+  @Column({ type: 'uuid', nullable: true })
+  @Index()
+  company_id: string;
+
+  // Keep for legacy/migration purposes, can be removed later
+  @Column({ nullable: true })
   @Index()
   companyName: string;
 
-  @Column({ nullable: true })
-  sector: string;
+  @Column({ length: 150 })
+  jobTitle: string;
 
-  @Column({ nullable: true })
-  position: string;
+  @Column({ length: 150, nullable: true })
+  jobLocation: string;
+
+  @Column({ type: 'boolean' })
+  isCurrentEmployee: boolean;
+
+  @Column({ type: 'int', nullable: true })
+  employmentEndYear: number;
 
   @Column({ type: 'smallint' })
   ratingOverall: number;
@@ -27,7 +43,7 @@ export class CompanyReview extends BaseEntity {
   ratingWorkLife: number;
 
   @Column({ type: 'smallint', nullable: true })
-  ratingPay: number;
+  ratingPay: number; // Also known as ratingBenefits
 
   @Column({ type: 'smallint', nullable: true })
   ratingManagement: number;
@@ -35,14 +51,20 @@ export class CompanyReview extends BaseEntity {
   @Column({ type: 'smallint', nullable: true })
   ratingCulture: number;
 
+  @Column({ length: 255 })
+  reviewTitle: string;
+
   @Column('text')
   pros: string;
 
   @Column('text')
   cons: string;
 
-  @Column({ type: 'boolean' })
+  @Column({ type: 'boolean', default: false })
   recommend: boolean;
+
+  @Column({ type: 'int', default: 0 })
+  helpfulVotes: number;
 
   @Column({ length: 100 })
   displayName: string; // The nickname

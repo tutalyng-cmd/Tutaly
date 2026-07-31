@@ -870,7 +870,13 @@
   @media (max-width: 900px) {
     .layout-split { grid-template-columns: 1fr; }
     .mobile-filter-toggle { display: block !important; }
-    .filters { display: none; position: relative !important; top: 0 !important; }
+    .filters { 
+      display: none; 
+      position: relative !important; 
+      top: 0 !important; 
+      max-height: none !important;
+      overflow-y: visible !important;
+    }
     .filters.is-open { display: block; }
   }
 

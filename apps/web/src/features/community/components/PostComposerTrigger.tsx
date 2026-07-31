@@ -14,7 +14,7 @@ export default function PostComposerTrigger({ onClick, userAvatar }: Props) {
         {userAvatar ? (
           <img src={userAvatar} alt="Avatar" className="w-full h-full object-cover" />
         ) : (
-          <div className="w-full h-full bg-[var(--blue-alpha-30)]" />
+          <div className="w-full h-full bg-blue-alpha-30" />
         )}
       </div>
       <button

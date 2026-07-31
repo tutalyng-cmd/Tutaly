@@ -1,9 +1,9 @@
-import { apiAuth, apiPublic } from '@/lib/api';
+import { api } from '@/lib/api';
 import { CommunityBowl, CommunityThread, AnonymityMode } from '../types/community.types';
 
 export const communityService = {
   getTrendingBowls: async () => {
-    const res = await apiPublic.get('/community/bowls');
+    const res = await api.get('/community/bowls');
     return res.data;
   },
 
@@ -11,10 +11,10 @@ export const communityService = {
     // If we want authenticated feed (e.g. 'following' or to show our upvotes), we should use apiAuth
     // Since some users might be unauthenticated, we handle it conditionally or just let apiAuth fail gracefully to guest mode if tokens are missing.
     try {
-      const res = await apiAuth.get('/community/feed', { params });
+      const res = await api.get('/community/feed', { params });
       return res.data;
     } catch {
-      const res = await apiPublic.get('/community/feed', { params });
+      const res = await api.get('/community/feed', { params });
       return res.data;
     }
   },
@@ -26,12 +26,12 @@ export const communityService = {
     anonymity_mode: AnonymityMode;
     display_title_override?: string;
   }) => {
-    const res = await apiAuth.post('/community/threads', data);
+    const res = await api.post('/community/threads', data);
     return res.data;
   },
 
   upvoteThread: async (threadId: string) => {
-    const res = await apiAuth.post(`/community/threads/${threadId}/vote`);
+    const res = await api.post(`/community/threads/${threadId}/vote`);
     return res.data;
   },
 };

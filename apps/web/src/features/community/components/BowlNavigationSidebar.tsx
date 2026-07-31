@@ -11,7 +11,7 @@ export default function BowlNavigationSidebar({ bowls }: { bowls: CommunityBowl[
   const currentBowl = searchParams.get('bowl');
 
   return (
-    <aside className="w-[240px] flex-shrink-0 hidden md:flex flex-col gap-6">
+    <aside className="w-60 flex-shrink-0 hidden md:flex flex-col gap-6">
       <div className="bg-c900 rounded-lg border border-c700 p-4">
         <h3 className="text-sm font-semibold text-c300 uppercase tracking-wider mb-4">Discover Bowls</h3>
         

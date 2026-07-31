@@ -5,7 +5,7 @@ import { TrendingUp, Users } from 'lucide-react';
 
 export default function TrendingTopicsWidget() {
   return (
-    <div className="w-[300px] flex-shrink-0 hidden xl:flex flex-col gap-4">
+    <div className="flex-shrink-0 hidden xl:flex flex-col gap-4" style={{ width: '300px' }}>
       <div className="bg-c900 rounded-lg border border-c700 p-4">
         <div className="flex items-center gap-2 mb-4 text-c300 font-semibold uppercase tracking-wider text-sm">
           <TrendingUp className="w-4 h-4" />
@@ -14,33 +14,33 @@ export default function TrendingTopicsWidget() {
 
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-1 cursor-pointer group">
-            <h4 className="text-white text-sm font-medium group-hover:text-[var(--blue)] transition-colors">
+            <h4 className="text-white text-sm font-medium group-hover:text-blue transition-colors">
               How much are entry-level Frontend Devs making in Lagos?
             </h4>
             <div className="flex items-center gap-2 text-xs text-c400">
-              <span className="text-[var(--blue)]">#SalaryTalk</span>
+              <span className="text-blue">#SalaryTalk</span>
               <span>•</span>
               <span>142 comments</span>
             </div>
           </div>
 
           <div className="flex flex-col gap-1 cursor-pointer group">
-            <h4 className="text-white text-sm font-medium group-hover:text-[var(--blue)] transition-colors">
+            <h4 className="text-white text-sm font-medium group-hover:text-blue transition-colors">
               Is hybrid work actually a trap for junior engineers?
             </h4>
             <div className="flex items-center gap-2 text-xs text-c400">
-              <span className="text-[var(--blue)]">#RemoteWork</span>
+              <span className="text-blue">#RemoteWork</span>
               <span>•</span>
               <span>89 comments</span>
             </div>
           </div>
 
           <div className="flex flex-col gap-1 cursor-pointer group">
-            <h4 className="text-white text-sm font-medium group-hover:text-[var(--blue)] transition-colors">
+            <h4 className="text-white text-sm font-medium group-hover:text-blue transition-colors">
               Layoffs at Paystack? Anyone have inside info?
             </h4>
             <div className="flex items-center gap-2 text-xs text-c400">
-              <span className="text-[var(--blue)]">#Fintech</span>
+              <span className="text-blue">#Fintech</span>
               <span>•</span>
               <span>256 comments</span>
             </div>

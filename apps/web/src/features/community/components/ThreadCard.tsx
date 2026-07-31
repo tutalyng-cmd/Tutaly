@@ -29,8 +29,8 @@ export default function ThreadCard({ thread }: Props) {
 
   const getAuthorIcon = () => {
     if (!thread.author.isAnonymous) return <User className="w-4 h-4 text-c400" />;
-    if (thread.author.name.toLowerCase().includes('employee')) return <Shield className="w-4 h-4 text-[var(--teal)]" />;
-    return <Briefcase className="w-4 h-4 text-[var(--blue)]" />;
+    if (thread.author.name.toLowerCase().includes('employee')) return <Shield className="w-4 h-4 text-teal" />;
+    return <Briefcase className="w-4 h-4 text-blue" />;
   };
 
   return (
@@ -43,7 +43,7 @@ export default function ThreadCard({ thread }: Props) {
           <div className="flex items-center gap-2">
             <span className="font-semibold text-white text-sm">{thread.author.name}</span>
             {thread.author.isAnonymous && (
-              <span className="px-1.5 py-0.5 rounded text-[10px] uppercase font-bold bg-[var(--blue-alpha-30)] text-[var(--blue)]">
+              <span className="px-1.5 py-0.5 rounded text-xs uppercase font-bold bg-blue-alpha-30 text-blue">
                 Anonymous
               </span>
             )}
@@ -55,7 +55,7 @@ export default function ThreadCard({ thread }: Props) {
             {thread.bowl && (
               <>
                 <span>•</span>
-                <span className="text-[var(--blue)] font-medium">#{thread.bowl.name}</span>
+                <span className="text-blue font-medium">#{thread.bowl.name}</span>
               </>
             )}
           </div>
@@ -71,7 +71,7 @@ export default function ThreadCard({ thread }: Props) {
         <button
           onClick={handleUpvote}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-colors ${
-            hasVoted ? 'bg-[var(--blue-alpha-30)] text-[var(--blue)]' : 'bg-c800 hover:bg-c700'
+            hasVoted ? 'bg-blue-alpha-30 text-blue' : 'bg-c800 hover:bg-c700'
           }`}
         >
           <ArrowBigUp className={`w-5 h-5 ${hasVoted ? 'fill-current' : ''}`} />

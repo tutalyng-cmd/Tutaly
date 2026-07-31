@@ -21,7 +21,7 @@ export default function AnonymitySelectorBar({ selected, onChange, userFullName,
           onClick={() => onChange('full_name')}
           className={`flex-1 flex flex-col items-start gap-1 p-3 rounded-md border text-left transition-colors ${
             selected === 'full_name'
-              ? 'border-[var(--blue)] bg-[var(--blue-alpha-30)]'
+              ? 'border-blue bg-blue-alpha-30'
               : 'border-c700 hover:border-c600 hover:bg-c700'
           }`}
         >
@@ -37,7 +37,7 @@ export default function AnonymitySelectorBar({ selected, onChange, userFullName,
           onClick={() => onChange('job_title_only')}
           className={`flex-1 flex flex-col items-start gap-1 p-3 rounded-md border text-left transition-colors ${
             selected === 'job_title_only'
-              ? 'border-[var(--blue)] bg-[var(--blue-alpha-30)]'
+              ? 'border-blue bg-blue-alpha-30'
               : 'border-c700 hover:border-c600 hover:bg-c700'
           }`}
         >
@@ -53,7 +53,7 @@ export default function AnonymitySelectorBar({ selected, onChange, userFullName,
           onClick={() => onChange('anonymous_employee')}
           className={`flex-1 flex flex-col items-start gap-1 p-3 rounded-md border text-left transition-colors ${
             selected === 'anonymous_employee'
-              ? 'border-[var(--blue)] bg-[var(--blue-alpha-30)]'
+              ? 'border-blue bg-blue-alpha-30'
               : 'border-c700 hover:border-c600 hover:bg-c700'
           }`}
         >

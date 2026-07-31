@@ -9,7 +9,7 @@ import ThreadCard from './ThreadCard';
 import TrendingTopicsWidget from './TrendingTopicsWidget';
 import { communityService } from '../api/community.service';
 import { CommunityBowl, CommunityThread } from '../types/community.types';
-import { apiAuth } from '@/lib/api';
+import { api } from '@/lib/api';
 
 export default function CommunityFeatureLayout() {
   const searchParams = useSearchParams();
@@ -32,7 +32,7 @@ export default function CommunityFeatureLayout() {
       if (token) {
         setIsLoggedIn(true);
         try {
-          const res = await apiAuth.get('/user/profile');
+          const res = await api.get('/user/profile');
           setUserFullName(`${res.data.data.firstName} ${res.data.data.lastName}`);
           // Simplified fallback for job title
           setUserJobTitle('Verified Professional');
@@ -102,7 +102,7 @@ export default function CommunityFeatureLayout() {
 
             {isLoading ? (
               <div className="flex justify-center p-8">
-                <div className="animate-spin w-8 h-8 border-4 border-[var(--blue)] border-t-transparent rounded-full" />
+                <div className="animate-spin w-8 h-8 border-4 border-blue border-t-transparent rounded-full" />
               </div>
             ) : threads.length > 0 ? (
               <div className="flex flex-col gap-4">

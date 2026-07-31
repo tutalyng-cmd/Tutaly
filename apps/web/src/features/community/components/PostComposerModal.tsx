@@ -45,8 +45,8 @@ export default function PostComposerModal({ onClose, onSuccess, bowls, defaultBo
   };
 
   return (
-    <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-[var(--black-alpha-70)] backdrop-blur-sm">
-      <div className="bg-c900 rounded-lg border border-c700 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black-alpha-70 backdrop-blur-sm">
+      <div className="bg-c900 rounded-lg border border-c700 w-full max-w-2xl overflow-y-auto shadow-2xl flex flex-col" style={{ maxHeight: '90vh' }}>
         <div className="flex items-center justify-between p-4 border-b border-c800">
           <h2 className="text-lg font-bold text-white">Create a Post</h2>
           <button onClick={onClose} className="p-2 hover:bg-c800 rounded-full transition-colors text-c400">
@@ -67,7 +67,7 @@ export default function PostComposerModal({ onClose, onSuccess, bowls, defaultBo
             <select
               value={selectedBowlSlug}
               onChange={(e) => setSelectedBowlSlug(e.target.value)}
-              className="bg-c800 border border-c700 rounded-md px-3 py-2 text-white outline-none focus:border-[var(--blue)]"
+              className="bg-c800 border border-c700 rounded-md px-3 py-2 text-white outline-none focus:border-blue"
               required
             >
               <option value="" disabled>Select a topic...</option>
@@ -84,7 +84,7 @@ export default function PostComposerModal({ onClose, onSuccess, bowls, defaultBo
               placeholder="What's on your mind?"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="bg-c800 border border-c700 rounded-md px-3 py-2 text-white outline-none focus:border-[var(--blue)]"
+              className="bg-c800 border border-c700 rounded-md px-3 py-2 text-white outline-none focus:border-blue"
               maxLength={255}
               required
             />
@@ -96,7 +96,8 @@ export default function PostComposerModal({ onClose, onSuccess, bowls, defaultBo
               placeholder="Add more details..."
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              className="bg-c800 border border-c700 rounded-md px-3 py-2 text-white outline-none focus:border-[var(--blue)] min-h-[150px] resize-y"
+              className="bg-c800 border border-c700 rounded-md px-3 py-2 text-white outline-none focus:border-blue resize-y"
+              style={{ minHeight: '150px' }}
               required
             />
           </div>

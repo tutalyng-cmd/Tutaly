@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Query } from '@nestjs/common';
 import { CompanyService } from './company.service';
 
 @Controller('companies')
@@ -22,5 +22,10 @@ export class CompanyController {
   @Get(':slug')
   async findOne(@Param('slug') slug: string) {
     return this.companyService.findBySlug(slug);
+  }
+
+  @Post('find-or-create')
+  async findOrCreate(@Body('name') name: string) {
+    return this.companyService.findOrCreate(name);
   }
 }

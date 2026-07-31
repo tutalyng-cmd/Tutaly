@@ -47,6 +47,21 @@ export class CompanyService {
     return { success: true, data: company };
   }
 
+  async findOrCreate(name: string) {
+    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+    let company = await this.companyRepository.findOne({ where: { slug } });
+    
+    if (!company) {
+      company = this.companyRepository.create({
+        name,
+        slug,
+      });
+      await this.companyRepository.save(company);
+    }
+    
+    return { success: true, data: company };
+  }
+
   // Internal hook for aggregation
   async recalculateAggregates(companyId: string) {
     const stats = await this.companyRepository.manager.query(

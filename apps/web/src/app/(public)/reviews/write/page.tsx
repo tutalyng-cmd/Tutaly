@@ -18,20 +18,14 @@ export default function WriteReviewSelectCompanyPage() {
     setLoading(true);
     setError('');
     try {
-      // Find company by name (search endpoint)
-      // Since we don't have a dedicated search endpoint yet that returns exact matches, 
-      // we can try fetching the top companies or using a search endpoint if available.
-      // Assuming GET /companies?search=query exists from CompanyController
-      const { data } = await api.get(`/companies?search=${encodeURIComponent(query)}`);
-      const companies = data?.data || [];
+      // Create or find the company by name
+      const { data } = await api.post('/companies/find-or-create', { name: query });
       
-      if (companies.length > 0) {
-        // Go to the first match
-        router.push(`/reviews/write/${companies[0].slug}`);
+      if (data?.success && data?.data) {
+        // Go to the company slug
+        router.push(`/reviews/write/${data.data.slug}`);
       } else {
-        // We could theoretically create a company on the fly here, 
-        // but for now, we'll just show an error.
-        setError('Company not found. Please try another name.');
+        setError('Could not process the company. Please try again.');
         setLoading(false);
       }
     } catch (err) {

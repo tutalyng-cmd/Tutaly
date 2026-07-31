@@ -10,11 +10,27 @@ export class CompanyService {
     private readonly companyRepository: Repository<Company>,
   ) {}
 
-  async findAll(page: number, limit: number, search?: string) {
+  async findAll(page: number, limit: number, search?: string, industry?: string, location?: string, size?: string, rating?: string) {
     const qb = this.companyRepository.createQueryBuilder('company');
     
     if (search) {
-      qb.where('company.name ILIKE :search', { search: `%${search}%` });
+      qb.andWhere('company.name ILIKE :search', { search: `%${search}%` });
+    }
+    if (industry) {
+      qb.andWhere('company.industry ILIKE :industry', { industry: `%${industry}%` });
+    }
+    if (location) {
+      qb.andWhere('company.location ILIKE :location', { location: `%${location}%` });
+    }
+    if (size) {
+      qb.andWhere('company.companySize = :size', { size });
+    }
+    if (rating) {
+      // Basic check for averageRating. We can expand this later to use specific category ratings if passed.
+      const parsedRating = parseFloat(rating);
+      if (!isNaN(parsedRating)) {
+        qb.andWhere('company.averageRating >= :rating', { rating: parsedRating });
+      }
     }
 
     qb.orderBy('company.reviewCount', 'DESC')

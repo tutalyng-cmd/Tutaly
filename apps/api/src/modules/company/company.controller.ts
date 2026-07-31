@@ -10,8 +10,12 @@ export class CompanyController {
     @Query('page') page = '1',
     @Query('limit') limit = '10',
     @Query('search') search?: string,
+    @Query('industry') industry?: string,
+    @Query('location') location?: string,
+    @Query('size') size?: string,
+    @Query('rating') rating?: string,
   ) {
-    return this.companyService.findAll(+page, +limit, search);
+    return this.companyService.findAll(+page, +limit, search, industry, location, size, rating);
   }
 
   @Get('top')

@@ -41,4 +41,26 @@ export class SalaryController {
     const l = parseInt(limit || '10', 10);
     return this.salaryService.getRecent(p, l, industry, role);
   }
+
+  // --- NEW SALARY INSIGHTS ENGINE (V2) ---
+
+  @Get('engine/search')
+  async searchSalaryEngine(
+    @Query('title') title: string,
+    @Query('location') location?: string,
+  ) {
+    return this.salaryService.searchSalaryEngine(title, location);
+  }
+
+  @Post('engine/submit')
+  async submitSalaryEngine(@Body() dto: any) {
+    // In a real app we would use a proper DTO here
+    return this.salaryService.submitSalaryEngine(dto);
+  }
+
+  @Get('engine/top-paying-companies')
+  async getTopPayingCompanies(@Query('title') title: string) {
+    if (!title) return { success: false, message: 'Job title is required' };
+    return this.salaryService.getTopPayingCompanies(title);
+  }
 }

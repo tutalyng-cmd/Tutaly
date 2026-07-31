@@ -9,7 +9,7 @@ export function CompanyNavigationTabs({ companySlug }: { companySlug: string }) 
 
   const tabs = [
     { label: 'Overview', href: `/reviews/company/${companySlug}` },
-    { label: 'Reviews', href: `/reviews/company/${companySlug}/reviews` },
+    { label: 'Reviews', href: `/reviews/company/${companySlug}` },
     { label: 'Salaries', href: `/reviews/company/${companySlug}/salaries` },
     { label: 'Q&A', href: `/reviews/company/${companySlug}/questions` },
     { label: 'Jobs', href: `/reviews/company/${companySlug}/jobs` },

@@ -3,8 +3,6 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { serverFetch } from '@/lib/server-fetch';
 
-import { CompanyHeader } from '@/components/reviews/CompanyHeader';
-import { CompanyNavigationTabs } from '@/components/reviews/CompanyNavigationTabs';
 import { RatingSummaryCard } from '@/components/reviews/RatingSummaryCard';
 import { ReviewFilterBar } from '@/components/reviews/ReviewFilterBar';
 import { ReviewCard } from '@/components/reviews/ReviewCard';
@@ -62,10 +60,7 @@ export default async function CompanyProfilePage(props: {
   const totalPages = Math.ceil(meta.total / meta.limit);
 
   return (
-    <div className="page-shell">
-      <CompanyHeader company={company} />
-      <CompanyNavigationTabs companySlug={slug} />
-
+    <>
       <div className="container" style={{ padding: '32px 0 80px' }}>
         <div className="layout-split" style={{ padding: 0 }}>
           
@@ -116,6 +111,6 @@ export default async function CompanyProfilePage(props: {
 
         </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -51,7 +51,7 @@ export class ReviewService {
     const reviewData: Partial<CompanyReview> = {
       ...dto,
       submitterHash,
-      status: ReviewStatus.PENDING,
+      status: ReviewStatus.APPROVED,
     };
     if (user) {
       reviewData.user = { id: user.sub } as any;
@@ -60,7 +60,13 @@ export class ReviewService {
     const review = this.reviewRepo.create(reviewData);
 
     await this.reviewRepo.save(review);
-    return { success: true, message: 'Review submitted and pending approval.' };
+    
+    // Automatically recalculate the company's stats since the review is approved instantly
+    if (review.company_id) {
+      await this.companyService.recalculateAggregates(review.company_id);
+    }
+
+    return { success: true, message: 'Review submitted successfully.' };
   }
 
   async getApprovedReviewsByCompany(companyId: string, page = 1, limit = 10) {

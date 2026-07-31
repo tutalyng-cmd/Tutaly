@@ -144,7 +144,7 @@ export default function WriteReviewForm({ company }: { company: any }) {
           <ShieldCheck style={{ width: '32px', height: '32px' }} />
         </div>
         <h2 style={{ fontSize: '24px', fontWeight: 800, color: 'var(--c-100)', marginBottom: '8px' }}>Review Submitted!</h2>
-        <p style={{ fontSize: '14px', color: 'var(--c-400)', marginBottom: '24px', lineHeight: 1.6 }}>Thank you for your anonymous contribution. Your review is pending moderation and will be published shortly.</p>
+        <p style={{ fontSize: '14px', color: 'var(--c-400)', marginBottom: '24px', lineHeight: 1.6 }}>Thank you for your anonymous contribution. Your review is now live and will help others make informed decisions.</p>
         <div style={{ color: 'var(--green)', fontSize: '14px', fontWeight: 600, animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' }}>Redirecting to {company.name}...</div>
       </div>
     );

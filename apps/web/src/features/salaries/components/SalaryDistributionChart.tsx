@@ -34,7 +34,7 @@ export const SalaryDistributionChart: React.FC<SalaryDistributionChartProps> = (
           <div style={{
             position: 'absolute', top: 0, bottom: 0,
             left: `${p25Left}%`, width: `${p75Right - p25Left}%`,
-            background: 'rgba(27,79,158,0.3)', borderRadius: 'var(--r-pill)',
+            background: 'var(--blue-alpha-30)', borderRadius: 'var(--r-pill)',
           }} />
           <div style={{
             position: 'absolute', top: '50%',

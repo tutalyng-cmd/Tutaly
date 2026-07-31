@@ -7,6 +7,9 @@
     --blue-l:  #3A7DE0;
     --gold:    #C9A227;
     --gold-h:  #DDB630;
+    --blue-alpha-30: rgba(27,79,158,0.3);
+    --green-alpha-20: rgba(29,122,58,0.2);
+    --black-alpha-70: rgba(0,0,0,0.7);
 
     --c-900: #1A1C1E;
     --c-800: #22252A;

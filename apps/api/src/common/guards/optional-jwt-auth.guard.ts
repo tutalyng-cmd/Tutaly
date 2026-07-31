@@ -6,7 +6,7 @@ export class OptionalJwtAuthGuard extends JwtAuthGuard {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     try {
       await super.canActivate(context);
-    } catch (e) {
+    } catch {
       // If validation fails or no token is provided, we just ignore the error
       // and allow the request to proceed without req.user
     }

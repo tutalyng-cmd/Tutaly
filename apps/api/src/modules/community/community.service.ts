@@ -44,7 +44,12 @@ export class CommunityService {
       .leftJoin('thread.user', 'user')
       .leftJoin('user.seekerProfile', 'seekerProfile')
       // Note: We don't join the full user by default to preserve anonymity, we only fetch what we need
-      .addSelect(['user.id', 'user.username', 'seekerProfile.firstName', 'seekerProfile.lastName'])
+      .addSelect([
+        'user.id',
+        'user.username',
+        'seekerProfile.firstName',
+        'seekerProfile.lastName',
+      ])
       .where('thread.status = :status', { status: 'published' })
       .orderBy('thread.createdAt', 'DESC')
       .skip((filters.page - 1) * filters.limit)
@@ -63,7 +68,8 @@ export class CommunityService {
 
       if (t.anonymity_mode === AnonymityMode.FULL_NAME && t.user) {
         if (t.user.seekerProfile?.firstName || t.user.seekerProfile?.lastName) {
-          authorName = `${t.user.seekerProfile?.firstName || ''} ${t.user.seekerProfile?.lastName || ''}`.trim();
+          authorName =
+            `${t.user.seekerProfile?.firstName || ''} ${t.user.seekerProfile?.lastName || ''}`.trim();
         } else {
           authorName = t.user.username || 'Anonymous';
         }

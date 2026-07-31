@@ -87,7 +87,6 @@ export class ConnectService {
   }
 
   async getFeed(userId: string, page = 1, limit = 10) {
-
     // DB fallback: get posts from people this user follows + own posts
     const followedUsers = await this.followRepo.find({
       where: { follower: { id: userId }, status: FollowStatus.ACCEPTED },

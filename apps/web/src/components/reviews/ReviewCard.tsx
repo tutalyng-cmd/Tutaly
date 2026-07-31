@@ -19,7 +19,7 @@ export function ReviewCard({ review }: { review: any }) {
   const employerResponse = review.responses && review.responses.length > 0 ? review.responses[0] : null;
 
   return (
-    <article className="review-full reveal visible" style={{ background: 'var(--c-800)', border: '1px solid var(--c-700)', borderRadius: 'var(--r-lg)', padding: '24px', marginBottom: '24px' }}>
+    <article className="review-full reveal visible" style={{ background: 'var(--c-800)', border: '1px solid var(--c-700)', borderRadius: 'var(--r-lg)', padding: '24px', marginBottom: '24px', overflowWrap: 'break-word', wordBreak: 'break-word' }}>
       <div className="review-full__head" style={{ borderBottom: 'none', paddingBottom: 0, marginBottom: '16px' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>

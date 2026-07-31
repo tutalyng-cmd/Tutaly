@@ -1068,15 +1068,18 @@
     border: 1px solid var(--c-700);
     border-radius: var(--r-lg);
     padding: 24px;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    min-width: 0;
   }
   .review-full__head {
     display: flex; align-items: flex-start; justify-content: space-between;
     margin-bottom: 14px;
     flex-wrap: wrap; gap: 10px;
   }
-  .review-full__company-row { display: flex; align-items: center; gap: 12px; }
+  .review-full__company-row { display: flex; align-items: center; gap: 12px; min-width: 0; }
   .review-full__title { font-size: 15px; font-weight: 700; color: var(--c-100); margin: 12px 0 10px; }
-  .review-full__body { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 14px; }
+  .review-full__body { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 14px; min-width: 0; }
   @media (max-width: 640px) { .review-full__body { grid-template-columns: 1fr; } }
   .review-pro, .review-con {
     padding: 12px 14px;
@@ -2241,15 +2244,18 @@
     border: 1px solid var(--c-700);
     border-radius: var(--r-lg);
     padding: 24px;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    min-width: 0;
   }
   .review-full__head {
     display: flex; align-items: flex-start; justify-content: space-between;
     margin-bottom: 14px;
     flex-wrap: wrap; gap: 10px;
   }
-  .review-full__company-row { display: flex; align-items: center; gap: 12px; }
+  .review-full__company-row { display: flex; align-items: center; gap: 12px; min-width: 0; }
   .review-full__title { font-size: 15px; font-weight: 700; color: var(--c-100); margin: 12px 0 10px; }
-  .review-full__body { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 14px; }
+  .review-full__body { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 14px; min-width: 0; }
   @media (max-width: 640px) { .review-full__body { grid-template-columns: 1fr; } }
   .review-pro, .review-con {
     padding: 12px 14px;

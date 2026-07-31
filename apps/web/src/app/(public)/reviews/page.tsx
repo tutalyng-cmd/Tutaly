@@ -9,6 +9,7 @@ export const metadata: Metadata = {
 
 import { serverFetch } from '@/lib/server-fetch';
 import { INDUSTRIES } from '@/lib/constants';
+import { ReviewGlobalSidebar } from '@/components/reviews/ReviewGlobalSidebar';
 function StarRating({ rating }: { rating: number }) {
   const full = Math.floor(rating);
   const stars = [];
@@ -74,30 +75,7 @@ export default async function ReviewsPage(props: {
         <div className="layout-split" style={{ padding: 0 }}>
 
           {/* FILTERS */}
-          <aside className="filters" aria-label="Review filters">
-            <div className="filters__header">
-              <span className="filters__title">Filters</span>
-              <span className="filters__clear">Clear all</span>
-            </div>
-            <div className="filter-group">
-              <div className="filter-group__label">Rating</div>
-              <label className="filter-option checked"><span className="filter-checkbox"></span> 4★ &amp; up <span className="filter-count">4,210</span></label>
-              <label className="filter-option"><span className="filter-checkbox"></span> 3★ &amp; up <span className="filter-count">7,840</span></label>
-              <label className="filter-option"><span className="filter-checkbox"></span> Any rating <span className="filter-count">12,000</span></label>
-            </div>
-            <div className="filter-group">
-              <div className="filter-group__label">Industry</div>
-              {INDUSTRIES.map(ind => (
-                <label key={ind} className="filter-option"><span className="filter-checkbox"></span> {ind} <span className="filter-count"></span></label>
-              ))}
-            </div>
-            <div className="filter-group">
-              <div className="filter-group__label">Company size</div>
-              <label className="filter-option"><span className="filter-checkbox"></span> Startup <span className="filter-count">5,200</span></label>
-              <label className="filter-option"><span className="filter-checkbox"></span> Mid-size <span className="filter-count">4,100</span></label>
-              <label className="filter-option"><span className="filter-checkbox"></span> Enterprise <span className="filter-count">2,700</span></label>
-            </div>
-          </aside>
+          <ReviewGlobalSidebar />
 
           {/* REVIEW LIST */}
           <main aria-label="Company reviews">

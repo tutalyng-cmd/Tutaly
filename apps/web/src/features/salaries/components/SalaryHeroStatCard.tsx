@@ -28,7 +28,7 @@ export const SalaryHeroStatCard: React.FC<SalaryHeroStatCardProps> = ({ stats, t
           </div>
         </div>
         
-        <div className="bg-c900 p-4 rounded-lg border border-c700 min-w-[240px]">
+        <div className="bg-c900 p-4 rounded-lg border border-c700 min-w-60">
           <div className="text-sm text-c400 mb-2 font-medium">Confidence & Data Quality</div>
           <div className="flex items-center gap-2">
             <div className={`w-3 h-3 rounded-full ${stats.sample_count > 10 ? 'bg-green' : 'bg-yellow-500'}`}></div>

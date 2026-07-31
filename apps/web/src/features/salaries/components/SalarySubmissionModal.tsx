@@ -95,8 +95,8 @@ export const SalarySubmissionModal: React.FC<SalarySubmissionModalProps> = ({
               />
             </div>
 
-            <div className="flex gap-4">
-              <div className="flex-[2]">
+            <div className="grid grid-cols-3 gap-4">
+              <div className="col-span-2">
                 <label className="block text-sm font-medium text-c300 mb-2">Base Pay (NGN)</label>
                 <input 
                   name="base_pay" 
@@ -107,7 +107,7 @@ export const SalarySubmissionModal: React.FC<SalarySubmissionModalProps> = ({
                   placeholder="e.g. 5000000"
                 />
               </div>
-              <div className="flex-1">
+              <div className="col-span-1">
                 <label className="block text-sm font-medium text-c300 mb-2">Per</label>
                 <select 
                   name="pay_period" 

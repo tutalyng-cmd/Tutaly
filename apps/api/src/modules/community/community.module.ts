@@ -6,6 +6,7 @@ import { CommunityBowl } from './entities/community-bowl.entity';
 import { CommunityThread } from './entities/community-thread.entity';
 import { CommunityComment } from './entities/community-comment.entity';
 import { UserModule } from '../user/user.module';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { UserModule } from '../user/user.module';
       CommunityComment,
     ]),
     UserModule,
+    AuthModule,
   ],
   controllers: [CommunityController],
   providers: [CommunityService],

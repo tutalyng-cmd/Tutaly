@@ -12,7 +12,7 @@ export default async function ReviewSearchPage({ searchParams }: { searchParams:
   let searchResults = [];
 
   try {
-    const res = await serverFetch<any>(`reviews/companies/search?q=${encodeURIComponent(query)}`, { cache: 'no-store' });
+    const res = await serverFetch<any>(`companies?search=${encodeURIComponent(query)}`, { cache: 'no-store' });
     searchResults = res?.data || [];
   } catch (err) {
     console.error('Failed to fetch search results', err);
@@ -46,15 +46,15 @@ export default async function ReviewSearchPage({ searchParams }: { searchParams:
         <div className="space-y-4">
           {searchResults.length > 0 ? (
             searchResults.map((company: any, index: number) => (
-              <Link key={index} href={`/reviews/company/${encodeURIComponent(company.companyName.toLowerCase())}`} className="block bg-white rounded-xl shadow-sm border border-c200 p-6 hover:shadow-md hover:border-green transition-all">
+              <Link key={index} href={`/reviews/company/${company.slug}`} className="block bg-white rounded-xl shadow-sm border border-c200 p-6 hover:shadow-md hover:border-green transition-all">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-lg bg-c100 border border-c100 flex items-center justify-center shrink-0">
                       <Building2 className="w-6 h-6 text-c400" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-c900">{company.companyName}</h3>
-                      <p className="text-sm text-c500">{company.totalReviews} reviews • {company.avgOverall} Rating</p>
+                      <h3 className="text-xl font-bold text-c900">{company.name}</h3>
+                      <p className="text-sm text-c500">{company.reviewCount} reviews • {Number(company.averageRating || 0).toFixed(1)} Rating</p>
                     </div>
                   </div>
                   <div className="text-green">

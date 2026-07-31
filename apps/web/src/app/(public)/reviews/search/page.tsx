@@ -41,16 +41,16 @@ export default async function ReviewSearchPage(props: {
   let searchResults = [];
   let meta = { total: 0, page: 1, limit: 10 };
 
-  try {
-    const params = new URLSearchParams();
-    params.set('page', page.toString());
-    params.set('limit', '10');
-    if (q) params.set('search', q);
-    if (industry) params.set('industry', industry);
-    if (location) params.set('location', location);
-    if (size) params.set('size', size);
-    if (rating) params.set('rating', rating);
+  const params = new URLSearchParams();
+  params.set('page', page.toString());
+  params.set('limit', '10');
+  if (q) params.set('search', q);
+  if (industry) params.set('industry', industry);
+  if (location) params.set('location', location);
+  if (size) params.set('size', size);
+  if (rating) params.set('rating', rating);
 
+  try {
     const res = await serverFetch<any>(`companies?${params.toString()}`, { cache: 'no-store' });
     searchResults = res?.data || [];
     meta = res?.meta || meta;

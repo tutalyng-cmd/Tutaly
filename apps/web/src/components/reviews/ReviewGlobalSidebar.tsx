@@ -58,9 +58,9 @@ export function ReviewGlobalSidebar() {
         <form action="/reviews/search" method="GET">
           <div className="filters__header" style={{ marginBottom: '24px' }}>
             <span className="filters__title" style={{ fontSize: '18px', fontWeight: 'bold' }}>Explore companies</span>
-            <div>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
               <a href="/reviews" className="filters__clear" style={{ marginRight: '16px', textDecoration: 'none' }}>Clear filters</a>
-              <button type="submit" style={{ background: 'var(--blue)', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: '4px', fontSize: '13px', cursor: 'pointer', fontWeight: 'bold' }}>Apply</button>
+              <button type="submit" className="btn btn--primary" style={{ padding: '6px 12px', fontSize: '13px' }}>Apply</button>
             </div>
           </div>
 

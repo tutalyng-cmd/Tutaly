@@ -98,9 +98,9 @@ export class UserManagementService {
   }
 
   async updateUserStatus(userId: string, status: UserStatus): Promise<void> {
-    const user = await this.userRepo.findOne({ 
+    const user = await this.userRepo.findOne({
       where: { id: userId },
-      relations: ['sellerProfile']
+      relations: ['sellerProfile'],
     });
     if (!user) throw new NotFoundException('User not found');
 

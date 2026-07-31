@@ -25,11 +25,7 @@ import { EmployerProfile } from '../user/entities/employer-profile.entity';
 import { UserSettings } from '../user/entities/user-settings.entity';
 import { Job, Application } from '../job/entities/job.entity';
 import { Order, OrderDispute } from '../shop/entities/order.entity';
-import {
-
-  LegalPage,
-  Ad,
-} from '../support/entities/support.entity';
+import { LegalPage, Ad } from '../support/entities/support.entity';
 import { ShopProduct } from '../shop/entities/shop.entity';
 import { CompanyReview } from '../review/entities/review.entity';
 import { Post } from '../connect/entities/post.entity';

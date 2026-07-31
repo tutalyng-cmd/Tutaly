@@ -710,7 +710,8 @@ export class ShopService {
     for (const { id } of expiredOrderIds) {
       await this.orderRepo.manager.transaction(async (manager) => {
         // Lock the row to prevent race conditions with createDispute using inner join
-        const order = await manager.createQueryBuilder(Order, 'order')
+        const order = await manager
+          .createQueryBuilder(Order, 'order')
           .innerJoinAndSelect('order.product', 'product')
           .innerJoinAndSelect('order.buyer', 'buyer')
           .where('order.id = :id', { id })
@@ -720,7 +721,8 @@ export class ShopService {
         if (!order) return;
 
         // Verify state hasn't changed while waiting for lock
-        if (![OrderStatus.PAID, OrderStatus.DELIVERED].includes(order.status)) return;
+        if (![OrderStatus.PAID, OrderStatus.DELIVERED].includes(order.status))
+          return;
         if (!order.escrowReleaseAt || order.escrowReleaseAt > now) return;
 
         if (order.product?.listingType === ListingType.PHYSICAL) {
@@ -729,7 +731,7 @@ export class ShopService {
         } else {
           order.status = OrderStatus.COMPLETED;
         }
-        
+
         order.earningsReleasedAt = new Date();
         await manager.save(order);
         releasedCount++;
@@ -742,8 +744,10 @@ export class ShopService {
             order.product?.title || 'Unknown Product',
           );
         }
-        
-        this.logger.log(`Order ${order.id} auto-confirmed/completed after 48hr window expired`);
+
+        this.logger.log(
+          `Order ${order.id} auto-confirmed/completed after 48hr window expired`,
+        );
       });
     }
 

@@ -60,7 +60,8 @@ export class SalaryService {
       .addGroupBy('salary.salaryPeriod')
       .getRawMany();
 
-    const typedStats: SalaryAggregateResult[] = stats as unknown as SalaryAggregateResult[];
+    const typedStats: SalaryAggregateResult[] =
+      stats as unknown as SalaryAggregateResult[];
 
     return typedStats.map((stat) => ({
       totalSubmissions: parseInt(stat.totalSubmissions),
@@ -85,7 +86,8 @@ export class SalaryService {
       .limit(limit)
       .getRawMany();
 
-    const typedStats: PopularRoleResult[] = stats as unknown as PopularRoleResult[];
+    const typedStats: PopularRoleResult[] =
+      stats as unknown as PopularRoleResult[];
 
     return typedStats.map((stat) => ({
       role: stat.role,
@@ -118,9 +120,13 @@ export class SalaryService {
    */
   async searchSalaryEngine(title: string, location?: string) {
     if (!title) throw new BadRequestException('Job title is required');
-    const canonical = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    const canonical = title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
 
-    const query = this.aggregateRepo.createQueryBuilder('agg')
+    const query = this.aggregateRepo
+      .createQueryBuilder('agg')
       .where('agg.canonical_job_title = :canonical', { canonical });
 
     if (location) {
@@ -134,7 +140,9 @@ export class SalaryService {
     return {
       success: true,
       data: result || null,
-      message: result ? 'Stats retrieved successfully' : 'No data found for this role and location',
+      message: result
+        ? 'Stats retrieved successfully'
+        : 'No data found for this role and location',
     };
   }
 
@@ -150,7 +158,10 @@ export class SalaryService {
     years_experience?: number;
     company_id?: string;
   }) {
-    const canonical = data.job_title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    const canonical = data.job_title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
 
     const salary = this.salaryRepo.create({
       job_title: data.job_title,
@@ -170,16 +181,23 @@ export class SalaryService {
     await this.recalculateAggregates(canonical, data.location);
     await this.recalculateAggregates(canonical, 'ALL');
 
-    return { success: true, message: 'Salary submitted and aggregated successfully.' };
+    return {
+      success: true,
+      message: 'Salary submitted and aggregated successfully.',
+    };
   }
 
   /**
    * Get top paying companies for a canonical title
    */
   async getTopPayingCompanies(title: string) {
-    const canonical = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    const canonical = title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
 
-    const results = await this.salaryRepo.createQueryBuilder('s')
+    const results = await this.salaryRepo
+      .createQueryBuilder('s')
       .leftJoinAndSelect('s.company', 'company')
       .where('s.canonical_job_title = :canonical', { canonical })
       .andWhere('s.company_id IS NOT NULL')
@@ -188,7 +206,7 @@ export class SalaryService {
         'company.name as name',
         'company.slug as slug',
         'AVG(s.base_pay) as avg_pay',
-        'COUNT(s.id) as sample_size'
+        'COUNT(s.id) as sample_size',
       ])
       .groupBy('company.id')
       .having('COUNT(s.id) > 0')
@@ -198,13 +216,13 @@ export class SalaryService {
 
     return {
       success: true,
-      data: results.map(r => ({
+      data: results.map((r) => ({
         id: r.id,
         name: r.name,
         slug: r.slug,
         averagePay: parseFloat(r.avg_pay),
-        sampleSize: parseInt(r.sample_size)
-      }))
+        sampleSize: parseInt(r.sample_size),
+      })),
     };
   }
 
@@ -234,11 +252,14 @@ export class SalaryService {
 
     if (stats && parseInt(stats.sample_count) > 0) {
       let aggregate = await this.aggregateRepo.findOne({
-        where: { canonical_job_title: canonical, location }
+        where: { canonical_job_title: canonical, location },
       });
 
       if (!aggregate) {
-        aggregate = this.aggregateRepo.create({ canonical_job_title: canonical, location });
+        aggregate = this.aggregateRepo.create({
+          canonical_job_title: canonical,
+          location,
+        });
       }
 
       aggregate.sample_count = parseInt(stats.sample_count);
@@ -252,4 +273,3 @@ export class SalaryService {
     }
   }
 }
-

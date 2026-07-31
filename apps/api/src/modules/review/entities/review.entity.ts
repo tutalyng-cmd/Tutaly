@@ -11,7 +11,9 @@ export enum ReviewStatus {
 
 @Entity('company_reviews')
 export class CompanyReview extends BaseEntity {
-  @ManyToOne(() => Company, (company) => company.reviews, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Company, (company) => company.reviews, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'company_id' })
   company: Company;
 

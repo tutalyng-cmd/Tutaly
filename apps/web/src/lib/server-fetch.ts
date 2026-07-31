@@ -25,6 +25,7 @@ export async function serverFetch<T>(endpoint: string, options: FetchOptions = {
   const fetchOptions: RequestInit = {
     ...options,
     headers,
+    signal: options.signal || AbortSignal.timeout(5000),
   };
 
   try {

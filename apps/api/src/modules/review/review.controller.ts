@@ -72,7 +72,11 @@ export class ReviewController {
     @Body('responseText') responseText: string,
     @NestRequest() req: any,
   ) {
-    return this.reviewService.addEmployerResponse(reviewId, req.user.sub, responseText);
+    return this.reviewService.addEmployerResponse(
+      reviewId,
+      req.user.sub,
+      responseText,
+    );
   }
 
   @Get('all/recent')

@@ -239,7 +239,9 @@ export class MailService {
     productTitle: string,
   ): Promise<void> {
     const orderUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard/purchases/${orderId}`;
-    console.log(`[MAILER MOCK] Auto-confirm email for ${to}, order: ${orderId}`);
+    console.log(
+      `[MAILER MOCK] Auto-confirm email for ${to}, order: ${orderId}`,
+    );
 
     try {
       await this.transporter.sendMail({

@@ -15,7 +15,15 @@ export class CompanyController {
     @Query('size') size?: string,
     @Query('rating') rating?: string,
   ) {
-    return this.companyService.findAll(+page, +limit, search, industry, location, size, rating);
+    return this.companyService.findAll(
+      +page,
+      +limit,
+      search,
+      industry,
+      location,
+      size,
+      rating,
+    );
   }
 
   @Get('top')

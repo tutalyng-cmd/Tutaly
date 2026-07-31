@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Param, Query, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Query,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { CommunityService } from './community.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { OptionalJwtAuthGuard } from '../auth/guards/optional-jwt-auth.guard';
@@ -23,20 +32,26 @@ export class CommunityController {
     @Query('limit') limit: number = 20,
   ) {
     const userId = req.user?.id;
-    return this.communityService.getFeed(userId, { bowlSlug, tab, page, limit });
+    return this.communityService.getFeed(userId, {
+      bowlSlug,
+      tab,
+      page,
+      limit,
+    });
   }
 
   @UseGuards(JwtAuthGuard)
   @Post('threads')
   async createThread(
     @Request() req,
-    @Body() dto: {
+    @Body()
+    dto: {
       bowl_slug: string;
       title: string;
       content: string;
       anonymity_mode: AnonymityMode;
       display_title_override?: string;
-    }
+    },
   ) {
     return this.communityService.createThread(req.user.id, dto);
   }

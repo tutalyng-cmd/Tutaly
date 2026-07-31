@@ -58,7 +58,7 @@ export class RatingsDisputesEarningsService {
   ) {
     const supabaseUrl = this.configService.get<string>('SUPABASE_URL');
     const supabaseKey = this.configService.get<string>('SUPABASE_SERVICE_KEY');
-    
+
     if (supabaseUrl && supabaseKey) {
       this.supabase = createClient(supabaseUrl, supabaseKey);
     }
@@ -221,7 +221,8 @@ export class RatingsDisputesEarningsService {
   ): Promise<OrderDispute> {
     return this.orderRepo.manager.transaction(async (manager) => {
       // Find order with pessimistic lock using inner join to avoid Postgres outer join lock error
-      const order = await manager.createQueryBuilder(Order, 'order')
+      const order = await manager
+        .createQueryBuilder(Order, 'order')
         .innerJoinAndSelect('order.buyer', 'buyer')
         .innerJoinAndSelect('order.seller', 'seller')
         .where('order.id = :orderId', { orderId })
@@ -236,7 +237,13 @@ export class RatingsDisputesEarningsService {
         throw new ForbiddenException('Only the buyer can raise a dispute');
       }
 
-      if (![OrderStatus.PAID, OrderStatus.DELIVERED, OrderStatus.COMPLETED].includes(order.status)) {
+      if (
+        ![
+          OrderStatus.PAID,
+          OrderStatus.DELIVERED,
+          OrderStatus.COMPLETED,
+        ].includes(order.status)
+      ) {
         throw new BadRequestException(
           'Disputes can only be raised for paid, delivered or completed orders',
         );
@@ -259,7 +266,9 @@ export class RatingsDisputesEarningsService {
       });
 
       if (existingDispute) {
-        throw new BadRequestException('A dispute already exists for this order');
+        throw new BadRequestException(
+          'A dispute already exists for this order',
+        );
       }
 
       // Validate evidenceUrls and enqueue for moderation
@@ -269,12 +278,12 @@ export class RatingsDisputesEarningsService {
           if (!url.startsWith(`disputes/${orderId}/${buyerId}-`)) {
             throw new BadRequestException('Invalid evidence URL provided');
           }
-          
+
           // Get a temporary public read URL for the worker to download
           const { data } = await this.supabase.storage
             .from('disputes')
             .createSignedUrl(url.replace('disputes/', ''), 60 * 60);
-            
+
           if (data?.signedUrl) {
             // Enqueue into existing moderation pipeline
             await this.imageQueue.add('process-image', {
@@ -310,7 +319,9 @@ export class RatingsDisputesEarningsService {
 
       // TODO: Notify seller via SendGrid
 
-      this.logger.log(`Dispute created for order ${orderId} by buyer ${buyerId}`);
+      this.logger.log(
+        `Dispute created for order ${orderId} by buyer ${buyerId}`,
+      );
 
       return savedDispute;
     });
@@ -371,15 +382,24 @@ export class RatingsDisputesEarningsService {
    */
   private async initiateRefund(order: Order, adminId: string): Promise<void> {
     if (!order.paymentRef || !order.paymentGateway) {
-      this.logger.error(`Cannot refund order ${order.id}: missing paymentRef or paymentGateway`);
-      throw new BadRequestException('Order is missing payment reference and cannot be automatically refunded.');
+      this.logger.error(
+        `Cannot refund order ${order.id}: missing paymentRef or paymentGateway`,
+      );
+      throw new BadRequestException(
+        'Order is missing payment reference and cannot be automatically refunded.',
+      );
     }
 
     const gateway = this.paymentGatewayFactory.create(order.paymentGateway);
-    const refundSuccess = await gateway.refundPayment(order.paymentRef, Number(order.amountPaid));
+    const refundSuccess = await gateway.refundPayment(
+      order.paymentRef,
+      Number(order.amountPaid),
+    );
 
     if (!refundSuccess) {
-      throw new BadRequestException('Failed to process refund with the payment gateway. Order status not changed.');
+      throw new BadRequestException(
+        'Failed to process refund with the payment gateway. Order status not changed.',
+      );
     }
 
     order.status = OrderStatus.REFUNDED;
@@ -420,17 +440,21 @@ export class RatingsDisputesEarningsService {
 
     if (!order) throw new NotFoundException('Order not found');
     if (order.buyer.id !== userId) {
-      throw new ForbiddenException('Only the buyer can upload dispute evidence');
+      throw new ForbiddenException(
+        'Only the buyer can upload dispute evidence',
+      );
     }
 
     // Only allow specific extensions (images and pdfs)
     const allowedExtensions = ['jpg', 'jpeg', 'png', 'pdf'];
     const ext = fileName.split('.').pop()?.toLowerCase();
     if (!ext || !allowedExtensions.includes(ext)) {
-      throw new BadRequestException('Invalid file type. Only JPG, PNG, and PDF are allowed.');
+      throw new BadRequestException(
+        'Invalid file type. Only JPG, PNG, and PDF are allowed.',
+      );
     }
 
-    // Use a specific bucket, default to 'disputes' if not specified, 
+    // Use a specific bucket, default to 'disputes' if not specified,
     // but the system has 'products', 'users', 'community' etc. We'll use 'disputes'
     const bucket = 'disputes';
     const filePath = `${orderId}/${userId}-${Date.now()}.${ext}`;
@@ -447,9 +471,9 @@ export class RatingsDisputesEarningsService {
     return {
       uploadUrl: data.signedUrl,
       path: filePath,
-      // The public or signed read URL will be generated when reading, 
+      // The public or signed read URL will be generated when reading,
       // but we return the storage path for the frontend to submit in createDispute
-      evidenceUrl: `${bucket}/${filePath}`, 
+      evidenceUrl: `${bucket}/${filePath}`,
     };
   }
 

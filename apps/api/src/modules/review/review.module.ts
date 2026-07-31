@@ -8,7 +8,11 @@ import { AuthModule } from '../auth/auth.module';
 import { CompanyModule } from '../company/company.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CompanyReview, ReviewResponse]), AuthModule, CompanyModule],
+  imports: [
+    TypeOrmModule.forFeature([CompanyReview, ReviewResponse]),
+    AuthModule,
+    CompanyModule,
+  ],
   controllers: [ReviewController],
   providers: [ReviewService],
 })

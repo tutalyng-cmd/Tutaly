@@ -10,17 +10,29 @@ export class CompanyService {
     private readonly companyRepository: Repository<Company>,
   ) {}
 
-  async findAll(page: number, limit: number, search?: string, industry?: string, location?: string, size?: string, rating?: string) {
+  async findAll(
+    page: number,
+    limit: number,
+    search?: string,
+    industry?: string,
+    location?: string,
+    size?: string,
+    rating?: string,
+  ) {
     const qb = this.companyRepository.createQueryBuilder('company');
-    
+
     if (search) {
       qb.andWhere('company.name ILIKE :search', { search: `%${search}%` });
     }
     if (industry) {
-      qb.andWhere('company.industry ILIKE :industry', { industry: `%${industry}%` });
+      qb.andWhere('company.industry ILIKE :industry', {
+        industry: `%${industry}%`,
+      });
     }
     if (location) {
-      qb.andWhere('company.location ILIKE :location', { location: `%${location}%` });
+      qb.andWhere('company.location ILIKE :location', {
+        location: `%${location}%`,
+      });
     }
     if (size) {
       qb.andWhere('company.companySize = :size', { size });
@@ -29,7 +41,9 @@ export class CompanyService {
       // Basic check for averageRating. We can expand this later to use specific category ratings if passed.
       const parsedRating = parseFloat(rating);
       if (!isNaN(parsedRating)) {
-        qb.andWhere('company.averageRating >= :rating', { rating: parsedRating });
+        qb.andWhere('company.averageRating >= :rating', {
+          rating: parsedRating,
+        });
       }
     }
 
@@ -64,9 +78,12 @@ export class CompanyService {
   }
 
   async findOrCreate(name: string) {
-    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+    const slug = name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)+/g, '');
     let company = await this.companyRepository.findOne({ where: { slug } });
-    
+
     if (!company) {
       company = this.companyRepository.create({
         name,
@@ -74,7 +91,7 @@ export class CompanyService {
       });
       await this.companyRepository.save(company);
     }
-    
+
     return { success: true, data: company };
   }
 
@@ -88,7 +105,7 @@ export class CompanyService {
       FROM company_reviews
       WHERE company_id = $1 AND status = 'approved'
       `,
-      [companyId]
+      [companyId],
     );
 
     const count = parseInt(stats[0].reviewCount || '0', 10);

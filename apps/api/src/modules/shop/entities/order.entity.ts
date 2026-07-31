@@ -74,8 +74,6 @@ export class Order extends BaseEntity {
   @Column({ name: 'confirmed_at', type: 'timestamp', nullable: true })
   confirmedAt: Date | null; // When buyer confirms receipt (physical only)
 
-
-
   @Column({ default: 1 })
   quantity: number; // For per-unit listings
 

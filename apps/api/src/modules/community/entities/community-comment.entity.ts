@@ -17,7 +17,11 @@ export class CommunityComment extends BaseEntity {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @Column({ type: 'enum', enum: AnonymityMode, default: AnonymityMode.JOB_TITLE_ONLY })
+  @Column({
+    type: 'enum',
+    enum: AnonymityMode,
+    default: AnonymityMode.JOB_TITLE_ONLY,
+  })
   anonymity_mode: AnonymityMode;
 
   @Column({ length: 100, nullable: true })

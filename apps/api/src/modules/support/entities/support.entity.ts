@@ -68,4 +68,3 @@ export class Notification extends BaseEntity {
   @Column({ nullable: true })
   link: string;
 }
-

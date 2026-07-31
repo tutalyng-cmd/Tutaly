@@ -60,7 +60,7 @@ export class ReviewService {
     const review = this.reviewRepo.create(reviewData);
 
     await this.reviewRepo.save(review);
-    
+
     // Automatically recalculate the company's stats since the review is approved instantly
     if (review.company_id) {
       await this.companyService.recalculateAggregates(review.company_id);
@@ -119,7 +119,11 @@ export class ReviewService {
     return { success: true, message: `Review status updated to ${status}` };
   }
 
-  async addEmployerResponse(reviewId: string, employerId: string, responseText: string) {
+  async addEmployerResponse(
+    reviewId: string,
+    employerId: string,
+    responseText: string,
+  ) {
     const review = await this.reviewRepo.findOne({ where: { id: reviewId } });
     if (!review) {
       throw new NotFoundException('Review not found');

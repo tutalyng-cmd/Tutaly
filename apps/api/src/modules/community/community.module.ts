@@ -9,7 +9,11 @@ import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([CommunityBowl, CommunityThread, CommunityComment]),
+    TypeOrmModule.forFeature([
+      CommunityBowl,
+      CommunityThread,
+      CommunityComment,
+    ]),
     UserModule,
   ],
   controllers: [CommunityController],

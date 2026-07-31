@@ -40,10 +40,12 @@ export class StripeGateway implements IPaymentGateway {
       // If we save the checkout session ID as paymentRef, we must retrieve the checkout session to get the PaymentIntent
       const session = await this.stripe.checkout.sessions.retrieve(paymentRef);
       const paymentIntentId = session.payment_intent as string;
-      
+
       if (!paymentIntentId) {
-         this.logger.error(`No payment intent found for Stripe session ${paymentRef}`);
-         return false;
+        this.logger.error(
+          `No payment intent found for Stripe session ${paymentRef}`,
+        );
+        return false;
       }
 
       const payload: any = { payment_intent: paymentIntentId };
@@ -52,14 +54,20 @@ export class StripeGateway implements IPaymentGateway {
       const refund = await this.stripe.refunds.create(payload);
 
       if (refund.status === 'succeeded' || refund.status === 'pending') {
-        this.logger.log(`Successfully refunded Stripe transaction ${paymentRef}`);
+        this.logger.log(
+          `Successfully refunded Stripe transaction ${paymentRef}`,
+        );
         return true;
       } else {
-        this.logger.error(`Stripe refund failed for ${paymentRef}: ${refund.status}`);
+        this.logger.error(
+          `Stripe refund failed for ${paymentRef}: ${refund.status}`,
+        );
         return false;
       }
     } catch (error: any) {
-      this.logger.error(`Stripe refund exception for ${paymentRef}: ${error.message}`);
+      this.logger.error(
+        `Stripe refund exception for ${paymentRef}: ${error.message}`,
+      );
       return false;
     }
   }

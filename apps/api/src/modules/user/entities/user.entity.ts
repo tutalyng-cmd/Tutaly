@@ -10,8 +10,6 @@ export enum UserRole {
   ADMIN = 'admin',
 }
 
-
-
 export enum AuthProvider {
   LOCAL = 'local',
   GOOGLE = 'google',
@@ -59,8 +57,6 @@ export class User extends BaseEntity {
 
   @Column({ default: false })
   isTestAccount: boolean;
-
-
 
   @Column({ type: 'enum', enum: AuthProvider, default: AuthProvider.LOCAL })
   authProvider: AuthProvider;

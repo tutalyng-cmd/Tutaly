@@ -2,7 +2,10 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CommunityBowl } from './entities/community-bowl.entity';
-import { CommunityThread, AnonymityMode } from './entities/community-thread.entity';
+import {
+  CommunityThread,
+  AnonymityMode,
+} from './entities/community-thread.entity';
 import { CommunityComment } from './entities/community-comment.entity';
 
 @Injectable()
@@ -26,8 +29,17 @@ export class CommunityService {
     };
   }
 
-  async getFeed(userId: string | undefined, filters: { bowlSlug?: string, tab: 'global' | 'following', page: number, limit: number }) {
-    const qb = this.threadRepo.createQueryBuilder('thread')
+  async getFeed(
+    _userId: string | undefined,
+    filters: {
+      bowlSlug?: string;
+      tab: 'global' | 'following';
+      page: number;
+      limit: number;
+    },
+  ) {
+    const qb = this.threadRepo
+      .createQueryBuilder('thread')
       .leftJoinAndSelect('thread.bowl', 'bowl')
       .leftJoin('thread.user', 'user')
       // Note: We don't join the full user by default to preserve anonymity, we only fetch what we need
@@ -44,9 +56,9 @@ export class CommunityService {
     const [threads, total] = await qb.getManyAndCount();
 
     // Map threads to apply anonymity rules before sending to frontend
-    const mappedThreads = threads.map(t => {
+    const mappedThreads = threads.map((t) => {
       let authorName = 'Anonymous';
-      let authorTitle = 'Verified Professional';
+      const authorTitle = 'Verified Professional';
 
       if (t.anonymity_mode === AnonymityMode.FULL_NAME && t.user) {
         authorName = `${t.user.firstName} ${t.user.lastName}`;
@@ -61,9 +73,9 @@ export class CommunityService {
         author: {
           name: authorName,
           title: authorTitle,
-          isAnonymous: t.anonymity_mode !== AnonymityMode.FULL_NAME
+          isAnonymous: t.anonymity_mode !== AnonymityMode.FULL_NAME,
         },
-        user: undefined // Strip original user object
+        user: undefined, // Strip original user object
       };
     });
 
@@ -78,8 +90,19 @@ export class CommunityService {
     };
   }
 
-  async createThread(userId: string, dto: { bowl_slug: string, title: string, content: string, anonymity_mode: AnonymityMode, display_title_override?: string }) {
-    const bowl = await this.bowlRepo.findOne({ where: { slug: dto.bowl_slug } });
+  async createThread(
+    userId: string,
+    dto: {
+      bowl_slug: string;
+      title: string;
+      content: string;
+      anonymity_mode: AnonymityMode;
+      display_title_override?: string;
+    },
+  ) {
+    const bowl = await this.bowlRepo.findOne({
+      where: { slug: dto.bowl_slug },
+    });
     if (!bowl) {
       throw new NotFoundException('Bowl not found');
     }
@@ -97,12 +120,12 @@ export class CommunityService {
     return { success: true, data: thread };
   }
 
-  async upvoteThread(threadId: string, userId: string) {
+  async upvoteThread(threadId: string, _userId: string) {
     const thread = await this.threadRepo.findOne({ where: { id: threadId } });
     if (!thread) {
       throw new NotFoundException('Thread not found');
     }
-    
+
     // Increment vote count (in a real system, track vote via relation to prevent duplicate votes)
     thread.upvotes_count += 1;
     await this.threadRepo.save(thread);

@@ -3,12 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { SupportController } from './support.controller';
 import { SupportService } from './support.service';
 import { NotificationsGateway } from './notifications.gateway';
-import {
-  Notification,
-  Ad,
-  LegalPage,
-
-} from './entities/support.entity';
+import { Notification, Ad, LegalPage } from './entities/support.entity';
 import { AuthModule } from '../auth/auth.module';
 
 @Global()

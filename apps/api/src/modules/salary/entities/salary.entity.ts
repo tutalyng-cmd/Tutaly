@@ -37,7 +37,7 @@ export class Salary extends BaseEntity {
   @Column({ type: 'varchar', length: 20, default: 'yearly' })
   pay_period: string;
 
-  @Column({ type: 'decimal', precision: 12, scale: 2, default: 0.00 })
+  @Column({ type: 'decimal', precision: 12, scale: 2, default: 0.0 })
   bonus_pay: number;
 
   @Column({ type: 'int', nullable: true })

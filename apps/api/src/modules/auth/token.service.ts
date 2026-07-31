@@ -1,88 +1,79 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import Redis from 'ioredis';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, MoreThanOrEqual, Like } from 'typeorm';
 import * as crypto from 'crypto';
+import { KeyValue } from './entities/key-value.entity';
 
 @Injectable()
 export class TokenService {
-  private redisClient: Redis;
+  constructor(
+    @InjectRepository(KeyValue)
+    private readonly kvRepo: Repository<KeyValue>,
+  ) {}
 
-  constructor(private configService: ConfigService) {
-    this.redisClient = new Redis(this.configService.get<string>('REDIS_URL')!);
+  private async setKey(key: string, value: string, ttlSeconds: number) {
+    const expiresAt = new Date(Date.now() + ttlSeconds * 1000);
+    const entity = this.kvRepo.create({ key, value, expiresAt });
+    await this.kvRepo.save(entity);
   }
 
-  /**
-   * Stores a refresh token in Redis associated with the user ID.
-   * If a previous token exists, it can be deleted to support token rotation.
-   */
+  private async getKey(key: string): Promise<string | null> {
+    const entity = await this.kvRepo.findOne({
+      where: { key, expiresAt: MoreThanOrEqual(new Date()) },
+    });
+    return entity ? entity.value : null;
+  }
+
+  private async delKey(key: string) {
+    await this.kvRepo.delete(key);
+  }
+
   async storeRefreshToken(userId: string, token: string): Promise<void> {
     const key = `refresh_token:${userId}`;
-    // Store for 7 days (604800 seconds)
-    await this.redisClient.set(key, token, 'EX', 7 * 24 * 60 * 60);
+    await this.setKey(key, token, 7 * 24 * 60 * 60);
   }
 
-  /**
-   * Validates a refresh token against the one stored in Redis.
-   */
   async validateRefreshToken(userId: string, token: string): Promise<boolean> {
     const key = `refresh_token:${userId}`;
-    const storedToken = await this.redisClient.get(key);
+    const storedToken = await this.getKey(key);
     return storedToken === token;
   }
 
-  /**
-   * Revokes the refresh token (logout / global force logout).
-   */
   async revokeRefreshToken(userId: string): Promise<void> {
     const key = `refresh_token:${userId}`;
-    await this.redisClient.del(key);
+    await this.delKey(key);
   }
 
-  /**
-   * Generates and stores a 6-digit OTP for MFA.
-   */
   async generateMfaEntry(userId: string): Promise<string> {
     const otp = crypto.randomInt(100000, 999999).toString();
     const key = `mfa_otp:${userId}`;
-    // Store for 5 minutes
-    await this.redisClient.set(key, otp, 'EX', 5 * 60);
+    await this.setKey(key, otp, 5 * 60);
     return otp;
   }
 
-  /**
-   * Validates the MFA OTP.
-   */
   async validateMfaOtp(userId: string, otp: string): Promise<boolean> {
     const key = `mfa_otp:${userId}`;
-    const storedOtp = await this.redisClient.get(key);
+    const storedOtp = await this.getKey(key);
     if (storedOtp === otp) {
-      await this.redisClient.del(key);
+      await this.delKey(key);
       return true;
     }
     return false;
   }
 
-  /**
-   * Stores a temporary MFA session token (to prove the user just logged in).
-   */
   async storeMfaSession(userId: string, token: string): Promise<void> {
     const key = `mfa_session:${userId}`;
-    // Store for 10 minutes
-    await this.redisClient.set(key, token, 'EX', 10 * 60);
+    await this.setKey(key, token, 10 * 60);
   }
 
-  /**
-   * Validates the temporary MFA session token.
-   */
   async validateMfaSession(userId: string, token: string): Promise<boolean> {
     const key = `mfa_session:${userId}`;
-    const storedToken = await this.redisClient.get(key);
+    const storedToken = await this.getKey(key);
     return storedToken === token;
   }
 
-  // ─── JOB CACHING ──────────────────────────────────
   async getJobCache(key: string): Promise<string | null> {
-    return this.redisClient.get(key);
+    return this.getKey(key);
   }
 
   async setJobCache(
@@ -90,24 +81,10 @@ export class TokenService {
     data: string,
     ttlSeconds: number = 300,
   ): Promise<void> {
-    await this.redisClient.set(key, data, 'EX', ttlSeconds);
+    await this.setKey(key, data, ttlSeconds);
   }
 
   async invalidateJobCache(): Promise<void> {
-    let cursor = '0';
-    do {
-      const result = await this.redisClient.scan(
-        cursor,
-        'MATCH',
-        'jobs:*',
-        'COUNT',
-        100,
-      );
-      cursor = result[0];
-      const keys = result[1];
-      if (keys.length > 0) {
-        await this.redisClient.del(...keys);
-      }
-    } while (cursor !== '0');
+    await this.kvRepo.delete({ key: Like('jobs:%') });
   }
 }

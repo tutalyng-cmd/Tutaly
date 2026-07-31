@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { BullModule } from '@nestjs/bull';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseModule } from './database/database.module';
@@ -20,49 +19,17 @@ import { CommunityModule } from './modules/community/community.module';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { ScheduleModule } from '@nestjs/schedule';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '../../.env',
     }),
-    BullModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => {
-        const redisUrlStr =
-          configService.get<string>('REDIS_URL') || 'redis://localhost:6379';
-        let redisConfig: any;
-
-        try {
-          const url = new URL(redisUrlStr);
-          redisConfig = {
-            host: url.hostname,
-            port: parseInt(url.port, 10) || 6379,
-            password: url.password
-              ? decodeURIComponent(url.password)
-              : undefined,
-            username: url.username
-              ? decodeURIComponent(url.username)
-              : undefined,
-            tls:
-              url.protocol === 'rediss:'
-                ? { rejectUnauthorized: false }
-                : undefined,
-            family: 4, // Force IPv4 for Upstash compatibility
-            maxRetriesPerRequest: null,
-            enableReadyCheck: false,
-          };
-        } catch {
-          // Fallback if URL parsing fails
-          redisConfig = redisUrlStr;
-        }
-
-        return {
-          redis: redisConfig,
-        };
-      },
-      inject: [ConfigService],
-    }),
+    EventEmitterModule.forRoot(),
+    ScheduleModule.forRoot(),
     DatabaseModule,
     AuthModule,
     UserModule,

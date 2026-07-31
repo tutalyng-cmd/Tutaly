@@ -1,10 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { BullModule } from '@nestjs/bull';
 import { ConnectController } from './connect.controller';
 import { ConnectService } from './connect.service';
-import { FeedProcessor } from './feed.processor';
-import { ImageProcessor } from './image.processor';
+import { ImageListener } from './image.listener';
 import { Post } from './entities/post.entity';
 import { PostLike } from './entities/post-like.entity';
 import { PostComment } from './entities/post-comment.entity';
@@ -38,17 +36,11 @@ import { AuthModule } from '../auth/auth.module';
       ConnectNotification,
       Block,
     ]),
-    BullModule.registerQueue({
-      name: 'feed-fanout',
-    }),
-    BullModule.registerQueue({
-      name: 'image-processing',
-    }),
     SupportModule,
     AuthModule,
   ],
   controllers: [ConnectController],
-  providers: [ConnectService, FeedProcessor, ImageProcessor],
+  providers: [ConnectService, ImageListener],
   exports: [ConnectService],
 })
 export class ConnectModule {}

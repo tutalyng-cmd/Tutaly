@@ -9,8 +9,8 @@ import {
   Request,
 } from '@nestjs/common';
 import { CommunityService } from './community.service';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { OptionalJwtAuthGuard } from '../auth/guards/optional-jwt-auth.guard';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { OptionalJwtAuthGuard } from '../../common/guards/optional-jwt-auth.guard';
 import { AnonymityMode } from './entities/community-thread.entity';
 
 @Controller('community')

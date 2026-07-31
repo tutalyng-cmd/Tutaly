@@ -1,16 +1,15 @@
-import { Processor, Process } from '@nestjs/bull';
-import { Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AdCampaign } from '../entities/ad-campaign.entity';
 import { CampaignStatus } from '../enums/ads.enums';
 import { NotificationService } from '../../admin/services/notification.service';
 import { NotificationType } from '../../admin/entities/notification.entity';
-import type { Job } from 'bull';
 
-@Processor('ads-cron')
-export class AdsCronProcessor {
-  private readonly logger = new Logger(AdsCronProcessor.name);
+@Injectable()
+export class AdsCronService {
+  private readonly logger = new Logger(AdsCronService.name);
 
   constructor(
     @InjectRepository(AdCampaign)
@@ -18,8 +17,8 @@ export class AdsCronProcessor {
     private readonly notificationService: NotificationService,
   ) {}
 
-  @Process('check-ad-budgets')
-  async handleCheckBudgets(_job: Job) {
+  @Cron(CronExpression.EVERY_HOUR)
+  async handleCheckBudgets() {
     this.logger.log('Checking ad campaigns for daily budgets and end dates...');
     const activeCampaigns = await this.campaignRepo.find({
       where: { status: CampaignStatus.ACTIVE },
@@ -102,8 +101,8 @@ export class AdsCronProcessor {
     }
   }
 
-  @Process('weekly-ad-report')
-  async handleWeeklyReport(_job: Job) {
+  @Cron('0 7 * * 1')
+  async handleWeeklyReport() {
     this.logger.log('Generating weekly ad reports...');
 
     // We only care about campaigns that are active or were recently completed

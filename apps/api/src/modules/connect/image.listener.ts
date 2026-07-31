@@ -1,20 +1,18 @@
-import { Process, Processor } from '@nestjs/bull';
-import type { Job } from 'bull';
 import { Injectable } from '@nestjs/common';
+import { OnEvent } from '@nestjs/event-emitter';
 import sharp from 'sharp';
 
 // NOTE: This processor expects an image URL or buffer, processes it with sharp to strip EXIF,
 // and should upload to a public CDN/storage bucket.
 @Injectable()
-@Processor('image-processing')
-export class ImageProcessor {
-  @Process('process-image')
-  async handleProcessImage(job: Job<{ mediaId: string; url: string }>) {
-    console.log(`[ImageProcessor] Processing image ${job.data.mediaId}`);
+export class ImageListener {
+  @OnEvent('image.process', { async: true })
+  async handleProcessImage(payload: { mediaId: string; url: string }) {
+    console.log(`[ImageListener] Processing image ${payload.mediaId}`);
 
     try {
       // 1. Download image from temporary URL (e.g. presigned URL)
-      const response = await fetch(job.data.url);
+      const response = await fetch(payload.url);
       if (!response.ok) {
         throw new Error(`Failed to fetch image: ${response.statusText}`);
       }
@@ -31,11 +29,11 @@ export class ImageProcessor {
       // TODO: Implement S3/Supabase Storage upload here
 
       console.log(
-        `[ImageProcessor] Image ${job.data.mediaId} processed successfully.`,
+        `[ImageListener] Image ${payload.mediaId} processed successfully.`,
       );
     } catch (error) {
       console.error(
-        `[ImageProcessor] Error processing image ${job.data.mediaId}:`,
+        `[ImageListener] Error processing image ${payload.mediaId}:`,
         error,
       );
       throw error;

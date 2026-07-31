@@ -7,8 +7,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { InjectQueue } from '@nestjs/bull';
-import type { Queue } from 'bull';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Between } from 'typeorm';
 import { Order, OrderStatus } from '../entities/order.entity';
@@ -54,7 +53,7 @@ export class RatingsDisputesEarningsService {
     private readonly disputeRepo: Repository<OrderDispute>,
     private readonly paymentGatewayFactory: PaymentGatewayFactory,
     private readonly configService: ConfigService,
-    @InjectQueue('image-processing') private readonly imageQueue: Queue,
+    private readonly eventEmitter: EventEmitter2,
   ) {
     const supabaseUrl = this.configService.get<string>('SUPABASE_URL');
     const supabaseKey = this.configService.get<string>('SUPABASE_SERVICE_KEY');
@@ -286,7 +285,7 @@ export class RatingsDisputesEarningsService {
 
           if (data?.signedUrl) {
             // Enqueue into existing moderation pipeline
-            await this.imageQueue.add('process-image', {
+            this.eventEmitter.emit('image.process', {
               mediaId: url,
               url: data.signedUrl,
             });

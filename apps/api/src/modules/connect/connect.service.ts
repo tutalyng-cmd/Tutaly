@@ -6,9 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { InjectQueue } from '@nestjs/bull';
-import type { Queue } from 'bull';
-import Redis from 'ioredis';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { User } from '../user/entities/user.entity';
 import { Post } from './entities/post.entity';
 import { PostLike } from './entities/post-like.entity';
@@ -29,8 +27,6 @@ function toPlain<T>(obj: T): T {
 
 @Injectable()
 export class ConnectService {
-  private redisClient: Redis | null = null;
-
   constructor(
     @InjectRepository(Post) private readonly postRepo: Repository<Post>,
     @InjectRepository(PostLike) private readonly likeRepo: Repository<PostLike>,
@@ -46,31 +42,10 @@ export class ConnectService {
     @InjectRepository(Block) private readonly blockRepo: Repository<Block>,
     @InjectRepository(ConnectNotification)
     private readonly connectNotificationRepo: Repository<ConnectNotification>,
-    @InjectQueue('feed-fanout') private feedQueue: Queue,
     private configService: ConfigService,
     private supportService: SupportService,
-  ) {
-    try {
-      const redisUrl = this.configService.get<string>('REDIS_URL');
-      if (redisUrl) {
-        this.redisClient = new Redis(redisUrl, {
-          maxRetriesPerRequest: 3,
-          lazyConnect: true,
-        });
-        this.redisClient.connect().catch((err) => {
-          console.warn(
-            '[ConnectService] Redis connection failed, feed will use DB fallback:',
-            err.message,
-          );
-          this.redisClient = null;
-        });
-      }
-    } catch {
-      console.warn(
-        '[ConnectService] Redis init failed, feed will use DB fallback',
-      );
-    }
-  }
+    private eventEmitter: EventEmitter2,
+  ) {}
 
   // ─── Posts ────────────────────────────────────────────────────────
 
@@ -101,64 +76,17 @@ export class ConnectService {
       // TODO: enqueue image processing job to strip EXIF and move to public CDN
     }
 
-    // Queue fan-out job (fire-and-forget — don't block post creation if Redis is down)
-    try {
-      await this.feedQueue.add('distribute-post', {
-        postId: post.id,
-        authorId: userId,
-        timestamp: post.createdAt.getTime(),
-      });
-    } catch (err) {
-      console.warn(
-        '[ConnectService] Failed to queue feed fan-out (Redis may be unavailable):',
-        err,
-      );
-    }
+    // Fire-and-forget event for fan-out and other post-creation tasks
+    this.eventEmitter.emit('post.created', {
+      postId: post.id,
+      authorId: userId,
+      timestamp: post.createdAt.getTime(),
+    });
 
     return { success: true, data: toPlain(post) };
   }
 
   async getFeed(userId: string, page = 1, limit = 10) {
-    // Try Redis-based feed first
-    if (this.redisClient) {
-      try {
-        const feedKey = `feed:${userId}`;
-        const start = (page - 1) * limit;
-        const end = start + limit - 1;
-
-        const postIds = await this.redisClient.zrevrange(feedKey, start, end);
-
-        if (postIds.length > 0) {
-          const posts = await this.postRepo
-            .createQueryBuilder('post')
-            .leftJoinAndSelect('post.author', 'author')
-            .leftJoinAndSelect('author.seekerProfile', 'seekerProfile')
-            .whereInIds(postIds)
-            .getMany();
-
-          posts.sort((a, b) => postIds.indexOf(a.id) - postIds.indexOf(b.id));
-          const total = await this.redisClient.zcard(feedKey);
-
-          const mappedPosts = posts.map((p) => {
-            const { password: _, ...safeAuthor } = p.author;
-            return {
-              ...p,
-              author: {
-                ...safeAuthor,
-                firstName: p.author.seekerProfile?.firstName,
-                lastName: p.author.seekerProfile?.lastName,
-              },
-            };
-          });
-
-          return { data: toPlain(mappedPosts), meta: { page, limit, total } };
-        }
-      } catch {
-        console.warn(
-          '[ConnectService] Redis feed read failed, falling back to DB',
-        );
-      }
-    }
 
     // DB fallback: get posts from people this user follows + own posts
     const followedUsers = await this.followRepo.find({

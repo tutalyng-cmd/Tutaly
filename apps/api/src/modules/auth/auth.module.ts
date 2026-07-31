@@ -11,9 +11,11 @@ import { EmployerProfile } from '../user/entities/employer-profile.entity';
 import { GoogleStrategy } from './strategies/google.strategy';
 import { LinkedInStrategy } from './strategies/linkedin.strategy';
 
+import { KeyValue } from './entities/key-value.entity';
+
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, SeekerProfile, EmployerProfile]),
+    TypeOrmModule.forFeature([User, SeekerProfile, EmployerProfile, KeyValue]),
     JwtModule.register({}), // Secrets are passed per-sign call
   ],
   controllers: [AuthController],

@@ -40,7 +40,6 @@ export const SalarySubmissionModal: React.FC<SalarySubmissionModalProps> = ({
         setTimeout(() => {
           setSuccess(false);
           onClose();
-          // Ideally refresh the page or trigger re-fetch here
           window.location.reload();
         }, 2000);
       }
@@ -55,64 +54,82 @@ export const SalarySubmissionModal: React.FC<SalarySubmissionModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-      <div className="bg-c900 border border-c700 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden">
-        
-        <div className="p-6 border-b border-c800 flex justify-between items-center bg-c800">
-          <h2 className="text-xl font-bold text-white">Add Your Salary</h2>
-          <button onClick={onClose} className="text-c400 hover:text-white transition-colors">
-            ✕
-          </button>
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 50,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      padding: '16px', background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)',
+    }}>
+      <div style={{
+        background: 'var(--c-900)',
+        border: '1px solid var(--c-700)',
+        width: '100%', maxWidth: '520px',
+        borderRadius: 'var(--r-xl)',
+        boxShadow: 'var(--shadow-lg)',
+        overflow: 'hidden',
+      }}>
+        {/* Header */}
+        <div style={{
+          padding: '20px 24px',
+          borderBottom: '1px solid var(--c-800)',
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          background: 'var(--c-800)',
+        }}>
+          <h2 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--c-100)' }}>Add Your Salary</h2>
+          <button onClick={onClose} style={{ color: 'var(--c-400)', fontSize: '18px', background: 'none' }}>✕</button>
         </div>
 
         {success ? (
-          <div className="p-12 text-center">
-            <div className="w-16 h-16 bg-green/20 text-green rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">✓</div>
-            <h3 className="text-xl font-bold text-white mb-2">Salary Submitted!</h3>
-            <p className="text-c400">Thank you for contributing to salary transparency. Your submission helps others negotiate fairly.</p>
+          <div style={{ padding: '48px 24px', textAlign: 'center' }}>
+            <div style={{
+              width: '56px', height: '56px',
+              background: 'rgba(29,122,58,0.2)', color: 'var(--green)',
+              borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              margin: '0 auto 16px', fontSize: '28px',
+            }}>✓</div>
+            <h3 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--c-100)', marginBottom: '8px' }}>Salary Submitted!</h3>
+            <p style={{ color: 'var(--c-400)', fontSize: '14px' }}>
+              Thank you for contributing to salary transparency. Your submission helps others negotiate fairly.
+            </p>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-5">
+          <form onSubmit={handleSubmit} style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <div>
-              <label className="block text-sm font-medium text-c300 mb-2">Job Title</label>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--c-300)', marginBottom: '8px' }}>Job Title</label>
               <input 
                 name="job_title" 
                 defaultValue={defaultTitle} 
                 required 
-                className="w-full bg-c800 border border-c700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-green"
+                className="filter-input"
                 placeholder="e.g. Software Engineer"
               />
             </div>
-            
+
             <div>
-              <label className="block text-sm font-medium text-c300 mb-2">Location</label>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--c-300)', marginBottom: '8px' }}>Location</label>
               <input 
                 name="location" 
                 defaultValue={defaultLocation} 
                 required 
-                className="w-full bg-c800 border border-c700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-green"
+                className="filter-input"
                 placeholder="e.g. Lagos, Nigeria"
               />
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
-              <div className="col-span-2">
-                <label className="block text-sm font-medium text-c300 mb-2">Base Pay (NGN)</label>
+            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '16px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--c-300)', marginBottom: '8px' }}>Base Pay (NGN)</label>
                 <input 
                   name="base_pay" 
                   type="number" 
                   required 
                   min="0"
-                  className="w-full bg-c800 border border-c700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-green"
+                  className="filter-input"
                   placeholder="e.g. 5000000"
                 />
               </div>
-              <div className="col-span-1">
-                <label className="block text-sm font-medium text-c300 mb-2">Per</label>
-                <select 
-                  name="pay_period" 
-                  className="w-full bg-c800 border border-c700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-green appearance-none"
-                >
+              <div>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--c-300)', marginBottom: '8px' }}>Per</label>
+                <select name="pay_period" className="filter-input" style={{ appearance: 'none' }}>
                   <option value="yearly">Year</option>
                   <option value="monthly">Month</option>
                   <option value="hourly">Hour</option>
@@ -120,46 +137,50 @@ export const SalarySubmissionModal: React.FC<SalarySubmissionModalProps> = ({
               </div>
             </div>
 
-            <div className="flex gap-4">
-              <div className="flex-1">
-                <label className="block text-sm font-medium text-c300 mb-2">Bonus / Equity (Optional)</label>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--c-300)', marginBottom: '8px' }}>Bonus / Equity (Optional)</label>
                 <input 
                   name="bonus_pay" 
                   type="number" 
                   min="0"
-                  className="w-full bg-c800 border border-c700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-green"
+                  className="filter-input"
                   placeholder="0"
                 />
               </div>
-              <div className="flex-1">
-                <label className="block text-sm font-medium text-c300 mb-2">Years of Exp. (Optional)</label>
+              <div>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--c-300)', marginBottom: '8px' }}>Years of Exp. (Optional)</label>
                 <input 
                   name="years_experience" 
                   type="number" 
                   min="0"
                   max="50"
-                  className="w-full bg-c800 border border-c700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-green"
+                  className="filter-input"
                   placeholder="e.g. 3"
                 />
               </div>
             </div>
 
-            <div className="text-xs text-c500 mt-2 bg-c800 p-3 rounded-lg border border-c700">
+            <div style={{
+              fontSize: '12px', color: 'var(--c-500)',
+              background: 'var(--c-800)', padding: '12px',
+              borderRadius: 'var(--r-md)', border: '1px solid var(--c-700)',
+            }}>
               🔒 Your submission is 100% anonymous. It will be aggregated with other submissions to show market medians.
             </div>
 
-            <div className="flex justify-end gap-3 mt-4 pt-4 border-t border-c800">
-              <button 
-                type="button" 
-                onClick={onClose} 
-                className="px-5 py-2.5 rounded-lg border border-c600 text-c300 hover:text-white hover:border-c500 font-medium transition-colors"
-              >
+            <div style={{
+              display: 'flex', justifyContent: 'flex-end', gap: '12px',
+              marginTop: '8px', paddingTop: '16px', borderTop: '1px solid var(--c-800)',
+            }}>
+              <button type="button" onClick={onClose} className="btn btn--ghost" style={{ fontSize: '13px', padding: '10px 20px' }}>
                 Cancel
               </button>
               <button 
                 type="submit" 
                 disabled={loading}
-                className="px-5 py-2.5 rounded-lg bg-green text-white font-medium hover:bg-green-600 transition-colors disabled:opacity-50"
+                className="btn btn--primary"
+                style={{ fontSize: '13px', padding: '10px 20px', opacity: loading ? 0.5 : 1 }}
               >
                 {loading ? 'Submitting...' : 'Submit Anonymous Salary'}
               </button>

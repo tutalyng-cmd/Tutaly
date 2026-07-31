@@ -3705,4 +3705,8 @@
             }
         }
 
+  /* ─── SALARY ROLE CARD HOVER ────────────────────────────── */
+  .salary-role-card:hover {
+    border-color: var(--blue-l) !important;
+  }
 

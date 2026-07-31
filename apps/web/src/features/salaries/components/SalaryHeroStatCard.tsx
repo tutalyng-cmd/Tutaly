@@ -16,30 +16,49 @@ export const SalaryHeroStatCard: React.FC<SalaryHeroStatCardProps> = ({ stats, t
   };
 
   return (
-    <div className="bg-c800 border border-c700 rounded-xl p-6 md:p-8">
-      <div className="flex flex-col md:flex-row justify-between md:items-center gap-6">
+    <div style={{
+      background: 'var(--c-800)',
+      border: '1px solid var(--c-700)',
+      borderRadius: 'var(--r-lg)',
+      padding: '28px 32px',
+    }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '24px' }}>
         <div>
-          <h2 className="text-xl text-c400 mb-1">Median Base Pay</h2>
-          <div className="text-4xl md:text-5xl font-bold text-white mb-2">
-            {formatMoney(stats.median_pay)} <span className="text-xl text-c500 font-normal">/ yr</span>
+          <div style={{ fontSize: '13px', color: 'var(--c-400)', marginBottom: '4px', fontWeight: 600 }}>Median Base Pay</div>
+          <div style={{ fontSize: '36px', fontWeight: 800, color: 'var(--c-100)', letterSpacing: '-0.03em', lineHeight: 1.1 }}>
+            {formatMoney(stats.median_pay)} <span style={{ fontSize: '16px', color: 'var(--c-500)', fontWeight: 400 }}>/ yr</span>
           </div>
-          <div className="text-sm text-c500 bg-c900 inline-block px-3 py-1 rounded-full border border-c700">
+          <div style={{
+            fontSize: '12px', color: 'var(--c-500)',
+            background: 'var(--c-900)', display: 'inline-block',
+            padding: '4px 12px', borderRadius: 'var(--r-pill)',
+            border: '1px solid var(--c-700)', marginTop: '10px',
+          }}>
             Based on {stats.sample_count} {stats.sample_count === 1 ? 'submission' : 'submissions'} for {title} {stats.location !== 'ALL' ? `in ${stats.location}` : ''}
           </div>
         </div>
-        
-        <div className="bg-c900 p-4 rounded-lg border border-c700 min-w-60">
-          <div className="text-sm text-c400 mb-2 font-medium">Confidence & Data Quality</div>
-          <div className="flex items-center gap-2">
-            <div className={`w-3 h-3 rounded-full ${stats.sample_count > 10 ? 'bg-green' : 'bg-yellow-500'}`}></div>
-            <span className="text-white font-medium">
-              {stats.sample_count > 10 ? 'High Confidence' : 'Low Confidence'}
+
+        <div style={{
+          background: 'var(--c-900)',
+          padding: '16px 20px',
+          borderRadius: 'var(--r-lg)',
+          border: '1px solid var(--c-700)',
+          minWidth: '220px',
+        }}>
+          <div style={{ fontSize: '13px', color: 'var(--c-400)', marginBottom: '8px', fontWeight: 600 }}>Confidence</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{
+              width: '10px', height: '10px', borderRadius: '50%',
+              background: stats.sample_count > 10 ? 'var(--green)' : 'var(--gold)',
+            }} />
+            <span style={{ fontWeight: 600, color: 'var(--c-100)', fontSize: '14px' }}>
+              {stats.sample_count > 10 ? 'High' : 'Low'} Confidence
             </span>
           </div>
-          <p className="text-xs text-c500 mt-2 leading-relaxed">
+          <p style={{ fontSize: '12px', color: 'var(--c-500)', marginTop: '6px', lineHeight: 1.5 }}>
             {stats.sample_count > 10 
-              ? 'We have enough data points to provide a statistically significant estimate for this role.'
-              : 'We need more data to improve accuracy. Consider submitting your salary.'}
+              ? 'Enough data points for a statistically significant estimate.'
+              : 'More data needed. Consider submitting your salary.'}
           </p>
         </div>
       </div>

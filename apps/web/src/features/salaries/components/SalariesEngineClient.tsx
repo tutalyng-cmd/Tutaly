@@ -7,12 +7,14 @@ interface SalariesEngineClientProps {
   defaultTitle?: string;
   defaultLocation?: string;
   buttonText?: string;
+  buttonVariant?: 'primary' | 'ghost';
 }
 
 export const SalariesEngineClient: React.FC<SalariesEngineClientProps> = ({ 
   defaultTitle, 
   defaultLocation,
-  buttonText = "Submit a Salary"
+  buttonText = "Submit a Salary",
+  buttonVariant = 'primary',
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -20,7 +22,7 @@ export const SalariesEngineClient: React.FC<SalariesEngineClientProps> = ({
     <>
       <button 
         onClick={() => setIsModalOpen(true)}
-        className="bg-green hover:bg-green-600 text-white font-medium px-6 py-3 rounded-lg transition-colors shadow-lg"
+        className={buttonVariant === 'primary' ? 'btn btn--primary' : 'btn btn--ghost'}
       >
         {buttonText}
       </button>

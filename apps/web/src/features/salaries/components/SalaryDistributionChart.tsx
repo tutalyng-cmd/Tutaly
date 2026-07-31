@@ -14,65 +14,76 @@ export const SalaryDistributionChart: React.FC<SalaryDistributionChartProps> = (
     }).format(amount);
   };
 
-  // Calculate percentages for the visual bar
   const totalRange = stats.max_pay - stats.min_pay;
   const p25Left = totalRange === 0 ? 25 : ((stats.p25_pay - stats.min_pay) / totalRange) * 100;
   const p75Right = totalRange === 0 ? 75 : ((stats.p75_pay - stats.min_pay) / totalRange) * 100;
   const medianPosition = totalRange === 0 ? 50 : ((stats.median_pay - stats.min_pay) / totalRange) * 100;
 
   return (
-    <div className="bg-c800 border border-c700 rounded-xl p-6 md:p-8">
-      <h3 className="text-xl font-bold text-white mb-6">Pay Distribution</h3>
-      
-      <div className="mb-12">
-        <div className="relative h-4 bg-c900 rounded-full mb-2">
-          {/* Main range (25th to 75th percentile) */}
-          <div 
-            className="absolute top-0 bottom-0 bg-green opacity-30 rounded-full"
-            style={{ left: `${p25Left}%`, width: `${p75Right - p25Left}%` }}
-          ></div>
-          
-          {/* Median marker */}
-          <div 
-            className="absolute top-1/2 -translate-y-1/2 w-3 h-5 bg-green rounded-full shadow-lg"
-            style={{ left: `${medianPosition}%`, transform: `translate(-50%, -50%)` }}
-          ></div>
+    <div style={{
+      background: 'var(--c-800)',
+      border: '1px solid var(--c-700)',
+      borderRadius: 'var(--r-lg)',
+      padding: '28px 32px',
+    }}>
+      <h3 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--c-100)', marginBottom: '24px' }}>Pay Distribution</h3>
+
+      <div style={{ marginBottom: '48px' }}>
+        {/* Bar */}
+        <div style={{ position: 'relative', height: '14px', background: 'var(--c-900)', borderRadius: 'var(--r-pill)' }}>
+          <div style={{
+            position: 'absolute', top: 0, bottom: 0,
+            left: `${p25Left}%`, width: `${p75Right - p25Left}%`,
+            background: 'rgba(27,79,158,0.3)', borderRadius: 'var(--r-pill)',
+          }} />
+          <div style={{
+            position: 'absolute', top: '50%',
+            left: `${medianPosition}%`,
+            width: '12px', height: '18px',
+            background: 'var(--blue)',
+            borderRadius: 'var(--r-sm)',
+            transform: 'translate(-50%, -50%)',
+            boxShadow: 'var(--glow-blue)',
+          }} />
         </div>
-        
-        <div className="flex justify-between text-sm text-c500 mt-4 relative">
-          <div className="text-left">
-            <div className="font-medium text-c400">Low</div>
-            <div>{formatMoney(stats.min_pay)}</div>
+
+        {/* Labels */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '16px', position: 'relative' }}>
+          <div style={{ textAlign: 'left' }}>
+            <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--c-400)' }}>Low</div>
+            <div style={{ fontSize: '13px', color: 'var(--c-300)' }}>{formatMoney(stats.min_pay)}</div>
           </div>
-          
-          <div className="absolute" style={{ left: `${medianPosition}%`, transform: 'translateX(-50%)' }}>
-            <div className="font-bold text-white">Median</div>
-            <div className="text-white">{formatMoney(stats.median_pay)}</div>
+          <div style={{ position: 'absolute', left: `${medianPosition}%`, transform: 'translateX(-50%)', textAlign: 'center' }}>
+            <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--c-100)' }}>Median</div>
+            <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--c-100)' }}>{formatMoney(stats.median_pay)}</div>
           </div>
-          
-          <div className="text-right">
-            <div className="font-medium text-c400">High</div>
-            <div>{formatMoney(stats.max_pay)}</div>
+          <div style={{ textAlign: 'right' }}>
+            <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--c-400)' }}>High</div>
+            <div style={{ fontSize: '13px', color: 'var(--c-300)' }}>{formatMoney(stats.max_pay)}</div>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-6 border-t border-c700">
+      {/* Summary grid */}
+      <div style={{
+        display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px',
+        borderTop: '1px solid var(--c-700)', paddingTop: '20px',
+      }}>
         <div>
-          <div className="text-xs text-c500 mb-1">Bottom 25%</div>
-          <div className="font-medium text-white">{formatMoney(stats.p25_pay)}</div>
+          <div style={{ fontSize: '11px', color: 'var(--c-500)', marginBottom: '4px' }}>Bottom 25%</div>
+          <div style={{ fontWeight: 600, color: 'var(--c-100)', fontSize: '14px' }}>{formatMoney(stats.p25_pay)}</div>
         </div>
         <div>
-          <div className="text-xs text-c500 mb-1">Median (50%)</div>
-          <div className="font-medium text-white">{formatMoney(stats.median_pay)}</div>
+          <div style={{ fontSize: '11px', color: 'var(--c-500)', marginBottom: '4px' }}>Median (50%)</div>
+          <div style={{ fontWeight: 600, color: 'var(--c-100)', fontSize: '14px' }}>{formatMoney(stats.median_pay)}</div>
         </div>
         <div>
-          <div className="text-xs text-c500 mb-1">Top 75%</div>
-          <div className="font-medium text-white">{formatMoney(stats.p75_pay)}</div>
+          <div style={{ fontSize: '11px', color: 'var(--c-500)', marginBottom: '4px' }}>Top 75%</div>
+          <div style={{ fontWeight: 600, color: 'var(--c-100)', fontSize: '14px' }}>{formatMoney(stats.p75_pay)}</div>
         </div>
         <div>
-          <div className="text-xs text-c500 mb-1">Total Submissions</div>
-          <div className="font-medium text-white">{stats.sample_count}</div>
+          <div style={{ fontSize: '11px', color: 'var(--c-500)', marginBottom: '4px' }}>Submissions</div>
+          <div style={{ fontWeight: 600, color: 'var(--c-100)', fontSize: '14px' }}>{stats.sample_count}</div>
         </div>
       </div>
     </div>

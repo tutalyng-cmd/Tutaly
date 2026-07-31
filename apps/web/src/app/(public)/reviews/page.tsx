@@ -126,7 +126,11 @@ export default async function ReviewsPage(props: {
                 return (
                   <article key={review.id} className="review-full reveal visible">
                     <div className="review-full__head">
-                      <div className="review-full__company-row">
+                      <Link 
+                        href={`/reviews/company/${review.company?.slug || (review.companyName ? encodeURIComponent(review.companyName.toLowerCase()) : '')}`}
+                        className="review-full__company-row" 
+                        style={{ textDecoration: 'none' }}
+                      >
                         <div
                           className="review-card__logo"
                           style={{ ...logoStyle, width: '48px', height: '48px', fontSize: '17px' }}
@@ -134,13 +138,15 @@ export default async function ReviewsPage(props: {
                           {initials}
                         </div>
                         <div>
-                          <div className="review-card__company" style={{ fontSize: '16px' }}>{review.companyName}</div>
+                          <div className="review-card__company" style={{ fontSize: '16px', textDecoration: 'underline', textUnderlineOffset: '4px' }}>
+                            {review.company?.name || review.companyName}
+                          </div>
                           <div className="review-card__stars" aria-label={`Rating: ${review.ratingOverall} out of 5`}>
                             <StarRating rating={Number(review.ratingOverall) || 0} />
                             <span className="review-card__score">{review.ratingOverall}</span>
                           </div>
                         </div>
-                      </div>
+                      </Link>
                       <span className={`badge ${review.recommend ? 'badge-success' : 'badge-danger'}`}>
                         {review.recommend ? 'Recommends' : 'Does not recommend'}
                       </span>

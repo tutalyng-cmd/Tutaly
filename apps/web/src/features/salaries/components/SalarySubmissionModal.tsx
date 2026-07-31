@@ -55,7 +55,7 @@ export const SalarySubmissionModal: React.FC<SalarySubmissionModalProps> = ({
 
   return (
     <div style={{
-      position: 'fixed', inset: 0, zIndex: 50,
+      position: 'fixed', inset: 0, zIndex: 999,
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       padding: '16px', background: 'var(--black-alpha-70)', backdropFilter: 'blur(4px)',
     }}>

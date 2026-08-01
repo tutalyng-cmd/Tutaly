@@ -4,11 +4,11 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import FeedSidebarLeft from './FeedSidebarLeft';
 import FeedSidebarRight from './FeedSidebarRight';
-import PostComposerTrigger from './PostComposerTrigger';
 import ThreadCard from './ThreadCard';
 import { communityService } from '../api/community.service';
 import { CommunityThread } from '../types/community.types';
 import { api } from '@/lib/api';
+import { ImageIcon, DollarSign, BarChart3, Loader2 } from 'lucide-react';
 
 export default function FeedView() {
   const searchParams = useSearchParams();
@@ -17,9 +17,9 @@ export default function FeedView() {
   const [threads, setThreads] = useState<CommunityThread[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'global' | 'following'>('global');
-  
+
   // User info for composer
-  const [userInitials, setUserInitials] = useState<string>('MW');
+  const [userInitials, setUserInitials] = useState<string>('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
@@ -49,7 +49,7 @@ export default function FeedView() {
         page: 1,
         limit: 20
       });
-      setThreads(threadsRes.data);
+      setThreads(threadsRes.data || []);
     } catch (err) {
       console.error('Failed to load community feed', err);
     } finally {
@@ -62,59 +62,72 @@ export default function FeedView() {
   }, [currentBowlSlug, activeTab]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)] xl:grid-cols-[260px_minmax(0,1fr)_280px] gap-6 items-start">
+    <main className="layout">
       {/* Left Sidebar */}
       <FeedSidebarLeft />
 
       {/* Center Feed */}
-      <div className="flex flex-col gap-4.5 min-w-0">
+      <div className="col center">
         {/* Global/Following Segmented Control */}
-        <div className="flex gap-1 p-1 bg-c900 border border-c700 rounded-xl w-fit">
-          <button 
+        <div className="segmented">
+          <button
             onClick={() => setActiveTab('global')}
-            className={`px-4.5 py-2 rounded-[9px] text-[13.5px] font-semibold border-0 transition-colors ${activeTab === 'global' ? 'bg-c700 text-white' : 'bg-transparent text-c500 hover:text-white'}`}
+            className={activeTab === 'global' ? 'active' : ''}
           >
             Global
           </button>
-          <button 
+          <button
             onClick={() => setActiveTab('following')}
-            className={`px-4.5 py-2 rounded-[9px] text-[13.5px] font-semibold border-0 transition-colors ${activeTab === 'following' ? 'bg-c700 text-white' : 'bg-transparent text-c500 hover:text-white'}`}
+            className={activeTab === 'following' ? 'active' : ''}
           >
             Following
           </button>
         </div>
 
+        {/* Composer */}
         {isLoggedIn ? (
-          <PostComposerTrigger 
-            onClick={() => {}} 
-            userInitials={userInitials} 
-          />
+          <div className="card composer">
+            <div className="composer-top">
+              <div className="mini-avatar">{userInitials}</div>
+              <div className="composer-input">
+                <textarea rows={1} placeholder="Share thoughts, ask a question, or post an update…"></textarea>
+              </div>
+            </div>
+            <div className="composer-tools">
+              <div className="tool-icons">
+                <button className="tool-chip"><ImageIcon size={14} /> Photo</button>
+                <button className="tool-chip salary"><DollarSign size={14} /> Salary tag</button>
+                <button className="tool-chip"><BarChart3 size={14} /> Poll</button>
+              </div>
+              <button className="btn-solid">Post</button>
+            </div>
+          </div>
         ) : (
-          <div className="bg-c800 rounded-2xl border border-c700 p-6 flex flex-col items-center justify-center text-center gap-3">
-            <h3 className="text-white font-semibold">Join the Conversation</h3>
-            <p className="text-c300 text-sm">Sign in to ask questions anonymously or share your experience.</p>
-            <a href="/sign-in" className="px-4.5 py-2 rounded-xl bg-teal text-[#06251D] text-[14px] font-bold hover:brightness-105 transition-all inline-block mt-2">Sign In</a>
+          <div className="card" style={{ textAlign: 'center', padding: '32px 16px' }}>
+            <h3 style={{ marginBottom: '10px' }}>Join the Conversation</h3>
+            <p style={{ color: 'var(--text-400)', fontSize: '14px', marginBottom: '20px' }}>Sign in to ask questions anonymously or share your experience.</p>
+            <a href="/auth/signin" className="btn-solid" style={{ display: 'inline-block' }}>Sign In</a>
           </div>
         )}
 
         {/* Thread List */}
-        <div className="flex flex-col">
-          {isLoading ? (
-            <div className="text-c400 text-center py-8">Loading feed...</div>
-          ) : threads.length > 0 ? (
-            threads.map(thread => (
-              <ThreadCard key={thread.id} thread={thread} />
-            ))
-          ) : (
-            <div className="text-c400 text-center py-8">No posts found in this view.</div>
-          )}
-        </div>
+        {isLoading ? (
+          <div className="comm-loading">
+            <Loader2 size={24} />
+          </div>
+        ) : threads.length > 0 ? (
+          threads.map((thread) => (
+            <ThreadCard key={thread.id} thread={thread} />
+          ))
+        ) : (
+          <div className="comm-empty">
+            No posts yet. Be the first to share something!
+          </div>
+        )}
       </div>
 
       {/* Right Sidebar */}
-      <div className="hidden xl:block">
-        <FeedSidebarRight />
-      </div>
-    </div>
+      <FeedSidebarRight />
+    </main>
   );
 }

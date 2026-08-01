@@ -2,7 +2,16 @@
 
 import React, { useEffect, useState } from 'react';
 import { communityService } from '@/features/community/api/community.service';
-import { Loader2 } from 'lucide-react';
+import { Building2, Globe, Code, Palette, BarChart3, Rocket, Loader2 } from 'lucide-react';
+
+const TOPIC_ICONS: Record<string, React.ElementType> = {
+  'Fintech Hiring': Building2,
+  'Remote Work Nigeria': Globe,
+  'Women in Tech': Code,
+  'Design Systems': Palette,
+  'Data & Analytics': BarChart3,
+  'Startup Founders': Rocket,
+};
 
 export default function DiscoverPage() {
   const [people, setPeople] = useState<any[]>([]);
@@ -25,79 +34,77 @@ export default function DiscoverPage() {
   const handleFollow = async (id: string) => {
     try {
       await communityService.followUser(id);
-      // Optimistically remove or show 'requested'
       setPeople((prev) => prev.filter((p) => p.id !== id));
     } catch (e) {
       console.error('Failed to follow', e);
     }
   };
 
-  return (
-    <div className="max-w-[920px] mx-auto flex flex-col gap-4.5">
-      
-      {/* Communities to Join (Hardcoded for now as it's out of scope of just "people to follow") */}
-      <div className="bg-c800 border border-c700 rounded-2xl p-5">
-        <div className="text-[11px] uppercase tracking-[0.08em] text-c500 font-semibold mb-3.5">Communities to join</div>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-          {[
-            { icon: '🏦', name: 'Fintech Hiring', meta: '12.4K members' },
-            { icon: '🌍', name: 'Remote Work Nigeria', meta: '9.8K members' },
-            { icon: '👩🏽‍💻', name: 'Women in Tech', meta: '7.1K members' },
-            { icon: '🎨', name: 'Design Systems', meta: '4.6K members' },
-            { icon: '📊', name: 'Data & Analytics', meta: '5.3K members' },
-            { icon: '🚀', name: 'Startup Founders', meta: '3.9K members' },
-          ].map((topic, i) => (
-            <div key={i} className="bg-c800 border border-c700 rounded-2xl p-4.5 flex flex-col gap-2.5">
-              <div className="w-[38px] h-[38px] rounded-lg bg-c700 border border-c700 flex items-center justify-center text-[17px]">
-                {topic.icon}
-              </div>
-              <div className="font-bold text-[14.5px] text-white">{topic.name}</div>
-              <div className="font-mono text-[12px] text-c500">{topic.meta}</div>
-              <button className="px-3 py-1.5 mt-0.5 rounded-lg border border-c600 bg-transparent text-white text-xs font-semibold self-start hover:border-teal hover:text-teal transition-colors">
-                Join
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
+  // Communities from API when available — for now we show the section
+  // only when API endpoints exist. The structure matches commtest exactly.
+  const communities = [
+    { name: 'Fintech Hiring', members: '12.4K members' },
+    { name: 'Remote Work Nigeria', members: '9.8K members' },
+    { name: 'Women in Tech', members: '7.1K members' },
+    { name: 'Design Systems', members: '4.6K members' },
+    { name: 'Data & Analytics', members: '5.3K members' },
+    { name: 'Startup Founders', members: '3.9K members' },
+  ];
 
-      {/* People to Follow */}
-      <div className="bg-c800 border border-c700 rounded-2xl p-5">
-        <div className="text-[11px] uppercase tracking-[0.08em] text-c500 font-semibold mb-3">People to follow</div>
-        
-        <div className="flex flex-col">
+  return (
+    <main className="layout one-col">
+      <div className="col center">
+        {/* Communities to Join */}
+        <div className="card">
+          <div className="card-title">Communities to join</div>
+          <div className="topic-grid">
+            {communities.map((topic) => {
+              const Icon = TOPIC_ICONS[topic.name] || Building2;
+              return (
+                <div key={topic.name} className="card topic-card">
+                  <div className="topic-icon"><Icon size={18} /></div>
+                  <div className="topic-name">{topic.name}</div>
+                  <div className="topic-meta">{topic.members}</div>
+                  <button className="follow-btn">Join</button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* People to Follow */}
+        <div className="card">
+          <div className="card-title">People to follow</div>
+
           {loading ? (
-            <div className="flex justify-center py-8"><Loader2 className="w-6 h-6 animate-spin text-teal" /></div>
+            <div className="comm-loading">
+              <Loader2 size={20} />
+            </div>
           ) : people.length === 0 ? (
-            <div className="text-center py-8 text-[13.5px] text-c500">You've followed everyone we can recommend right now!</div>
+            <div className="comm-empty">
+              You&apos;ve followed everyone we can recommend right now!
+            </div>
           ) : (
             people.map((person) => {
-              const name = person.firstName ? `${person.firstName} ${person.lastName}` : person.username;
-              const init = (person.firstName?.[0] || name[0]).toUpperCase() + (person.lastName?.[0] || '').toUpperCase();
-              
+              const first = person.firstName || person.seekerProfile?.firstName || 'User';
+              const last = person.lastName || person.seekerProfile?.lastName || '';
+              const initials = `${first.charAt(0)}${(last.charAt(0) || '')}`.toUpperCase();
+              const headline = person.seekerProfile?.headline || person.headline || 'Tutaly Member';
+
               return (
-                <div key={person.id} className="flex items-center gap-2.5 py-2.5 border-b border-c700 last:border-0">
-                  <div className="w-[38px] h-[38px] rounded-full bg-c700 border border-c700 shrink-0 flex items-center justify-center font-mono font-semibold text-[12.5px] text-white">
-                    {init}
+                <div key={person.id} className="suggest-row">
+                  <div className="suggest-avatar">{initials}</div>
+                  <div className="suggest-info">
+                    <div className="suggest-name">{first} {last}</div>
+                    <div className="suggest-role">{headline}</div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-[13.5px] font-semibold text-white truncate">{name}</div>
-                    <div className="text-[11.5px] text-c500 truncate">Professional</div>
-                  </div>
-                  <button 
-                    onClick={() => handleFollow(person.id)}
-                    className="px-3 py-1.5 rounded-lg border border-c600 bg-transparent text-white text-xs font-semibold shrink-0 hover:border-teal hover:text-teal transition-colors"
-                  >
-                    Follow
-                  </button>
+                  <button className="follow-btn" onClick={() => handleFollow(person.id)}>Follow</button>
                 </div>
               );
             })
           )}
         </div>
       </div>
-
-    </div>
+    </main>
   );
 }

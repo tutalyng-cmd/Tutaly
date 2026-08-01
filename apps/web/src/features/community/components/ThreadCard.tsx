@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { CommunityThread } from '../types/community.types';
 import { communityService } from '../api/community.service';
 import { formatDistanceToNow } from 'date-fns';
+import { DollarSign, TrendingUp, MessageCircle, Heart, MessageSquare, ExternalLink, Bookmark, CheckCircle } from 'lucide-react';
 
 interface Props {
   thread: CommunityThread;
@@ -26,68 +27,87 @@ export default function ThreadCard({ thread }: Props) {
     }
   };
 
-  // Map post types for border colors
-  // Default to general if tag isn't explicitly salary or career
-  let typeClass = 'border-l-c600';
-  let eyebrowText = '💬 Discussion';
-  let eyebrowColor = 'text-c500';
+  // Determine post type
+  let typeClass = 'type-general';
+  let EyebrowIcon = MessageCircle;
+  let eyebrowLabel = 'DISCUSSION';
 
-  if (thread.content.toLowerCase().includes('salary') || thread.title?.toLowerCase().includes('salary')) {
-    typeClass = 'border-l-gold';
-    eyebrowText = '💰 Salary reveal';
-    eyebrowColor = 'text-gold';
-  } else if (thread.content.toLowerCase().includes('career') || thread.title?.toLowerCase().includes('career') || thread.title?.toLowerCase().includes('offer')) {
-    typeClass = 'border-l-teal';
-    eyebrowText = '📈 Career move';
-    eyebrowColor = 'text-teal';
+  const content = (thread.content || '').toLowerCase();
+  const title = (thread.title || '').toLowerCase();
+
+  if (content.includes('salary') || title.includes('salary') || content.includes('comp') || title.includes('negotiat')) {
+    typeClass = 'type-salary';
+    EyebrowIcon = DollarSign;
+    eyebrowLabel = 'SALARY REVEAL';
+  } else if (content.includes('career') || title.includes('career') || title.includes('offer') || content.includes('new role') || content.includes('joined')) {
+    typeClass = 'type-career';
+    EyebrowIcon = TrendingUp;
+    eyebrowLabel = 'CAREER MOVE';
   }
 
+  const initials = thread.author.name === 'Anonymous'
+    ? 'AN'
+    : thread.author.name.substring(0, 2).toUpperCase();
+
+  const timeAgo = (() => {
+    try {
+      const raw = formatDistanceToNow(new Date(thread.createdAt), { addSuffix: false });
+      return raw
+        .replace('about ', '')
+        .replace(' hours', 'h')
+        .replace(' hour', 'h')
+        .replace(' minutes', 'm')
+        .replace(' minute', 'm')
+        .replace(' days', 'd')
+        .replace(' day', 'd')
+        .replace(' months', 'mo')
+        .replace(' month', 'mo')
+        .replace('less than a m', '1m');
+    } catch {
+      return '';
+    }
+  })();
+
   return (
-    <div className="bg-c800 border border-c700 rounded-2xl p-0 overflow-hidden mb-3.5">
-      <div className={`px-5 py-4.5 border-l-4 ${typeClass}`}>
-        <div className={`font-mono text-[10.5px] tracking-[0.09em] uppercase font-semibold mb-2.5 flex items-center gap-1.5 ${eyebrowColor}`}>
-          {eyebrowText}
+    <div className={`card post ${typeClass}`}>
+      <div className="post-inner">
+        <div className="post-eyebrow">
+          <EyebrowIcon size={13} />
+          {eyebrowLabel}
         </div>
-        
-        <div className="flex gap-3">
-          <div className="w-[42px] h-[42px] rounded-full bg-c700 border border-c700 flex items-center justify-center font-mono font-semibold text-[14px] shrink-0 text-white">
-            {thread.author.name === 'Anonymous' ? 'AN' : thread.author.name.substring(0, 2).toUpperCase()}
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-1.5 text-[14.5px]">
-              <span className="font-bold text-white">{thread.author.name}</span>
-              {!thread.author.isAnonymous && <span className="text-teal text-[13px]">✔</span>}
+
+        <div className="post-head">
+          <div className="post-avatar">{initials}</div>
+          <div className="post-meta">
+            <div className="post-name-row">
+              <span className="post-name">{thread.author.name}</span>
+              {!thread.author.isAnonymous && (
+                <span className="verified"><CheckCircle size={13} /></span>
+              )}
             </div>
-            <div className="text-[12.5px] text-c500 mt-0.5">{thread.author.title}</div>
+            <div className="post-sub">{thread.author.title}</div>
           </div>
-          <div className="text-c500 text-[12.5px] whitespace-nowrap">
-            {formatDistanceToNow(new Date(thread.createdAt), { addSuffix: true })}
-          </div>
+          <div className="post-time">{timeAgo}</div>
         </div>
 
-        {thread.title && <h3 className="text-[15.5px] font-bold text-white mt-3 ml-[54px] max-w-[calc(100%-54px)]">{thread.title}</h3>}
-        <p className="text-[14.5px] leading-[1.55] text-white mt-2 ml-[54px] max-w-[calc(100%-54px)] whitespace-pre-wrap">
-          {thread.content}
-        </p>
+        {thread.title && (
+          <h3 style={{ margin: '12px 0 0 54px', fontSize: '15px', fontWeight: 700 }}>{thread.title}</h3>
+        )}
+        <p className="post-body">{thread.content}</p>
 
-        {/* Action Buttons */}
-        <div className="flex items-center gap-1 mt-3.5 ml-[54px] pt-3 border-t border-c700">
-          <button 
-            onClick={handleUpvote}
-            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[13px] font-medium transition-colors border-0
-              ${hasVoted ? 'text-red bg-c700' : 'text-c500 bg-transparent hover:text-red hover:bg-c700'}`}
-          >
-            🤍 {upvotes}
+        <div className="post-actions">
+          <button className={`pa-btn like ${hasVoted ? 'voted' : ''}`} onClick={handleUpvote}>
+            <Heart size={14} fill={hasVoted ? 'currentColor' : 'none'} /> {upvotes}
           </button>
-          <button className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-c500 text-[13px] font-medium bg-transparent border-0 hover:text-white hover:bg-c700 transition-colors">
-            💬 {thread.comments_count}
+          <button className="pa-btn">
+            <MessageSquare size={14} /> {thread.comments_count}
           </button>
-          <button className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-c500 text-[13px] font-medium bg-transparent border-0 hover:text-teal hover:bg-c700 transition-colors">
-            ↗ Share
+          <button className="pa-btn share">
+            <ExternalLink size={14} /> Share
           </button>
-          <span className="flex-1"></span>
-          <button className="flex items-center justify-center w-8 h-8 rounded-lg text-c500 text-[13px] bg-transparent border-0 hover:text-white hover:bg-c700 transition-colors">
-            🔖
+          <span className="pa-spacer"></span>
+          <button className="pa-btn">
+            <Bookmark size={14} />
           </button>
         </div>
       </div>

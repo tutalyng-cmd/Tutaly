@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
@@ -141,10 +146,10 @@ export class CommunityService {
 
     try {
       const saved = await this.threadRepo.save(thread);
-      
+
       // Update bowl count
       await this.bowlRepo.increment({ id: bowl.id }, 'post_count', 1);
-  
+
       return {
         success: true,
         data: saved,
@@ -154,17 +159,22 @@ export class CommunityService {
       if (dto.media_urls && dto.media_urls.length > 0 && this.supabase) {
         try {
           const filesToDelete = dto.media_urls
-            .map(url => {
+            .map((url) => {
               const parts = url.split('/community-media/');
               return parts.length > 1 ? parts[1] : null;
             })
-            .filter(path => path !== null);
-            
+            .filter((path) => path !== null);
+
           if (filesToDelete.length > 0) {
-            await this.supabase.storage.from('community-media').remove(filesToDelete);
+            await this.supabase.storage
+              .from('community-media')
+              .remove(filesToDelete);
           }
         } catch (cleanupError) {
-          console.error('Failed to cleanup orphaned community media:', cleanupError);
+          console.error(
+            'Failed to cleanup orphaned community media:',
+            cleanupError,
+          );
         }
       }
       throw error;
@@ -176,14 +186,12 @@ export class CommunityService {
       throw new InternalServerErrorException('Storage service not configured');
     }
 
-    const uploadedUrls: string[] = [];
-    
     // Upload files in parallel
     const uploadPromises = files.map(async (file) => {
       const ext = file.originalname.split('.').pop()?.toLowerCase() || 'jpg';
       const key = `${userId}/${uuidv4()}.${ext}`;
 
-      const { data, error } = await this.supabase.storage
+      const { error } = await this.supabase.storage
         .from('community-media')
         .upload(key, file.buffer, {
           contentType: file.mimetype,
@@ -191,7 +199,9 @@ export class CommunityService {
         });
 
       if (error) {
-        throw new BadRequestException(`Failed to upload file: ${error.message}`);
+        throw new BadRequestException(
+          `Failed to upload file: ${error.message}`,
+        );
       }
 
       const { data: urlData } = this.supabase.storage
@@ -207,7 +217,7 @@ export class CommunityService {
         success: true,
         urls,
       };
-    } catch (error) {
+    } catch {
       // If any upload fails, we should ideally clean up the successful ones in this batch
       throw new BadRequestException('Failed to process media uploads');
     }

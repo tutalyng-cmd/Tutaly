@@ -167,7 +167,7 @@ export default function CheckoutPage() {
                 <label className={`shop-pay-option ${payMethod === 'wallet' ? 'selected' : ''}`}>
                   <input type="radio" name="paymethod" value="wallet" checked={payMethod === 'wallet'} onChange={() => setPayMethod('wallet')} disabled />
                   <div>
-                    <div>Tutaly Wallet <span style={{ color: 'var(--accent-red)', fontSize: '10px', marginLeft: '6px', background: 'rgba(239,85,85,.1)', padding: '2px 6px', borderRadius: '4px' }}>Insufficient funds</span></div>
+                    <div>Tutaly Wallet <span className="shop-wallet-badge">Insufficient funds</span></div>
                     <div className="sub">Balance: ₦0.00</div>
                   </div>
                 </label>

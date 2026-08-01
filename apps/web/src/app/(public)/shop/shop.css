@@ -16,6 +16,7 @@
   --accent-gold: #e8b84b;
   --accent-green: #2fbf71;
   --accent-red: #ef5555;
+  --accent-red-bg: rgba(239, 85, 85, 0.1);
   --font-display: 'Sora', sans-serif;
   --font-body: 'Inter', sans-serif;
   --font-mono: 'IBM Plex Mono', monospace;
@@ -923,3 +924,12 @@
   padding-bottom: 8px;
 }
 .shop-related-scroll .shop-card { min-width: 210px; }
+
+.shop-wallet-badge {
+  color: var(--accent-red);
+  font-size: 10px;
+  margin-left: 6px;
+  background: var(--accent-red-bg);
+  padding: 2px 6px;
+  border-radius: 4px;
+}

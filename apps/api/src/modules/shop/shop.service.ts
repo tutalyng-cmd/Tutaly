@@ -6,7 +6,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import * as crypto from 'crypto';
@@ -354,14 +354,33 @@ export class ShopService {
     return `cart:${userId}`;
   }
 
-  async getCart(userId: string) {
+  async getRawCart(userId: string) {
     const raw = await this.tokenService.getJobCache(this.cartKey(userId));
     if (!raw) return [];
     return JSON.parse(raw) as Array<{ productId: string; quantity: number }>;
   }
 
+  async getCart(userId: string) {
+    const items = await this.getRawCart(userId);
+    if (items.length === 0) return [];
+    
+    const productIds = items.map(i => i.productId);
+    const products = await this.productRepo.find({
+      where: { id: In(productIds) },
+      relations: ['seller']
+    });
+
+    return items.map(item => {
+      const product = products.find(p => p.id === item.productId);
+      return {
+        ...item,
+        product
+      };
+    }).filter(item => item.product);
+  }
+
   async addToCart(userId: string, productId: string, quantity = 1) {
-    const cart = await this.getCart(userId);
+    const cart = await this.getRawCart(userId);
     const existing = cart.find((item) => item.productId === productId);
     if (existing) {
       existing.quantity += quantity;
@@ -377,7 +396,7 @@ export class ShopService {
   }
 
   async removeFromCart(userId: string, productId: string) {
-    let cart = await this.getCart(userId);
+    let cart = await this.getRawCart(userId);
     cart = cart.filter((item) => item.productId !== productId);
     await this.tokenService.setJobCache(
       this.cartKey(userId),
@@ -393,7 +412,7 @@ export class ShopService {
     userId: string,
     gateway: PaymentGateway = PaymentGateway.FLUTTERWAVE,
   ) {
-    const cart = await this.getCart(userId);
+    const cart = await this.getRawCart(userId);
     if (cart.length === 0) throw new BadRequestException('Your cart is empty.');
 
     const orders: Order[] = [];

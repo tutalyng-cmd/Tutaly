@@ -9,7 +9,7 @@ import { communityService } from '../api/community.service';
 import { CommunityThread, CommunityBowl } from '../types/community.types';
 import { api } from '@/lib/api';
 import { ImageIcon, DollarSign, BarChart3, Loader2 } from 'lucide-react';
-import PostComposerModal from './PostComposerModal';
+import InlinePostComposer from './InlinePostComposer';
 
 export default function FeedView() {
   const searchParams = useSearchParams();
@@ -26,7 +26,6 @@ export default function FeedView() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // Composer
-  const [showComposer, setShowComposer] = useState(false);
   const [bowls, setBowls] = useState<CommunityBowl[]>([]);
 
   useEffect(() => {
@@ -107,22 +106,14 @@ export default function FeedView() {
 
         {/* Composer */}
         {isLoggedIn ? (
-          <div className="card composer" onClick={() => setShowComposer(true)} style={{ cursor: 'pointer' }}>
-            <div className="composer-top pointer-events-none">
-              <div className="mini-avatar">{userInitials}</div>
-              <div className="composer-input">
-                <textarea rows={1} placeholder="Share thoughts, ask a question, or post an update…" readOnly></textarea>
-              </div>
-            </div>
-            <div className="composer-tools pointer-events-none">
-              <div className="tool-icons">
-                <button className="tool-chip"><ImageIcon size={14} /> Photo</button>
-                <button className="tool-chip salary"><DollarSign size={14} /> Salary tag</button>
-                <button className="tool-chip"><BarChart3 size={14} /> Poll</button>
-              </div>
-              <button className="btn-solid">Post</button>
-            </div>
-          </div>
+          <InlinePostComposer
+            onSuccess={loadData}
+            bowls={bowls}
+            defaultBowlSlug={currentBowlSlug || undefined}
+            userFullName={userFullName}
+            userJobTitle={userJobTitle}
+            userInitials={userInitials}
+          />
         ) : (
           <div className="card" style={{ textAlign: 'center', padding: '32px 16px' }}>
             <h3 style={{ marginBottom: '10px' }}>Join the Conversation</h3>
@@ -149,20 +140,6 @@ export default function FeedView() {
 
       {/* Right Sidebar */}
       <FeedSidebarRight />
-
-      {showComposer && (
-        <PostComposerModal
-          onClose={() => setShowComposer(false)}
-          onSuccess={() => {
-            setShowComposer(false);
-            loadData();
-          }}
-          bowls={bowls}
-          defaultBowlSlug={currentBowlSlug || undefined}
-          userFullName={userFullName}
-          userJobTitle={userJobTitle}
-        />
-      )}
     </main>
   );
 }

@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import * as crypto from 'crypto';
 import {
@@ -86,6 +87,7 @@ export class ShopService {
     private readonly mailService: MailService,
     private readonly supportService: SupportService,
     private readonly paymentFactory: PaymentGatewayFactory,
+    private readonly eventEmitter: EventEmitter2,
   ) {
     this.supabase = createClient(
       process.env.SUPABASE_URL || '',
@@ -508,6 +510,19 @@ export class ShopService {
     meta: Record<string, any>,
   ) {
     console.log('[Payment Processor] Processing payment for ref:', txRef);
+
+    // Handle Ad Campaign Payments
+    if (meta?.payment_type === 'ad_campaign' && meta?.campaign_id) {
+      console.log(
+        `[Payment Processor] Detected Ad Campaign payment for campaign ${meta.campaign_id}`,
+      );
+      this.eventEmitter.emit('payment.success.ad_campaign', {
+        campaignId: meta.campaign_id,
+        txRef: txRef,
+      });
+      return;
+    }
+
     const order = await this.orderRepo.findOne({
       where: { paymentRef: txRef },
       relations: ['product'],

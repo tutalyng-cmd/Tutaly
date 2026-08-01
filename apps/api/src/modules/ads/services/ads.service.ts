@@ -3,6 +3,7 @@ import {
   BadRequestException,
   NotFoundException,
 } from '@nestjs/common';
+import { OnEvent } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, EntityManager } from 'typeorm';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
@@ -338,6 +339,28 @@ export class AdsService {
     campaign.status = CampaignStatus.PENDING_REVIEW;
 
     return this.campaignRepo.save(campaign);
+  }
+
+  @OnEvent('payment.success.ad_campaign')
+  async handleAdCampaignPaymentSuccess(payload: {
+    campaignId: string;
+    txRef: string;
+  }) {
+    console.log(
+      `[AdsService] Received payment success event for campaign ${payload.campaignId}`,
+    );
+    try {
+      await this.confirmPayment(
+        payload.campaignId,
+        payload.txRef,
+        PaymentGateway.FLUTTERWAVE,
+      );
+    } catch (err) {
+      console.error(
+        `[AdsService] Failed to confirm payment for campaign ${payload.campaignId}`,
+        err,
+      );
+    }
   }
 
   async getMyCampaigns(advertiserId: string): Promise<AdCampaignWithDetails[]> {

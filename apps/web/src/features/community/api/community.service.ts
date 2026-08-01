@@ -23,9 +23,22 @@ export const communityService = {
     content: string;
     anonymity_mode: AnonymityMode;
     display_title_override?: string;
+    media_urls?: string[];
   }) => {
-    // This actually seems to map to POST /community/threads in the older community module
     const res = await api.post('/community/threads', data);
+    return res.data;
+  },
+
+  uploadMedia: async (files: File[]) => {
+    const formData = new FormData();
+    files.forEach((file) => formData.append('files', file));
+    
+    // Explicitly set Content-Type to multipart/form-data logic handled by axios automatically when given FormData
+    const res = await api.post('/community/threads/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
     return res.data;
   },
 

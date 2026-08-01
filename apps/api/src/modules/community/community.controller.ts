@@ -7,7 +7,11 @@ import {
   Query,
   UseGuards,
   Request,
+  UseInterceptors,
+  UploadedFiles,
+  BadRequestException,
 } from '@nestjs/common';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { CommunityService } from './community.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { OptionalJwtAuthGuard } from '../../common/guards/optional-jwt-auth.guard';
@@ -41,6 +45,35 @@ export class CommunityController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Post('threads/upload')
+  @UseInterceptors(
+    FilesInterceptor('files', 4, {
+      limits: {
+        fileSize: 5 * 1024 * 1024, // 5MB limit per file
+      },
+    }),
+  )
+  async uploadThreadMedia(
+    @Request() req,
+    @UploadedFiles() files: Express.Multer.File[],
+  ) {
+    if (!files || files.length === 0) {
+      throw new BadRequestException('No files uploaded');
+    }
+
+    const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    for (const file of files) {
+      if (!allowedMimeTypes.includes(file.mimetype)) {
+        throw new BadRequestException(
+          `Invalid file type: ${file.mimetype}. Only JPEG, PNG, and WebP are allowed.`,
+        );
+      }
+    }
+
+    return this.communityService.uploadThreadMedia(req.user.id, files);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Post('threads')
   async createThread(
     @Request() req,
@@ -51,6 +84,7 @@ export class CommunityController {
       content: string;
       anonymity_mode: AnonymityMode;
       display_title_override?: string;
+      media_urls?: string[];
     },
   ) {
     return this.communityService.createThread(req.user.id, dto);

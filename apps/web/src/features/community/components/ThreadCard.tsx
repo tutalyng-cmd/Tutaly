@@ -4,15 +4,16 @@ import React, { useState } from 'react';
 import { CommunityThread } from '../types/community.types';
 import { communityService } from '../api/community.service';
 import { formatDistanceToNow } from 'date-fns';
-import { DollarSign, TrendingUp, MessageCircle, Heart, MessageSquare, ExternalLink, Bookmark, CheckCircle } from 'lucide-react';
+import { DollarSign, TrendingUp, MessageCircle, Heart, MessageSquare, ExternalLink, Bookmark, CheckCircle, X } from 'lucide-react';
 
 interface Props {
   thread: CommunityThread;
 }
 
 export default function ThreadCard({ thread }: Props) {
-  const [upvotes, setUpvotes] = useState(thread.upvotes_count);
+  const [upvotes, setUpvotes] = useState(thread.upvotes_count || 0);
   const [hasVoted, setHasVoted] = useState(false);
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
   const handleUpvote = async () => {
     if (hasVoted) return;
@@ -95,12 +96,38 @@ export default function ThreadCard({ thread }: Props) {
         )}
         <p className="post-body">{thread.content}</p>
 
+        {/* Media Grid */}
+        {thread.media_urls && thread.media_urls.length > 0 && (
+          <div 
+            className={`grid gap-2 mt-3 ml-[54px] w-[calc(100%-54px)] ${
+              thread.media_urls.length === 1 ? 'grid-cols-1' :
+              thread.media_urls.length === 2 ? 'grid-cols-2' :
+              thread.media_urls.length === 3 ? 'grid-cols-2' :
+              'grid-cols-2'
+            }`}
+          >
+            {thread.media_urls.map((url, i) => (
+              <div 
+                key={i} 
+                className={`relative rounded-xl overflow-hidden cursor-pointer border border-c700 bg-c800 ${
+                  thread.media_urls!.length === 3 && i === 0 ? 'col-span-2 aspect-[2/1]' : 
+                  thread.media_urls!.length === 1 ? 'aspect-auto max-h-[400px]' : 
+                  'aspect-square'
+                } hover:opacity-90 transition-opacity`}
+                onClick={() => setLightboxImage(url)}
+              >
+                <img src={url} alt="Community thread image" className={`w-full h-full ${thread.media_urls!.length === 1 ? 'object-contain bg-black' : 'object-cover'}`} />
+              </div>
+            ))}
+          </div>
+        )}
+
         <div className="post-actions">
           <button className={`pa-btn like ${hasVoted ? 'voted' : ''}`} onClick={handleUpvote}>
             <Heart size={14} fill={hasVoted ? 'currentColor' : 'none'} /> {upvotes}
           </button>
           <button className="pa-btn">
-            <MessageSquare size={14} /> {thread.comments_count}
+            <MessageSquare size={14} /> {thread.comments_count || 0}
           </button>
           <button className="pa-btn share">
             <ExternalLink size={14} /> Share
@@ -111,6 +138,29 @@ export default function ThreadCard({ thread }: Props) {
           </button>
         </div>
       </div>
+
+      {/* Lightbox Modal */}
+      {lightboxImage && (
+        <div 
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4 backdrop-blur-md"
+          onClick={() => setLightboxImage(null)}
+        >
+          <div className="relative max-w-5xl w-full max-h-screen p-4 flex justify-center items-center">
+            <button 
+              className="absolute top-4 right-4 p-2 bg-c800/50 hover:bg-c800 rounded-full text-white transition-colors"
+              onClick={() => setLightboxImage(null)}
+            >
+              <X size={24} />
+            </button>
+            <img 
+              src={lightboxImage} 
+              alt="Enlarged community image view" 
+              className="max-w-full max-h-[85vh] object-contain rounded-lg"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

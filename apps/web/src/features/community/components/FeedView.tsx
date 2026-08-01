@@ -6,9 +6,10 @@ import FeedSidebarLeft from './FeedSidebarLeft';
 import FeedSidebarRight from './FeedSidebarRight';
 import ThreadCard from './ThreadCard';
 import { communityService } from '../api/community.service';
-import { CommunityThread } from '../types/community.types';
+import { CommunityThread, CommunityBowl } from '../types/community.types';
 import { api } from '@/lib/api';
 import { ImageIcon, DollarSign, BarChart3, Loader2 } from 'lucide-react';
+import PostComposerModal from './PostComposerModal';
 
 export default function FeedView() {
   const searchParams = useSearchParams();
@@ -20,7 +21,13 @@ export default function FeedView() {
 
   // User info for composer
   const [userInitials, setUserInitials] = useState<string>('');
+  const [userFullName, setUserFullName] = useState<string>('');
+  const [userJobTitle, setUserJobTitle] = useState<string>('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Composer
+  const [showComposer, setShowComposer] = useState(false);
+  const [bowls, setBowls] = useState<CommunityBowl[]>([]);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -29,15 +36,29 @@ export default function FeedView() {
         setIsLoggedIn(true);
         try {
           const res = await api.get('/user/me');
-          const first = res.data?.data?.firstName || '';
-          const last = res.data?.data?.lastName || '';
+          const data = res.data?.data || {};
+          const first = data.firstName || '';
+          const last = data.lastName || '';
           setUserInitials((first.charAt(0) + last.charAt(0)).toUpperCase() || 'U');
+          setUserFullName(`${first} ${last}`.trim());
+          setUserJobTitle(data.seekerProfile?.headline || data.companyName || 'Member');
         } catch (err) {
           console.error('[FeedView] User fetch error:', err);
         }
       }
     };
     fetchUser();
+    
+    // Fetch bowls for composer
+    const fetchBowls = async () => {
+      try {
+        const b = await communityService.getTrendingBowls();
+        setBowls(b?.data || b || []);
+      } catch (err) {
+        console.error('[FeedView] Bowls fetch error:', err);
+      }
+    };
+    fetchBowls();
   }, []);
 
   const loadData = async () => {
@@ -86,14 +107,14 @@ export default function FeedView() {
 
         {/* Composer */}
         {isLoggedIn ? (
-          <div className="card composer">
-            <div className="composer-top">
+          <div className="card composer" onClick={() => setShowComposer(true)} style={{ cursor: 'pointer' }}>
+            <div className="composer-top pointer-events-none">
               <div className="mini-avatar">{userInitials}</div>
               <div className="composer-input">
-                <textarea rows={1} placeholder="Share thoughts, ask a question, or post an update…"></textarea>
+                <textarea rows={1} placeholder="Share thoughts, ask a question, or post an update…" readOnly></textarea>
               </div>
             </div>
-            <div className="composer-tools">
+            <div className="composer-tools pointer-events-none">
               <div className="tool-icons">
                 <button className="tool-chip"><ImageIcon size={14} /> Photo</button>
                 <button className="tool-chip salary"><DollarSign size={14} /> Salary tag</button>
@@ -128,6 +149,20 @@ export default function FeedView() {
 
       {/* Right Sidebar */}
       <FeedSidebarRight />
+
+      {showComposer && (
+        <PostComposerModal
+          onClose={() => setShowComposer(false)}
+          onSuccess={() => {
+            setShowComposer(false);
+            loadData();
+          }}
+          bowls={bowls}
+          defaultBowlSlug={currentBowlSlug || undefined}
+          userFullName={userFullName}
+          userJobTitle={userJobTitle}
+        />
+      )}
     </main>
   );
 }

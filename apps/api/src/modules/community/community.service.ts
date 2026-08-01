@@ -1,5 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ConfigService } from '@nestjs/config';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { v4 as uuidv4 } from 'uuid';
 import { Repository } from 'typeorm';
 import { CommunityBowl } from './entities/community-bowl.entity';
 import {
@@ -17,7 +20,16 @@ export class CommunityService {
     private readonly threadRepo: Repository<CommunityThread>,
     @InjectRepository(CommunityComment)
     private readonly commentRepo: Repository<CommunityComment>,
-  ) {}
+    private readonly configService: ConfigService,
+  ) {
+    const supabaseUrl = this.configService.get<string>('SUPABASE_URL');
+    const supabaseKey = this.configService.get<string>('SUPABASE_SERVICE_KEY');
+    if (supabaseUrl && supabaseKey) {
+      this.supabase = createClient(supabaseUrl, supabaseKey);
+    }
+  }
+
+  private supabase: SupabaseClient;
 
   async getTrendingBowls() {
     return {
@@ -109,14 +121,13 @@ export class CommunityService {
       content: string;
       anonymity_mode: AnonymityMode;
       display_title_override?: string;
+      media_urls?: string[];
     },
   ) {
     const bowl = await this.bowlRepo.findOne({
       where: { slug: dto.bowl_slug },
     });
-    if (!bowl) {
-      throw new NotFoundException('Bowl not found');
-    }
+    if (!bowl) throw new NotFoundException('Community bowl not found');
 
     const thread = this.threadRepo.create({
       bowl: { id: bowl.id },
@@ -125,10 +136,81 @@ export class CommunityService {
       content: dto.content,
       anonymity_mode: dto.anonymity_mode,
       display_title_override: dto.display_title_override,
+      media_urls: dto.media_urls || [],
     });
 
-    await this.threadRepo.save(thread);
-    return { success: true, data: thread };
+    try {
+      const saved = await this.threadRepo.save(thread);
+      
+      // Update bowl count
+      await this.bowlRepo.increment({ id: bowl.id }, 'post_count', 1);
+  
+      return {
+        success: true,
+        data: saved,
+      };
+    } catch (error) {
+      // If thread creation fails, we should clean up any uploaded files to save storage
+      if (dto.media_urls && dto.media_urls.length > 0 && this.supabase) {
+        try {
+          const filesToDelete = dto.media_urls
+            .map(url => {
+              const parts = url.split('/community-media/');
+              return parts.length > 1 ? parts[1] : null;
+            })
+            .filter(path => path !== null);
+            
+          if (filesToDelete.length > 0) {
+            await this.supabase.storage.from('community-media').remove(filesToDelete);
+          }
+        } catch (cleanupError) {
+          console.error('Failed to cleanup orphaned community media:', cleanupError);
+        }
+      }
+      throw error;
+    }
+  }
+
+  async uploadThreadMedia(userId: string, files: Express.Multer.File[]) {
+    if (!this.supabase) {
+      throw new InternalServerErrorException('Storage service not configured');
+    }
+
+    const uploadedUrls: string[] = [];
+    
+    // Upload files in parallel
+    const uploadPromises = files.map(async (file) => {
+      const ext = file.originalname.split('.').pop()?.toLowerCase() || 'jpg';
+      const key = `${userId}/${uuidv4()}.${ext}`;
+
+      const { data, error } = await this.supabase.storage
+        .from('community-media')
+        .upload(key, file.buffer, {
+          contentType: file.mimetype,
+          upsert: false,
+        });
+
+      if (error) {
+        throw new BadRequestException(`Failed to upload file: ${error.message}`);
+      }
+
+      const { data: urlData } = this.supabase.storage
+        .from('community-media')
+        .getPublicUrl(key);
+
+      return urlData.publicUrl;
+    });
+
+    try {
+      const urls = await Promise.all(uploadPromises);
+      return {
+        success: true,
+        urls,
+      };
+    } catch (error) {
+      // If any upload fails, we should ideally clean up the successful ones in this batch
+      throw new BadRequestException('Failed to process media uploads');
+    }
   }
 
   async upvoteThread(threadId: string, _userId: string) {

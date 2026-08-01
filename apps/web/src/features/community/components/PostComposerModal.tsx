@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X } from 'lucide-react';
+import { X, Image as ImageIcon, Loader2 } from 'lucide-react';
+import imageCompression from 'browser-image-compression';
 import AnonymitySelectorBar from './AnonymitySelectorBar';
 import { AnonymityMode, CommunityBowl } from '../types/community.types';
 import { communityService } from '../api/community.service';
@@ -21,18 +22,66 @@ export default function PostComposerModal({ onClose, onSuccess, bowls, defaultBo
   const [anonymityMode, setAnonymityMode] = useState<AnonymityMode>('job_title_only');
   const [selectedBowlSlug, setSelectedBowlSlug] = useState(defaultBowlSlug || bowls[0]?.slug || '');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const files = Array.from(e.target.files);
+      if (selectedFiles.length + files.length > 4) {
+        alert('You can only attach up to 4 images per post.');
+        return;
+      }
+      setSelectedFiles(prev => [...prev, ...files]);
+      setPreviewUrls(prev => [
+        ...prev,
+        ...files.map(f => URL.createObjectURL(f))
+      ]);
+    }
+  };
+
+  const removeFile = (index: number) => {
+    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+    setPreviewUrls(prev => prev.filter((_, i) => i !== index));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim() || !content.trim() || !selectedBowlSlug) return;
     
     setIsSubmitting(true);
+    let mediaUrls: string[] = [];
+
     try {
+      if (selectedFiles.length > 0) {
+        // Compress images
+        const compressedFiles = await Promise.all(
+          selectedFiles.map(async (file) => {
+            const options = {
+              maxSizeMB: 1,
+              maxWidthOrHeight: 1920,
+              useWebWorker: true,
+            };
+            try {
+              return await imageCompression(file, options);
+            } catch (error) {
+              console.error('Compression error:', error);
+              return file; // fallback to original
+            }
+          })
+        );
+        
+        // Upload compressed images
+        const uploadRes = await communityService.uploadMedia(compressedFiles);
+        mediaUrls = uploadRes.urls || [];
+      }
+
       await communityService.createThread({
         bowl_slug: selectedBowlSlug,
         title,
         content,
         anonymity_mode: anonymityMode,
+        media_urls: mediaUrls.length > 0 ? mediaUrls : undefined,
       });
       onSuccess();
       onClose();
@@ -102,12 +151,54 @@ export default function PostComposerModal({ onClose, onSuccess, bowls, defaultBo
             />
           </div>
 
-          <div className="flex justify-end pt-2">
+          {/* Image Previews */}
+          {previewUrls.length > 0 && (
+            <div className="flex gap-3 flex-wrap mt-2">
+              {previewUrls.map((url, i) => (
+                <div key={i} className="relative w-24 h-24 rounded-lg overflow-hidden border border-c700 bg-c800">
+                  <img src={url} alt={`Preview ${i}`} className="w-full h-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => removeFile(i)}
+                    className="absolute top-1 right-1 p-1 bg-black/60 hover:bg-black rounded-full text-white transition-colors backdrop-blur-sm"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="flex justify-between items-center pt-2">
+            <div>
+              <input
+                type="file"
+                id="media-upload"
+                multiple
+                accept="image/jpeg, image/png, image/webp"
+                className="hidden"
+                onChange={handleFileChange}
+                disabled={selectedFiles.length >= 4}
+              />
+              <label
+                htmlFor="media-upload"
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors text-[13.5px] font-medium ${
+                  selectedFiles.length >= 4 
+                    ? 'text-c600 cursor-not-allowed opacity-50' 
+                    : 'text-c400 hover:text-white hover:bg-c800 cursor-pointer border border-transparent hover:border-c700'
+                }`}
+              >
+                <ImageIcon size={16} />
+                Add Photos
+              </label>
+            </div>
+
             <button
               type="submit"
-              disabled={isSubmitting || !title.trim() || !content.trim()}
-              className="btn btn--primary"
+              disabled={isSubmitting || !title.trim() || !content.trim() || !selectedBowlSlug}
+              className="btn btn--primary flex items-center gap-2"
             >
+              {isSubmitting && <Loader2 size={16} className="animate-spin" />}
               {isSubmitting ? 'Posting...' : 'Post Thread'}
             </button>
           </div>

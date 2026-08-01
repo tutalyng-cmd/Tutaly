@@ -16,7 +16,7 @@ export default function CheckoutPage() {
   
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
-  const [payMethod, setPayMethod] = useState('paystack');
+  const [payMethod, setPayMethod] = useState('flutterwave');
 
   useEffect(() => {
     fetchCart();
@@ -157,6 +157,13 @@ export default function CheckoutPage() {
             <div className="shop-form-card">
               <h3>Payment method</h3>
               <div className="shop-pay-options">
+                <label className={`shop-pay-option ${payMethod === 'flutterwave' ? 'selected' : ''}`}>
+                  <input type="radio" name="paymethod" value="flutterwave" checked={payMethod === 'flutterwave'} onChange={() => setPayMethod('flutterwave')} />
+                  <div>
+                    <div>Flutterwave</div>
+                    <div className="sub">Cards, Bank Transfer, USSD, Mobile Money</div>
+                  </div>
+                </label>
                 <label className={`shop-pay-option ${payMethod === 'paystack' ? 'selected' : ''}`}>
                   <input type="radio" name="paymethod" value="paystack" checked={payMethod === 'paystack'} onChange={() => setPayMethod('paystack')} />
                   <div>

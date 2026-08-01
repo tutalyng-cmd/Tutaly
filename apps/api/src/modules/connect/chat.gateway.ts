@@ -61,19 +61,23 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('sendMessage')
   async handleMessage(
     @ConnectedSocket() client: any, // any to access user from WsJwtGuard
-    @MessageBody() payload: { receiverId: string; content: string }
+    @MessageBody() payload: { receiverId: string; content: string },
   ) {
     const senderId = client.user.sub; // ConnectController uses req.user.sub for userId
     const { receiverId, content } = payload;
 
     // Save to DB
-    const result = await this.connectService.sendMessage(senderId, receiverId, content);
+    const result = await this.connectService.sendMessage(
+      senderId,
+      receiverId,
+      content,
+    );
 
     if (result.success) {
       // Emit to receiver if online
       const receiverSockets = this.userSockets.get(receiverId);
       if (receiverSockets) {
-        receiverSockets.forEach(socketId => {
+        receiverSockets.forEach((socketId) => {
           this.server.to(socketId).emit('newMessage', result.data);
         });
       }
@@ -81,7 +85,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       // Also emit back to sender (to other devices they might have open)
       const senderSockets = this.userSockets.get(senderId);
       if (senderSockets) {
-        senderSockets.forEach(socketId => {
+        senderSockets.forEach((socketId) => {
           if (socketId !== client.id) {
             this.server.to(socketId).emit('newMessage', result.data);
           }

@@ -51,7 +51,7 @@ export default function ShopProductDetailPage() {
 
     setAddingToCart(true);
     try {
-      await apiAuth.withToken(token).post('/shop/cart/items', {
+      await apiAuth.withToken(token).post('/shop/cart/add', {
         productId: product.id,
         quantity: qty
       });

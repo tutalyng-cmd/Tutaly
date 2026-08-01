@@ -52,11 +52,12 @@ export default function CheckoutPage() {
       if (!token) throw new Error('Not authenticated');
 
       const res = await apiAuth.withToken(token).post('/shop/checkout', {
-        paymentMethod: payMethod
+        gateway: payMethod
       });
       
-      if (res.data?.paymentUrl) {
-        window.location.href = res.data.paymentUrl;
+      const paymentLink = res.data?.paymentLink || res.data?.paymentUrl;
+      if (paymentLink) {
+        window.location.href = paymentLink;
       } else {
         alert('Payment successful!');
         router.push('/seeker/orders');

@@ -2,6 +2,7 @@
 /* Extracted from shop.html — scoped to /shop routes */
 
 .shop-view {
+  padding-top: 80px;
   --bg: #0b0d10;
   --bg-elevated: #12161b;
   --bg-card: #181d23;

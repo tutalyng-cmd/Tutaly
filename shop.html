@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tutaly Shop — Career resources built for you</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0d10;
+    --bg-elevated:#12161b;
+    --bg-card:#181d23;
+    --bg-card-hover:#1e242b;
+    --border:#262c34;
+    --border-soft:#1c2129;
+    --text-primary:#f4f6f8;
+    --text-secondary:#9aa4b2;
+    --text-muted:#5f6b79;
+    --accent-blue:#3b6df0;
+    --accent-blue-dim:#274a9e;
+    --accent-gold:#e8b84b;
+    --accent-green:#2fbf71;
+    --accent-red:#ef5555;
+    --font-display:'Sora', sans-serif;
+    --font-body:'Inter', sans-serif;
+    --font-mono:'IBM Plex Mono', monospace;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text-primary);font-family:var(--font-body);-webkit-font-smoothing:antialiased;}
+  a{color:inherit;text-decoration:none;}
+  button{font-family:inherit;cursor:pointer;}
+  ::selection{background:var(--accent-blue);color:#fff;}
+  ::-webkit-scrollbar{width:10px;height:10px;}
+  ::-webkit-scrollbar-track{background:var(--bg);}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:8px;}
+  :focus-visible{outline:2px solid var(--accent-gold);outline-offset:2px;}
+
+  .wrap{max-width:1240px;margin:0 auto;padding:0 28px;}
+  @media(max-width:640px){.wrap{padding:0 16px;}}
+
+  /* NAV */
+  .nav{position:sticky;top:0;z-index:50;background:rgba(11,13,16,0.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--border-soft);}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:68px;}
+  .logo{display:flex;align-items:center;gap:8px;font-family:var(--font-display);font-weight:800;font-size:20px;letter-spacing:-0.02em;}
+  .logo .bars{display:inline-flex;gap:2px;}
+  .logo .bars span{width:4px;height:18px;border-radius:2px;display:inline-block;}
+  .logo .bars span:nth-child(1){background:#3ba55c;}
+  .logo .bars span:nth-child(2){background:#f4f4f4;}
+  .logo .bars span:nth-child(3){background:#e05555;}
+  .nav-links{display:flex;gap:30px;font-size:14.5px;color:var(--text-secondary);}
+  .nav-links a{padding:8px 2px;transition:color .15s;}
+  .nav-links a:hover{color:var(--text-primary);}
+  .nav-links a.active{color:var(--text-primary);background:var(--bg-card);border-radius:8px;padding:8px 12px;}
+  .nav-right{display:flex;align-items:center;gap:14px;}
+  .icon-btn{position:relative;width:38px;height:38px;border-radius:10px;background:transparent;border:none;color:var(--text-primary);display:flex;align-items:center;justify-content:center;transition:background .15s;}
+  .icon-btn:hover{background:var(--bg-card);}
+  .cart-count{position:absolute;top:2px;right:2px;background:var(--accent-gold);color:#1a1204;font-family:var(--font-mono);font-size:10px;font-weight:600;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .btn{border-radius:10px;padding:10px 18px;font-size:14px;font-weight:600;border:1px solid transparent;transition:all .15s;}
+  .btn-ghost{background:var(--bg-card);border-color:var(--border);color:var(--text-primary);}
+  .btn-ghost:hover{background:var(--bg-card-hover);}
+  .btn-primary{background:var(--accent-blue);color:#fff;}
+  .btn-primary:hover{background:#4c7bf5;}
+  .btn-primary:disabled{background:var(--border);color:var(--text-muted);cursor:not-allowed;}
+  .btn-gold{background:var(--accent-gold);color:#1a1204;}
+  .btn-gold:hover{background:#f0c665;}
+  .btn-block{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;}
+  .navmobile{display:none;}
+  @media(max-width:900px){.nav-links{display:none;} }
+
+  /* FLASH BANNER */
+  .flash{background:linear-gradient(90deg,#1c2440,#241c14 65%,#1c2440);border-bottom:1px solid var(--border-soft);}
+  .flash-inner{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 0;flex-wrap:wrap;font-size:13.5px;}
+  .flash-badge{background:var(--accent-red);color:#fff;font-weight:700;font-size:11px;letter-spacing:.06em;padding:4px 9px;border-radius:6px;text-transform:uppercase;}
+  .flash-copy{color:var(--text-secondary);}
+  .flash-copy b{color:var(--text-primary);}
+  .countdown{display:flex;gap:5px;font-family:var(--font-mono);}
+  .countdown span{background:var(--bg-elevated);border:1px solid var(--border);padding:3px 7px;border-radius:6px;font-weight:600;color:var(--accent-gold);min-width:26px;text-align:center;}
+
+  /* TRUST BAR */
+  .trust{border-bottom:1px solid var(--border-soft);}
+  .trust-inner{display:flex;gap:0;padding:16px 0;}
+  .trust-item{flex:1;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-secondary);}
+  .trust-item svg{flex-shrink:0;color:var(--accent-green);}
+  @media(max-width:900px){.trust-inner{flex-wrap:wrap;gap:14px;}.trust-item{flex:1 1 45%;}}
+
+  /* HERO */
+  .hero{padding:44px 0 24px;}
+  .eyebrow{display:flex;align-items:center;gap:8px;color:var(--accent-gold);font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px;}
+  .eyebrow .dash{width:22px;height:2px;background:var(--accent-gold);display:inline-block;}
+  h1.title{font-family:var(--font-display);font-size:44px;font-weight:800;letter-spacing:-0.02em;margin:0 0 12px;line-height:1.08;}
+  .subtitle{color:var(--text-secondary);font-size:16.5px;max-width:560px;line-height:1.5;margin:0;}
+  @media(max-width:640px){h1.title{font-size:30px;}}
+
+  /* PILLS */
+  .pills{display:flex;gap:10px;margin:30px 0 20px;flex-wrap:wrap;}
+  .pill{padding:9px 18px;border-radius:999px;background:var(--bg-card);border:1px solid var(--border);color:var(--text-secondary);font-size:13.5px;font-weight:600;transition:all .15s;}
+  .pill.active{background:var(--accent-blue);border-color:var(--accent-blue);color:#fff;}
+  .pill:hover:not(.active){background:var(--bg-card-hover);color:var(--text-primary);}
+
+  .toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:10px;}
+  .result-count{font-size:14px;color:var(--text-secondary);}
+  .result-count b{color:var(--text-primary);}
+  .sortbox select{background:var(--bg-card);border:1px solid var(--border);color:var(--text-primary);border-radius:10px;padding:9px 14px;font-size:13.5px;}
+  .filter-toggle{display:none;}
+  @media(max-width:800px){.filter-toggle{display:flex;}}
+
+  /* LAYOUT: sidebar + grid */
+  .shop-layout{display:grid;grid-template-columns:230px 1fr;gap:32px;align-items:start;padding-bottom:70px;}
+  @media(max-width:800px){.shop-layout{grid-template-columns:1fr;} .sidebar{display:none;} .sidebar.open{display:block;}}
+  .sidebar{background:var(--bg-card);border:1px solid var(--border-soft);border-radius:var(--radius);padding:20px;position:sticky;top:88px;}
+  .filter-group{margin-bottom:22px;}
+  .filter-group:last-child{margin-bottom:0;}
+  .filter-title{font-size:12.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:12px;}
+  .filter-row{display:flex;align-items:center;gap:9px;margin-bottom:10px;font-size:13.5px;color:var(--text-secondary);cursor:pointer;}
+  .filter-row input{accent-color:var(--accent-blue);width:15px;height:15px;}
+  .filter-row:hover{color:var(--text-primary);}
+  .price-range{width:100%;accent-color:var(--accent-blue);margin-top:6px;}
+
+  /* GRID + CARD */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:20px;}
+  .card{background:var(--bg-card);border:1px solid var(--border-soft);border-radius:var(--radius);overflow:hidden;transition:transform .18s, border-color .18s, box-shadow .18s;position:relative;display:flex;flex-direction:column;}
+  .card:hover{transform:translateY(-3px);border-color:var(--border);box-shadow:0 12px 30px -12px rgba(0,0,0,.5);}
+  .card-media{aspect-ratio:4/3;background:linear-gradient(135deg,#20262e,#151920);position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+  .card-media svg{width:44%;height:44%;color:var(--border);}
+  .badge{position:absolute;top:10px;left:10px;font-size:10.5px;font-weight:700;padding:4px 9px;border-radius:6px;text-transform:uppercase;letter-spacing:.04em;z-index:2;}
+  .badge.bestseller{background:var(--accent-gold);color:#1a1204;}
+  .badge.new{background:var(--accent-green);color:#06210f;}
+  .badge.sale{background:var(--accent-red);color:#fff;}
+  .wishlist{position:absolute;top:8px;right:8px;width:32px;height:32px;border-radius:50%;background:rgba(11,13,16,.65);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;color:#fff;border:1px solid rgba(255,255,255,.12);z-index:2;transition:all .15s;}
+  .wishlist:hover{background:rgba(11,13,16,.9);}
+  .wishlist.active svg{fill:var(--accent-red);stroke:var(--accent-red);}
+  .card-body{padding:14px 15px 15px;display:flex;flex-direction:column;gap:6px;flex:1;}
+  .card-cat{font-size:10.5px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;font-weight:600;}
+  .card-title{font-size:14.5px;font-weight:600;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:39px;}
+  .card-seller{font-size:12px;color:var(--text-muted);}
+  .rating{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-secondary);}
+  .stars{color:var(--accent-gold);letter-spacing:1px;font-size:12px;}
+  .price-row{display:flex;align-items:baseline;gap:8px;margin-top:2px;font-family:var(--font-mono);}
+  .price{font-weight:600;font-size:15px;color:var(--text-primary);}
+  .price-old{font-size:12px;color:var(--text-muted);text-decoration:line-through;}
+  .discount-tag{font-size:11px;color:var(--accent-green);font-weight:600;}
+  .card-actions{margin-top:10px;display:flex;gap:8px;}
+  .add-btn{flex:1;background:var(--bg-elevated);border:1px solid var(--border);color:var(--text-primary);border-radius:9px;padding:9px 10px;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s;}
+  .add-btn:hover{background:var(--accent-blue);border-color:var(--accent-blue);color:#fff;}
+  .add-btn.added{background:var(--accent-green);border-color:var(--accent-green);color:#06210f;}
+
+  /* BREADCRUMB */
+  .crumb{display:flex;gap:8px;align-items:center;color:var(--text-muted);font-size:13px;padding:22px 0 0;flex-wrap:wrap;}
+  .crumb a:hover{color:var(--text-primary);}
+  .crumb .sep{color:var(--border);}
+  .crumb .cur{color:var(--text-secondary);}
+
+  /* PRODUCT DETAIL */
+  .pd-layout{display:grid;grid-template-columns:1fr 400px;gap:44px;padding:26px 0 60px;align-items:start;}
+  @media(max-width:900px){.pd-layout{grid-template-columns:1fr;}}
+  .gallery-main{aspect-ratio:1/1;background:linear-gradient(135deg,#20262e,#151920);border-radius:var(--radius);border:1px solid var(--border-soft);display:flex;align-items:center;justify-content:center;margin-bottom:14px;position:relative;}
+  .gallery-main svg{width:32%;height:32%;color:var(--border);}
+  .gallery-thumbs{display:flex;gap:10px;}
+  .thumb{width:70px;height:70px;border-radius:9px;background:var(--bg-card);border:1.5px solid var(--border-soft);display:flex;align-items:center;justify-content:center;transition:border-color .15s;}
+  .thumb.active{border-color:var(--accent-blue);}
+  .thumb svg{width:40%;height:40%;color:var(--text-muted);}
+
+  .pd-cat{font-size:12.5px;color:var(--accent-gold);text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin-bottom:8px;}
+  .pd-title{font-family:var(--font-display);font-size:28px;font-weight:700;letter-spacing:-0.01em;line-height:1.2;margin:0 0 10px;}
+  .pd-meta{display:flex;align-items:center;gap:16px;color:var(--text-secondary);font-size:13.5px;margin-bottom:18px;flex-wrap:wrap;}
+  .pd-meta .rating{font-size:13.5px;}
+  .verified{display:inline-flex;align-items:center;gap:4px;color:var(--accent-green);}
+
+  .buybox{background:var(--bg-card);border:1px solid var(--border-soft);border-radius:var(--radius);padding:22px;position:sticky;top:88px;}
+  .buybox .price-row{font-size:24px;margin-bottom:4px;}
+  .buybox .price{font-size:26px;}
+  .buybox .savings{font-size:12.5px;color:var(--accent-green);margin-bottom:14px;font-weight:600;}
+  .delivery-line{display:flex;gap:9px;align-items:flex-start;font-size:13px;color:var(--text-secondary);padding:11px 0;border-top:1px solid var(--border-soft);}
+  .delivery-line svg{flex-shrink:0;color:var(--accent-blue);margin-top:1px;}
+  .qty-row{display:flex;align-items:center;justify-content:space-between;margin:16px 0;}
+  .qty-label{font-size:13px;color:var(--text-secondary);}
+  .qty-stepper{display:flex;align-items:center;border:1px solid var(--border);border-radius:9px;overflow:hidden;}
+  .qty-stepper button{background:var(--bg-elevated);color:var(--text-primary);border:none;width:32px;height:32px;font-size:16px;}
+  .qty-stepper button:hover{background:var(--bg-card-hover);}
+  .qty-stepper span{width:36px;text-align:center;font-family:var(--font-mono);font-size:13.5px;}
+  .buybox-actions{display:flex;flex-direction:column;gap:10px;margin-top:6px;}
+  .seller-card{display:flex;align-items:center;gap:11px;margin-top:20px;padding-top:18px;border-top:1px solid var(--border-soft);}
+  .seller-avatar{width:38px;height:38px;border-radius:50%;background:var(--accent-blue-dim);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;font-size:14px;color:#cdd9ff;}
+  .seller-name{font-size:13.5px;font-weight:600;}
+  .seller-sub{font-size:11.5px;color:var(--text-muted);}
+
+  .tabs{display:flex;gap:26px;border-bottom:1px solid var(--border-soft);margin:8px 0 24px;}
+  .tab-btn{padding:12px 2px;font-size:14px;font-weight:600;color:var(--text-muted);border-bottom:2px solid transparent;margin-bottom:-1px;}
+  .tab-btn.active{color:var(--text-primary);border-color:var(--accent-blue);}
+  .tab-panel{display:none;color:var(--text-secondary);font-size:14.5px;line-height:1.75;}
+  .tab-panel.active{display:block;}
+  .tab-panel ul{padding-left:20px;margin:8px 0;}
+  .tab-panel li{margin-bottom:6px;}
+  .review{display:flex;gap:14px;padding:18px 0;border-bottom:1px solid var(--border-soft);}
+  .review:last-child{border-bottom:none;}
+  .review-avatar{width:36px;height:36px;border-radius:50%;background:var(--bg-elevated);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;font-size:13px;flex-shrink:0;}
+  .review-name{font-size:13.5px;font-weight:600;color:var(--text-primary);}
+  .review-date{font-size:11.5px;color:var(--text-muted);}
+  .review-text{margin-top:6px;font-size:13.5px;}
+
+  .section-heading{font-family:var(--font-display);font-size:20px;font-weight:700;margin:44px 0 18px;letter-spacing:-0.01em;}
+
+  /* CART */
+  .cart-layout{display:grid;grid-template-columns:1fr 340px;gap:34px;padding:26px 0 70px;align-items:start;}
+  @media(max-width:850px){.cart-layout{grid-template-columns:1fr;}}
+  .cart-item{display:flex;gap:16px;padding:18px 0;border-bottom:1px solid var(--border-soft);align-items:center;}
+  .cart-thumb{width:76px;height:76px;border-radius:10px;background:linear-gradient(135deg,#20262e,#151920);flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+  .cart-thumb svg{width:40%;height:40%;color:var(--border);}
+  .cart-info{flex:1;min-width:0;}
+  .cart-info-title{font-size:14.5px;font-weight:600;margin-bottom:4px;}
+  .cart-info-cat{font-size:12px;color:var(--text-muted);}
+  .cart-remove{font-size:12.5px;color:var(--accent-red);margin-top:6px;display:inline-block;}
+  .cart-qty{margin:0 20px;}
+  .cart-price{font-family:var(--font-mono);font-weight:600;font-size:14.5px;min-width:90px;text-align:right;}
+  .summary-card{background:var(--bg-card);border:1px solid var(--border-soft);border-radius:var(--radius);padding:22px;position:sticky;top:88px;}
+  .summary-row{display:flex;justify-content:space-between;font-size:13.5px;color:var(--text-secondary);padding:8px 0;}
+  .summary-row.total{border-top:1px solid var(--border-soft);margin-top:8px;padding-top:14px;font-size:16px;color:var(--text-primary);font-weight:700;}
+  .summary-row .val{font-family:var(--font-mono);color:var(--text-primary);}
+  .promo{display:flex;gap:8px;margin:14px 0;}
+  .promo input{flex:1;background:var(--bg-elevated);border:1px solid var(--border);color:var(--text-primary);border-radius:9px;padding:10px 12px;font-size:13px;}
+  .empty-state{text-align:center;padding:80px 20px;color:var(--text-secondary);}
+  .empty-state svg{color:var(--border);margin-bottom:18px;}
+  .empty-state h3{font-family:var(--font-display);color:var(--text-primary);font-size:20px;margin:0 0 8px;}
+
+  /* CHECKOUT */
+  .steps{display:flex;align-items:center;gap:10px;padding:26px 0 6px;font-size:13px;color:var(--text-muted);}
+  .steps .step{display:flex;align-items:center;gap:8px;}
+  .steps .num{width:22px;height:22px;border-radius:50%;background:var(--bg-card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:11px;}
+  .steps .step.active{color:var(--text-primary);font-weight:600;}
+  .steps .step.active .num{background:var(--accent-blue);border-color:var(--accent-blue);color:#fff;}
+  .steps .line{width:30px;height:1px;background:var(--border);}
+  .co-layout{display:grid;grid-template-columns:1fr 340px;gap:34px;padding:20px 0 70px;align-items:start;}
+  @media(max-width:850px){.co-layout{grid-template-columns:1fr;}}
+  .form-card{background:var(--bg-card);border:1px solid var(--border-soft);border-radius:var(--radius);padding:24px;margin-bottom:20px;}
+  .form-card h3{font-family:var(--font-display);font-size:16px;margin:0 0 16px;}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .form-grid.full{grid-template-columns:1fr;}
+  .field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
+  .field label{font-size:12.5px;color:var(--text-secondary);}
+  .field input{background:var(--bg-elevated);border:1px solid var(--border);color:var(--text-primary);border-radius:9px;padding:11px 13px;font-size:13.5px;}
+  .field input:focus{border-color:var(--accent-blue);}
+  .pay-options{display:flex;flex-direction:column;gap:10px;}
+  .pay-option{display:flex;align-items:center;gap:12px;border:1px solid var(--border);border-radius:10px;padding:14px;font-size:13.5px;transition:border-color .15s;}
+  .pay-option.selected{border-color:var(--accent-blue);background:var(--bg-elevated);}
+  .pay-option input{accent-color:var(--accent-blue);width:16px;height:16px;}
+  .pay-option .sub{color:var(--text-muted);font-size:11.5px;}
+
+  .confirm-wrap{text-align:center;padding:90px 20px;max-width:480px;margin:0 auto;}
+  .confirm-check{width:70px;height:70px;border-radius:50%;background:rgba(47,191,113,.12);border:1.5px solid var(--accent-green);display:flex;align-items:center;justify-content:center;margin:0 auto 22px;color:var(--accent-green);}
+  .confirm-wrap h2{font-family:var(--font-display);font-size:26px;margin:0 0 10px;}
+  .order-id{font-family:var(--font-mono);background:var(--bg-card);border:1px solid var(--border-soft);border-radius:9px;padding:10px 16px;display:inline-block;margin:14px 0 26px;color:var(--accent-gold);font-size:14px;}
+
+  .related-scroll{display:flex;gap:16px;overflow-x:auto;padding-bottom:8px;}
+  .related-scroll .card{min-width:210px;}
+
+  footer{border-top:1px solid var(--border-soft);padding:36px 0;margin-top:40px;color:var(--text-muted);font-size:12.5px;text-align:center;}
+
+  .view{display:none;}
+  .view.active{display:block;}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <a href="#" class="logo" onclick="go('shop');return false;">
+      <span class="bars"><span></span><span></span><span></span></span>Tutaly
+    </a>
+    <div class="nav-links">
+      <a href="#">Jobs</a>
+      <a href="#">Salaries</a>
+      <a href="#">Company Reviews</a>
+      <a href="#" class="active" onclick="go('shop');return false;">Shop</a>
+      <a href="#">Community</a>
+    </div>
+    <div class="nav-right">
+      <button class="icon-btn" title="Wishlist" onclick="alert('Your saved items would appear here.')">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+      </button>
+      <button class="icon-btn" title="Cart" onclick="go('cart');return false;">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+        <span class="cart-count" id="cartCount">0</span>
+      </button>
+      <button class="btn btn-ghost" onclick="alert('Sign in flow goes here.')">Sign in</button>
+      <button class="btn btn-primary" onclick="alert('Sign up flow goes here.')">Get started</button>
+    </div>
+  </div>
+</nav>
+
+<div class="flash">
+  <div class="wrap flash-inner">
+    <span class="flash-badge">Flash Sale</span>
+    <span class="flash-copy"><b>Career Boost Week</b> — up to 40% off courses &amp; coaching</span>
+    <div class="countdown" id="countdown">
+      <span id="cd-h">00</span><span>:</span><span id="cd-m">00</span><span>:</span><span id="cd-s">00</span>
+    </div>
+  </div>
+</div>
+
+<div class="trust">
+  <div class="wrap trust-inner">
+    <div class="trust-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>Instant digital download</div>
+    <div class="trust-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Secure checkout</div>
+    <div class="trust-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>24/7 support</div>
+    <div class="trust-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>7-day money-back guarantee</div>
+  </div>
+</div>
+
+<!-- ============ SHOP VIEW ============ -->
+<div class="view active" id="view-shop">
+  <div class="wrap">
+    <div class="hero">
+      <div class="eyebrow"><span class="dash"></span>Shop</div>
+      <h1 class="title">Career resources built for you.</h1>
+      <p class="subtitle">Resume templates, courses, salary reports, and guides — from people who've done it.</p>
+    </div>
+
+    <div class="pills" id="typePills"></div>
+
+    <div class="toolbar">
+      <div class="result-count"><b id="resultCount">0</b> resources</div>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <button class="btn btn-ghost filter-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">Filters</button>
+        <div class="sortbox">
+          <select id="sortSelect" onchange="renderGrid()">
+            <option value="bestselling">Bestselling</option>
+            <option value="priceLow">Price: Low to High</option>
+            <option value="priceHigh">Price: High to Low</option>
+            <option value="rating">Highest Rated</option>
+            <option value="newest">Newest</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="shop-layout">
+      <aside class="sidebar">
+        <div class="filter-group">
+          <div class="filter-title">Career stage</div>
+          <label class="filter-row"><input type="checkbox" class="stageFilter" value="Entry-level"> Entry-level</label>
+          <label class="filter-row"><input type="checkbox" class="stageFilter" value="Mid-level"> Mid-level</label>
+          <label class="filter-row"><input type="checkbox" class="stageFilter" value="Executive"> Executive</label>
+        </div>
+        <div class="filter-group">
+          <div class="filter-title">Price</div>
+          <input type="range" min="0" max="60000" step="1000" value="60000" class="price-range" id="priceRange" oninput="document.getElementById('priceLabel').textContent='₦'+Number(this.value).toLocaleString();renderGrid()">
+          <div style="font-size:12.5px;color:var(--text-secondary);margin-top:6px;">Up to <span id="priceLabel">₦60,000</span></div>
+        </div>
+        <div class="filter-group">
+          <div class="filter-title">Rating</div>
+          <label class="filter-row"><input type="radio" name="ratingFilter" value="0" checked> Any rating</label>
+          <label class="filter-row"><input type="radio" name="ratingFilter" value="4.5"> 4.5 &amp; up</label>
+          <label class="filter-row"><input type="radio" name="ratingFilter" value="4.8"> 4.8 &amp; up</label>
+        </div>
+      </aside>
+
+      <div>
+        <div class="grid" id="productGrid"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PRODUCT DETAIL VIEW ============ -->
+<div class="view" id="view-product">
+  <div class="wrap">
+    <div class="crumb">
+      <a href="#" onclick="go('shop');return false;">Shop</a><span class="sep">/</span>
+      <a href="#" id="pdCrumbCat">Digital</a><span class="sep">/</span>
+      <span class="cur" id="pdCrumbTitle">Product</span>
+    </div>
+
+    <div class="pd-layout">
+      <div>
+        <div class="gallery-main" id="pdGalleryMain"><svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg></div>
+        <div class="gallery-thumbs" id="pdThumbs"></div>
+
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="desc" onclick="switchTab('desc')">Description</button>
+          <button class="tab-btn" data-tab="incl" onclick="switchTab('incl')">What's included</button>
+          <button class="tab-btn" data-tab="rev" onclick="switchTab('rev')">Reviews (<span id="revCount">0</span>)</button>
+        </div>
+        <div class="tab-panel active" id="tab-desc"></div>
+        <div class="tab-panel" id="tab-incl"></div>
+        <div class="tab-panel" id="tab-rev"></div>
+
+        <div class="section-heading">Frequently bought together</div>
+        <div class="related-scroll" id="fbtRow"></div>
+
+        <div class="section-heading">You may also like</div>
+        <div class="related-scroll" id="relatedRow"></div>
+      </div>
+
+      <div class="buybox">
+        <div class="pd-cat" id="pdCat">Digital</div>
+        <h1 class="pd-title" id="pdTitle">Product title</h1>
+        <div class="pd-meta">
+          <span class="rating"><span class="stars" id="pdStars">★★★★★</span> <span id="pdRatingNum">4.9</span> (<span id="pdReviewCount">0</span>)</span>
+          <span class="verified"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>Verified creator</span>
+        </div>
+        <div class="price-row"><span class="price" id="pdPrice">₦0</span><span class="price-old" id="pdPriceOld"></span></div>
+        <div class="savings" id="pdSavings" style="display:none;"></div>
+
+        <div class="delivery-line" id="pdDelivery1"></div>
+        <div class="delivery-line" id="pdDelivery2"></div>
+
+        <div class="qty-row" id="pdQtyRow">
+          <span class="qty-label">Quantity</span>
+          <div class="qty-stepper">
+            <button onclick="changeQty(-1)">−</button>
+            <span id="qtyVal">1</span>
+            <button onclick="changeQty(1)">+</button>
+          </div>
+        </div>
+
+        <div class="buybox-actions">
+          <button class="btn btn-primary btn-block" onclick="addToCart(currentProduct.id, qty); pulseCart();">Add to cart</button>
+          <button class="btn btn-gold btn-block" onclick="addToCart(currentProduct.id, qty); go('checkout');">Buy now</button>
+        </div>
+
+        <div class="seller-card">
+          <div class="seller-avatar" id="sellerInitial">T</div>
+          <div>
+            <div class="seller-name" id="sellerName">Tutaly Creator</div>
+            <div class="seller-sub">98% positive feedback · Responds within a day</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CART VIEW ============ -->
+<div class="view" id="view-cart">
+  <div class="wrap">
+    <div class="hero" style="padding-bottom:8px;">
+      <h1 class="title" style="font-size:30px;">Your cart</h1>
+    </div>
+    <div id="cartEmpty" class="empty-state" style="display:none;">
+      <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+      <h3>Your cart is empty</h3>
+      <p>Browse the shop and add resources to get started.</p>
+      <button class="btn btn-primary" style="margin-top:10px;" onclick="go('shop')">Continue shopping</button>
+    </div>
+
+    <div class="cart-layout" id="cartLayout">
+      <div>
+        <div id="cartItems"></div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-row"><span>Subtotal (<span id="cartItemCount">0</span> items)</span><span class="val" id="cartSubtotal">₦0</span></div>
+        <div class="summary-row"><span>Discount</span><span class="val" id="cartDiscount">− ₦0</span></div>
+        <div class="summary-row"><span>Delivery</span><span class="val" id="cartDelivery">₦0</span></div>
+        <div class="summary-row total"><span>Total</span><span class="val" id="cartTotal">₦0</span></div>
+        <div class="promo">
+          <input type="text" placeholder="Promo code" id="promoInput">
+          <button class="btn btn-ghost" onclick="applyPromo()">Apply</button>
+        </div>
+        <button class="btn btn-primary btn-block" onclick="go('checkout')">Proceed to checkout →</button>
+      </div>
+    </div>
+
+    <div class="section-heading">You may also like</div>
+    <div class="related-scroll" id="cartRelated"></div>
+  </div>
+</div>
+
+<!-- ============ CHECKOUT VIEW ============ -->
+<div class="view" id="view-checkout">
+  <div class="wrap">
+    <div class="steps">
+      <div class="step"><span class="num">✓</span>Cart</div>
+      <div class="line"></div>
+      <div class="step active"><span class="num">2</span>Checkout</div>
+      <div class="line"></div>
+      <div class="step" id="stepConfirm"><span class="num">3</span>Confirmation</div>
+    </div>
+
+    <div class="co-layout" id="checkoutForm">
+      <div>
+        <div class="form-card" id="shippingCard">
+          <h3>Delivery details</h3>
+          <div class="form-grid">
+            <div class="field"><label>Full name</label><input type="text" placeholder="Ada Okafor"></div>
+            <div class="field"><label>Phone number</label><input type="text" placeholder="080X XXX XXXX"></div>
+          </div>
+          <div class="form-grid full">
+            <div class="field"><label>Delivery address</label><input type="text" placeholder="14 Admiralty Way, Lekki, Lagos"></div>
+          </div>
+        </div>
+        <div class="form-card">
+          <h3>Contact email</h3>
+          <div class="form-grid full">
+            <div class="field"><label>We'll send your receipt and downloads here</label><input type="email" placeholder="you@email.com"></div>
+          </div>
+        </div>
+        <div class="form-card">
+          <h3>Payment method</h3>
+          <div class="pay-options" id="payOptions">
+            <label class="pay-option selected"><input type="radio" name="pay" checked onclick="selectPay(this)">Card (Visa / Mastercard / Verve)<span></span></label>
+            <label class="pay-option"><input type="radio" name="pay" onclick="selectPay(this)">Bank transfer<span class="sub"> · instant confirmation</span></label>
+            <label class="pay-option" id="podOption"><input type="radio" name="pay" onclick="selectPay(this)">Pay on delivery<span class="sub"> · physical items only</span></label>
+          </div>
+        </div>
+      </div>
+      <div class="summary-card">
+        <h3 style="font-family:var(--font-display);font-size:16px;margin:0 0 14px;">Order summary</h3>
+        <div id="coItems" style="margin-bottom:10px;"></div>
+        <div class="summary-row"><span>Subtotal</span><span class="val" id="coSubtotal">₦0</span></div>
+        <div class="summary-row"><span>Discount</span><span class="val" id="coDiscount">− ₦0</span></div>
+        <div class="summary-row"><span>Delivery</span><span class="val" id="coDelivery">₦0</span></div>
+        <div class="summary-row total"><span>Total</span><span class="val" id="coTotal">₦0</span></div>
+        <button class="btn btn-primary btn-block" style="margin-top:14px;" onclick="placeOrder()">Place order</button>
+      </div>
+    </div>
+
+    <div class="view" id="view-confirm">
+      <div class="confirm-wrap">
+        <div class="confirm-check"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg></div>
+        <h2>Order placed successfully</h2>
+        <p style="color:var(--text-secondary);">We've emailed your receipt and download links.</p>
+        <div class="order-id" id="orderIdText">Order #TT-000000</div>
+        <div>
+          <button class="btn btn-primary" onclick="resetAfterOrder()">Continue shopping</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">© 2026 Tutaly. Career resources built for you — resume templates, courses, salary reports, and guides.</div>
+</footer>
+
+<script>
+/* ---------------- DATA ---------------- */
+const products = [
+  {id:1, type:'Digital', stage:'Entry-level', category:'Ebook', title:'The Complete Resume Toolkit', seller:'Tutaly Creator', price:15000, oldPrice:22000, rating:4.9, reviews:341, badge:'bestseller', desc:'A start-to-finish system for building a resume that gets past applicant tracking software and into a hiring manager\'s hands. Written by a recruiter who has screened over 10,000 resumes.', includes:['12 ATS-tested templates (Word + Google Docs)','Line-by-line rewrite examples for 6 industries','Action-verb and metrics cheat sheet','Lifetime access to future updates']},
+  {id:2, type:'Digital', stage:'Mid-level', category:'Course', title:'Ace Your Interview: Video Course', seller:'Chidinma Career Coaching', price:45000, oldPrice:65000, rating:4.8, reviews:212, badge:'sale', desc:'Six hours of video training covering behavioral interviews, technical rounds, salary negotiation, and follow-up etiquette, taught by a career coach who has placed candidates at top Nigerian and global firms.', includes:['32 video lessons (6h 20m)','Mock interview question bank (150+ questions)','Downloadable answer frameworks','Private community access for 90 days']},
+  {id:3, type:'Digital', stage:'Entry-level', category:'Report', title:'2026 Tech Salary Report — Nigeria Edition', seller:'Tutaly Research', price:8500, oldPrice:null, rating:4.7, reviews:184, badge:'new', desc:'Compensation benchmarks for over 40 tech roles across Lagos, Abuja, and remote-first companies, sourced from 3,000+ verified salary submissions.', includes:['PDF report (86 pages)','Editable salary comparison spreadsheet','Quarterly update access']},
+  {id:4, type:'Service', stage:'Executive', category:'Coaching', title:'1-on-1 Career Coaching Session', seller:'Chidinma Career Coaching', price:35000, oldPrice:null, rating:5.0, reviews:96, badge:null, desc:'A focused 60-minute video session to work through your career strategy, whether that\'s a job search plan, a promotion case, or a pivot into a new field.', includes:['60-minute live video call','Personalized action plan (PDF)','7 days of follow-up messaging support']},
+  {id:5, type:'Digital', stage:'Entry-level', category:'Ebook', title:'Cover Letter Masterclass', seller:'Tutaly Creator', price:12000, oldPrice:16000, rating:4.6, reviews:158, badge:null, desc:'A practical guide with 20 real, annotated cover letter examples across finance, tech, marketing, and public sector roles.', includes:['20 annotated real examples','Fill-in-the-blank templates','Common mistakes checklist']},
+  {id:6, type:'Service', stage:'Mid-level', category:'Personal Branding', title:'Premium LinkedIn Profile Makeover', seller:'Bright Profile Studio', price:25000, oldPrice:32000, rating:4.8, reviews:271, badge:'bestseller', desc:'A full rewrite of your LinkedIn headline, About section, and experience bullets, plus a custom banner image, done within 48 hours.', includes:['Full profile copywriting','Custom banner design','48-hour turnaround','One round of revisions']},
+  {id:7, type:'Physical', stage:'Mid-level', category:'Kit', title:'Printed Resume Portfolio Kit', seller:'Tutaly Shop', price:18000, oldPrice:null, rating:4.5, reviews:64, badge:null, desc:'A premium leather-look portfolio folder with 10 archival-paper resume prints, a matching pen, and a business card slot — ready for in-person interviews.', includes:['Leather-look portfolio folder','10 archival-paper prints','Metal pen','Nationwide delivery in 3–5 days']},
+  {id:8, type:'Digital', stage:'Executive', category:'Bundle', title:'Job Search Accelerator Bundle', seller:'Tutaly Creator', price:60000, oldPrice:95000, rating:4.9, reviews:129, badge:'sale', desc:'Everything in the Resume Toolkit, Interview Course, and Salary Report — bundled at a discount for a complete job search relaunch.', includes:['Resume Toolkit','Interview video course','Salary report + spreadsheet','Priority email support for 30 days']},
+];
+
+const reviewsData = [
+  {name:'Ifeoma A.', date:'2 weeks ago', text:'Landed 3 interviews within a month of using this. The examples were specific to Nigerian job listings, which made a huge difference.'},
+  {name:'Tunde O.', date:'1 month ago', text:'Clear, no-fluff, and easy to apply the same day. Worth every naira.'},
+  {name:'Grace E.', date:'2 months ago', text:'Good value but I wish there were more examples for the public sector.'},
+];
+
+let cart = {}; // {productId: qty} — kept in memory for this session only
+let currentProduct = null;
+let qty = 1;
+let currentTypeFilter = 'All';
+let promoApplied = false;
+
+/* ---------------- NAV / ROUTING ---------------- */
+function go(view, scrollTop=true){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+view).classList.add('active');
+  if(view==='checkout'){ document.getElementById('checkoutForm').style.display='grid'; document.getElementById('view-confirm').classList.remove('active'); }
+  if(view==='cart') renderCart();
+  if(view==='checkout') renderCheckout();
+  if(scrollTop) window.scrollTo({top:0, behavior:'instant'});
+}
+
+/* ---------------- TYPE PILLS ---------------- */
+function renderPills(){
+  const types = ['All','Digital','Physical','Service'];
+  const el = document.getElementById('typePills');
+  el.innerHTML = types.map(t=>`<button class="pill ${t===currentTypeFilter?'active':''}" onclick="setType('${t}')">${t}</button>`).join('');
+}
+function setType(t){ currentTypeFilter = t; renderPills(); renderGrid(); }
+
+/* ---------------- GRID ---------------- */
+function money(n){ return '₦' + Number(n).toLocaleString(); }
+
+function getFilteredProducts(){
+  let list = products.slice();
+  if(currentTypeFilter !== 'All') list = list.filter(p=>p.type===currentTypeFilter);
+  const stageChecks = Array.from(document.querySelectorAll('.stageFilter:checked')).map(c=>c.value);
+  if(stageChecks.length) list = list.filter(p=>stageChecks.includes(p.stage));
+  const maxPrice = Number(document.getElementById('priceRange')?.value || 60000);
+  list = list.filter(p=>p.price <= maxPrice);
+  const ratingFilter = Number(document.querySelector('input[name="ratingFilter"]:checked')?.value || 0);
+  list = list.filter(p=>p.rating >= ratingFilter);
+
+  const sort = document.getElementById('sortSelect')?.value || 'bestselling';
+  if(sort==='priceLow') list.sort((a,b)=>a.price-b.price);
+  else if(sort==='priceHigh') list.sort((a,b)=>b.price-a.price);
+  else if(sort==='rating') list.sort((a,b)=>b.rating-a.rating);
+  else if(sort==='newest') list.sort((a,b)=>b.id-a.id);
+  else list.sort((a,b)=> (b.badge==='bestseller') - (a.badge==='bestseller') || b.reviews-a.reviews);
+  return list;
+}
+
+function starString(r){
+  const full = Math.round(r);
+  return '★'.repeat(full) + '☆'.repeat(5-full);
+}
+
+function productCard(p){
+  const badgeHtml = p.badge ? `<span class="badge ${p.badge}">${p.badge==='sale' ? '-'+Math.round(100-(p.price/p.oldPrice*100))+'%' : p.badge}</span>` : '';
+  const oldHtml = p.oldPrice ? `<span class="price-old">${money(p.oldPrice)}</span>` : '';
+  return `
+  <div class="card">
+    <div class="card-media" onclick="openProduct(${p.id})" style="cursor:pointer;">
+      ${badgeHtml}
+      <button class="wishlist" onclick="event.stopPropagation();this.classList.toggle('active')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></button>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg>
+    </div>
+    <div class="card-body">
+      <div class="card-cat">${p.category} · ${p.type}</div>
+      <div class="card-title" onclick="openProduct(${p.id})" style="cursor:pointer;">${p.title}</div>
+      <div class="card-seller">by ${p.seller}</div>
+      <div class="rating"><span class="stars">${starString(p.rating)}</span> ${p.rating.toFixed(1)} (${p.reviews})</div>
+      <div class="price-row">
+        <span class="price">${money(p.price)}</span>${oldHtml}
+      </div>
+      <div class="card-actions">
+        <button class="add-btn" onclick="quickAdd(${p.id}, this)">Add to cart</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderGrid(){
+  const list = getFilteredProducts();
+  document.getElementById('productGrid').innerHTML = list.map(productCard).join('') || `<div style="color:var(--text-secondary);padding:40px 0;">No resources match these filters.</div>`;
+  document.getElementById('resultCount').textContent = list.length;
+}
+
+function quickAdd(id, btn){
+  addToCart(id, 1);
+  btn.textContent = 'Added ✓';
+  btn.classList.add('added');
+  setTimeout(()=>{ btn.textContent='Add to cart'; btn.classList.remove('added'); }, 1400);
+  pulseCart();
+}
+
+/* ---------------- CART LOGIC ---------------- */
+function addToCart(id, amount){
+  cart[id] = (cart[id]||0) + amount;
+  updateCartCount();
+}
+function updateCartCount(){
+  const count = Object.values(cart).reduce((a,b)=>a+b,0);
+  document.getElementById('cartCount').textContent = count;
+}
+function pulseCart(){
+  const el = document.getElementById('cartCount');
+  el.style.transform='scale(1.4)';
+  setTimeout(()=>el.style.transform='scale(1)',180);
+}
+
+function cartLines(){
+  return Object.entries(cart).filter(([id,q])=>q>0).map(([id,q])=>{
+    const p = products.find(pp=>pp.id===Number(id));
+    return {p, q};
+  });
+}
+
+function calcTotals(){
+  const lines = cartLines();
+  let subtotal = lines.reduce((s,l)=>s+l.p.price*l.q,0);
+  let discount = promoApplied ? Math.round(subtotal*0.1) : 0;
+  const hasPhysical = lines.some(l=>l.p.type==='Physical');
+  let delivery = hasPhysical ? 2500 : 0;
+  let total = subtotal - discount + delivery;
+  return {subtotal, discount, delivery, total, lines, hasPhysical};
+}
+
+function renderCart(){
+  const {subtotal, discount, delivery, total, lines} = calcTotals();
+  const empty = lines.length===0;
+  document.getElementById('cartEmpty').style.display = empty ? 'block' : 'none';
+  document.getElementById('cartLayout').style.display = empty ? 'none' : 'grid';
+
+  document.getElementById('cartItems').innerHTML = lines.map(l=>`
+    <div class="cart-item">
+      <div class="cart-thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg></div>
+      <div class="cart-info">
+        <div class="cart-info-title">${l.p.title}</div>
+        <div class="cart-info-cat">${l.p.category} · ${l.p.type}</div>
+        <a href="#" class="cart-remove" onclick="removeFromCart(${l.p.id});return false;">Remove</a>
+      </div>
+      <div class="qty-stepper cart-qty">
+        <button onclick="setCartQty(${l.p.id}, ${l.q-1})">−</button>
+        <span>${l.q}</span>
+        <button onclick="setCartQty(${l.p.id}, ${l.q+1})">+</button>
+      </div>
+      <div class="cart-price">${money(l.p.price*l.q)}</div>
+    </div>
+  `).join('');
+
+  document.getElementById('cartItemCount').textContent = lines.reduce((s,l)=>s+l.q,0);
+  document.getElementById('cartSubtotal').textContent = money(subtotal);
+  document.getElementById('cartDiscount').textContent = '− ' + money(discount);
+  document.getElementById('cartDelivery').textContent = delivery ? money(delivery) : 'Free';
+  document.getElementById('cartTotal').textContent = money(total);
+
+  const usedIds = lines.map(l=>l.p.id);
+  const suggestions = products.filter(p=>!usedIds.includes(p.id)).slice(0,4);
+  document.getElementById('cartRelated').innerHTML = suggestions.map(productCard).join('');
+}
+
+function removeFromCart(id){ delete cart[id]; updateCartCount(); renderCart(); }
+function setCartQty(id, newQty){
+  if(newQty<=0){ removeFromCart(id); return; }
+  cart[id]=newQty; updateCartCount(); renderCart();
+}
+function applyPromo(){
+  const val = document.getElementById('promoInput').value.trim().toUpperCase();
+  if(val==='TUTALY10'){ promoApplied=true; renderCart(); alert('Promo applied: 10% off your order.'); }
+  else alert('Try code TUTALY10 for 10% off.');
+}
+
+/* ---------------- PRODUCT DETAIL ---------------- */
+function openProduct(id){
+  currentProduct = products.find(p=>p.id===id);
+  qty = 1;
+  renderProduct();
+  go('product');
+}
+
+function renderProduct(){
+  const p = currentProduct;
+  document.getElementById('pdCrumbCat').textContent = p.type;
+  document.getElementById('pdCrumbTitle').textContent = p.title;
+  document.getElementById('pdCat').textContent = p.category + ' · ' + p.type;
+  document.getElementById('pdTitle').textContent = p.title;
+  document.getElementById('pdStars').textContent = starString(p.rating);
+  document.getElementById('pdRatingNum').textContent = p.rating.toFixed(1);
+  document.getElementById('pdReviewCount').textContent = p.reviews;
+  document.getElementById('revCount').textContent = p.reviews;
+  document.getElementById('pdPrice').textContent = money(p.price);
+  document.getElementById('pdPriceOld').textContent = p.oldPrice ? money(p.oldPrice) : '';
+  const savingsEl = document.getElementById('pdSavings');
+  if(p.oldPrice){ savingsEl.style.display='block'; savingsEl.textContent = 'You save ' + money(p.oldPrice-p.price) + ' (' + Math.round(100-(p.price/p.oldPrice*100)) + '%)'; }
+  else savingsEl.style.display='none';
+
+  document.getElementById('sellerInitial').textContent = p.seller.charAt(0);
+  document.getElementById('sellerName').textContent = p.seller;
+
+  const d1 = document.getElementById('pdDelivery1');
+  const d2 = document.getElementById('pdDelivery2');
+  if(p.type==='Physical'){
+    d1.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg> Delivery in 3–5 business days, nationwide`;
+    d2.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg> Ships from Tutaly Shop, Lagos`;
+  } else if(p.type==='Service'){
+    d1.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Booked directly with ${p.seller} after purchase`;
+    d2.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Satisfaction guaranteed or full refund`;
+  } else {
+    d1.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15V3m0 12l-4-4m4 4 4-4"/><path d="M3 15v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4"/></svg> Instant download after payment`;
+    d2.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Lifetime access, including future updates`;
+  }
+
+  document.getElementById('pdQtyRow').style.display = p.type==='Physical' ? 'flex' : 'none';
+  document.getElementById('qtyVal').textContent = qty;
+
+  document.getElementById('pdThumbs').innerHTML = [0,1,2].map(i=>`<div class="thumb ${i===0?'active':''}" onclick="document.querySelectorAll('#pdThumbs .thumb').forEach(t=>t.classList.remove('active'));this.classList.add('active');"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg></div>`).join('');
+
+  document.getElementById('tab-desc').innerHTML = `<p>${p.desc}</p>`;
+  document.getElementById('tab-incl').innerHTML = `<ul>${p.includes.map(i=>`<li>${i}</li>`).join('')}</ul>`;
+  document.getElementById('tab-rev').innerHTML = reviewsData.map(r=>`
+    <div class="review">
+      <div class="review-avatar">${r.name.charAt(0)}</div>
+      <div>
+        <span class="review-name">${r.name}</span> · <span class="review-date">${r.date}</span>
+        <div class="stars" style="font-size:12px;">${starString(5)}</div>
+        <div class="review-text">${r.text}</div>
+      </div>
+    </div>`).join('');
+  switchTab('desc');
+
+  const others = products.filter(x=>x.id!==p.id);
+  document.getElementById('fbtRow').innerHTML = others.slice(0,3).map(productCard).join('');
+  document.getElementById('relatedRow').innerHTML = others.filter(x=>x.category===p.category || x.type===p.type).slice(0,4).map(productCard).join('') || others.slice(0,4).map(productCard).join('');
+}
+
+function switchTab(name){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.tab===name));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+}
+
+function changeQty(delta){
+  qty = Math.max(1, qty+delta);
+  document.getElementById('qtyVal').textContent = qty;
+}
+
+/* ---------------- CHECKOUT ---------------- */
+function selectPay(input){
+  document.querySelectorAll('.pay-option').forEach(o=>o.classList.remove('selected'));
+  input.closest('.pay-option').classList.add('selected');
+}
+
+function renderCheckout(){
+  const {subtotal, discount, delivery, total, lines, hasPhysical} = calcTotals();
+  document.getElementById('shippingCard').style.display = hasPhysical ? 'block' : 'none';
+  document.getElementById('podOption').style.opacity = hasPhysical ? '1' : '.4';
+  document.getElementById('podOption').querySelector('input').disabled = !hasPhysical;
+
+  document.getElementById('coItems').innerHTML = lines.map(l=>`
+    <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text-secondary);padding:6px 0;">
+      <span>${l.p.title} × ${l.q}</span><span class="val" style="font-family:var(--font-mono);">${money(l.p.price*l.q)}</span>
+    </div>`).join('');
+  document.getElementById('coSubtotal').textContent = money(subtotal);
+  document.getElementById('coDiscount').textContent = '− ' + money(discount);
+  document.getElementById('coDelivery').textContent = delivery ? money(delivery) : 'Free';
+  document.getElementById('coTotal').textContent = money(total);
+}
+
+function placeOrder(){
+  if(cartLines().length===0){ alert('Your cart is empty.'); go('shop'); return; }
+  const orderId = 'TT-' + Math.floor(100000+Math.random()*900000);
+  document.getElementById('orderIdText').textContent = 'Order #' + orderId;
+  document.getElementById('checkoutForm').style.display='none';
+  document.getElementById('view-confirm').classList.add('active');
+  document.querySelector('.steps .step:nth-child(3)').classList.add('active');
+  document.querySelector('.steps .step:nth-child(3) .num').textContent='✓';
+  cart = {};
+  updateCartCount();
+  window.scrollTo({top:0, behavior:'instant'});
+}
+
+function resetAfterOrder(){
+  document.querySelector('.steps .step:nth-child(3)').classList.remove('active');
+  document.querySelector('.steps .step:nth-child(3) .num').textContent='3';
+  go('shop');
+}
+
+/* ---------------- COUNTDOWN ---------------- */
+function startCountdown(){
+  let target = Date.now() + (7*3600 + 42*60 + 18)*1000;
+  function tick(){
+    let diff = Math.max(0, target - Date.now());
+    let h = Math.floor(diff/3600000);
+    let m = Math.floor((diff%3600000)/60000);
+    let s = Math.floor((diff%60000)/1000);
+    document.getElementById('cd-h').textContent = String(h).padStart(2,'0');
+    document.getElementById('cd-m').textContent = String(m).padStart(2,'0');
+    document.getElementById('cd-s').textContent = String(s).padStart(2,'0');
+  }
+  tick();
+  setInterval(tick, 1000);
+}
+
+/* ---------------- INIT ---------------- */
+document.querySelectorAll('.stageFilter').forEach(el=>el.addEventListener('change', renderGrid));
+document.querySelectorAll('input[name="ratingFilter"]').forEach(el=>el.addEventListener('change', renderGrid));
+
+renderPills();
+renderGrid();
+updateCartCount();
+startCountdown();
+</script>
+</body>
+</html>

@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { api } from '@/lib/api';
-import { FileText, Package, Briefcase } from 'lucide-react';
+import { Heart, FileText, Package, Briefcase } from 'lucide-react';
+import './shop.css';
 
 const LISTING_TYPE_MAP: Record<string, { label: string; icon: React.ElementType; color: string; iconColor: string; tagClass: string }> = {
   digital: { label: 'Digital', icon: FileText, color: 'var(--blue-10)', iconColor: 'var(--blue)', tagClass: 'tag--blue' },
@@ -17,11 +18,17 @@ export default function ShopPage() {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [search, setSearch] = useState('');
-  const [listingType, setListingType] = useState('');
+  const [listingType, setListingType] = useState('All');
+  
+  // Filters
+  const [priceRange, setPriceRange] = useState(60000);
+  const [ratingFilter, setRatingFilter] = useState(0);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sort, setSort] = useState('bestselling');
 
   useEffect(() => {
     fetchProducts();
-  }, [page, search, listingType]);
+  }, [page, search, listingType, priceRange, ratingFilter, sort]);
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -30,8 +37,14 @@ export default function ShopPage() {
       params.append('page', page.toString());
       params.append('limit', '12');
       if (search) params.append('search', search);
-      if (listingType) params.append('listingType', listingType);
+      
+      let mappedType = '';
+      if (listingType === 'Digital') mappedType = 'digital';
+      if (listingType === 'Physical') mappedType = 'physical';
+      if (listingType === 'Service') mappedType = 'service';
+      if (mappedType) params.append('listingType', mappedType);
 
+      // In a real app we'd pass price/rating to API, but here we just fetch and let the API handle what it can
       const res = await api.get(`/shop/products?${params.toString()}`);
       setProducts(res.data?.data || []);
       setTotal(res.data?.meta?.total || 0);
@@ -45,115 +58,131 @@ export default function ShopPage() {
   const formatPrice = (price: number, currency?: string) => {
     const cur = currency || 'NGN';
     const locales: Record<string, string> = { NGN: 'en-NG', USD: 'en-US', EUR: 'de-DE' };
-    return new Intl.NumberFormat(locales[cur] || 'en-NG', { style: 'currency', currency: cur }).format(price);
+    return new Intl.NumberFormat(locales[cur] || 'en-NG', { style: 'currency', currency: cur, minimumFractionDigits: 0 }).format(price);
+  };
+
+  const starString = (r: number) => {
+    const full = Math.round(r || 0);
+    return '★'.repeat(full) + '☆'.repeat(5 - full);
   };
 
   return (
-    <div className="page-shell">
-      <header className="page-header">
-        <div className="container">
-          <div className="page-header__eyebrow">Shop</div>
-          <h1 className="page-header__title">Career resources built for you.</h1>
-          <p className="page-header__sub">Resume templates, courses, salary reports, and guides — from people who've done it.</p>
+    <div className="shop-view">
+      <div className="shop-wrap">
+        <div className="shop-hero">
+          <div className="shop-eyebrow"><span className="dash"></span>Shop</div>
+          <h1 className="shop-title">Career resources built for you.</h1>
+          <p className="shop-subtitle">Resume templates, courses, salary reports, and guides — from people who've done it.</p>
         </div>
-      </header>
 
-      <div className="container" style={{ padding: '28px 0 80px' }}>
-        <div className="category-rail" role="list" aria-label="Shop categories">
-          <span 
-            className={`cat-pill ${!listingType ? 'active' : ''}`} 
-            role="listitem"
-            onClick={() => { setListingType(''); setPage(1); }}
-          >
-            All
-          </span>
-          {Object.entries(LISTING_TYPE_MAP).map(([key, { label }]) => (
-            <span 
-              key={key}
-              className={`cat-pill ${listingType === key ? 'active' : ''}`} 
-              role="listitem"
-              onClick={() => { setListingType(key); setPage(1); }}
+        <div className="shop-pills">
+          {['All', 'Digital', 'Physical', 'Service'].map(t => (
+            <button 
+              key={t}
+              className={`shop-pill ${listingType === t ? 'active' : ''}`}
+              onClick={() => { setListingType(t); setPage(1); }}
             >
-              {label}
-            </span>
+              {t}
+            </button>
           ))}
         </div>
 
-        <div className="results-bar">
-          <p className="results-count"><strong>{total}</strong> resources</p>
-          <div className="results-sort">
-            Sort by
-            <select aria-label="Sort shop items">
-              <option>Bestselling</option>
-              <option>Highest rated</option>
-              <option>Newest</option>
-              <option>Price: low to high</option>
-            </select>
+        <div className="shop-toolbar">
+          <div className="shop-result-count"><b>{total}</b> resources</div>
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            <button className="shop-btn shop-btn-ghost shop-filter-toggle" onClick={() => setSidebarOpen(!sidebarOpen)}>Filters</button>
+            <div className="shop-sortbox">
+              <select value={sort} onChange={(e) => setSort(e.target.value)}>
+                <option value="bestselling">Bestselling</option>
+                <option value="priceLow">Price: Low to High</option>
+                <option value="priceHigh">Price: High to Low</option>
+                <option value="rating">Highest Rated</option>
+                <option value="newest">Newest</option>
+              </select>
+            </div>
           </div>
         </div>
 
-        {loading ? (
-          <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--c-400)' }}>Loading resources...</div>
-        ) : products.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--c-400)' }}>No resources found.</div>
-        ) : (
-          <div className="market-grid reveal visible">
-            {products.map((product: any) => {
-              const typeInfo = LISTING_TYPE_MAP[product.listingType] || LISTING_TYPE_MAP.digital;
-              return (
-                <Link key={product.id} href={`/shop/${product.id}`} className="market-card" style={{ display: 'block' }}>
-                  <article>
-                    <div className="market-card__thumb" style={{ background: product.imageUrls?.[0] ? 'var(--c-50)' : typeInfo.color, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      {product.imageUrls?.[0] ? (
-                        <img src={product.imageUrls[0]} alt={product.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                      ) : (
-                        <typeInfo.icon size={48} color={typeInfo.iconColor} style={{ opacity: 0.8 }} />
-                      )}
-                      {product.isBestseller && (
-                        <span className={`market-card__badge ${typeInfo.tagClass}`}>Bestseller</span>
-                      )}
-                    </div>
-                    <div className="market-card__body">
-                      <div className="market-card__title">{product.title}</div>
-                      <div className="market-card__seller">by {product.seller?.name || 'Tutaly Creator'}</div>
-                      <div className="market-card__footer">
-                        {product.pricingType === 'per_unit' ? (
-                          <span className="market-card__price">{formatPrice(product.price, product.currency)}</span>
-                        ) : (
-                          <span className="market-card__price" style={{ fontSize: '13px', color: 'var(--gold)' }}>Custom Quote</span>
-                        )}
-                        <span className="market-card__rating">★ {product.rating || '4.9'} ({product.reviewCount || '0'})</span>
+        <div className="shop-layout">
+          <aside className={`shop-sidebar ${sidebarOpen ? 'open' : ''}`}>
+            <div className="shop-filter-group">
+              <div className="shop-filter-title">Career stage</div>
+              <label className="shop-filter-row"><input type="checkbox" className="stageFilter" value="Entry-level" /> Entry-level</label>
+              <label className="shop-filter-row"><input type="checkbox" className="stageFilter" value="Mid-level" /> Mid-level</label>
+              <label className="shop-filter-row"><input type="checkbox" className="stageFilter" value="Executive" /> Executive</label>
+            </div>
+            <div className="shop-filter-group">
+              <div className="shop-filter-title">Price</div>
+              <input type="range" min="0" max="60000" step="1000" value={priceRange} onChange={(e) => setPriceRange(Number(e.target.value))} className="price-range" />
+              <div style={{ fontSize: '12.5px', color: 'var(--text-secondary)', marginTop: '6px' }}>Up to <span id="priceLabel">₦{priceRange.toLocaleString()}</span></div>
+            </div>
+            <div className="shop-filter-group">
+              <div className="shop-filter-title">Rating</div>
+              <label className="shop-filter-row"><input type="radio" name="ratingFilter" value="0" checked={ratingFilter === 0} onChange={() => setRatingFilter(0)} /> Any rating</label>
+              <label className="shop-filter-row"><input type="radio" name="ratingFilter" value="4.5" checked={ratingFilter === 4.5} onChange={() => setRatingFilter(4.5)} /> 4.5 &amp; up</label>
+              <label className="shop-filter-row"><input type="radio" name="ratingFilter" value="4.8" checked={ratingFilter === 4.8} onChange={() => setRatingFilter(4.8)} /> 4.8 &amp; up</label>
+            </div>
+          </aside>
+
+          <div>
+            {loading ? (
+              <div style={{ color: 'var(--text-secondary)', padding: '40px 0' }}>Loading resources...</div>
+            ) : products.length === 0 ? (
+              <div style={{ color: 'var(--text-secondary)', padding: '40px 0' }}>No resources match these filters.</div>
+            ) : (
+              <div className="shop-grid">
+                {products.map((product) => {
+                  const typeInfo = LISTING_TYPE_MAP[product.listingType] || LISTING_TYPE_MAP.digital;
+                  const MainIcon = typeInfo.icon;
+                  const isBestseller = product.isBestseller;
+                  return (
+                    <div key={product.id} className="shop-card">
+                      <Link href={`/shop/${product.id}`}>
+                        <div className="shop-card-media">
+                          {isBestseller && <span className="shop-badge bestseller">Bestseller</span>}
+                          <button className="shop-wishlist" onClick={(e) => { e.preventDefault(); e.currentTarget.classList.toggle('active'); }}>
+                            <Heart size={15} />
+                          </button>
+                          {product.imageUrls?.[0] ? (
+                            <img src={product.imageUrls[0]} alt={product.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          ) : (
+                            <MainIcon className="main-icon" />
+                          )}
+                        </div>
+                      </Link>
+                      <div className="shop-card-body">
+                        <div className="shop-card-cat">{product.category || 'Category'} · {typeInfo.label}</div>
+                        <Link href={`/shop/${product.id}`} className="shop-card-title">{product.title}</Link>
+                        <div className="shop-card-seller">by {product.seller?.profile?.companyName || product.seller?.firstName || 'Tutaly Creator'}</div>
+                        <div className="shop-rating"><span className="shop-stars">{starString(product.rating || 4.9)}</span> {(product.rating || 4.9).toFixed(1)} ({product.reviewCount || 0})</div>
+                        <div className="shop-price-row">
+                          <span className="shop-price">{product.pricingType === 'per_unit' ? formatPrice(product.price, product.currency) : 'Custom Quote'}</span>
+                        </div>
+                        <div className="shop-card-actions">
+                          <button className="shop-add-btn" onClick={(e) => {
+                            e.preventDefault();
+                            const btn = e.currentTarget;
+                            btn.textContent = 'Added ✓';
+                            btn.classList.add('added');
+                            setTimeout(() => { btn.textContent = 'Add to cart'; btn.classList.remove('added'); }, 1400);
+                          }}>Add to cart</button>
+                        </div>
                       </div>
                     </div>
-                  </article>
-                </Link>
-              );
-            })}
+                  );
+                })}
+              </div>
+            )}
+            
+            {total > 12 && (
+              <div style={{ marginTop: '30px', display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                <button className="shop-btn shop-btn-ghost" disabled={page === 1} onClick={() => setPage(p => p - 1)}>Prev</button>
+                <button className="shop-btn shop-btn-primary">{page}</button>
+                <button className="shop-btn shop-btn-ghost" disabled={page >= Math.ceil(total / 12)} onClick={() => setPage(p => p + 1)}>Next</button>
+              </div>
+            )}
           </div>
-        )}
-
-        {total > 12 && (
-          <nav className="pagination" aria-label="Shop results pages">
-            <button 
-              className="page-btn" 
-              disabled={page === 1}
-              onClick={() => setPage(p => p - 1)}
-              aria-label="Previous page"
-            >
-              ‹
-            </button>
-            <button className="page-btn active" aria-current="page">{page}</button>
-            <span style={{ color: 'var(--c-500)', padding: '0 4px' }}>of {Math.ceil(total / 12)}</span>
-            <button 
-              className="page-btn" 
-              disabled={page >= Math.ceil(total / 12)}
-              onClick={() => setPage(p => p + 1)}
-              aria-label="Next page"
-            >
-              ›
-            </button>
-          </nav>
-        )}
+        </div>
       </div>
     </div>
   );

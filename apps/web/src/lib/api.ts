@@ -25,26 +25,37 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+let refreshPromise: Promise<string> | null = null;
+
 // Response Interceptor: Auto-refresh token on 401
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
     
-    // If 401 and we haven't retried yet
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // If 401 and we haven't retried yet and not hitting refresh itself
+    if (error.response?.status === 401 && !originalRequest._retry && originalRequest.url !== '/auth/refresh') {
       originalRequest._retry = true;
       
       try {
-        // Attempt to refresh the token using the HttpOnly cookie
-        const refreshRes = await axios.post(
-          `${baseURL}/auth/refresh`,
-          {},
-          { withCredentials: true }
-        );
+        if (!refreshPromise) {
+          refreshPromise = axios.post(
+            `${baseURL}/auth/refresh`,
+            {},
+            { withCredentials: true }
+          ).then(res => {
+            const newToken = res.data.accessToken;
+            setMemoryToken(newToken);
+            if (typeof window !== 'undefined') {
+              localStorage.setItem('access_token', newToken);
+            }
+            return newToken;
+          }).finally(() => {
+            refreshPromise = null;
+          });
+        }
         
-        const newToken = refreshRes.data.accessToken;
-        setMemoryToken(newToken);
+        const newToken = await refreshPromise;
         
         // Update the failed request with the new token and retry
         originalRequest.headers.Authorization = `Bearer ${newToken}`;
@@ -63,7 +74,8 @@ api.interceptors.response.use(
                                    path.startsWith('/employer') || 
                                    path.startsWith('/seeker') || 
                                    path.startsWith('/seller') || 
-                                   path.startsWith('/dashboard');
+                                   path.startsWith('/dashboard') ||
+                                   path.startsWith('/community');
                                    
           if (isProtectedRoute) {
             window.location.href = '/auth/signin';

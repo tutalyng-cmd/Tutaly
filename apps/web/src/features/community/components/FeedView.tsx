@@ -62,7 +62,7 @@ export default function FeedView() {
   }, [currentBowlSlug, activeTab]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[280px_minmax(0,1fr)] xl:grid-cols-[264px_minmax(0,1fr)_300px] gap-6 items-start">
+    <div className="grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)] xl:grid-cols-[260px_minmax(0,1fr)_280px] gap-6 items-start">
       {/* Left Sidebar */}
       <FeedSidebarLeft />
 

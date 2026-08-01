@@ -18,30 +18,32 @@ export default function CommunityTabs() {
   return (
     <>
       {/* Desktop Tabs */}
-      <nav className="max-w-[1360px] mx-auto px-4 sm:px-8 pb-5 hidden sm:flex gap-1.5">
-        {tabs.map((tab) => {
-          const isActive = tab.isExact ? pathname === tab.href : pathname?.startsWith(tab.href);
-          return (
-            <Link
-              key={tab.href}
-              href={tab.href}
-              className={`
-                relative flex items-center gap-2 px-4 py-2.5 rounded-xl border font-semibold text-[13.5px] transition-colors
-                ${isActive 
-                  ? 'bg-teal/10 border-teal text-teal' 
-                  : 'bg-c900 border-c700 text-c400 hover:text-white hover:border-c600'
-                }
-              `}
-            >
-              <span className="text-[15px]">{tab.icon}</span>
-              {tab.label}
-              {tab.hasDot && (
-                <span className="absolute top-1.5 right-2 w-1.5 h-1.5 rounded-full bg-red" />
-              )}
-            </Link>
-          );
-        })}
-      </nav>
+      <div className="border-b border-c700 mb-[30px] sticky top-[64px] bg-c900/90 backdrop-blur-[10px] z-50 hidden sm:block">
+        <nav className="max-w-[1360px] mx-auto px-8 flex gap-8 overflow-x-auto no-scrollbar">
+          {tabs.map((tab) => {
+            const isActive = tab.isExact ? pathname === tab.href : pathname?.startsWith(tab.href);
+            return (
+              <Link
+                key={tab.href}
+                href={tab.href}
+                className={`
+                  relative flex items-center gap-2 py-4 border-b-2 font-medium text-[14px] transition-colors whitespace-nowrap
+                  ${isActive 
+                    ? 'border-teal text-teal' 
+                    : 'border-transparent text-c400 hover:text-white hover:border-c600'
+                  }
+                `}
+              >
+                <span className="text-[16px] leading-none">{tab.icon}</span>
+                {tab.label}
+                {tab.hasDot && (
+                  <span className="absolute top-4 -right-2 w-[6px] h-[6px] rounded-full bg-red" />
+                )}
+              </Link>
+            );
+          })}
+        </nav>
+      </div>
       
       {/* Mobile Bottom Nav */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[#151A20]/95 backdrop-blur-md border-t border-c700 p-2.5 pb-3.5 flex justify-around sm:hidden">
@@ -56,7 +58,7 @@ export default function CommunityTabs() {
                 ${isActive ? 'text-teal' : 'text-c500'}
               `}
             >
-              <span className="text-lg">{tab.icon}</span>
+              <span className="text-lg leading-none">{tab.icon}</span>
               {tab.label}
               {tab.hasDot && (
                 <span className="absolute -top-0.5 right-1.5 w-1.5 h-1.5 rounded-full bg-red border-2 border-c900" />

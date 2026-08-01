@@ -544,7 +544,7 @@ export class ShopService {
 
     const order = await this.orderRepo.findOne({
       where: { paymentRef: txRef },
-      relations: ['product'],
+      relations: ['product', 'buyer', 'seller'],
     });
 
     if (!order) {
@@ -558,7 +558,7 @@ export class ShopService {
       for (const orderId of orderIds) {
         const o = await this.orderRepo.findOne({
           where: { id: orderId.trim() },
-          relations: ['product'],
+          relations: ['product', 'buyer', 'seller'],
         });
         if (o) {
           console.log(
@@ -575,6 +575,14 @@ export class ShopService {
             console.log(
               `[Payment Processor] Order ${o.id} marked as ${o.status}`,
             );
+            
+            // Send Notifications
+            if (o.buyer?.email) {
+              await this.mailService.sendOrderReceiptEmail(o.buyer.email, o.id, Number(o.amountPaid), o.product.title);
+            }
+            if (o.seller?.email) {
+              await this.mailService.sendSellerNotificationEmail(o.seller.email, o.id, o.product.title);
+            }
           }
         } else {
           console.warn(
@@ -596,6 +604,14 @@ export class ShopService {
       console.log(
         `[Payment Processor] Order ${order.id} marked as ${order.status}`,
       );
+
+      // Send Notifications
+      if (order.buyer?.email) {
+        await this.mailService.sendOrderReceiptEmail(order.buyer.email, order.id, Number(order.amountPaid), order.product.title);
+      }
+      if (order.seller?.email) {
+        await this.mailService.sendSellerNotificationEmail(order.seller.email, order.id, order.product.title);
+      }
     } else {
       console.log(
         `[Payment Processor] Order ${order.id} already has status: ${order.status}`,

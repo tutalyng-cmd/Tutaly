@@ -278,6 +278,86 @@ export class MailService {
     }
   }
 
+  async sendOrderReceiptEmail(
+    to: string,
+    orderId: string,
+    amount: number,
+    productTitle: string,
+  ): Promise<void> {
+    const orderUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard/purchases`;
+    console.log(`[MAILER MOCK] Order receipt for ${to}, order: ${orderId}`);
+
+    try {
+      await this.transporter.sendMail({
+        from: `"Tutaly Shop" <${this.fromEmail}>`,
+        to,
+        subject: 'Your Tutaly Order Receipt',
+        html: `
+          <div style="font-family: 'Inter', sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px;">
+            <div style="text-align: center; margin-bottom: 30px;">
+              <h1 style="color: #0D1B2A; font-size: 28px; margin: 0;">Tutaly</h1>
+            </div>
+            <div style="background: #f8f9fa; border-radius: 12px; padding: 32px;">
+              <h2 style="color: #0D1B2A; margin-top: 0;">Thank you for your purchase! 🎉</h2>
+              <p style="color: #4a5568; font-size: 16px; line-height: 1.6;">
+                Your payment of <strong>₦${amount.toLocaleString()}</strong> for <strong>${productTitle}</strong> was successful.
+              </p>
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="${orderUrl}" 
+                   style="background: #1D9E75; color: white; padding: 14px 32px; border-radius: 8px; 
+                          text-decoration: none; font-weight: 600; font-size: 16px; display: inline-block;">
+                  View Order
+                </a>
+              </div>
+            </div>
+          </div>
+        `,
+      });
+    } catch (error) {
+      console.error(`[MAILER ERROR] Failed to send receipt to ${to}:`, (error as Error).message);
+    }
+  }
+
+  async sendSellerNotificationEmail(
+    to: string,
+    orderId: string,
+    productTitle: string,
+  ): Promise<void> {
+    const dashboardUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard/employer/shop`;
+    console.log(`[MAILER MOCK] Seller notification for ${to}, order: ${orderId}`);
+
+    try {
+      await this.transporter.sendMail({
+        from: `"Tutaly Shop" <${this.fromEmail}>`,
+        to,
+        subject: `New Order on Tutaly: ${productTitle}`,
+        html: `
+          <div style="font-family: 'Inter', sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px;">
+            <div style="text-align: center; margin-bottom: 30px;">
+              <h1 style="color: #0D1B2A; font-size: 28px; margin: 0;">Tutaly</h1>
+            </div>
+            <div style="background: #f8f9fa; border-radius: 12px; padding: 32px;">
+              <h2 style="color: #0D1B2A; margin-top: 0;">You received a new order!</h2>
+              <p style="color: #4a5568; font-size: 16px; line-height: 1.6;">
+                Great news! You just received a new order for <strong>${productTitle}</strong>. 
+                Please check your seller dashboard to fulfill the order.
+              </p>
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="${dashboardUrl}" 
+                   style="background: #2563eb; color: white; padding: 14px 32px; border-radius: 8px; 
+                          text-decoration: none; font-weight: 600; font-size: 16px; display: inline-block;">
+                  View Dashboard
+                </a>
+              </div>
+            </div>
+          </div>
+        `,
+      });
+    } catch (error) {
+      console.error(`[MAILER ERROR] Failed to send seller notification to ${to}:`, (error as Error).message);
+    }
+  }
+
   async sendEmailChangeVerification(to: string, token: string): Promise<void> {
     const verificationUrl = `http://localhost:3000/verify-email-change?token=${token}`;
     console.log(

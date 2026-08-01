@@ -19,14 +19,14 @@ export default function FeedSidebarLeft() {
       const token = localStorage.getItem('access_token');
       if (!token) return;
       try {
-        const res = await api.get('/user/profile');
-        const data = res.data.data;
+        const res = await api.get('/user/me');
+        const data = res.data?.data || {};
         const first = data.firstName || '';
         const last = data.lastName || '';
-        const initials = `${first.charAt(0)}${last.charAt(0)}`.toUpperCase() || 'U';
+        const initials = (first.charAt(0) + last.charAt(0)).toUpperCase() || 'U';
         const isEmployer = data.role === 'employer';
         const headline = data.seekerProfile?.headline
-          || (isEmployer ? `${data.employerProfile?.companyName || 'Employer'} · Tutaly Member` : 'Tutaly Member');
+          || (isEmployer ? `${data.companyName || first || 'Employer'} · Tutaly Member` : 'Tutaly Member');
 
         setProfile({
           firstName: first,

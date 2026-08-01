@@ -28,10 +28,10 @@ export default function FeedView() {
       if (token) {
         setIsLoggedIn(true);
         try {
-          const res = await api.get('/user/profile');
-          const first = res.data.data.firstName || '';
-          const last = res.data.data.lastName || '';
-          setUserInitials(`${first.charAt(0)}${last.charAt(0)}`.toUpperCase());
+          const res = await api.get('/user/me');
+          const first = res.data?.data?.firstName || '';
+          const last = res.data?.data?.lastName || '';
+          setUserInitials((first.charAt(0) + last.charAt(0)).toUpperCase() || 'U');
         } catch (err) {
           console.error(err);
         }

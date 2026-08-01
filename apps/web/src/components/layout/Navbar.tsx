@@ -50,7 +50,7 @@ export default function Navbar() {
       const fetchNotifications = async () => {
         try {
           const token = localStorage.getItem('access_token');
-          const res = await apiAuth.withToken(token!).get('/community/notifications');
+          const res = await apiAuth.withToken(token!).get('/support/notifications');
           const notifs = res.data?.data || [];
           setNotifications(notifs);
           setUnreadCount(notifs.filter((n: any) => !n.isRead).length);
@@ -75,7 +75,7 @@ export default function Navbar() {
     event.stopPropagation();
     try {
       const token = localStorage.getItem('access_token');
-      await apiAuth.withToken(token!).patch(`/community/notifications/${id}/read`);
+      await apiAuth.withToken(token!).patch(`/support/notifications/${id}/read`);
       setNotifications(prev => prev.map(n => n.id === id ? { ...n, isRead: true } : n));
       setUnreadCount(prev => Math.max(0, prev - 1));
     } catch {}

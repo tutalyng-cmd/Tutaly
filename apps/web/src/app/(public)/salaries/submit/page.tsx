@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 'use client';
 
 import React, { useState, useMemo } from 'react';
@@ -66,7 +67,7 @@ export default function SubmitSalaryPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.confirmed) {
-      alert("Please confirm the information is accurate.");
+      toast.error("Please confirm the information is accurate.");
       return;
     }
     setLoading(true);
@@ -92,7 +93,7 @@ export default function SubmitSalaryPage() {
     } catch (e) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const err = e as any;
-      alert(err.response?.data?.message || 'Failed to submit salary');
+      toast.error(err.response?.data?.message || 'Failed to submit salary');
       setLoading(false);
     }
   };

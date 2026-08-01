@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
@@ -55,7 +56,7 @@ if (err.response?.status === 401 || err.response?.status === 403) {
 
   const handleToggleStatus = async (id: string, currentIsActive: boolean, role: string) => {
     if (role === 'admin') {
-      alert('Cannot change status of admin users');
+      toast.error('Cannot change status of admin users');
       return;
     }
     
@@ -79,7 +80,7 @@ if (err.response?.status === 401 || err.response?.status === 403) {
        
       const err = e as { response?: { data?: { message?: string }; status?: number }; message?: string };
        
-alert(err.response?.data?.message || err.message);
+toast.error(err.response?.data?.message || err.message);
     }
   };
 

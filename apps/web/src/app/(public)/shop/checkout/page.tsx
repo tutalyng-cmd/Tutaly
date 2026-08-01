@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -59,7 +60,7 @@ export default function CheckoutPage() {
       if (paymentLink) {
         window.location.href = paymentLink;
       } else {
-        alert('Payment successful!');
+        toast.success('Payment successful!');
         router.push('/seeker/orders');
       }
     } catch (e: any) {

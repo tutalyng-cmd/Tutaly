@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -54,7 +55,7 @@ export default function CreateProductPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.isWorkRelatedConfirmed) {
-      alert('You must confirm this product is work-related.');
+      toast.error('You must confirm this product is work-related.');
       return;
     }
 
@@ -89,7 +90,7 @@ export default function CreateProductPage() {
       router.push('/employer/shop');
     } catch (e) {
       const err = e as any;
-      alert(err.response?.data?.message || 'Failed to create product');
+      toast.error(err.response?.data?.message || 'Failed to create product');
     } finally {
       setLoading(false);
     }

@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -56,7 +57,7 @@ export default function BuyerOrdersPage() {
       }
     } catch (e) {
       const err = e as any;
-      alert(err.response?.data?.message || 'Download failed');
+      toast.error(err.response?.data?.message || 'Download failed');
     } finally {
       setDownloading(null);
     }
@@ -72,7 +73,7 @@ export default function BuyerOrdersPage() {
       fetchOrders();
     } catch (e) {
       const err = e as any;
-      alert(err.response?.data?.message || 'Confirmation failed');
+      toast.error(err.response?.data?.message || 'Confirmation failed');
     } finally {
       setConfirming(null);
     }
@@ -86,7 +87,7 @@ export default function BuyerOrdersPage() {
 
   const submitDispute = async () => {
     if (!disputeReason) {
-      alert('Please provide a reason for the dispute.');
+      toast.error('Please provide a reason for the dispute.');
       return;
     }
     
@@ -127,12 +128,12 @@ export default function BuyerOrdersPage() {
         evidenceUrls
       });
       
-      alert('Dispute raised successfully. Our team will review it shortly.');
+      toast.success('Dispute raised successfully. Our team will review it shortly.');
       setDisputeOrderId(null);
       fetchOrders();
     } catch (e) {
       const err = e as any;
-      alert(err.response?.data?.message || err.message || 'Failed to report issue');
+      toast.error(err.response?.data?.message || err.message || 'Failed to report issue');
     } finally {
       setSubmittingDispute(false);
     }

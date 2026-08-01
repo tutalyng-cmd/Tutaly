@@ -22,6 +22,7 @@ import {
   UpdateApplicationStatusDto,
   ReportJobDto,
 } from './dto/job.dto';
+import { excludeTestAccounts } from '../../common/utils/query.utils';
 import { TokenService } from '../auth/token.service';
 import { MailService } from '../auth/mail.service';
 import { User, UserRole } from '../user/entities/user.entity';
@@ -104,6 +105,9 @@ export class JobService {
       .leftJoinAndSelect('job.employer', 'employer')
       .leftJoinAndSelect('employer.employerProfile', 'employerProfile')
       .where('job.status = :status', { status });
+
+    // Exclude test accounts globally from public lists
+    excludeTestAccounts(qb, 'employer');
 
     if (country) qb.andWhere('job.country ILIKE :country', { country });
     if (state) qb.andWhere('job.state ILIKE :state', { state });

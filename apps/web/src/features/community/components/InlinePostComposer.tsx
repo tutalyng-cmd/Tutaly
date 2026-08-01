@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -38,7 +39,7 @@ export default function InlinePostComposer({ onSuccess, bowls, defaultBowlSlug, 
     if (e.target.files) {
       const files = Array.from(e.target.files);
       if (selectedFiles.length + files.length > 4) {
-        alert('You can only attach up to 4 images per post.');
+        toast.error('You can only attach up to 4 images per post.');
         return;
       }
       setSelectedFiles(prev => [...prev, ...files]);
@@ -104,7 +105,7 @@ export default function InlinePostComposer({ onSuccess, bowls, defaultBowlSlug, 
       onSuccess();
     } catch (err) {
       console.error(err);
-      alert('Failed to post thread. Please try again.');
+      toast.error('Failed to post thread. Please try again.');
     } finally {
       setIsSubmitting(false);
     }

@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -60,7 +61,7 @@ export default function ShopProductDetailPage() {
       setTimeout(() => setAdded(false), 3000);
     } catch (err) {
       console.error('Failed to add to cart', err);
-      alert('Failed to add to cart. Please try again.');
+      toast.error('Failed to add to cart. Please try again.');
     } finally {
       setAddingToCart(false);
     }

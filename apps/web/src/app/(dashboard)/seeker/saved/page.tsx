@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -34,7 +35,7 @@ export default function SavedJobsPage() {
       await apiAuth.withToken(token).delete(`/jobs/${jobId}/save`);
       setSavedJobs(savedJobs.filter(job => job.id !== jobId));
     } catch (err) {
-      alert('Failed to remove saved job');
+      toast.error('Failed to remove saved job');
     }
   };
 

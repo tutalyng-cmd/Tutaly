@@ -71,7 +71,7 @@ export default function SignUp() {
     return (
       <div className="auth-centered-shell">
         {/* <Link href="/" className="auth-centered-logo">
-          <img src="/images/tutaly-icon-mark.png" alt="Tutaly" />
+          <img src="/logo.png" alt="Tutaly" />
         </Link> */}
         <div className="auth-centered-wrap text-center">
           <div className="auth-success-icon mx-auto">
@@ -93,7 +93,7 @@ export default function SignUp() {
       {/* LEFT BRANDED PANEL */}
       <aside className="auth-panel">
         <Link href="/" className="auth-panel__logo">
-          <img src="/images/tutaly-icon-mark.png" alt="Tutaly" />
+          <img src="/logo.png" alt="Tutaly" />
         </Link>
 
         <div className="auth-panel__content">
@@ -126,7 +126,7 @@ export default function SignUp() {
         <div className="auth-form-wrap">
 
           {/* <Link href="/" className="auth-mobile-logo">
-            <img src="/images/tutaly-icon-mark.png" alt="Tutaly" />
+            <img src="/logo.png" alt="Tutaly" />
           </Link> */}
 
           <h1 className="auth-heading">Create an account</h1>

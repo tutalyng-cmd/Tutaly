@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -152,7 +153,7 @@ export default function CreateListing() {
         });
       }
 
-      alert('Listing created successfully!');
+      toast.success('Listing created successfully!');
       router.push('/seller');
     } catch (e) {
       const err = e as any;

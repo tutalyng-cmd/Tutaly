@@ -28,6 +28,10 @@ export class UserService {
     );
   }
 
+  async getUserById(userId: string) {
+    return this.userRepo.findOne({ where: { id: userId } });
+  }
+
   async getSeekerProfile(userId: string) {
     let profile = await this.seekerProfileRepo.findOne({
       where: { user: { id: userId } },

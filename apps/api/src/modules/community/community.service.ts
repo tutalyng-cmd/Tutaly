@@ -9,6 +9,8 @@ import { ConfigService } from '@nestjs/config';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { v4 as uuidv4 } from 'uuid';
 import { Repository } from 'typeorm';
+import { User } from '../user/entities/user.entity';
+import { excludeTestAccounts } from '../../common/utils/query.utils';
 import { CommunityBowl } from './entities/community-bowl.entity';
 import {
   CommunityThread,
@@ -71,6 +73,9 @@ export class CommunityService {
       .orderBy('thread.createdAt', 'DESC')
       .skip((filters.page - 1) * filters.limit)
       .take(filters.limit);
+
+    // Exclude test accounts globally from public lists
+    excludeTestAccounts(qb, 'user');
 
     if (filters.bowlSlug) {
       qb.andWhere('bowl.slug = :slug', { slug: filters.bowlSlug });

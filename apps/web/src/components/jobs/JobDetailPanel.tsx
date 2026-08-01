@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 'use client';
 
 import React, { useState } from 'react';
@@ -78,7 +79,7 @@ export default function JobDetailPanel({ job }: { job: Job | null }) {
       if (userStr) {
         const user = JSON.parse(userStr);
         if (user.role === 'employer') {
-          alert('Employers cannot apply to jobs. Please sign in as a job seeker.');
+          toast.error('Employers cannot apply to jobs. Please sign in as a job seeker.');
           return;
         }
       }
@@ -99,7 +100,7 @@ export default function JobDetailPanel({ job }: { job: Job | null }) {
       await apiAuth.withToken(token).post(`/jobs/${job.id}/save`);
       setSaved(true);
     } catch {
-      alert('Could not save this job. You may have already saved it.');
+      toast.error('Could not save this job. You may have already saved it.');
     }
   };
 
@@ -115,9 +116,9 @@ export default function JobDetailPanel({ job }: { job: Job | null }) {
 
     try {
       await apiAuth.withToken(token).post(`/jobs/${job.id}/report`, { reason: reason.trim() });
-      alert('Thank you. Your report has been submitted for review.');
+      toast.success('Thank you. Your report has been submitted for review.');
     } catch {
-      alert('Could not submit report. Please try again.');
+      toast.error('Could not submit report. Please try again.');
     }
   };
 

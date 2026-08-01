@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -48,7 +49,7 @@ setError(err?.response?.data?.message || 'Failed to load profile');
     try {
       const token = localStorage.getItem('access_token');
       await apiAuth.withToken(token!).post(`/connect/follow/${profile.id}`);
-      alert('Follow request sent');
+      toast.error('Follow request sent');
     } catch (e) {
        
       /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -58,7 +59,7 @@ setError(err?.response?.data?.message || 'Failed to load profile');
        
       const err = e as { response?: { data?: { message?: string }; status?: number }; message?: string };
        
-alert(err?.response?.data?.message || 'Failed to follow user');
+toast.error(err?.response?.data?.message || 'Failed to follow user');
     }
   };
 

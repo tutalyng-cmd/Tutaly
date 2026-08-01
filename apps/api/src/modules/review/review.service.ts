@@ -9,6 +9,7 @@ import { CompanyReview, ReviewStatus } from './entities/review.entity';
 import { ReviewResponse } from './entities/review-response.entity';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { CompanyService } from '../company/company.service';
+import { excludeTestAccounts } from '../../common/utils/query.utils';
 import * as crypto from 'crypto';
 
 @Injectable()
@@ -70,24 +71,37 @@ export class ReviewService {
   }
 
   async getApprovedReviewsByCompany(companyId: string, page = 1, limit = 10) {
-    const [data, total] = await this.reviewRepo.findAndCount({
-      where: { company_id: companyId, status: ReviewStatus.APPROVED },
-      order: { createdAt: 'DESC' },
-      take: limit,
-      skip: (page - 1) * limit,
-    });
+    const qb = this.reviewRepo
+      .createQueryBuilder('review')
+      .leftJoinAndSelect('review.user', 'user')
+      .where('review.company_id = :companyId', { companyId })
+      .andWhere('review.status = :status', { status: ReviewStatus.APPROVED });
+
+    excludeTestAccounts(qb, 'user');
+
+    qb.orderBy('review.createdAt', 'DESC')
+      .take(limit)
+      .skip((page - 1) * limit);
+
+    const [data, total] = await qb.getManyAndCount();
 
     return { data, meta: { page, limit, total } };
   }
 
   async getRecentGlobalReviews(page = 1, limit = 10) {
-    const [data, total] = await this.reviewRepo.findAndCount({
-      where: { status: ReviewStatus.APPROVED },
-      relations: ['company'],
-      order: { createdAt: 'DESC' },
-      take: limit,
-      skip: (page - 1) * limit,
-    });
+    const qb = this.reviewRepo
+      .createQueryBuilder('review')
+      .leftJoinAndSelect('review.company', 'company')
+      .leftJoinAndSelect('review.user', 'user')
+      .where('review.status = :status', { status: ReviewStatus.APPROVED });
+
+    excludeTestAccounts(qb, 'user');
+
+    qb.orderBy('review.createdAt', 'DESC')
+      .take(limit)
+      .skip((page - 1) * limit);
+
+    const [data, total] = await qb.getManyAndCount();
 
     return { data, meta: { page, limit, total } };
   }

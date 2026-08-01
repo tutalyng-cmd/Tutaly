@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -100,7 +101,7 @@ export default function AdCreationWizard() {
 
   const handleLaunch = async () => {
     if (formData.daily_budget < 1000) {
-      return alert("Minimum daily budget is ₦1,000");
+      return toast.error("Minimum daily budget is ₦1,000");
     }
     
     setIsSubmitting(true);
@@ -157,7 +158,7 @@ export default function AdCreationWizard() {
         router.push('/advertise/dashboard?success=true');
       }
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Failed to create campaign');
+      toast.error(err.response?.data?.message || 'Failed to create campaign');
       setIsSubmitting(false);
     }
   };

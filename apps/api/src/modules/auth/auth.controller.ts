@@ -136,6 +136,27 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Post('mfa/setup')
+  async setupMfa(@Req() req: AuthorizedRequest) {
+    return this.authService.setupMfa(req.user.sub, req.user.email);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('mfa/enable')
+  async enableMfa(@Req() req: AuthorizedRequest, @Body() dto: VerifyMfaDto) {
+    // Note: VerifyMfaDto requires userId, but since they are authenticated, we can override or just use req.user.sub
+    // For simplicity, we just pass the DTO and ignore its userId if we want, but VerifyMfaDto requires userId.
+    // Let's ensure the userId in DTO matches the authenticated user, or just trust the authenticated user.
+    return this.authService.enableMfa(req.user.sub, { ...dto, userId: req.user.sub });
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('mfa/disable')
+  async disableMfa(@Req() req: AuthorizedRequest) {
+    return this.authService.disableMfa(req.user.sub);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Post('logout')
   async logout(
     @NestRequest() req: AuthorizedRequest,

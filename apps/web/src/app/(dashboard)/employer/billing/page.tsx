@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -68,7 +69,7 @@ export default function EmployerBillingPage() {
         window.location.href = res.data.redirectUrl;
       }
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Failed to update payment');
+      toast.error(err.response?.data?.message || 'Failed to update payment');
     } finally {
       setActionLoading(false);
     }
@@ -82,10 +83,10 @@ export default function EmployerBillingPage() {
       const token = localStorage.getItem('access_token');
       if (!token) return;
       await apiAuth.withToken(token).post('/billing/subscription/cancel');
-      alert('Subscription canceled successfully');
+      toast.success('Subscription canceled successfully');
       fetchBillingData();
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Failed to cancel subscription');
+      toast.error(err.response?.data?.message || 'Failed to cancel subscription');
     } finally {
       setActionLoading(false);
     }

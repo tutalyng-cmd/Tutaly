@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
@@ -64,7 +65,7 @@ export default function AdminReviewsPage() {
       fetchReviews();
     } catch (err) {
       console.error(`Failed to ${action} review`, err);
-      alert(`Failed to ${action} review`);
+      toast.error(`Failed to ${action} review`);
     } finally {
       setActionId(null);
     }

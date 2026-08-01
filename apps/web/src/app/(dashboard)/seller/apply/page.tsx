@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -50,7 +51,7 @@ export default function ApplySellerPage() {
       await apiAuth.withToken(token!).post('/shop/seller/apply', formData);
       router.push('/seller');
     } catch (error: any) {
-      alert(error.response?.data?.message || 'Failed to create profile');
+      toast.error(error.response?.data?.message || 'Failed to create profile');
     } finally {
       setLoading(false);
     }

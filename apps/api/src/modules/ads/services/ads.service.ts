@@ -363,12 +363,15 @@ export class AdsService {
     }
   }
 
-  async getMyCampaigns(advertiserId: string): Promise<AdCampaignWithDetails[]> {
-    const campaigns: AdCampaign[] = await this.campaignRepo.find({
+  async getMyCampaigns(advertiserId: string, page = 1, limit = 10) {
+    const [campaigns, total] = await this.campaignRepo.findAndCount({
       where: { advertiser_id: advertiserId },
       order: { createdAt: 'DESC' },
+      skip: (page - 1) * limit,
+      take: limit,
     });
-    return this.attachDetailsToCampaigns(campaigns);
+    const data = await this.attachDetailsToCampaigns(campaigns);
+    return { data, meta: { total, page, limit } };
   }
 
   // ─── ADMIN ENDPOINTS ──────────────────────────────────────
@@ -402,12 +405,15 @@ export class AdsService {
     }));
   }
 
-  async getPendingQueue(): Promise<AdCampaignWithDetails[]> {
-    const campaigns: AdCampaign[] = await this.campaignRepo.find({
+  async getPendingQueue(page = 1, limit = 10) {
+    const [campaigns, total] = await this.campaignRepo.findAndCount({
       where: { status: CampaignStatus.PENDING_REVIEW },
       order: { createdAt: 'ASC' },
+      skip: (page - 1) * limit,
+      take: limit,
     });
-    return this.attachDetailsToCampaigns(campaigns);
+    const data = await this.attachDetailsToCampaigns(campaigns);
+    return { data, meta: { total, page, limit } };
   }
 
   async approveCampaign(id: string): Promise<AdCampaign> {
@@ -457,11 +463,14 @@ export class AdsService {
     return campaign;
   }
 
-  async getAllCampaigns(): Promise<AdCampaignWithDetails[]> {
-    const campaigns: AdCampaign[] = await this.campaignRepo.find({
+  async getAllCampaigns(page = 1, limit = 10) {
+    const [campaigns, total] = await this.campaignRepo.findAndCount({
       order: { createdAt: 'DESC' },
+      skip: (page - 1) * limit,
+      take: limit,
     });
-    return this.attachDetailsToCampaigns(campaigns);
+    const data = await this.attachDetailsToCampaigns(campaigns);
+    return { data, meta: { total, page, limit } };
   }
 
   // ─── TRACKING ENDPOINTS ───────────────────────────────────

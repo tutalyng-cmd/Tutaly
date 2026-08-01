@@ -313,7 +313,52 @@ export class AuthService {
     }
   }
 
-  // ─── REFRESH TOKEN ─────────────────────────────────
+  // ─── MFA ENROLLMENT ─────────────────────────────────
+  async setupMfa(userId: string, email: string) {
+    const otp = await this.tokenService.generateMfaEntry(userId);
+    const mfaToken = crypto.randomBytes(32).toString('hex');
+    await this.tokenService.storeMfaSession(userId, mfaToken);
+
+    await this.mailService.sendMfaEmail(email, otp);
+
+    return {
+      success: true,
+      message: 'MFA setup initiated. Check your email for the OTP.',
+      mfaToken: mfaToken,
+      otp: otp, // DEV ONLY
+    };
+  }
+
+  async enableMfa(userId: string, dto: VerifyMfaDto) {
+    const isSessionValid = await this.tokenService.validateMfaSession(
+      userId,
+      dto.mfaToken,
+    );
+    if (!isSessionValid) {
+      throw new UnauthorizedException(
+        'MFA session expired or invalid. Please request a new code.',
+      );
+    }
+
+    const isOtpValid = await this.tokenService.validateMfaOtp(
+      userId,
+      dto.code,
+    );
+    if (!isOtpValid) {
+      throw new UnauthorizedException('Invalid or expired MFA code.');
+    }
+
+    await this.userRepo.update(userId, { isMfaEnabled: true });
+
+    return { success: true, message: 'MFA enabled successfully.' };
+  }
+
+  async disableMfa(userId: string) {
+    await this.userRepo.update(userId, { isMfaEnabled: false });
+    return { success: true, message: 'MFA disabled successfully.' };
+  }
+
+  // ─── REFRESH TOKEN ──────────────────────────────────
   async refreshAccessToken(refreshToken: string) {
     try {
       const payload = this.jwtService.verify(refreshToken, {

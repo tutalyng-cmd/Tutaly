@@ -8,6 +8,7 @@ import {
   UseInterceptors,
   UploadedFile,
   BadRequestException,
+  Query,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AdsService } from '../services/ads.service';
@@ -117,8 +118,14 @@ export class AdsController {
 
   @Get()
   @Roles(UserRole.EMPLOYER, UserRole.ADMIN)
-  async getMyCampaigns(@Req() req: AuthRequest) {
-    return this.adsService.getMyCampaigns(req.user.sub);
+  async getMyCampaigns(
+    @Req() req: AuthRequest,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
+    const pageNum = page ? parseInt(page, 10) : 1;
+    const limitNum = limit ? parseInt(limit, 10) : 10;
+    return this.adsService.getMyCampaigns(req.user.sub, pageNum, limitNum);
   }
 
   @Get('alerts')

@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
@@ -65,7 +66,7 @@ export default function AdminDisputesPage() {
       fetchDisputes();
     } catch (err) {
       console.error('Failed to resolve dispute', err);
-      alert('Failed to resolve dispute');
+      toast.error('Failed to resolve dispute');
     } finally {
       setResolvingId(null);
     }

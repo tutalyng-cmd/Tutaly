@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 'use client';
 
 import React, { useState } from 'react';
@@ -45,7 +46,7 @@ export const SalarySubmissionModal: React.FC<SalarySubmissionModalProps> = ({
       }
     } catch (err) {
       console.error(err);
-      alert('Failed to submit salary. Please try again.');
+      toast.error('Failed to submit salary. Please try again.');
     } finally {
       setLoading(false);
     }

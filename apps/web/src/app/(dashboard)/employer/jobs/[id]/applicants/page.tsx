@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -108,7 +109,7 @@ export default function ApplicantsPage() {
         setSelectedApp((prev) => (prev ? { ...prev, status } : null));
       }
     } catch {
-      alert('Failed to update status');
+      toast.error('Failed to update status');
     }
   };
 
@@ -149,7 +150,7 @@ export default function ApplicantsPage() {
       if (res.data?.signedUrl) {
         window.open(res.data.signedUrl, '_blank');
       } else {
-        alert('Could not load resume. Please try again.');
+        toast.error('Could not load resume. Please try again.');
       }
     } catch (e) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -157,7 +158,7 @@ export default function ApplicantsPage() {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const err = e as any;
 const msg = err?.response?.data?.message || 'Failed to load resume';
-      alert(msg);
+      toast.error(msg);
     }
   };
 

@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 'use client';
 
 import React, { useEffect, useState, Suspense } from 'react';
@@ -98,9 +99,9 @@ function AdminOrdersContent() {
       const res = await apiAuth.withToken(token || undefined).post(`/admin/orders/${orderId}/verify-payment`);
       const data = res.data;
       if (data.verified) {
-        alert(`✅ Payment verified!\n\nStatus updated to: ${data.newStatus}\nAmount: ${data.gatewayData?.currency} ${data.gatewayData?.amount}\nPaid at: ${data.gatewayData?.paidAt}\nChannel: ${data.gatewayData?.channel}`);
+        toast.success(`✅ Payment verified!\n\nStatus updated to: ${data.newStatus}\nAmount: ${data.gatewayData?.currency} ${data.gatewayData?.amount}\nPaid at: ${data.gatewayData?.paidAt}\nChannel: ${data.gatewayData?.channel}`);
       } else {
-        alert(`⚠️ Payment NOT confirmed.\n\nPaystack status: "${data.gatewayStatus}"\n\n${data.message}`);
+        toast.error(`⚠️ Payment NOT confirmed.\n\nPaystack status: "${data.gatewayStatus}"\n\n${data.message}`);
       }
       fetchOrders();
     } catch (e) {
@@ -112,7 +113,7 @@ function AdminOrdersContent() {
       /* eslint-disable @typescript-eslint/no-unused-vars */
       const err = e as { response?: { data?: { message?: string }; status?: number }; message?: string };
       /* eslint-enable @typescript-eslint/no-unused-vars */
-      alert(error.response?.data?.message || error.message || 'Verification failed');
+      toast.error(error.response?.data?.message || error.message || 'Verification failed');
     } finally {
       setActionLoading(null);
     }
@@ -136,7 +137,7 @@ function AdminOrdersContent() {
       /* eslint-disable @typescript-eslint/no-unused-vars */
       const err = e as { response?: { data?: { message?: string }; status?: number }; message?: string };
       /* eslint-enable @typescript-eslint/no-unused-vars */
-      alert(error.response?.data?.message || error.message || 'Cancel failed');
+      toast.error(error.response?.data?.message || error.message || 'Cancel failed');
     } finally {
       setActionLoading(null);
     }
@@ -160,7 +161,7 @@ function AdminOrdersContent() {
       /* eslint-disable @typescript-eslint/no-unused-vars */
       const err = e as { response?: { data?: { message?: string }; status?: number }; message?: string };
       /* eslint-enable @typescript-eslint/no-unused-vars */
-      alert(error.response?.data?.message || error.message || 'Flag failed');
+      toast.error(error.response?.data?.message || error.message || 'Flag failed');
     } finally {
       setActionLoading(null);
     }
@@ -184,7 +185,7 @@ function AdminOrdersContent() {
       /* eslint-disable @typescript-eslint/no-unused-vars */
       const err = e as { response?: { data?: { message?: string }; status?: number }; message?: string };
       /* eslint-enable @typescript-eslint/no-unused-vars */
-      alert(error.response?.data?.message || error.message || 'Resolve failed');
+      toast.error(error.response?.data?.message || error.message || 'Resolve failed');
     } finally {
       setActionLoading(null);
     }

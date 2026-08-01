@@ -58,7 +58,7 @@ export default function Onboarding() {
         <div className="auth-form-wrap">
           
           <Link href="/" className="auth-mobile-logo">
-            <img src="/images/tutaly-icon-mark.png" alt="Tutaly" />
+            <img src="/logo.png" alt="Tutaly" />
           </Link>
 
           <h1 className="auth-heading">Complete your profile</h1>

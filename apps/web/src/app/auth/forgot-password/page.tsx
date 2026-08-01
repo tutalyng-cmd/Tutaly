@@ -30,7 +30,7 @@ export default function ForgotPassword() {
   return (
     <div className="auth-centered-shell">
       <Link href="/" className="auth-centered-logo">
-        <img src="/images/tutaly-icon-mark.png" alt="Tutaly" />
+        <img src="/logo.png" alt="Tutaly" />
       </Link>
 
       <div className="auth-centered-wrap">

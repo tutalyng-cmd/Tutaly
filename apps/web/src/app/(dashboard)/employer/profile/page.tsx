@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 'use client';
 
 import React, { useEffect, useState, useRef, useCallback } from 'react';
@@ -87,7 +88,7 @@ export default function EmployerProfilePage() {
     } catch (e) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const err = e as any;
-      alert(err.response?.data?.message || 'Failed to save profile');
+      toast.error(err.response?.data?.message || 'Failed to save profile');
     } finally {
       setSaving(false);
     }
@@ -98,12 +99,12 @@ export default function EmployerProfilePage() {
     if (!file) return;
 
     if (!file.type.startsWith('image/')) {
-      alert('Only image files are allowed for logos');
+      toast.error('Only image files are allowed for logos');
       return;
     }
 
     if (file.size > 2 * 1024 * 1024) {
-      alert('File size must be under 2MB');
+      toast.error('File size must be under 2MB');
       return;
     }
 
@@ -126,7 +127,7 @@ export default function EmployerProfilePage() {
     } catch (e) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const err = e as any;
-      alert(err.response?.data?.message || 'Failed to upload logo');
+      toast.error(err.response?.data?.message || 'Failed to upload logo');
     } finally {
       setUploadingLogo(false);
       if (fileInputRef.current) {

@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 'use client';
 
 import React, { useState } from 'react';
@@ -73,12 +74,12 @@ export default function WriteReviewForm({ company }: { company: any }) {
   const handleNext = () => {
     if (step === 1) {
       if (!formData.jobTitle.trim()) {
-        alert('Please enter your job title.');
+        toast.error('Please enter your job title.');
         return;
       }
     } else if (step === 2) {
       if (formData.ratingOverall === 0) {
-        alert('Please provide an overall rating.');
+        toast.error('Please provide an overall rating.');
         return;
       }
     }
@@ -92,11 +93,11 @@ export default function WriteReviewForm({ company }: { company: any }) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.confirmed) {
-      alert("Please confirm the information is accurate.");
+      toast.error("Please confirm the information is accurate.");
       return;
     }
     if (formData.pros.length < 10 || formData.cons.length < 10) {
-      alert('Pros and Cons must be at least 10 characters long');
+      toast.error('Pros and Cons must be at least 10 characters long');
       return;
     }
 
@@ -132,7 +133,7 @@ export default function WriteReviewForm({ company }: { company: any }) {
       }, 3000);
     } catch (e) {
       const err = e as any;
-      alert(err.response?.data?.message || 'Failed to submit review');
+      toast.error(err.response?.data?.message || 'Failed to submit review');
       setLoading(false);
     }
   };

@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -76,7 +77,7 @@ export default function SellerShopPage() {
       const error = e as any;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const err = e as any;
-alert(err.response?.data?.message || 'Application failed');
+toast.error(err.response?.data?.message || 'Application failed');
     } finally {
       setApplyLoading(false);
     }
@@ -95,7 +96,7 @@ alert(err.response?.data?.message || 'Application failed');
       const error = e as any;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const err = e as any;
-alert(err.response?.data?.message || 'Failed to mark as delivered');
+toast.error(err.response?.data?.message || 'Failed to mark as delivered');
     } finally {
       setDeliveringId(null);
     }

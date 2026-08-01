@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
@@ -116,7 +117,7 @@ export default function AdminAdsModerationPage() {
        
       const err = e as { response?: { data?: { message?: string }; status?: number }; message?: string };
        
-alert(err.response?.data?.message || err.message);
+toast.error(err.response?.data?.message || err.message);
     }
   };
 
@@ -135,7 +136,7 @@ alert(err.response?.data?.message || err.message);
       : rejectReason;
 
     if (!finalReason.trim()) {
-      alert("Please provide a rejection reason.");
+      toast.error("Please provide a rejection reason.");
       return;
     }
 
@@ -155,7 +156,7 @@ alert(err.response?.data?.message || err.message);
        
       const err = e as { response?: { data?: { message?: string }; status?: number }; message?: string };
        
-alert(err.response?.data?.message || err.message);
+toast.error(err.response?.data?.message || err.message);
     }
   };
 

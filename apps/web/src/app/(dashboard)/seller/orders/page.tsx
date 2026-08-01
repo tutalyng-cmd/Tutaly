@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -46,7 +47,7 @@ export default function SellerOrdersPage() {
       await fetchOrders();
     } catch (e) {
       const err = e as any;
-      alert(err.response?.data?.message || 'Failed to mark as delivered');
+      toast.error(err.response?.data?.message || 'Failed to mark as delivered');
     }
   };
 

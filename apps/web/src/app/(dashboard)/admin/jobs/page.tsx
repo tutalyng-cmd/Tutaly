@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
@@ -105,7 +106,7 @@ if (err.response?.status === 401 || err.response?.status === 403) {
        
       const err = e as { response?: { data?: { message?: string }; status?: number }; message?: string };
        
-alert(err.response?.data?.message || err.message);
+toast.error(err.response?.data?.message || err.message);
     }
   };
 
@@ -126,7 +127,7 @@ alert(err.response?.data?.message || err.message);
        
       const err = e as { response?: { data?: { message?: string }; status?: number }; message?: string };
        
-alert(err.response?.data?.message || err.message);
+toast.error(err.response?.data?.message || err.message);
     }
   };
 

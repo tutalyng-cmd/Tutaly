@@ -37,6 +37,9 @@ export class UserController {
     const userId = req.user.sub;
     const role = req.user.role;
     let profileData: any = {};
+    
+    const user = await this.userService.getUserById(userId);
+
 
     try {
       if (role === UserRole.SEEKER) {
@@ -62,6 +65,7 @@ export class UserController {
         id: userId,
         email: req.user.email,
         role: role,
+        isMfaEnabled: user?.isMfaEnabled || false,
         ...profileData,
       },
     };

@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 'use client';
 
 import React, { useState, useMemo } from 'react';
@@ -133,9 +134,9 @@ export default function PostJobWizard() {
       const res = await apiAuth.withToken(token).post('/jobs', payload);
       
       if (formData.isFeatured && !isDraft) {
-        alert('Job posted! Since it is a featured job, you will be redirected to payment.');
+        toast.error('Job posted! Since it is a featured job, you will be redirected to payment.');
       } else {
-        alert(isDraft ? 'Job saved as draft!' : 'Job posted successfully! It is now pending admin review.');
+        toast.error(isDraft ? 'Job saved as draft!' : 'Job posted successfully! It is now pending admin review.');
       }
       router.push('/employer/jobs');
     } catch (e) {

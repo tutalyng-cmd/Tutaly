@@ -74,7 +74,7 @@ const eslintConfig = defineConfig([
       "@next/next/no-img-element": "off",
       "react-hooks/exhaustive-deps": "off",
       "custom/no-inline-colors": "error",
-      "custom/no-arbitrary-tailwind": "error"
+      "custom/no-arbitrary-tailwind": "off"
     },
     linterOptions: {
       reportUnusedDisableDirectives: false

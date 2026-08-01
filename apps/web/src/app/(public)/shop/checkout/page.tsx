@@ -168,7 +168,7 @@ export default function CheckoutPage() {
                   <input type="radio" name="paymethod" value="wallet" checked={payMethod === 'wallet'} onChange={() => setPayMethod('wallet')} disabled />
                   <div>
                     <div>Tutaly Wallet <span className="shop-wallet-badge">Insufficient funds</span></div>
-                    <div className="sub">Balance: ₦0.00</div>
+                    <div className="sub">Fund your wallet to use this method.</div>
                   </div>
                 </label>
               </div>

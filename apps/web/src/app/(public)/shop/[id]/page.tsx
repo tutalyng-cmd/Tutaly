@@ -161,17 +161,23 @@ export default function ShopProductDetailPage() {
               </ul>
             </div>
             <div className={`shop-tab-panel ${activeTab === 'rev' ? 'active' : ''}`}>
-              {reviewCount === 0 ? (
+              {!product.reviews || product.reviews.length === 0 ? (
                 <p>No reviews yet.</p>
               ) : (
-                <div className="shop-review">
-                  <div className="shop-review-avatar">T</div>
-                  <div>
-                    <div className="shop-review-name">Tutaly User</div>
-                    <div className="shop-review-date">Recently</div>
-                    <div className="shop-review-text">Great resource, very helpful!</div>
+                product.reviews.map((rev: any, idx: number) => (
+                  <div key={idx} className="shop-review">
+                    <div className="shop-review-avatar">
+                      {rev.authorName ? rev.authorName.charAt(0).toUpperCase() : 'U'}
+                    </div>
+                    <div>
+                      <div className="shop-review-name">{rev.authorName || 'Tutaly User'}</div>
+                      <div className="shop-review-date">
+                        {rev.createdAt ? new Date(rev.createdAt).toLocaleDateString() : 'Recently'}
+                      </div>
+                      <div className="shop-review-text">{rev.comment || rev.text}</div>
+                    </div>
                   </div>
-                </div>
+                ))
               )}
             </div>
 

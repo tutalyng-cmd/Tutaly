@@ -37,7 +37,7 @@ export default function FeedSidebarLeft() {
           postsCount: data.postsCount || 0,
         });
       } catch (err) {
-        console.error('Failed to load profile', err);
+        console.error('[FeedSidebarLeft] Profile fetch error:', err);
       }
     };
     fetchUser();

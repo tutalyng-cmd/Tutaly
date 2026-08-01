@@ -265,7 +265,7 @@ alert(err.response?.data?.message || err.message);
                     <td className="px-6 py-5">
                       <div className="flex flex-col gap-1">
                         <div className="font-bold text-c900 text-sm">
-                          {campaign.advertiser ? campaign.advertiser.name : campaign.advertiser_id.substring(0,8)}
+                          {campaign.advertiser ? campaign.advertiser.name : (campaign.advertiser_id || '').substring(0,8)}
                         </div>
                         {campaign.advertiser && (
                           <div className="text-xs text-c500">{campaign.advertiser.email}</div>

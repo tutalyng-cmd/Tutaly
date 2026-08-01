@@ -33,7 +33,7 @@ export default function FeedView() {
           const last = res.data?.data?.lastName || '';
           setUserInitials((first.charAt(0) + last.charAt(0)).toUpperCase() || 'U');
         } catch (err) {
-          console.error(err);
+          console.error('[FeedView] User fetch error:', err);
         }
       }
     };
@@ -51,7 +51,7 @@ export default function FeedView() {
       });
       setThreads(threadsRes.data || []);
     } catch (err) {
-      console.error('Failed to load community feed', err);
+      console.error('[FeedView] Feed fetch error:', err);
     } finally {
       setIsLoading(false);
     }

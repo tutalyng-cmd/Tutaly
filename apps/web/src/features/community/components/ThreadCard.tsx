@@ -45,9 +45,9 @@ export default function ThreadCard({ thread }: Props) {
     eyebrowLabel = 'CAREER MOVE';
   }
 
-  const initials = thread.author.name === 'Anonymous'
+  const initials = thread.author?.name === 'Anonymous'
     ? 'AN'
-    : thread.author.name.substring(0, 2).toUpperCase();
+    : (thread.author?.name || '').substring(0, 2).toUpperCase() || 'U';
 
   const timeAgo = (() => {
     try {

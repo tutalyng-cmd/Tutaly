@@ -54,7 +54,9 @@ export default function Navbar() {
           const notifs = res.data?.data || [];
           setNotifications(notifs);
           setUnreadCount(notifs.filter((n: any) => !n.isRead).length);
-        } catch (err) {}
+        } catch (err) {
+          console.error('[Navbar] Notifications fetch error:', err);
+        }
       };
       fetchNotifications();
     }

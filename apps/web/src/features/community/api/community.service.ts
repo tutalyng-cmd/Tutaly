@@ -8,13 +8,11 @@ export const communityService = {
   },
 
   getFeed: async (params: { bowlSlug?: string; tab: 'global' | 'following'; page: number; limit: number }) => {
-    // If we want authenticated feed (e.g. 'following' or to show our upvotes), we should use apiAuth
-    // Since some users might be unauthenticated, we handle it conditionally or just let apiAuth fail gracefully to guest mode if tokens are missing.
     try {
-      const res = await api.get('/community/feed', { params });
+      const res = await api.get('/connect/feed', { params });
       return res.data;
     } catch {
-      const res = await api.get('/community/feed', { params });
+      const res = await api.get('/connect/feed', { params });
       return res.data;
     }
   },
@@ -26,12 +24,56 @@ export const communityService = {
     anonymity_mode: AnonymityMode;
     display_title_override?: string;
   }) => {
+    // This actually seems to map to POST /community/threads in the older community module
     const res = await api.post('/community/threads', data);
     return res.data;
   },
 
   upvoteThread: async (threadId: string) => {
     const res = await api.post(`/community/threads/${threadId}/vote`);
+    return res.data;
+  },
+
+  // ---- Connect Module Integration ----
+
+  getNetwork: async () => {
+    const [followers, following] = await Promise.all([
+      api.get('/connect/followers'),
+      api.get('/connect/following')
+    ]);
+    return {
+      followers: followers.data.data,
+      following: following.data.data
+    };
+  },
+
+  followUser: async (userId: string) => {
+    const res = await api.post(`/connect/follow/${userId}`);
+    return res.data;
+  },
+
+  getDiscoverPeople: async () => {
+    const res = await api.get('/connect/discover');
+    return res.data;
+  },
+
+  getConversations: async () => {
+    const res = await api.get('/connect/conversations');
+    return res.data;
+  },
+
+  getMessages: async (userId: string) => {
+    const res = await api.get(`/connect/messages/${userId}`);
+    return res.data;
+  },
+
+  sendMessage: async (userId: string, body: string) => {
+    const res = await api.post(`/connect/messages/${userId}`, { body });
+    return res.data;
+  },
+
+  getNotifications: async () => {
+    const res = await api.get('/support/notifications');
     return res.data;
   },
 };

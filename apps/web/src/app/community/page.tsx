@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import React, { Suspense } from 'react';
-import CommunityFeatureLayout from '@/features/community/components/CommunityFeatureLayout';
+import FeedView from '@/features/community/components/FeedView';
 
 export const metadata: Metadata = {
   title: 'Community | Tutaly',
@@ -9,8 +9,8 @@ export const metadata: Metadata = {
 
 export default function CommunityPage() {
   return (
-    <Suspense fallback={<div className="p-8 text-center text-white">Loading community...</div>}>
-      <CommunityFeatureLayout />
+    <Suspense fallback={<div className="p-8 text-center text-white">Loading community feed...</div>}>
+      <FeedView />
     </Suspense>
   );
 }

@@ -18,6 +18,7 @@ import { Block } from './entities/block.entity';
 import { User } from '../user/entities/user.entity';
 import { SupportModule } from '../support/support.module';
 import { AuthModule } from '../auth/auth.module';
+import { ChatGateway } from './chat.gateway';
 
 @Module({
   imports: [
@@ -40,7 +41,7 @@ import { AuthModule } from '../auth/auth.module';
     AuthModule,
   ],
   controllers: [ConnectController],
-  providers: [ConnectService, ImageListener],
+  providers: [ConnectService, ImageListener, ChatGateway],
   exports: [ConnectService],
 })
 export class ConnectModule {}

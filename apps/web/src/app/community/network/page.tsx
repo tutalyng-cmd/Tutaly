@@ -1,269 +1,74 @@
 'use client';
 
-import React, { useEffect, useState, useCallback } from 'react';
-import { apiAuth } from '@/lib/api';
-import { Users, UserCheck, UserX, UserPlus, Clock, ChevronDown } from 'lucide-react';
-
-interface FollowData {
-  id: string;
-  firstName?: string;
-  lastName?: string;
-  email: string;
-}
-
-interface PendingRequest {
-  id: string;
-  follower: FollowData;
-  createdAt: string;
-}
-
-type Tab = 'followers' | 'following' | 'pending';
+import React, { useEffect, useState } from 'react';
+import { communityService } from '@/features/community/api/community.service';
+import Link from 'next/link';
+import { Loader2 } from 'lucide-react';
 
 export default function NetworkPage() {
-  const [activeTab, setActiveTab] = useState<Tab>('followers');
-  const [followers, setFollowers] = useState<FollowData[]>([]);
-  const [following, setFollowing] = useState<FollowData[]>([]);
-  const [pending, setPending] = useState<PendingRequest[]>([]);
+  const [network, setNetwork] = useState<any>({ followers: [], following: [] });
   const [loading, setLoading] = useState(true);
-  const [counts, setCounts] = useState({ followers: 0, following: 0, pending: 0 });
 
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    try {
-      const token = localStorage.getItem('access_token');
-      if (!token) return;
-
-      const [followersRes, followingRes, pendingRes] = await Promise.all([
-        apiAuth.withToken(token).get('/connect/followers?limit=50'),
-        apiAuth.withToken(token).get('/connect/following?limit=50'),
-        apiAuth.withToken(token).get('/connect/follow/pending?limit=50'),
-      ]);
-
-      setFollowers(followersRes.data?.data || []);
-      setFollowing(followingRes.data?.data || []);
-      setPending(pendingRes.data?.data || []);
-      setCounts({
-        followers: followersRes.data?.meta?.total || 0,
-        following: followingRes.data?.meta?.total || 0,
-        pending: pendingRes.data?.meta?.total || 0,
-      });
-    } catch (err) {
-      console.error('Failed to load network', err);
-    } finally {
-      setLoading(false);
+  useEffect(() => {
+    async function load() {
+      try {
+        const data = await communityService.getNetwork();
+        setNetwork(data);
+      } catch (e) {
+        console.error('Failed to load network', e);
+      } finally {
+        setLoading(false);
+      }
     }
+    load();
   }, []);
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  if (loading) {
+    return (
+      <div className="flex justify-center py-12">
+        <Loader2 className="w-8 h-8 animate-spin text-teal" />
+      </div>
+    );
+  }
 
-  const handleAccept = async (followerId: string) => {
-    try {
-      const token = localStorage.getItem('access_token');
-      if (!token) return;
-      await apiAuth.withToken(token).patch(`/connect/follow/${followerId}/accept`);
-      fetchData();
-    } catch (err) {
-      console.error('Failed to accept follow', err);
-    }
-  };
-
-  const handleReject = async (followerId: string) => {
-    try {
-      const token = localStorage.getItem('access_token');
-      if (!token) return;
-      await apiAuth.withToken(token).patch(`/connect/follow/${followerId}/reject`);
-      fetchData();
-    } catch (err) {
-      console.error('Failed to reject follow', err);
-    }
-  };
-
-  const handleUnfollow = async (userId: string) => {
-    try {
-      const token = localStorage.getItem('access_token');
-      if (!token) return;
-      await apiAuth.withToken(token).delete(`/connect/follow/${userId}`);
-      fetchData();
-    } catch (err) {
-      console.error('Failed to unfollow', err);
-    }
-  };
-
-  const getName = (p: FollowData) => {
-    if (p.firstName && p.lastName) return `${p.firstName} ${p.lastName}`;
-    return p.email?.split('@')[0] || 'User';
-  };
-
-  const getInitial = (p: FollowData) => getName(p).charAt(0).toUpperCase();
-
-  const tabs: { key: Tab; label: string; count: number; icon: React.ElementType }[] = [
-    { key: 'followers', label: 'Followers', count: counts.followers, icon: Users },
-    { key: 'following', label: 'Following', count: counts.following, icon: UserCheck },
-    { key: 'pending', label: 'Requests', count: counts.pending, icon: Clock },
-  ];
+  // Combine them for a single "Connections" list for now, or just show following
+  const connections = network.following || [];
 
   return (
-    <div className="max-w-3xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-c100">Your Network</h1>
-        <p className="text-c400 text-sm mt-1">Manage your professional connections</p>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
-        {tabs.map((tab) => (
-          <button
-            key={tab.key}
-            onClick={() => setActiveTab(tab.key)}
-            className={`bg-c800/80 backdrop-blur-sm rounded-2xl border p-4 text-center transition-all ${
-              activeTab === tab.key
-                ? 'border-blue shadow-glow-blue ring-1 ring-blue'
-                : 'border-c700 hover:border-c600 hover:shadow-sm'
-            }`}
-          >
-            <tab.icon className={`w-5 h-5 mx-auto mb-2 ${activeTab === tab.key ? 'text-blue' : 'text-c400'}`} />
-            <p className={`text-2xl font-bold ${activeTab === tab.key ? 'text-blue' : 'text-c100'}`}>
-              {tab.count}
-            </p>
-            <p className="text-xs text-c400 mt-0.5">{tab.label}</p>
-            {tab.key === 'pending' && tab.count > 0 && (
-              <span className="inline-block mt-1.5 bg-red text-white text-xs font-bold px-2 py-0.5 rounded-full">
-                {tab.count} new
-              </span>
-            )}
-          </button>
-        ))}
-      </div>
-
-      {/* Content */}
-      {loading ? (
-        <div className="space-y-3">
-          {[1, 2, 3].map(i => (
-            <div key={i} className="bg-c800/80 backdrop-blur-sm rounded-2xl border border-c700 p-4 animate-pulse">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-c700 rounded-full" />
-                <div className="space-y-2 flex-1">
-                  <div className="h-4 bg-c700 rounded w-1/3" />
-                  <div className="h-3 bg-c600 rounded w-1/5" />
+    <div className="max-w-[920px] mx-auto">
+      
+      <div className="bg-c800 border border-c700 rounded-2xl p-5">
+        <div className="text-[11px] uppercase tracking-[0.08em] text-c500 font-semibold mb-4">Your Connections</div>
+        
+        {connections.length === 0 ? (
+          <div className="text-center py-10 text-c500 text-[14px]">
+            You aren't following anyone yet. Head over to <Link href="/community/discover" className="text-teal hover:underline">Discover</Link> to find professionals to connect with.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5">
+            {connections.map((person: any, i: number) => {
+              const name = person.firstName ? `${person.firstName} ${person.lastName}` : person.username;
+              const init = (person.firstName?.[0] || name[0]).toUpperCase() + (person.lastName?.[0] || '').toUpperCase();
+              
+              return (
+                <div key={i} className="bg-c700 border border-c600/50 rounded-2xl p-4.5 flex flex-col items-center text-center">
+                  <div className="w-16 h-16 rounded-full bg-c600 border border-c600 flex items-center justify-center font-mono font-semibold text-2xl text-white mb-2 mx-auto">
+                    {init}
+                  </div>
+                  <div className="text-[13.5px] font-bold text-white">{name}</div>
+                  <div className="text-[11.5px] text-c400 truncate w-full mt-0.5">Verified Professional</div>
+                  <Link href={`/community/messages?to=${person.id}`} className="w-full mt-3 block">
+                    <button className="w-full px-4 py-2 rounded-xl border border-c600 bg-transparent text-white text-[13px] font-bold hover:border-teal hover:text-teal transition-colors">
+                      Message
+                    </button>
+                  </Link>
                 </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <>
-          {/* Pending Requests */}
-          {activeTab === 'pending' && (
-            pending.length === 0 ? (
-              <EmptyState icon={Clock} title="No pending requests" subtitle="When someone requests to follow you, it will appear here." />
-            ) : (
-              <div className="space-y-3">
-                {pending.map((req) => (
-                  <div key={req.follower.id} className="bg-c800/80 backdrop-blur-sm rounded-2xl border border-c700 p-4 hover:border-c600 hover:shadow-sm transition-all">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-gold shadow-glow-gold flex items-center justify-center text-c900 font-bold text-base shrink-0">
-                        {getInitial(req.follower)}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-bold text-c100">{getName(req.follower)}</p>
-                        <p className="text-xs text-c400">Wants to follow you</p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => handleAccept(req.follower.id)}
-                          className="flex items-center gap-1 text-sm font-bold text-white bg-blue hover:bg-blueH px-3 py-1.5 rounded-xl transition-colors shadow-glow-blue active:scale-95"
-                        >
-                          <UserCheck className="w-3.5 h-3.5" />
-                          Accept
-                        </button>
-                        <button
-                          onClick={() => handleReject(req.follower.id)}
-                          className="text-sm font-bold text-c100 bg-c700 hover:bg-c600 px-3 py-1.5 rounded-xl transition-colors active:scale-95 border border-c600"
-                        >
-                          Decline
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )
-          )}
-
-          {/* Followers */}
-          {activeTab === 'followers' && (
-            followers.length === 0 ? (
-              <EmptyState icon={Users} title="No followers yet" subtitle="Share your profile to grow your network." />
-            ) : (
-              <div className="space-y-3">
-                {followers.map((person) => (
-                  <PersonCard key={person.id} person={person} getName={getName} getInitial={getInitial} gradient="bg-blue shadow-glow-blue" />
-                ))}
-              </div>
-            )
-          )}
-
-          {/* Following */}
-          {activeTab === 'following' && (
-            following.length === 0 ? (
-              <EmptyState icon={UserCheck} title="Not following anyone" subtitle="Discover professionals to follow." />
-            ) : (
-              <div className="space-y-3">
-                {following.map((person) => (
-                  <div key={person.id} className="bg-c800/80 backdrop-blur-sm rounded-2xl border border-c700 p-4 hover:border-c600 hover:shadow-sm transition-all">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-blue shadow-glow-blue flex items-center justify-center text-white font-bold text-base shrink-0">
-                        {getInitial(person)}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-bold text-c100">{getName(person)}</p>
-                      </div>
-                      <button
-                        onClick={() => handleUnfollow(person.id)}
-                        className="text-sm font-bold text-c100 bg-c700 hover:bg-red/20 hover:text-red hover:border-red border border-c600 px-3 py-1.5 rounded-xl transition-colors"
-                      >
-                        Unfollow
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )
-          )}
-        </>
-      )}
-    </div>
-  );
-}
-
-function EmptyState({ icon: Icon, title, subtitle }: { icon: React.ElementType; title: string; subtitle: string }) {
-  return (
-    <div className="bg-c800/80 backdrop-blur-sm rounded-2xl shadow-sm border border-c700 p-12 text-center">
-      <div className="w-16 h-16 bg-c700 rounded-full flex items-center justify-center mx-auto mb-4">
-        <Icon className="w-8 h-8 text-c400" />
+              );
+            })}
+          </div>
+        )}
       </div>
-      <h3 className="text-lg font-bold text-c100 mb-2">{title}</h3>
-      <p className="text-c400 text-sm">{subtitle}</p>
-    </div>
-  );
-}
 
-function PersonCard({ person, getName, getInitial, gradient }: {
-  person: FollowData;
-  getName: (p: FollowData) => string;
-  getInitial: (p: FollowData) => string;
-  gradient: string;
-}) {
-  return (
-    <div className="bg-c800/80 backdrop-blur-sm rounded-2xl border border-c700 p-4 hover:border-c600 hover:shadow-sm transition-all">
-      <div className="flex items-center gap-4 mb-4">
-        <div className={`w-12 h-12 rounded-full ${gradient} flex items-center justify-center text-white font-bold text-base shrink-0`}>
-          {getInitial(person)}
-        </div>
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-bold text-c100">{getName(person)}</p>
-        </div>
-      </div>
     </div>
   );
 }

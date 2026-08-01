@@ -1,0 +1,2755 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tutaly</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --ink-950: #0C0F13;
+      --surface-900: #151A20;
+      --surface-800: #1C222A;
+      --surface-750: #222933;
+      --line-700: #2A323C;
+      --line-600: #343E4A;
+      --text-100: #F2F5F8;
+      --text-400: #9AA4B2;
+      --text-500: #75818F;
+      --teal: #2FD9A8;
+      --teal-dim: #1B4B41;
+      --amber: #F5B942;
+      --amber-dim: #4A3A19;
+      --coral: #FF6B6B;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--ink-950);
+      color: var(--text-100);
+      font-family: var(--font-body);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    input {
+      font-family: inherit;
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--teal);
+      outline-offset: 2px;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    /* ===== TOP NAV ===== */
+    .topnav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 32px;
+      border-bottom: 1px solid var(--line-700);
+      position: sticky;
+      top: 0;
+      background: rgba(12, 15, 19, 0.92);
+      backdrop-filter: blur(10px);
+      z-index: 60;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 19px;
+      background: none;
+      border: none;
+      color: var(--text-100);
+    }
+
+    .brand-bars {
+      display: flex;
+      gap: 2px;
+      align-items: flex-end;
+    }
+
+    .brand-bars span {
+      width: 3px;
+      display: block;
+      border-radius: 1px;
+    }
+
+    .bar1 {
+      height: 10px;
+      background: var(--coral);
+    }
+
+    .bar2 {
+      height: 16px;
+      background: var(--amber);
+    }
+
+    .bar3 {
+      height: 13px;
+      background: var(--teal);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-400);
+    }
+
+    .nav-links button {
+      background: none;
+      border: none;
+      color: inherit;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 6px 2px;
+      border-bottom: 2px solid transparent;
+      transition: .15s;
+    }
+
+    .nav-links button:hover {
+      color: var(--text-100);
+    }
+
+    .nav-links button.active {
+      color: var(--text-100);
+      border-bottom-color: var(--teal);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      border: 1px solid var(--line-700);
+      background: var(--surface-900);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-400);
+      position: relative;
+    }
+
+    .icon-btn:hover {
+      border-color: var(--line-600);
+      color: var(--text-100);
+    }
+
+    .dot {
+      position: absolute;
+      top: -3px;
+      right: -3px;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--coral);
+      border: 2px solid var(--ink-950);
+    }
+
+    .btn-ghost {
+      padding: 9px 16px;
+      border-radius: 10px;
+      border: 1px solid var(--line-600);
+      background: transparent;
+      color: var(--text-100);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--text-400);
+    }
+
+    .btn-solid {
+      padding: 9px 18px;
+      border-radius: 10px;
+      border: none;
+      background: var(--teal);
+      color: #06251D;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .btn-solid:hover {
+      filter: brightness(1.08);
+    }
+
+    .hamburger {
+      display: none;
+    }
+
+    /* mobile drawer */
+    .mobile-drawer {
+      display: none;
+      position: fixed;
+      top: 65px;
+      left: 0;
+      right: 0;
+      z-index: 55;
+      background: var(--surface-900);
+      border-bottom: 1px solid var(--line-700);
+      padding: 10px 20px 18px;
+      flex-direction: column;
+      gap: 2px;
+      transform: translateY(-8px);
+      opacity: 0;
+      pointer-events: none;
+      transition: .18s ease;
+    }
+
+    .mobile-drawer.open {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .mobile-drawer button {
+      text-align: left;
+      background: none;
+      border: none;
+      color: var(--text-400);
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 12px 4px;
+      border-bottom: 1px solid var(--line-700);
+    }
+
+    .mobile-drawer button.active {
+      color: var(--teal);
+    }
+
+    .mobile-drawer .drawer-auth {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .mobile-drawer .drawer-auth button {
+      flex: 1;
+      text-align: center;
+      border-bottom: none;
+      border-radius: 10px;
+      border: 1px solid var(--line-600);
+      padding: 11px;
+    }
+
+    .mobile-drawer .drawer-auth .get-started {
+      background: var(--teal);
+      color: #06251D;
+      border: none;
+    }
+
+    /* ===== HERO STRIP ===== */
+    .hero {
+      padding: 40px 32px 28px;
+      max-width: 1360px;
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: .14em;
+      color: var(--amber);
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+
+    .eyebrow::before {
+      content: '';
+      width: 18px;
+      height: 1px;
+      background: var(--amber);
+    }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 10px;
+    }
+
+    .hero p {
+      color: var(--text-400);
+      font-size: 15px;
+      max-width: 580px;
+      line-height: 1.5;
+    }
+
+    /* ===== SHARED CARD / LAYOUT ===== */
+    .layout {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 0 32px 60px;
+      display: grid;
+      grid-template-columns: 264px minmax(0, 1fr) 300px;
+      gap: 24px;
+    }
+
+    .layout.two-col {
+      grid-template-columns: 280px minmax(0, 1fr);
+    }
+
+    .layout.one-col {
+      grid-template-columns: minmax(0, 1fr);
+      max-width: 920px;
+    }
+
+    .col {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      min-width: 0;
+    }
+
+    .card {
+      background: var(--surface-900);
+      border: 1px solid var(--line-700);
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    .card-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--text-500);
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    /* ===== PROFILE CARD ===== */
+    .profile-banner {
+      height: 52px;
+      margin: -20px -20px 0;
+      border-radius: 16px 16px 0 0;
+      background: linear-gradient(120deg, var(--teal-dim), var(--surface-800) 70%);
+    }
+
+    .avatar-ring {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      margin-top: -32px;
+      margin-left: 4px;
+      background: linear-gradient(135deg, var(--teal), var(--amber));
+      padding: 3px;
+      display: flex;
+    }
+
+    .avatar-ring .avatar {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: var(--surface-750);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 20px;
+      color: var(--text-100);
+      border: 2px solid var(--surface-900);
+    }
+
+    .profile-name {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 17px;
+      margin-top: 12px;
+    }
+
+    .profile-role {
+      color: var(--text-400);
+      font-size: 13px;
+      margin-top: 3px;
+    }
+
+    .profile-stats {
+      display: flex;
+      margin-top: 16px;
+      border-top: 1px solid var(--line-700);
+      padding-top: 14px;
+    }
+
+    .stat {
+      flex: 1;
+      text-align: center;
+    }
+
+    .stat b {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    .stat span {
+      font-size: 11px;
+      color: var(--text-500);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    .stat+.stat {
+      border-left: 1px solid var(--line-700);
+    }
+
+    .shortcut {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 0;
+      font-size: 14px;
+      color: var(--text-400);
+      font-weight: 500;
+    }
+
+    .shortcut:hover {
+      color: var(--text-100);
+    }
+
+    .shortcut .ic {
+      width: 18px;
+      text-align: center;
+      color: var(--text-500);
+    }
+
+    /* ===== COMMUNITY: feed ===== */
+    .segmented {
+      display: flex;
+      gap: 4px;
+      background: var(--surface-900);
+      border: 1px solid var(--line-700);
+      border-radius: 12px;
+      padding: 4px;
+      width: fit-content;
+    }
+
+    .segmented button {
+      padding: 8px 18px;
+      border: none;
+      background: transparent;
+      border-radius: 9px;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-500);
+    }
+
+    .segmented button.active {
+      background: var(--surface-750);
+      color: var(--text-100);
+    }
+
+    .composer {
+      padding: 18px;
+    }
+
+    .composer-top {
+      display: flex;
+      gap: 12px;
+    }
+
+    .mini-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--surface-750);
+      border: 1px solid var(--line-700);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+
+    .composer-input {
+      flex: 1;
+    }
+
+    .composer-input textarea {
+      width: 100%;
+      background: transparent;
+      border: none;
+      resize: none;
+      color: var(--text-100);
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.5;
+      min-height: 26px;
+    }
+
+    .composer-input textarea::placeholder {
+      color: var(--text-500);
+    }
+
+    .composer-tools {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line-700);
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .tool-icons {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .tool-chip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      border-radius: 9px;
+      background: var(--surface-800);
+      border: 1px solid var(--line-700);
+      font-size: 12.5px;
+      color: var(--text-400);
+      font-weight: 500;
+    }
+
+    .tool-chip:hover {
+      color: var(--text-100);
+      border-color: var(--line-600);
+    }
+
+    .tool-chip.salary {
+      color: var(--amber);
+      border-color: var(--amber-dim);
+      background: rgba(245, 185, 66, 0.06);
+    }
+
+    .post {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .post-inner {
+      padding: 18px 20px 16px;
+      border-left: 3px solid transparent;
+    }
+
+    .post.type-salary .post-inner {
+      border-left-color: var(--amber);
+    }
+
+    .post.type-career .post-inner {
+      border-left-color: var(--teal);
+    }
+
+    .post.type-general .post-inner {
+      border-left-color: var(--line-600);
+    }
+
+    .post-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .type-salary .post-eyebrow {
+      color: var(--amber);
+    }
+
+    .type-career .post-eyebrow {
+      color: var(--teal);
+    }
+
+    .type-general .post-eyebrow {
+      color: var(--text-500);
+    }
+
+    .post-head {
+      display: flex;
+      gap: 12px;
+    }
+
+    .post-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--surface-750);
+      border: 1px solid var(--line-700);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .post-meta {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .post-name-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14.5px;
+    }
+
+    .post-name {
+      font-weight: 700;
+    }
+
+    .verified {
+      color: var(--teal);
+      font-size: 13px;
+    }
+
+    .post-sub {
+      font-size: 12.5px;
+      color: var(--text-500);
+      margin-top: 2px;
+    }
+
+    .post-time {
+      color: var(--text-500);
+      font-size: 12.5px;
+      white-space: nowrap;
+    }
+
+    .post-body {
+      font-size: 14.5px;
+      line-height: 1.55;
+      color: var(--text-100);
+      margin: 12px 0 0 54px;
+      max-width: calc(100% - 54px);
+    }
+
+    .salary-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 12px 0 0 54px;
+      background: var(--amber-dim);
+      border: 1px solid rgba(245, 185, 66, 0.35);
+      border-radius: 11px;
+      padding: 9px 13px;
+      flex-wrap: wrap;
+    }
+
+    .salary-chip .role {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-100);
+    }
+
+    .salary-chip .amt {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      font-size: 13.5px;
+      color: var(--amber);
+    }
+
+    .salary-chip .divider {
+      width: 1px;
+      height: 14px;
+      background: rgba(245, 185, 66, 0.3);
+    }
+
+    .post-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin: 14px 0 0 54px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line-700);
+    }
+
+    .pa-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      color: var(--text-500);
+      font-size: 13px;
+      font-weight: 500;
+      background: transparent;
+      border: none;
+    }
+
+    .pa-btn:hover {
+      color: var(--text-100);
+      background: var(--surface-800);
+    }
+
+    .pa-btn.like:hover {
+      color: var(--coral);
+    }
+
+    .pa-btn.share:hover {
+      color: var(--teal);
+    }
+
+    .pa-spacer {
+      flex: 1;
+    }
+
+    .trend-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--line-700);
+    }
+
+    .trend-row:last-child {
+      border-bottom: none;
+    }
+
+    .trend-tag {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-100);
+    }
+
+    .trend-count {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: var(--text-500);
+    }
+
+    .suggest-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0;
+    }
+
+    .suggest-row:not(:last-child) {
+      border-bottom: 1px solid var(--line-700);
+    }
+
+    .suggest-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--surface-750);
+      border: 1px solid var(--line-700);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      font-size: 12.5px;
+    }
+
+    .suggest-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .suggest-name {
+      font-size: 13.5px;
+      font-weight: 600;
+    }
+
+    .suggest-role {
+      font-size: 11.5px;
+      color: var(--text-500);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .follow-btn {
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--line-600);
+      background: transparent;
+      color: var(--text-100);
+      font-size: 12px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .follow-btn:hover {
+      border-color: var(--teal);
+      color: var(--teal);
+    }
+
+    .spotlight-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .spotlight-logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: var(--surface-750);
+      border: 1px solid var(--line-700);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 15px;
+    }
+
+    .spotlight-name {
+      font-weight: 700;
+      font-size: 14.5px;
+    }
+
+    .stars {
+      color: var(--amber);
+      font-size: 12.5px;
+      margin-top: 3px;
+      font-family: var(--font-mono);
+    }
+
+    .spotlight-note {
+      font-size: 12.5px;
+      color: var(--text-400);
+      margin-top: 10px;
+      line-height: 1.5;
+    }
+
+    /* ===== COMMUNITY SUB-NAV (Feed/Discover/Messages/Notifications/Network) ===== */
+    .community-tabs {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 0 32px 22px;
+      display: flex;
+      gap: 6px;
+    }
+
+    .community-tabs button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: 11px;
+      border: 1px solid var(--line-700);
+      background: var(--surface-900);
+      color: var(--text-400);
+      font-size: 13.5px;
+      font-weight: 600;
+      position: relative;
+    }
+
+    .community-tabs button .ic {
+      font-size: 15px;
+    }
+
+    .community-tabs button:hover {
+      color: var(--text-100);
+      border-color: var(--line-600);
+    }
+
+    .community-tabs button.active {
+      background: rgba(47, 217, 168, 0.1);
+      border-color: var(--teal);
+      color: var(--teal);
+    }
+
+    .community-tabs button .ct-dot {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--coral);
+    }
+
+    .comm-view {
+      display: none;
+    }
+
+    .comm-view.active {
+      display: block;
+    }
+
+    /* ===== DISCOVER ===== */
+    .topic-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .topic-card {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .topic-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: var(--surface-750);
+      border: 1px solid var(--line-700);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+    }
+
+    .topic-name {
+      font-weight: 700;
+      font-size: 14.5px;
+    }
+
+    .topic-meta {
+      font-size: 12px;
+      color: var(--text-500);
+      font-family: var(--font-mono);
+    }
+
+    .topic-card .follow-btn {
+      align-self: flex-start;
+      margin-top: 2px;
+    }
+
+    /* ===== MESSAGES ===== */
+    .msg-shell {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 0;
+      height: 560px;
+      overflow: hidden;
+    }
+
+    .msg-list {
+      border-right: 1px solid var(--line-700);
+      overflow-y: auto;
+    }
+
+    .msg-thread {
+      display: flex;
+      gap: 11px;
+      padding: 13px 16px;
+      border-bottom: 1px solid var(--line-700);
+      align-items: center;
+    }
+
+    .msg-thread:hover,
+    .msg-thread.active {
+      background: var(--surface-800);
+    }
+
+    .msg-thread .suggest-avatar {
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .msg-thread-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .msg-thread-name {
+      font-size: 13.5px;
+      font-weight: 700;
+    }
+
+    .msg-thread-preview {
+      font-size: 12px;
+      color: var(--text-500);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 2px;
+    }
+
+    .msg-thread-time {
+      font-size: 11px;
+      color: var(--text-500);
+      flex-shrink: 0;
+    }
+
+    .msg-unread {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--teal);
+      flex-shrink: 0;
+    }
+
+    .msg-panel {
+      display: flex;
+      flex-direction: column;
+      padding: 18px;
+      overflow-y: auto;
+    }
+
+    .msg-panel-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--line-700);
+      margin-bottom: 16px;
+    }
+
+    .msg-panel-name {
+      font-weight: 700;
+      font-size: 14.5px;
+    }
+
+    .msg-panel-role {
+      font-size: 12px;
+      color: var(--text-500);
+    }
+
+    .bubble {
+      max-width: 72%;
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-size: 13.5px;
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+
+    .bubble.in {
+      background: var(--surface-800);
+      border: 1px solid var(--line-700);
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+    }
+
+    .bubble.out {
+      background: var(--teal-dim);
+      border: 1px solid rgba(47, 217, 168, 0.3);
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+      margin-left: auto;
+    }
+
+    .msg-composer {
+      display: flex;
+      gap: 8px;
+      margin-top: auto;
+      padding-top: 14px;
+      border-top: 1px solid var(--line-700);
+    }
+
+    .msg-composer input {
+      flex: 1;
+      background: var(--surface-800);
+      border: 1px solid var(--line-700);
+      border-radius: 10px;
+      padding: 10px 13px;
+      color: var(--text-100);
+      font-size: 13.5px;
+    }
+
+    .msg-composer input::placeholder {
+      color: var(--text-500);
+    }
+
+    /* ===== NOTIFICATIONS ===== */
+    .notif-group-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--text-500);
+      font-weight: 600;
+      margin: 20px 0 10px;
+    }
+
+    .notif-group-label:first-child {
+      margin-top: 0;
+    }
+
+    .notif-row {
+      display: flex;
+      gap: 12px;
+      padding: 13px;
+      border-radius: 12px;
+      align-items: flex-start;
+    }
+
+    .notif-row.unread {
+      background: var(--surface-800);
+    }
+
+    .notif-row:hover {
+      background: var(--surface-800);
+    }
+
+    .notif-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--surface-750);
+      border: 1px solid var(--line-700);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+
+    .notif-icon.like {
+      color: var(--coral);
+    }
+
+    .notif-icon.salary {
+      color: var(--amber);
+    }
+
+    .notif-icon.follow {
+      color: var(--teal);
+    }
+
+    .notif-text {
+      font-size: 13.5px;
+      line-height: 1.5;
+    }
+
+    .notif-text b {
+      font-weight: 700;
+    }
+
+    .notif-time {
+      font-size: 11.5px;
+      color: var(--text-500);
+      margin-top: 3px;
+    }
+
+    /* ===== NETWORK ===== */
+    .net-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .net-card {
+      padding: 18px;
+      text-align: center;
+    }
+
+    .net-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--surface-750);
+      border: 1px solid var(--line-700);
+      margin: 0 auto 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .net-name {
+      font-weight: 700;
+      font-size: 13.5px;
+    }
+
+    .net-role {
+      font-size: 11.5px;
+      color: var(--text-500);
+      margin-top: 3px;
+    }
+
+    .net-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .net-actions button {
+      flex: 1;
+      padding: 8px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .net-actions .connect {
+      border: 1px solid var(--line-600);
+      background: transparent;
+      color: var(--text-100);
+    }
+
+    .net-actions .connect:hover {
+      border-color: var(--teal);
+      color: var(--teal);
+    }
+
+    .net-actions .accept {
+      border: none;
+      background: var(--teal);
+      color: #06251D;
+    }
+
+    .net-actions .decline {
+      border: 1px solid var(--line-600);
+      background: transparent;
+      color: var(--text-400);
+    }
+
+    /* ===== SEARCH BAR (shared: jobs/salaries/reviews) ===== */
+    .search-bar {
+      display: flex;
+      gap: 10px;
+      padding: 16px;
+      flex-wrap: wrap;
+    }
+
+    .search-field {
+      flex: 1;
+      min-width: 180px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--surface-800);
+      border: 1px solid var(--line-700);
+      border-radius: 11px;
+      padding: 11px 14px;
+    }
+
+    .search-field input {
+      flex: 1;
+      background: none;
+      border: none;
+      color: var(--text-100);
+      font-size: 14px;
+    }
+
+    .search-field input::placeholder {
+      color: var(--text-500);
+    }
+
+    .search-field .ic {
+      color: var(--text-500);
+    }
+
+    .filter-row {
+      display: flex;
+      gap: 8px;
+      padding: 0 16px 16px;
+      flex-wrap: wrap;
+    }
+
+    .filter-chip {
+      padding: 8px 14px;
+      border-radius: 9px;
+      border: 1px solid var(--line-700);
+      background: var(--surface-800);
+      color: var(--text-400);
+      font-size: 12.5px;
+      font-weight: 600;
+    }
+
+    .filter-chip.active {
+      background: rgba(47, 217, 168, 0.1);
+      border-color: var(--teal);
+      color: var(--teal);
+    }
+
+    .filter-chip:hover {
+      color: var(--text-100);
+    }
+
+    /* ===== JOBS ===== */
+    .job-card {
+      padding: 20px;
+    }
+
+    .job-top {
+      display: flex;
+      gap: 14px;
+    }
+
+    .job-logo {
+      width: 46px;
+      height: 46px;
+      border-radius: 11px;
+      background: var(--surface-750);
+      border: 1px solid var(--line-700);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+
+    .job-title {
+      font-weight: 700;
+      font-size: 15.5px;
+    }
+
+    .job-sub {
+      font-size: 13px;
+      color: var(--text-400);
+      margin-top: 3px;
+    }
+
+    .job-tags {
+      display: flex;
+      gap: 7px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    .job-tag {
+      padding: 5px 10px;
+      border-radius: 7px;
+      background: var(--surface-800);
+      border: 1px solid var(--line-700);
+      font-size: 11.5px;
+      color: var(--text-400);
+      font-weight: 500;
+    }
+
+    .job-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line-700);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .job-salary {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: var(--amber);
+      font-size: 13.5px;
+    }
+
+    .job-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .job-actions .save {
+      padding: 9px 12px;
+      border-radius: 9px;
+      border: 1px solid var(--line-600);
+      background: transparent;
+      color: var(--text-400);
+      font-size: 13px;
+    }
+
+    .job-actions .apply {
+      padding: 9px 16px;
+      border-radius: 9px;
+      border: none;
+      background: var(--teal);
+      color: #06251D;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .featured-badge {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--amber);
+      background: var(--amber-dim);
+      padding: 4px 8px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+
+    /* ===== SALARIES ===== */
+    .salary-card {
+      padding: 20px;
+    }
+
+    .salary-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .salary-role {
+      font-weight: 700;
+      font-size: 15.5px;
+    }
+
+    .salary-company {
+      font-size: 13px;
+      color: var(--text-400);
+      margin-top: 3px;
+    }
+
+    .salary-median {
+      text-align: right;
+    }
+
+    .salary-median b {
+      font-family: var(--font-mono);
+      font-size: 19px;
+      color: var(--teal);
+      display: block;
+    }
+
+    .salary-median span {
+      font-size: 10.5px;
+      color: var(--text-500);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    .salary-bar-wrap {
+      margin-top: 16px;
+    }
+
+    .salary-bar {
+      height: 8px;
+      border-radius: 5px;
+      background: var(--surface-800);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .salary-bar-fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      border-radius: 5px;
+      background: linear-gradient(90deg, var(--teal-dim), var(--teal));
+    }
+
+    .salary-range-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-500);
+    }
+
+    .salary-meta {
+      display: flex;
+      gap: 16px;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line-700);
+      font-size: 12px;
+      color: var(--text-400);
+      flex-wrap: wrap;
+    }
+
+    .salary-meta b {
+      color: var(--text-100);
+      font-weight: 600;
+    }
+
+    /* ===== REVIEWS ===== */
+    .rating-hero {
+      padding: 24px;
+      display: flex;
+      gap: 28px;
+      flex-wrap: wrap;
+    }
+
+    .rating-big {
+      text-align: center;
+    }
+
+    .rating-big b {
+      font-family: var(--font-display);
+      font-size: 44px;
+      display: block;
+      line-height: 1;
+    }
+
+    .rating-big .stars {
+      font-size: 16px;
+      margin-top: 8px;
+    }
+
+    .rating-big .count {
+      font-size: 12px;
+      color: var(--text-500);
+      margin-top: 6px;
+    }
+
+    .rating-breakdown {
+      flex: 1;
+      min-width: 200px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .rb-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12.5px;
+    }
+
+    .rb-label {
+      width: 110px;
+      color: var(--text-400);
+      flex-shrink: 0;
+    }
+
+    .rb-track {
+      flex: 1;
+      height: 6px;
+      border-radius: 4px;
+      background: var(--surface-800);
+      overflow: hidden;
+    }
+
+    .rb-fill {
+      height: 100%;
+      background: var(--amber);
+      border-radius: 4px;
+    }
+
+    .rb-val {
+      font-family: var(--font-mono);
+      width: 28px;
+      text-align: right;
+      color: var(--text-400);
+    }
+
+    .review-card {
+      padding: 18px 20px;
+    }
+
+    .review-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .review-title {
+      font-weight: 700;
+      font-size: 14.5px;
+    }
+
+    .review-role {
+      font-size: 12px;
+      color: var(--text-500);
+      margin-top: 3px;
+    }
+
+    .review-stars {
+      color: var(--amber);
+      font-family: var(--font-mono);
+      font-size: 13px;
+    }
+
+    .review-pc {
+      display: flex;
+      gap: 16px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+
+    .review-pc div {
+      flex: 1;
+      min-width: 180px;
+    }
+
+    .review-pc .lbl {
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .review-pc .pros .lbl {
+      color: var(--teal);
+    }
+
+    .review-pc .cons .lbl {
+      color: var(--coral);
+    }
+
+    .review-pc p {
+      font-size: 13px;
+      color: var(--text-400);
+      line-height: 1.5;
+    }
+
+    /* ===== SHOP ===== */
+    .shop-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .product-card {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .product-thumb {
+      height: 120px;
+      background: linear-gradient(135deg, var(--surface-750), var(--surface-800));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      border-bottom: 1px solid var(--line-700);
+    }
+
+    .product-body {
+      padding: 16px;
+    }
+
+    .product-name {
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .product-desc {
+      font-size: 12px;
+      color: var(--text-500);
+      margin-top: 5px;
+      line-height: 1.5;
+    }
+
+    .product-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 14px;
+    }
+
+    .product-price {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: var(--amber);
+      font-size: 14px;
+    }
+
+    .product-add {
+      padding: 7px 13px;
+      border-radius: 8px;
+      border: 1px solid var(--line-600);
+      background: transparent;
+      color: var(--text-100);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .product-add:hover {
+      border-color: var(--teal);
+      color: var(--teal);
+    }
+
+    /* ===== BOTTOM NAV (mobile, community only) ===== */
+    .bottomnav {
+      display: none;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width:1080px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .layout .col.left,
+      .layout .col.right {
+        display: none;
+      }
+
+      .shop-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .net-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width:900px) {
+      .layout {
+        padding-bottom: 60px;
+      }
+    }
+
+    @media (max-width:760px) {
+      .msg-shell {
+        grid-template-columns: 1fr;
+        height: auto;
+      }
+
+      .msg-list {
+        border-right: none;
+        max-height: 340px;
+      }
+
+      .msg-panel {
+        border-top: 1px solid var(--line-700);
+        height: 420px;
+      }
+    }
+
+    @media (max-width:640px) {
+      .topnav {
+        padding: 14px 16px;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .nav-right .btn-ghost,
+      .nav-right .btn-solid,
+      .nav-right .icon-btn[aria-label="Cart"] {
+        display: none;
+      }
+
+      .hamburger {
+        display: flex;
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        border: 1px solid var(--line-700);
+        background: var(--surface-900);
+        align-items: center;
+        justify-content: center;
+        color: var(--text-100);
+        font-size: 16px;
+      }
+
+      .mobile-drawer {
+        display: flex;
+      }
+
+      .hero {
+        padding: 22px 16px 18px;
+      }
+
+      .hero h1 {
+        font-size: 26px;
+      }
+
+      .layout {
+        padding: 0 16px 90px;
+        gap: 14px;
+      }
+
+      .card {
+        border-radius: 14px;
+        padding: 16px;
+      }
+
+      .shop-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      .rating-hero {
+        flex-direction: column;
+        gap: 18px;
+      }
+
+      .community-tabs {
+        display: none;
+      }
+
+      .topic-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .net-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .bubble {
+        max-width: 85%;
+      }
+
+      .bottomnav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 50;
+        background: rgba(21, 26, 32, 0.96);
+        backdrop-filter: blur(10px);
+        border-top: 1px solid var(--line-700);
+        padding: 10px 8px 14px;
+        justify-content: space-around;
+      }
+
+      .bn-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        color: var(--text-500);
+        font-size: 10.5px;
+        font-weight: 600;
+        position: relative;
+        background: none;
+        border: none;
+      }
+
+      .bn-item.active {
+        color: var(--teal);
+      }
+
+      .bn-item .ic {
+        font-size: 18px;
+      }
+
+      .bn-dot {
+        position: absolute;
+        top: -2px;
+        right: 6px;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--coral);
+        border: 2px solid var(--surface-900);
+      }
+    }
+
+    @media (max-width:420px) {
+      .shop-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav class="topnav">
+    <button class="brand" onclick="selectPage('community')">
+      <span class="brand-bars"><span class="bar1"></span><span class="bar2"></span><span class="bar3"></span></span>
+      Tutaly
+    </button>
+    <div class="nav-links">
+      <button data-page="jobs" onclick="selectPage('jobs')">Jobs</button>
+      <button data-page="salaries" onclick="selectPage('salaries')">Salaries</button>
+      <button data-page="reviews" onclick="selectPage('reviews')">Company Reviews</button>
+      <button data-page="shop" onclick="selectPage('shop')">Shop</button>
+      <button data-page="community" class="active" onclick="selectPage('community')">Community</button>
+    </div>
+    <div class="nav-right">
+      <button class="icon-btn" aria-label="Cart">🛒</button>
+      <button class="icon-btn" aria-label="Notifications">🔔<span class="dot"></span></button>
+      <button class="btn-ghost">Sign in</button>
+      <button class="btn-solid">Get started</button>
+      <button class="hamburger" aria-label="Menu" onclick="toggleDrawer()">☰</button>
+    </div>
+  </nav>
+
+  <div class="mobile-drawer" id="mobileDrawer">
+    <button data-page="jobs" onclick="selectPage('jobs')">Jobs</button>
+    <button data-page="salaries" onclick="selectPage('salaries')">Salaries</button>
+    <button data-page="reviews" onclick="selectPage('reviews')">Company Reviews</button>
+    <button data-page="shop" onclick="selectPage('shop')">Shop</button>
+    <button data-page="community" class="active" onclick="selectPage('community')">Community</button>
+    <div class="drawer-auth">
+      <button class="btn-ghost">Sign in</button>
+      <button class="get-started">Get started</button>
+    </div>
+  </div>
+
+  <!-- ============ COMMUNITY ============ -->
+  <section class="page active" id="page-community">
+    <header class="hero">
+      <div class="eyebrow">CONNECT</div>
+      <h1>Build your professional network.</h1>
+      <p>Follow industry leaders, join communities, and stay visible to the people who matter — backed by real salary
+        and company data.</p>
+    </header>
+
+    <nav class="community-tabs">
+      <button class="active" data-tab="feed" onclick="selectCommunityTab('feed')"><span class="ic">🏠</span>
+        Feed</button>
+      <button data-tab="discover" onclick="selectCommunityTab('discover')"><span class="ic">🔍</span> Discover</button>
+      <button data-tab="messages" onclick="selectCommunityTab('messages')"><span class="ic">💬</span> Messages</button>
+      <button data-tab="notifications" onclick="selectCommunityTab('notifications')"><span class="ic">🔔</span>
+        Notifications<span class="ct-dot"></span></button>
+      <button data-tab="network" onclick="selectCommunityTab('network')"><span class="ic">🤝</span> Network</button>
+    </nav>
+
+    <!-- ---- FEED ---- -->
+    <div class="comm-view active" id="comm-feed">
+      <main class="layout">
+        <div class="col left">
+          <div class="card">
+            <div class="profile-banner"></div>
+            <div class="avatar-ring">
+              <div class="avatar">MW</div>
+            </div>
+            <div class="profile-name">Marv Wise</div>
+            <div class="profile-role">Product Designer · Tutaly Member</div>
+            <div class="profile-stats">
+              <div class="stat"><b>128</b><span>Connections</span></div>
+              <div class="stat"><b>14</b><span>Posts</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Shortcuts</div>
+            <div class="shortcut"><span class="ic">📝</span> My Posts</div>
+            <div class="shortcut"><span class="ic">🔖</span> Saved</div>
+            <div class="shortcut"><span class="ic">💰</span> My Salary Reports</div>
+            <div class="shortcut"><span class="ic">🏢</span> Companies I Follow</div>
+          </div>
+        </div>
+
+        <div class="col center">
+          <div class="segmented">
+            <button class="active">Global</button>
+            <button>Following</button>
+          </div>
+
+          <div class="card composer">
+            <div class="composer-top">
+              <div class="mini-avatar">MW</div>
+              <div class="composer-input"><textarea rows="1"
+                  placeholder="Share thoughts, ask a question, or post an update…"></textarea></div>
+            </div>
+            <div class="composer-tools">
+              <div class="tool-icons">
+                <button class="tool-chip">🖼️ Photo</button>
+                <button class="tool-chip salary">💰 Salary tag</button>
+                <button class="tool-chip">📊 Poll</button>
+              </div>
+              <button class="btn-solid">Post</button>
+            </div>
+          </div>
+
+          <div class="card post type-salary">
+            <div class="post-inner">
+              <div class="post-eyebrow">💰 Salary reveal</div>
+              <div class="post-head">
+                <div class="post-avatar">DA</div>
+                <div class="post-meta">
+                  <div class="post-name-row"><span class="post-name">Dara Ade</span><span class="verified">✔</span>
+                  </div>
+                  <div class="post-sub">Senior Backend Engineer · Fintech</div>
+                </div>
+                <div class="post-time">2h</div>
+              </div>
+              <p class="post-body">Negotiated a 22% bump moving from a Series B startup to a scale-up in Lagos. Happy to
+                share what worked in the thread — mostly about timing the offer against two competing interviews.</p>
+              <div class="salary-chip"><span class="role">Senior Backend Engineer</span><span
+                  class="divider"></span><span class="amt">₦9.2M–₦11M /yr</span></div>
+              <div class="post-actions">
+                <button class="pa-btn like">🤍 84</button>
+                <button class="pa-btn">💬 19</button>
+                <button class="pa-btn share">↗ Share</button>
+                <span class="pa-spacer"></span>
+                <button class="pa-btn">🔖</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card post type-career">
+            <div class="post-inner">
+              <div class="post-eyebrow">📈 Career move</div>
+              <div class="post-head">
+                <div class="post-avatar">TE</div>
+                <div class="post-meta">
+                  <div class="post-name-row"><span class="post-name">Tobi Eze</span></div>
+                  <div class="post-sub">Joined Flux Robotics as Head of Design</div>
+                </div>
+                <div class="post-time">5h</div>
+              </div>
+              <p class="post-body">After 4 years building the design system at my last company, starting a new chapter
+                leading design at Flux Robotics. Grateful for everyone who reviewed my portfolio along the way 🙏</p>
+              <div class="post-actions">
+                <button class="pa-btn like">🤍 212</button>
+                <button class="pa-btn">💬 37</button>
+                <button class="pa-btn share">↗ Share</button>
+                <span class="pa-spacer"></span>
+                <button class="pa-btn">🔖</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card post type-general">
+            <div class="post-inner">
+              <div class="post-eyebrow">💬 Discussion</div>
+              <div class="post-head">
+                <div class="post-avatar">MW</div>
+                <div class="post-meta">
+                  <div class="post-name-row"><span class="post-name">marv wise</span></div>
+                  <div class="post-sub">Product Designer</div>
+                </div>
+                <div class="post-time">3mo</div>
+              </div>
+              <p class="post-body">Hello 👋 — new here, excited to see honest conversations about comp and remote work
+                instead of the usual LinkedIn humble-brags.</p>
+              <div class="post-actions">
+                <button class="pa-btn like">🤍 6</button>
+                <button class="pa-btn">💬 2</button>
+                <button class="pa-btn share">↗ Share</button>
+                <span class="pa-spacer"></span>
+                <button class="pa-btn">🔖</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col right">
+          <div class="card">
+            <div class="card-title">Trending Topics</div>
+            <div class="trend-row"><span class="trend-tag">#RemoteWork</span><span class="trend-count">3.2K posts</span>
+            </div>
+            <div class="trend-row"><span class="trend-tag">#SalaryTransparency</span><span class="trend-count">2.8K
+                posts</span></div>
+            <div class="trend-row"><span class="trend-tag">#FintechHiring</span><span class="trend-count">1.1K
+                posts</span></div>
+            <div class="trend-row"><span class="trend-tag">#CareerGrowth</span><span class="trend-count">940
+                posts</span></div>
+          </div>
+          <div class="card">
+            <div class="card-title">People You May Know</div>
+            <div class="suggest-row">
+              <div class="suggest-avatar">KJ</div>
+              <div class="suggest-info">
+                <div class="suggest-name">Kemi Johnson</div>
+                <div class="suggest-role">Data Analyst · Paystack</div>
+              </div><button class="follow-btn">Follow</button>
+            </div>
+            <div class="suggest-row">
+              <div class="suggest-avatar">RS</div>
+              <div class="suggest-info">
+                <div class="suggest-name">Rian Saka</div>
+                <div class="suggest-role">Recruiter · Tutaly</div>
+              </div><button class="follow-btn">Follow</button>
+            </div>
+            <div class="suggest-row">
+              <div class="suggest-avatar">NP</div>
+              <div class="suggest-info">
+                <div class="suggest-name">Nia Peters</div>
+                <div class="suggest-role">Eng Manager · Flux Robotics</div>
+              </div><button class="follow-btn">Follow</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Company Spotlight</div>
+            <div class="spotlight-head">
+              <div class="spotlight-logo">FR</div>
+              <div>
+                <div class="spotlight-name">Flux Robotics</div>
+                <div class="stars">★★★★☆ 4.3 · 212 reviews</div>
+              </div>
+            </div>
+            <p class="spotlight-note">Employees rate work-life balance 4.6/5 this quarter — highest among fintech peers
+              on Tutaly.</p>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- ---- DISCOVER ---- -->
+    <div class="comm-view" id="comm-discover">
+      <main class="layout one-col">
+        <div class="col center">
+          <div class="card">
+            <div class="card-title">Communities to join</div>
+            <div class="topic-grid">
+              <div class="card topic-card">
+                <div class="topic-icon">🏦</div>
+                <div class="topic-name">Fintech Hiring</div>
+                <div class="topic-meta">12.4K members</div><button class="follow-btn">Join</button>
+              </div>
+              <div class="card topic-card">
+                <div class="topic-icon">🌍</div>
+                <div class="topic-name">Remote Work Nigeria</div>
+                <div class="topic-meta">9.8K members</div><button class="follow-btn">Join</button>
+              </div>
+              <div class="card topic-card">
+                <div class="topic-icon">👩🏽‍💻</div>
+                <div class="topic-name">Women in Tech</div>
+                <div class="topic-meta">7.1K members</div><button class="follow-btn">Join</button>
+              </div>
+              <div class="card topic-card">
+                <div class="topic-icon">🎨</div>
+                <div class="topic-name">Design Systems</div>
+                <div class="topic-meta">4.6K members</div><button class="follow-btn">Join</button>
+              </div>
+              <div class="card topic-card">
+                <div class="topic-icon">📊</div>
+                <div class="topic-name">Data &amp; Analytics</div>
+                <div class="topic-meta">5.3K members</div><button class="follow-btn">Join</button>
+              </div>
+              <div class="card topic-card">
+                <div class="topic-icon">🚀</div>
+                <div class="topic-name">Startup Founders</div>
+                <div class="topic-meta">3.9K members</div><button class="follow-btn">Join</button>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">People to follow</div>
+            <div class="suggest-row">
+              <div class="suggest-avatar">KJ</div>
+              <div class="suggest-info">
+                <div class="suggest-name">Kemi Johnson</div>
+                <div class="suggest-role">Data Analyst · Paystack</div>
+              </div><button class="follow-btn">Follow</button>
+            </div>
+            <div class="suggest-row">
+              <div class="suggest-avatar">RS</div>
+              <div class="suggest-info">
+                <div class="suggest-name">Rian Saka</div>
+                <div class="suggest-role">Recruiter · Tutaly</div>
+              </div><button class="follow-btn">Follow</button>
+            </div>
+            <div class="suggest-row">
+              <div class="suggest-avatar">NP</div>
+              <div class="suggest-info">
+                <div class="suggest-name">Nia Peters</div>
+                <div class="suggest-role">Eng Manager · Flux Robotics</div>
+              </div><button class="follow-btn">Follow</button>
+            </div>
+            <div class="suggest-row">
+              <div class="suggest-avatar">CO</div>
+              <div class="suggest-info">
+                <div class="suggest-name">Chidi Okonkwo</div>
+                <div class="suggest-role">CTO · Flux Robotics</div>
+              </div><button class="follow-btn">Follow</button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- ---- MESSAGES ---- -->
+    <div class="comm-view" id="comm-messages">
+      <main class="layout one-col">
+        <div class="col center">
+          <div class="card msg-shell">
+            <div class="msg-list">
+              <div class="msg-thread active">
+                <div class="suggest-avatar">RS</div>
+                <div class="msg-thread-info">
+                  <div class="msg-thread-name">Rian Saka</div>
+                  <div class="msg-thread-preview">Sure, I can send the JD today</div>
+                </div>
+                <div class="msg-thread-time">2h</div>
+              </div>
+              <div class="msg-thread">
+                <div class="suggest-avatar">NP</div>
+                <div class="msg-thread-info">
+                  <div class="msg-thread-name">Nia Peters</div>
+                  <div class="msg-thread-preview">Thanks for the referral! 🙌</div>
+                </div>
+                <div class="msg-unread"></div>
+              </div>
+              <div class="msg-thread">
+                <div class="suggest-avatar">KJ</div>
+                <div class="msg-thread-info">
+                  <div class="msg-thread-name">Kemi Johnson</div>
+                  <div class="msg-thread-preview">Let's connect next week</div>
+                </div>
+                <div class="msg-thread-time">1d</div>
+              </div>
+              <div class="msg-thread">
+                <div class="suggest-avatar">CO</div>
+                <div class="msg-thread-info">
+                  <div class="msg-thread-name">Chidi Okonkwo</div>
+                  <div class="msg-thread-preview">Loved your portfolio post</div>
+                </div>
+                <div class="msg-thread-time">3d</div>
+              </div>
+            </div>
+            <div class="msg-panel">
+              <div class="msg-panel-head">
+                <div class="suggest-avatar">RS</div>
+                <div>
+                  <div class="msg-panel-name">Rian Saka</div>
+                  <div class="msg-panel-role">Recruiter · Tutaly</div>
+                </div>
+              </div>
+              <div class="bubble in">Hey Marv — loved your salary reveal post. Are you open to a senior product design
+                role at a fintech client of ours?</div>
+              <div class="bubble out">Hi Rian! Yes, open to hearing more. What's the comp range?</div>
+              <div class="bubble in">Sure, I can send the JD today — range is ₦8M–₦10.5M depending on level.</div>
+              <div class="msg-composer">
+                <input placeholder="Write a message…">
+                <button class="btn-solid">Send</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- ---- NOTIFICATIONS ---- -->
+    <div class="comm-view" id="comm-notifications">
+      <main class="layout one-col">
+        <div class="col center">
+          <div class="card">
+            <div class="notif-group-label">New</div>
+            <div class="notif-row unread">
+              <div class="notif-icon like">❤️</div>
+              <div>
+                <div class="notif-text"><b>Tobi Eze</b> and 83 others liked your salary reveal</div>
+                <div class="notif-time">2h ago</div>
+              </div>
+            </div>
+            <div class="notif-row unread">
+              <div class="notif-icon follow">🤝</div>
+              <div>
+                <div class="notif-text"><b>Nia Peters</b> started following you</div>
+                <div class="notif-time">4h ago</div>
+              </div>
+            </div>
+            <div class="notif-row unread">
+              <div class="notif-icon salary">💰</div>
+              <div>
+                <div class="notif-text"><b>Dara Ade</b> tagged you in a salary discussion</div>
+                <div class="notif-time">6h ago</div>
+              </div>
+            </div>
+            <div class="notif-group-label">Earlier</div>
+            <div class="notif-row">
+              <div class="notif-icon like">💬</div>
+              <div>
+                <div class="notif-text"><b>Kemi Johnson</b> commented: "This is so helpful, thank you!"</div>
+                <div class="notif-time">1d ago</div>
+              </div>
+            </div>
+            <div class="notif-row">
+              <div class="notif-icon follow">🤝</div>
+              <div>
+                <div class="notif-text"><b>Chidi Okonkwo</b> accepted your connection request</div>
+                <div class="notif-time">2d ago</div>
+              </div>
+            </div>
+            <div class="notif-row">
+              <div class="notif-icon like">❤️</div>
+              <div>
+                <div class="notif-text"><b>Rian Saka</b> liked your career update</div>
+                <div class="notif-time">3d ago</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- ---- NETWORK ---- -->
+    <div class="comm-view" id="comm-network">
+      <main class="layout one-col">
+        <div class="col center">
+          <div class="segmented">
+            <button class="active" onclick="selectNetworkTab(this,'connections')">Connections · 128</button>
+            <button onclick="selectNetworkTab(this,'invitations')">Invitations · 3</button>
+            <button onclick="selectNetworkTab(this,'suggested')">Suggested</button>
+          </div>
+
+          <div id="net-connections">
+            <div class="card">
+              <div class="net-grid">
+                <div class="net-card">
+                  <div class="net-avatar">TE</div>
+                  <div class="net-name">Tobi Eze</div>
+                  <div class="net-role">Head of Design · Flux Robotics</div>
+                  <div class="net-actions"><button class="connect">Message</button></div>
+                </div>
+                <div class="net-card">
+                  <div class="net-avatar">DA</div>
+                  <div class="net-name">Dara Ade</div>
+                  <div class="net-role">Sr. Backend Engineer</div>
+                  <div class="net-actions"><button class="connect">Message</button></div>
+                </div>
+                <div class="net-card">
+                  <div class="net-avatar">KJ</div>
+                  <div class="net-name">Kemi Johnson</div>
+                  <div class="net-role">Data Analyst · Paystack</div>
+                  <div class="net-actions"><button class="connect">Message</button></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="net-invitations" style="display:none;">
+            <div class="card">
+              <div class="net-grid">
+                <div class="net-card">
+                  <div class="net-avatar">BF</div>
+                  <div class="net-name">Bola Fashola</div>
+                  <div class="net-role">Product Manager · Interswitch</div>
+                  <div class="net-actions"><button class="accept">Accept</button><button
+                      class="decline">Decline</button></div>
+                </div>
+                <div class="net-card">
+                  <div class="net-avatar">JU</div>
+                  <div class="net-name">Jide Uche</div>
+                  <div class="net-role">iOS Engineer</div>
+                  <div class="net-actions"><button class="accept">Accept</button><button
+                      class="decline">Decline</button></div>
+                </div>
+                <div class="net-card">
+                  <div class="net-avatar">AA</div>
+                  <div class="net-name">Amaka Ali</div>
+                  <div class="net-role">HR Business Partner</div>
+                  <div class="net-actions"><button class="accept">Accept</button><button
+                      class="decline">Decline</button></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="net-suggested" style="display:none;">
+            <div class="card">
+              <div class="net-grid">
+                <div class="net-card">
+                  <div class="net-avatar">CO</div>
+                  <div class="net-name">Chidi Okonkwo</div>
+                  <div class="net-role">CTO · Flux Robotics</div>
+                  <div class="net-actions"><button class="connect">Connect</button></div>
+                </div>
+                <div class="net-card">
+                  <div class="net-avatar">RS</div>
+                  <div class="net-name">Rian Saka</div>
+                  <div class="net-role">Recruiter · Tutaly</div>
+                  <div class="net-actions"><button class="connect">Connect</button></div>
+                </div>
+                <div class="net-card">
+                  <div class="net-avatar">NP</div>
+                  <div class="net-name">Nia Peters</div>
+                  <div class="net-role">Eng Manager · Flux Robotics</div>
+                  <div class="net-actions"><button class="connect">Connect</button></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </section>
+
+  <!-- ============ JOBS ============ -->
+  <section class="page" id="page-jobs">
+    <header class="hero">
+      <div class="eyebrow">HIRING NOW</div>
+      <h1>Find your next role.</h1>
+      <p>Every listing shows the real salary band before you apply — no guessing games.</p>
+    </header>
+    <main class="layout two-col">
+      <div class="col left">
+        <div class="card">
+          <div class="card-title">Refine</div>
+          <div class="filter-chip active" style="display:block; margin-bottom:8px; text-align:left;">Remote</div>
+          <div class="filter-chip" style="display:block; margin-bottom:8px; text-align:left;">Full-time</div>
+          <div class="filter-chip" style="display:block; margin-bottom:8px; text-align:left;">₦5M+ /yr</div>
+          <div class="filter-chip" style="display:block; text-align:left;">Entry level</div>
+        </div>
+      </div>
+      <div class="col center">
+        <div class="card search-bar">
+          <div class="search-field"><span class="ic">🔍</span><input placeholder="Job title or keyword"></div>
+          <div class="search-field" style="max-width:220px;"><span class="ic">📍</span><input placeholder="Location">
+          </div>
+          <button class="btn-solid">Search</button>
+        </div>
+
+        <div class="card job-card">
+          <span class="featured-badge">Featured</span>
+          <div class="job-top">
+            <div class="job-logo">FR</div>
+            <div>
+              <div class="job-title">Senior Product Designer</div>
+              <div class="job-sub">Flux Robotics · Lagos (Hybrid)</div>
+            </div>
+          </div>
+          <div class="job-tags"><span class="job-tag">Full-time</span><span class="job-tag">5+ yrs</span><span
+              class="job-tag">Design Systems</span></div>
+          <div class="job-bottom">
+            <span class="job-salary">₦7.5M–₦9.8M /yr</span>
+            <div class="job-actions"><button class="save">Save</button><button class="apply">Apply</button></div>
+          </div>
+        </div>
+
+        <div class="card job-card">
+          <div class="job-top">
+            <div class="job-logo">PY</div>
+            <div>
+              <div class="job-title">Backend Engineer (Node.js)</div>
+              <div class="job-sub">Paystack · Remote</div>
+            </div>
+          </div>
+          <div class="job-tags"><span class="job-tag">Full-time</span><span class="job-tag">Remote</span><span
+              class="job-tag">Fintech</span></div>
+          <div class="job-bottom">
+            <span class="job-salary">₦6M–₦8.4M /yr</span>
+            <div class="job-actions"><button class="save">Save</button><button class="apply">Apply</button></div>
+          </div>
+        </div>
+
+        <div class="card job-card">
+          <div class="job-top">
+            <div class="job-logo">TL</div>
+            <div>
+              <div class="job-title">Growth Marketing Manager</div>
+              <div class="job-sub">Tutaly · Lagos</div>
+            </div>
+          </div>
+          <div class="job-tags"><span class="job-tag">Full-time</span><span class="job-tag">3+ yrs</span></div>
+          <div class="job-bottom">
+            <span class="job-salary">₦4.8M–₦6.2M /yr</span>
+            <div class="job-actions"><button class="save">Save</button><button class="apply">Apply</button></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </section>
+
+  <!-- ============ SALARIES ============ -->
+  <section class="page" id="page-salaries">
+    <header class="hero">
+      <div class="eyebrow">SALARY EXPLORER</div>
+      <h1>Know what you're worth.</h1>
+      <p>Real, verified pay ranges reported by professionals across Nigeria's top companies.</p>
+    </header>
+    <main class="layout one-col">
+      <div class="col center">
+        <div class="card search-bar">
+          <div class="search-field"><span class="ic">🔍</span><input placeholder="Search a job title or company"></div>
+          <button class="btn-solid">Search</button>
+        </div>
+
+        <div class="card salary-card">
+          <div class="salary-card-top">
+            <div>
+              <div class="salary-role">Senior Backend Engineer</div>
+              <div class="salary-company">Fintech · 340 reports</div>
+            </div>
+            <div class="salary-median"><b>₦10.1M</b><span>Median /yr</span></div>
+          </div>
+          <div class="salary-bar-wrap">
+            <div class="salary-bar">
+              <div class="salary-bar-fill" style="width:68%"></div>
+            </div>
+            <div class="salary-range-labels"><span>₦6.5M</span><span>₦14.2M</span></div>
+          </div>
+          <div class="salary-meta"><span><b>+18%</b> YoY growth</span><span><b>92%</b> report bonuses</span></div>
+        </div>
+
+        <div class="card salary-card">
+          <div class="salary-card-top">
+            <div>
+              <div class="salary-role">Product Designer</div>
+              <div class="salary-company">Tech &amp; Product · 210 reports</div>
+            </div>
+            <div class="salary-median"><b>₦7.2M</b><span>Median /yr</span></div>
+          </div>
+          <div class="salary-bar-wrap">
+            <div class="salary-bar">
+              <div class="salary-bar-fill" style="width:52%"></div>
+            </div>
+            <div class="salary-range-labels"><span>₦4.1M</span><span>₦10.8M</span></div>
+          </div>
+          <div class="salary-meta"><span><b>+9%</b> YoY growth</span><span><b>61%</b> report bonuses</span></div>
+        </div>
+
+        <div class="card salary-card">
+          <div class="salary-card-top">
+            <div>
+              <div class="salary-role">Data Analyst</div>
+              <div class="salary-company">Fintech · 156 reports</div>
+            </div>
+            <div class="salary-median"><b>₦5.6M</b><span>Median /yr</span></div>
+          </div>
+          <div class="salary-bar-wrap">
+            <div class="salary-bar">
+              <div class="salary-bar-fill" style="width:41%"></div>
+            </div>
+            <div class="salary-range-labels"><span>₦3.2M</span><span>₦8.9M</span></div>
+          </div>
+          <div class="salary-meta"><span><b>+14%</b> YoY growth</span><span><b>48%</b> report bonuses</span></div>
+        </div>
+      </div>
+    </main>
+  </section>
+
+  <!-- ============ COMPANY REVIEWS ============ -->
+  <section class="page" id="page-reviews">
+    <header class="hero">
+      <div class="eyebrow">TRANSPARENCY</div>
+      <h1>Read what it's really like.</h1>
+      <p>Anonymous, verified reviews from employees at the companies you're considering.</p>
+    </header>
+    <main class="layout one-col">
+      <div class="col center">
+        <div class="card search-bar">
+          <div class="search-field"><span class="ic">🔍</span><input placeholder="Search a company"></div>
+          <button class="btn-solid">Search</button>
+        </div>
+
+        <div class="card rating-hero">
+          <div class="rating-big"><b>4.3</b>
+            <div class="stars">★★★★☆</div>
+            <div class="count">212 reviews</div>
+          </div>
+          <div class="rating-breakdown">
+            <div class="rb-row"><span class="rb-label">Culture</span>
+              <div class="rb-track">
+                <div class="rb-fill" style="width:88%"></div>
+              </div><span class="rb-val">4.4</span>
+            </div>
+            <div class="rb-row"><span class="rb-label">Compensation</span>
+              <div class="rb-track">
+                <div class="rb-fill" style="width:80%"></div>
+              </div><span class="rb-val">4.0</span>
+            </div>
+            <div class="rb-row"><span class="rb-label">Work-life balance</span>
+              <div class="rb-track">
+                <div class="rb-fill" style="width:92%"></div>
+              </div><span class="rb-val">4.6</span>
+            </div>
+            <div class="rb-row"><span class="rb-label">Management</span>
+              <div class="rb-track">
+                <div class="rb-fill" style="width:70%"></div>
+              </div><span class="rb-val">3.5</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card review-card">
+          <div class="review-head">
+            <div>
+              <div class="review-title">Flux Robotics — Product Designer</div>
+              <div class="review-role">Current employee · 1.5 yrs</div>
+            </div>
+            <div class="review-stars">★★★★★</div>
+          </div>
+          <div class="review-pc">
+            <div class="pros">
+              <div class="lbl">Pros</div>
+              <p>Design team has real influence on roadmap and leadership actually ships what gets promised in reviews.
+              </p>
+            </div>
+            <div class="cons">
+              <div class="lbl">Cons</div>
+              <p>Growth ladder past senior level is still undefined.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card review-card">
+          <div class="review-head">
+            <div>
+              <div class="review-title">Flux Robotics — Backend Engineer</div>
+              <div class="review-role">Former employee · 3 yrs</div>
+            </div>
+            <div class="review-stars">★★★★☆</div>
+          </div>
+          <div class="review-pc">
+            <div class="pros">
+              <div class="lbl">Pros</div>
+              <p>Strong engineering culture, fair on-call rotation, salary reviews every 6 months.</p>
+            </div>
+            <div class="cons">
+              <div class="lbl">Cons</div>
+              <p>Tooling budget got tighter after the last funding round.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </section>
+
+  <!-- ============ SHOP ============ -->
+  <section class="page" id="page-shop">
+    <header class="hero">
+      <div class="eyebrow">CAREER TOOLS</div>
+      <h1>Gear up for what's next.</h1>
+      <p>Templates, courses and coaching built by the people hiring on Tutaly.</p>
+    </header>
+    <main class="layout one-col">
+      <div class="col center">
+        <div class="shop-grid">
+          <div class="card product-card">
+            <div class="product-thumb">📄</div>
+            <div class="product-body">
+              <div class="product-name">ATS Resume Template Pack</div>
+              <div class="product-desc">12 tested layouts across design, eng &amp; product.</div>
+              <div class="product-bottom"><span class="product-price">₦4,500</span><button
+                  class="product-add">Add</button></div>
+            </div>
+          </div>
+          <div class="card product-card">
+            <div class="product-thumb">🎯</div>
+            <div class="product-body">
+              <div class="product-name">Salary Negotiation Course</div>
+              <div class="product-desc">4-hour video course + scripts that work.</div>
+              <div class="product-bottom"><span class="product-price">₦12,000</span><button
+                  class="product-add">Add</button></div>
+            </div>
+          </div>
+          <div class="card product-card">
+            <div class="product-thumb">🧑‍💼</div>
+            <div class="product-body">
+              <div class="product-name">1:1 Career Coaching Session</div>
+              <div class="product-desc">45 min with a vetted industry mentor.</div>
+              <div class="product-bottom"><span class="product-price">₦18,000</span><button
+                  class="product-add">Add</button></div>
+            </div>
+          </div>
+          <div class="card product-card">
+            <div class="product-thumb">📊</div>
+            <div class="product-body">
+              <div class="product-name">Interview Prep Workbook</div>
+              <div class="product-desc">Behavioral + technical question banks.</div>
+              <div class="product-bottom"><span class="product-price">₦6,000</span><button
+                  class="product-add">Add</button></div>
+            </div>
+          </div>
+          <div class="card product-card">
+            <div class="product-thumb">🎓</div>
+            <div class="product-body">
+              <div class="product-name">Portfolio Review</div>
+              <div class="product-desc">Line-by-line feedback within 48 hours.</div>
+              <div class="product-bottom"><span class="product-price">₦9,500</span><button
+                  class="product-add">Add</button></div>
+            </div>
+          </div>
+          <div class="card product-card">
+            <div class="product-thumb">📈</div>
+            <div class="product-body">
+              <div class="product-name">Market Rate Report — Q3</div>
+              <div class="product-desc">Full salary benchmarks by role &amp; city.</div>
+              <div class="product-bottom"><span class="product-price">₦3,000</span><button
+                  class="product-add">Add</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </section>
+
+  <nav class="bottomnav" id="bottomnav">
+    <button class="bn-item active" data-tab="feed" onclick="selectCommunityTab('feed')"><span
+        class="ic">🏠</span>Feed</button>
+    <button class="bn-item" data-tab="discover" onclick="selectCommunityTab('discover')"><span
+        class="ic">🔍</span>Discover</button>
+    <button class="bn-item" data-tab="messages" onclick="selectCommunityTab('messages')"><span
+        class="ic">💬</span>Messages</button>
+    <button class="bn-item" data-tab="notifications" onclick="selectCommunityTab('notifications')"><span
+        class="ic">🔔</span>Notifs<span class="bn-dot"></span></button>
+    <button class="bn-item" data-tab="network" onclick="selectCommunityTab('network')"><span
+        class="ic">🤝</span>Network</button>
+  </nav>
+
+  <script>
+    function selectPage(id) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('page-' + id).classList.add('active');
+      document.querySelectorAll('.nav-links button, .mobile-drawer button[data-page]').forEach(b => {
+        b.classList.toggle('active', b.dataset.page === id);
+      });
+      document.getElementById('mobileDrawer').classList.remove('open');
+      document.getElementById('bottomnav').style.display = (id === 'community') ? '' : 'none';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function toggleDrawer() {
+      document.getElementById('mobileDrawer').classList.toggle('open');
+    }
+    function selectCommunityTab(tab) {
+      document.querySelectorAll('.comm-view').forEach(v => v.classList.remove('active'));
+      document.getElementById('comm-' + tab).classList.add('active');
+      document.querySelectorAll('.community-tabs button[data-tab], .bn-item[data-tab]').forEach(b => {
+        b.classList.toggle('active', b.dataset.tab === tab);
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function selectNetworkTab(btn, tab) {
+      document.querySelectorAll('#comm-network .segmented button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      ['connections', 'invitations', 'suggested'].forEach(t => {
+        document.getElementById('net-' + t).style.display = (t === tab) ? '' : 'none';
+      });
+    }
+  </script>
+</body>
+
+</html>

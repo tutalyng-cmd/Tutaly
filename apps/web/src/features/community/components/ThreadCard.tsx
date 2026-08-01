@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { CommunityThread } from '../types/community.types';
-import { MessageSquare, ArrowBigUp, Share2, Shield, User, Briefcase } from 'lucide-react';
 import { communityService } from '../api/community.service';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -27,66 +26,71 @@ export default function ThreadCard({ thread }: Props) {
     }
   };
 
-  const getAuthorIcon = () => {
-    if (!thread.author.isAnonymous) return <User className="w-4 h-4 text-c400" />;
-    if (thread.author.name.toLowerCase().includes('employee')) return <Shield className="w-4 h-4 text-teal" />;
-    return <Briefcase className="w-4 h-4 text-blue" />;
-  };
+  // Map post types for border colors
+  // Default to general if tag isn't explicitly salary or career
+  let typeClass = 'border-l-c600';
+  let eyebrowText = '💬 Discussion';
+  let eyebrowColor = 'text-c500';
+
+  if (thread.content.toLowerCase().includes('salary') || thread.title?.toLowerCase().includes('salary')) {
+    typeClass = 'border-l-gold';
+    eyebrowText = '💰 Salary reveal';
+    eyebrowColor = 'text-gold';
+  } else if (thread.content.toLowerCase().includes('career') || thread.title?.toLowerCase().includes('career') || thread.title?.toLowerCase().includes('offer')) {
+    typeClass = 'border-l-teal';
+    eyebrowText = '📈 Career move';
+    eyebrowColor = 'text-teal';
+  }
 
   return (
-    <article className="bg-c900 rounded-lg border border-c700 p-4 transition-colors hover:border-c600">
-      <div className="flex items-start gap-3 mb-3">
-        <div className="w-10 h-10 rounded-full bg-c800 flex items-center justify-center overflow-hidden border border-c700">
-          {getAuthorIcon()}
+    <div className="bg-c800 border border-c700 rounded-2xl p-0 overflow-hidden mb-3.5">
+      <div className={`px-5 py-4.5 border-l-4 ${typeClass}`}>
+        <div className={`font-mono text-[10.5px] tracking-[0.09em] uppercase font-semibold mb-2.5 flex items-center gap-1.5 ${eyebrowColor}`}>
+          {eyebrowText}
         </div>
-        <div className="flex flex-col">
-          <div className="flex items-center gap-2">
-            <span className="font-semibold text-white text-sm">{thread.author.name}</span>
-            {thread.author.isAnonymous && (
-              <span className="px-1.5 py-0.5 rounded text-xs uppercase font-bold bg-blue-alpha-30 text-blue">
-                Anonymous
-              </span>
-            )}
+        
+        <div className="flex gap-3">
+          <div className="w-[42px] h-[42px] rounded-full bg-c700 border border-c700 flex items-center justify-center font-mono font-semibold text-[14px] shrink-0 text-white">
+            {thread.author.name === 'Anonymous' ? 'AN' : thread.author.name.substring(0, 2).toUpperCase()}
           </div>
-          <div className="flex items-center gap-2 text-xs text-c400">
-            <span>{thread.author.title}</span>
-            <span>•</span>
-            <span>{formatDistanceToNow(new Date(thread.createdAt), { addSuffix: true })}</span>
-            {thread.bowl && (
-              <>
-                <span>•</span>
-                <span className="text-blue font-medium">#{thread.bowl.name}</span>
-              </>
-            )}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-1.5 text-[14.5px]">
+              <span className="font-bold text-white">{thread.author.name}</span>
+              {!thread.author.isAnonymous && <span className="text-teal text-[13px]">✔</span>}
+            </div>
+            <div className="text-[12.5px] text-c500 mt-0.5">{thread.author.title}</div>
+          </div>
+          <div className="text-c500 text-[12.5px] whitespace-nowrap">
+            {formatDistanceToNow(new Date(thread.createdAt), { addSuffix: true })}
           </div>
         </div>
+
+        {thread.title && <h3 className="text-[15.5px] font-bold text-white mt-3 ml-[54px] max-w-[calc(100%-54px)]">{thread.title}</h3>}
+        <p className="text-[14.5px] leading-[1.55] text-white mt-2 ml-[54px] max-w-[calc(100%-54px)] whitespace-pre-wrap">
+          {thread.content}
+        </p>
+
+        {/* Action Buttons */}
+        <div className="flex items-center gap-1 mt-3.5 ml-[54px] pt-3 border-t border-c700">
+          <button 
+            onClick={handleUpvote}
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[13px] font-medium transition-colors border-0
+              ${hasVoted ? 'text-red bg-c700' : 'text-c500 bg-transparent hover:text-red hover:bg-c700'}`}
+          >
+            🤍 {upvotes}
+          </button>
+          <button className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-c500 text-[13px] font-medium bg-transparent border-0 hover:text-white hover:bg-c700 transition-colors">
+            💬 {thread.comments_count}
+          </button>
+          <button className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-c500 text-[13px] font-medium bg-transparent border-0 hover:text-teal hover:bg-c700 transition-colors">
+            ↗ Share
+          </button>
+          <span className="flex-1"></span>
+          <button className="flex items-center justify-center w-8 h-8 rounded-lg text-c500 text-[13px] bg-transparent border-0 hover:text-white hover:bg-c700 transition-colors">
+            🔖
+          </button>
+        </div>
       </div>
-
-      <h3 className="text-lg font-bold text-white mb-2 leading-snug">{thread.title}</h3>
-      <p className="text-c300 text-sm leading-relaxed mb-4 whitespace-pre-wrap line-clamp-4">
-        {thread.content}
-      </p>
-
-      <div className="flex items-center gap-4 text-c400">
-        <button
-          onClick={handleUpvote}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-colors ${
-            hasVoted ? 'bg-blue-alpha-30 text-blue' : 'bg-c800 hover:bg-c700'
-          }`}
-        >
-          <ArrowBigUp className={`w-5 h-5 ${hasVoted ? 'fill-current' : ''}`} />
-          <span className="text-sm font-medium">{upvotes}</span>
-        </button>
-
-        <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-c800 hover:bg-c700 transition-colors">
-          <MessageSquare className="w-4 h-4" />
-          <span className="text-sm font-medium">{thread.comments_count} Comments</span>
-        </button>
-
-        <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-full hover:bg-c800 transition-colors ml-auto">
-          <Share2 className="w-4 h-4" />
-        </button>
-      </div>
-    </article>
+    </div>
   );
 }

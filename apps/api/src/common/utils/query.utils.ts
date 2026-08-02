@@ -10,7 +10,10 @@ export function excludeTestAccounts<T extends ObjectLiteral>(
   qb: SelectQueryBuilder<T>,
   userAlias: string,
 ): SelectQueryBuilder<T> {
-  return qb.andWhere(`${userAlias}.isTestAccount = :isTestAccount`, {
-    isTestAccount: false,
-  });
+  return qb.andWhere(
+    `(${userAlias}.isTestAccount = :isTestAccount OR ${userAlias}.isTestAccount IS NULL)`,
+    {
+      isTestAccount: false,
+    },
+  );
 }

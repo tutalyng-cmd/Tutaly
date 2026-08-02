@@ -1,5 +1,6 @@
-import { toast } from 'react-hot-toast';
 'use client';
+
+import { toast } from 'react-hot-toast';
 
 import React, { useState, useRef, useEffect } from 'react';
 import { X, Image as ImageIcon, Loader2 } from 'lucide-react';

@@ -1,17 +1,16 @@
+'use client';
+
 import { toast } from 'react-hot-toast';
-'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { apiAuth } from '@/lib/api';
-'use client';
-
-import React, { useState, useEffect } from 'react';
-import { apiAuth } from '@/lib/api';
-import { Loader2 } from 'lucide-react';
+import { AlertCircle, Loader2 } from 'lucide-react';
 
 export default function EmployerSettingsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [loadError, setLoadError] = useState('');
   const [profile, setProfile] = useState<{ email: string; name: string } | null>(null);
   const [notifications, setNotifications] = useState({
     newApplicants: true,
@@ -26,6 +25,7 @@ export default function EmployerSettingsPage() {
   const [mfaToken, setMfaToken] = useState('');
   const [mfaCode, setMfaCode] = useState('');
   const [mfaLoading, setMfaLoading] = useState(false);
+  const [confirmingMfaDisable, setConfirmingMfaDisable] = useState(false);
 
   useEffect(() => {
     async function loadSettings() {
@@ -34,8 +34,10 @@ export default function EmployerSettingsPage() {
         if (!token) return;
 
         // Fetch User profile for email and MFA status
-        const userRes = await apiAuth.withToken(token).get('/user/me');
-        const empRes = await apiAuth.withToken(token).get('/user/employer/profile');
+        const [userRes, empRes] = await Promise.all([
+          apiAuth.withToken(token).get('/user/me'),
+          apiAuth.withToken(token).get('/user/employer/profile'),
+        ]);
         setProfile({
           email: userRes.data?.data?.email || '',
           name: empRes.data?.companyName || 'Employer',
@@ -52,6 +54,7 @@ export default function EmployerSettingsPage() {
         }
       } catch (err) {
         console.error('Failed to load settings', err);
+        setLoadError('We could not load all account settings. Refresh the page to try again.');
       } finally {
         setLoading(false);
       }
@@ -63,7 +66,7 @@ export default function EmployerSettingsPage() {
     try {
       const token = localStorage.getItem('access_token');
       if (!token) return;
-      
+
       const res = await apiAuth.withToken(token).post('/auth/mfa/setup', {});
       if (res.data?.mfaToken) {
         setMfaToken(res.data.mfaToken);
@@ -80,13 +83,13 @@ export default function EmployerSettingsPage() {
     try {
       const token = localStorage.getItem('access_token');
       if (!token) return;
-      
+
       await apiAuth.withToken(token).post('/auth/mfa/enable', {
         mfaToken,
         code: mfaCode,
         userId: 'temp' // the backend will overwrite this with the authenticated user ID
       });
-      
+
       setIsMfaEnabled(true);
       setMfaModalOpen(false);
       setMfaCode('');
@@ -99,17 +102,19 @@ export default function EmployerSettingsPage() {
   };
 
   const disableMfa = async () => {
-    if (!confirm('Are you sure you want to disable Two-Factor Authentication?')) return;
-    
+    setMfaLoading(true);
     try {
       const token = localStorage.getItem('access_token');
       if (!token) return;
-      
+
       await apiAuth.withToken(token).post('/auth/mfa/disable', {});
       setIsMfaEnabled(false);
-      toast.success('Two-Factor Authentication disabled');
+      setConfirmingMfaDisable(false);
+      toast.success('Two-factor authentication disabled');
     } catch (e: any) {
       toast.error(e.response?.data?.message || 'Failed to disable MFA');
+    } finally {
+      setMfaLoading(false);
     }
   };
 
@@ -124,7 +129,7 @@ export default function EmployerSettingsPage() {
       if (!token) return;
 
       await apiAuth.withToken(token).patch('/users/settings/notifications', notifications);
-      toast.success('Settings saved successfully!');
+      toast.success('Settings saved');
     } catch (e) {
       console.error('Failed to save settings', e);
       toast.error('Failed to save settings');
@@ -135,14 +140,22 @@ export default function EmployerSettingsPage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center py-20">
-        <Loader2 className="w-10 h-10 animate-spin text-green" />
+      <div className="settings-loading" role="status">
+        <Loader2 className="w-8 h-8 animate-spin text-green" aria-hidden="true" />
+        <span>Loading account settings…</span>
       </div>
     );
   }
 
   return (
     <>
+      {loadError && (
+        <div className="settings-alert" role="alert">
+          <AlertCircle size={18} aria-hidden="true" />
+          <span>{loadError}</span>
+        </div>
+      )}
+
       <div className="dcard">
         <div className="form-section">
           <div className="form-section__title">Account</div>
@@ -154,141 +167,147 @@ export default function EmployerSettingsPage() {
             </div>
             <div className="form-field">
               <label className="form-label" htmlFor="e-pass">Password</label>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <input className="input" type="password" defaultValue="••••••••••" disabled style={{ opacity: 0.6 }} />
-                <button className="btn btn--ghost btn--sm" style={{ whiteSpace: 'nowrap' }}>Change</button>
+              <div className="settings-inline-action">
+                <input className="input" type="password" id="e-pass" defaultValue="••••••••••" disabled />
+                <Link className="btn btn--ghost btn--sm" href="/auth/forgot-password">Reset</Link>
               </div>
             </div>
           </div>
         </div>
 
         <div className="form-section">
-          <div className="form-section__title">Account Security</div>
-          <div className="form-section__desc">Protect your account with Two-Factor Authentication.</div>
-          <div className="form-grid-2">
-            <div className="form-field">
-              <label className="form-label">Two-Factor Authentication (MFA)</label>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <span className={`text-sm ${isMfaEnabled ? 'text-green font-medium' : 'text-gray-500'}`}>
-                  {isMfaEnabled ? 'Enabled' : 'Disabled'}
-                </span>
-                <button 
-                  className={`btn btn--sm ${isMfaEnabled ? 'btn--ghost' : 'btn--primary'}`}
-                  onClick={isMfaEnabled ? disableMfa : enableMfaFlow}
-                >
-                  {isMfaEnabled ? 'Disable' : 'Enable'}
+          <div className="form-section__title">Account security</div>
+          <div className="form-section__desc">Require an email verification code when you sign in.</div>
+          <div className="settings-security-row">
+            <div>
+              <div className="form-label">Two-factor authentication</div>
+              <div className="settings-security-status">
+                Status: <strong>{isMfaEnabled ? 'Enabled' : 'Disabled'}</strong>
+              </div>
+            </div>
+            <button
+              type="button"
+              className={`btn btn--sm ${isMfaEnabled ? 'btn--ghost' : 'btn--primary'}`}
+              onClick={() => isMfaEnabled ? setConfirmingMfaDisable(true) : enableMfaFlow()}
+              disabled={mfaLoading}
+            >
+              {isMfaEnabled ? 'Disable' : 'Enable'}
+            </button>
+          </div>
+          {confirmingMfaDisable && (
+            <div className="settings-confirm" role="alert">
+              <div>
+                <strong>Disable two-factor authentication?</strong>
+                <span>Your account will only require your password at sign-in.</span>
+              </div>
+              <div className="settings-confirm__actions">
+                <button type="button" className="btn btn--ghost btn--sm" onClick={() => setConfirmingMfaDisable(false)}>Keep enabled</button>
+                <button type="button" className="btn btn--danger-outline" onClick={disableMfa} disabled={mfaLoading}>
+                  {mfaLoading ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> : 'Disable MFA'}
                 </button>
               </div>
             </div>
-          </div>
+          )}
         </div>
 
         <div className="form-section">
           <div className="form-section__title">Notifications</div>
-          <div className="toggle-row" onClick={() => toggleNotification('newApplicants')} style={{ cursor: 'pointer' }}>
-            <div>
+          <button type="button" className="toggle-row" role="switch" aria-checked={notifications.newApplicants} onClick={() => toggleNotification('newApplicants')}>
+            <span>
               <div className="toggle-row__title">New applicants</div>
               <div className="toggle-row__desc">Get notified when someone applies to your job posts</div>
-            </div>
-            <div className={`toggle-switch ${notifications.newApplicants ? 'on' : ''}`}></div>
-          </div>
-          <div className="toggle-row" onClick={() => toggleNotification('weeklyDigest')} style={{ cursor: 'pointer' }}>
-            <div>
+            </span>
+            <span className={`toggle-switch ${notifications.newApplicants ? 'on' : ''}`} aria-hidden="true"></span>
+          </button>
+          <button type="button" className="toggle-row" role="switch" aria-checked={notifications.weeklyDigest} onClick={() => toggleNotification('weeklyDigest')}>
+            <span>
               <div className="toggle-row__title">Weekly performance digest</div>
               <div className="toggle-row__desc">Summary of views, applications, and pipeline movement</div>
-            </div>
-            <div className={`toggle-switch ${notifications.weeklyDigest ? 'on' : ''}`}></div>
-          </div>
-          <div className="toggle-row" onClick={() => toggleNotification('expiryReminders')} style={{ cursor: 'pointer' }}>
-            <div>
+            </span>
+            <span className={`toggle-switch ${notifications.weeklyDigest ? 'on' : ''}`} aria-hidden="true"></span>
+          </button>
+          <button type="button" className="toggle-row" role="switch" aria-checked={notifications.expiryReminders} onClick={() => toggleNotification('expiryReminders')}>
+            <span>
               <div className="toggle-row__title">Job post expiry reminders</div>
               <div className="toggle-row__desc">Alert 3 days before a listing expires</div>
-            </div>
-            <div className={`toggle-switch ${notifications.expiryReminders ? 'on' : ''}`}></div>
-          </div>
-          <div className="toggle-row" onClick={() => toggleNotification('productUpdates')} style={{ cursor: 'pointer' }}>
-            <div>
+            </span>
+            <span className={`toggle-switch ${notifications.expiryReminders ? 'on' : ''}`} aria-hidden="true"></span>
+          </button>
+          <button type="button" className="toggle-row" role="switch" aria-checked={notifications.productUpdates} onClick={() => toggleNotification('productUpdates')}>
+            <span>
               <div className="toggle-row__title">Product updates &amp; tips</div>
               <div className="toggle-row__desc">Occasional emails about new employer features</div>
-            </div>
-            <div className={`toggle-switch ${notifications.productUpdates ? 'on' : ''}`}></div>
-          </div>
+            </span>
+            <span className={`toggle-switch ${notifications.productUpdates ? 'on' : ''}`} aria-hidden="true"></span>
+          </button>
         </div>
 
-        <div className="form-section" style={{ borderBottom: 'none', paddingBottom: 0 }}>
-          <div className="form-section__title">Team members</div>
-          <div className="form-section__desc">People with access to this employer account.</div>
+        <div className="form-section">
+          <div className="form-section__title">Workspace owner</div>
+          <div className="form-section__desc">The account currently responsible for this employer workspace.</div>
 
           <div className="team-row">
-            <div className="team-row__avatar" style={{ background: 'linear-gradient(135deg, var(--blue), var(--blue-l))' }}>
-              {profile?.name ? profile.name.substring(0,2).toUpperCase() : 'OW'}
+            <div className="team-row__avatar team-row__avatar--owner">
+              {profile?.name ? profile.name.substring(0, 2).toUpperCase() : 'OW'}
             </div>
             <div>
               <div className="team-row__name">{profile?.name || 'Owner'}</div>
               <div className="team-row__email">{profile?.email || 'owner@example.com'}</div>
             </div>
             <div className="team-row__role">
-              <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--gold-h)', background: 'var(--gold-light)', padding: '3px 10px', borderRadius: 'var(--r-pill)' }}>Owner</span>
+              <span className="team-row__badge">Owner</span>
             </div>
           </div>
-          
-          {/* Mock extra members for UI demonstration */}
-          <div className="team-row">
-            <div className="team-row__avatar" style={{ background: 'linear-gradient(135deg, var(--green), var(--green-light))' }}>NT</div>
-            <div>
-              <div className="team-row__name">Ngozi Thomas</div>
-              <div className="team-row__email">ngozi@example.com</div>
-            </div>
-            <div className="team-row__role">
-              <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--c-400)', background: 'var(--c-700)', padding: '3px 10px', borderRadius: 'var(--r-pill)' }}>Recruiter</span>
-            </div>
-          </div>
-          <button className="btn btn--ghost btn--sm" style={{ marginTop: '14px' }}>+ Invite team member</button>
         </div>
       </div>
 
       <div className="dcard-footer">
-        <button className="btn btn--primary" onClick={handleSave} disabled={saving}>
-          {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save settings'}
+        <button className="btn btn--primary" onClick={handleSave} disabled={saving} aria-busy={saving}>
+          {saving ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> : 'Save settings'}
         </button>
       </div>
 
       {mfaModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-navy/50 backdrop-blur-sm">
-          <div className="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl relative">
-            <h3 className="text-xl font-semibold text-navy mb-2">Verify your email</h3>
-            <p className="text-gray-500 mb-6 text-sm">
-              We've sent a 6-digit code to <strong>{profile?.email}</strong>. Enter it below to enable Two-Factor Authentication.
+        <div className="settings-modal-backdrop">
+          <section className="settings-modal" role="dialog" aria-modal="true" aria-labelledby="mfa-dialog-title" aria-describedby="mfa-dialog-description">
+            <h2 id="mfa-dialog-title">Verify your email</h2>
+            <p id="mfa-dialog-description">
+              We&apos;ve sent a 6-digit code to <strong>{profile?.email}</strong>. Enter it below to enable two-factor authentication.
             </p>
-            <div className="space-y-4">
+            <form onSubmit={(event) => { event.preventDefault(); verifyMfa(); }}>
               <div className="form-field">
-                <label className="form-label text-sm text-navy/70">Confirmation Code</label>
+                <label className="form-label" htmlFor="mfa-code">Confirmation code</label>
                 <input
                   type="text"
+                  id="mfa-code"
                   placeholder="000000"
-                  className="input text-center text-xl tracking-[0.5em] font-mono py-3"
+                  className="input settings-code-input"
                   maxLength={6}
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  autoFocus
                   value={mfaCode}
                   onChange={(e) => setMfaCode(e.target.value.replace(/\D/g, ''))}
                 />
               </div>
-              <div className="flex gap-3 pt-2">
-                <button 
+              <div className="settings-modal__actions">
+                <button
+                  type="button"
                   className="btn btn--ghost flex-1"
                   onClick={() => { setMfaModalOpen(false); setMfaCode(''); }}
                 >
                   Cancel
                 </button>
-                <button 
+                <button
+                  type="submit"
                   className="btn btn--primary flex-1"
-                  onClick={verifyMfa}
                   disabled={mfaCode.length !== 6 || mfaLoading}
                 >
-                  {mfaLoading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'Verify & Enable'}
+                  {mfaLoading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" aria-hidden="true" /> : 'Verify and enable'}
                 </button>
               </div>
-            </div>
-          </div>
+            </form>
+          </section>
         </div>
       )}
     </>

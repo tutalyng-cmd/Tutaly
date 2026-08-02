@@ -3,8 +3,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Loader2 } from 'lucide-react';
-import { api } from '@/lib/api';
+import Image from 'next/image';
+import { AlertCircle, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { api, setMemoryToken } from '@/lib/api';
 
 export default function SignIn() {
   const router = useRouter();
@@ -30,6 +31,7 @@ export default function SignIn() {
         return;
       }
 
+      setMemoryToken(response.data.accessToken);
       localStorage.setItem('access_token', response.data.accessToken);
       localStorage.setItem('user', JSON.stringify(response.data.user));
 
@@ -45,44 +47,34 @@ export default function SignIn() {
   return (
     <div className="auth-shell">
 
-      {/* LEFT BRANDED PANEL */}
       <aside className="auth-panel">
-        {/* <Link href="/" className="auth-panel__logo">
-          <img src="/logo.png" alt="Tutaly" />
-        </Link> */}
+        <Link href="/" className="auth-panel__logo" aria-label="Tutaly home">
+          <Image src="/logo.png" alt="Tutaly" width={140} height={40} />
+        </Link>
 
         <div className="auth-panel__content">
-          <div className="auth-panel__quote">
-            "Tutaly helped me see what I was actually worth. The salary data gave me the confidence to negotiate a 30% bump."
-          </div>
-          <div className="auth-panel__author">
-            <div className="auth-panel__avatar">OS</div>
-            <div>
-              <div className="auth-panel__name">Oluwatobi Salako</div>
-              <div className="auth-panel__title">Senior Software Engineer</div>
-            </div>
-          </div>
+          <div className="auth-panel__eyebrow">One professional identity</div>
+          <div className="auth-panel__quote">Return to your jobs, applications, salary insights, marketplace orders, and professional community.</div>
+          <p className="auth-panel__support">Tutaly keeps every part of your working life in one trusted Nigerian-first ecosystem.</p>
         </div>
 
         <div className="auth-panel__stats">
           <div className="auth-panel__stat">
-            <div className="auth-panel__stat-num">12k+</div>
-            <div className="auth-panel__stat-label">Verified Salaries</div>
+            <div className="auth-panel__stat-num">Jobs</div>
+            <div className="auth-panel__stat-label">Discover roles</div>
           </div>
           <div className="auth-panel__stat">
-            <div className="auth-panel__stat-num">4.8</div>
-            <div className="auth-panel__stat-label">Avg rating</div>
+            <div className="auth-panel__stat-num">Salaries</div>
+            <div className="auth-panel__stat-label">Know your worth</div>
           </div>
         </div>
       </aside>
 
-      {/* RIGHT FORM PANEL */}
       <main className="auth-form-side reveal visible">
         <div className="auth-form-wrap">
-
-          {/* <Link href="/" className="auth-mobile-logo">
-            <img src="/logo.png" alt="Tutaly" />
-          </Link> */}
+          <Link href="/" className="auth-mobile-logo" aria-label="Tutaly home">
+            <Image src="/logo.png" alt="Tutaly" width={140} height={40} />
+          </Link>
 
           <h1 className="auth-heading">Welcome back</h1>
           <p className="auth-subheading">
@@ -91,22 +83,23 @@ export default function SignIn() {
 
           <form onSubmit={handleSubmit}>
             {error && (
-              <div className="field-error" style={{ marginBottom: '16px' }}>
-                {error}
+              <div className="auth-alert" role="alert">
+                <AlertCircle size={16} /> <span>{error}</span>
               </div>
             )}
 
             <div className="form-field">
               <label className="form-label" htmlFor="email">
-                Work Email <span className="required">*</span>
+                Email address <span className="required">*</span>
               </label>
               <div className="input-wrap">
                 <input
                   type="email"
                   id="email"
                   className="input"
-                  placeholder="you@company.com"
+                  placeholder="you@example.com"
                   required
+                  autoComplete="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
@@ -124,6 +117,7 @@ export default function SignIn() {
                   className="input"
                   placeholder="••••••••"
                   required
+                  autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
@@ -131,17 +125,15 @@ export default function SignIn() {
                   type="button"
                   className="input-toggle"
                   onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  aria-pressed={showPassword}
                 >
-                  {showPassword ? 'HIDE' : 'SHOW'}
+                  {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
                 </button>
               </div>
             </div>
 
-            <div className="auth-row-between">
-              <div className="check-row">
-                <input type="checkbox" id="remember" className="filter-checkbox" />
-                <label htmlFor="remember">Remember for 30 days</label>
-              </div>
+            <div className="auth-row-between auth-row-between--end">
               <Link href="/auth/forgot-password" className="forgot-link">Forgot password?</Link>
             </div>
 

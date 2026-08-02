@@ -1,5 +1,6 @@
-import { toast } from 'react-hot-toast';
 'use client';
+
+import { toast } from 'react-hot-toast';
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
@@ -19,13 +20,14 @@ export default function ShopProductDetailPage() {
   const { id } = useParams();
   const router = useRouter();
   const { refreshCart } = useCart();
-  
+
   const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [addingToCart, setAddingToCart] = useState(false);
   const [added, setAdded] = useState(false);
-  
+
   const [activeTab, setActiveTab] = useState<'desc' | 'incl' | 'rev'>('desc');
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [qty, setQty] = useState(1);
 
   useEffect(() => {
@@ -43,11 +45,11 @@ export default function ShopProductDetailPage() {
     }
   };
 
-  const handleAddToCart = async () => {
+  const handleAddToCart = async (): Promise<boolean> => {
     const token = localStorage.getItem('access_token');
     if (!token) {
       router.push('/auth/signin');
-      return;
+      return false;
     }
 
     setAddingToCart(true);
@@ -59,17 +61,19 @@ export default function ShopProductDetailPage() {
       await refreshCart();
       setAdded(true);
       setTimeout(() => setAdded(false), 3000);
+      return true;
     } catch (err) {
       console.error('Failed to add to cart', err);
       toast.error('Failed to add to cart. Please try again.');
+      return false;
     } finally {
       setAddingToCart(false);
     }
   };
 
   const handleBuyNow = async () => {
-    await handleAddToCart();
-    router.push('/shop/checkout');
+    const wasAdded = await handleAddToCart();
+    if (wasAdded) router.push('/shop/checkout');
   };
 
   const formatPrice = (price: number, currency?: string) => {
@@ -79,7 +83,7 @@ export default function ShopProductDetailPage() {
   };
 
   const starString = (r: number) => {
-    const full = Math.round(r || 0);
+    const full = Math.min(5, Math.max(0, Math.round(r || 0)));
     return '★'.repeat(full) + '☆'.repeat(5 - full);
   };
 
@@ -108,9 +112,10 @@ export default function ShopProductDetailPage() {
   const sellerName = product.seller?.profile?.companyName || product.seller?.firstName || 'Tutaly Creator';
   const typeInfo = LISTING_TYPE_MAP[product.listingType] || LISTING_TYPE_MAP.digital;
   const MainIcon = typeInfo.icon;
-  const rating = product.rating || 4.9;
+  const rating = Number(product.rating) || 0;
   const reviewCount = product.reviewCount || 0;
   const isPhysical = product.listingType === 'physical';
+  const canPurchase = product.pricingType === 'per_unit';
 
   return (
     <div className="shop-view">
@@ -125,7 +130,7 @@ export default function ShopProductDetailPage() {
           <div>
             <div className="shop-gallery-main">
               {product.imageUrls?.[0] ? (
-                <img src={product.imageUrls[0]} alt={product.title} />
+                <img src={product.imageUrls[activeImageIndex]} alt={product.title} />
               ) : (
                 <MainIcon />
               )}
@@ -133,9 +138,16 @@ export default function ShopProductDetailPage() {
             {product.imageUrls?.length > 1 && (
               <div className="shop-gallery-thumbs">
                 {product.imageUrls.map((url: string, i: number) => (
-                  <div key={i} className={`shop-thumb ${i === 0 ? 'active' : ''}`}>
+                  <button
+                    type="button"
+                    key={url}
+                    className={`shop-thumb ${i === activeImageIndex ? 'active' : ''}`}
+                    onClick={() => setActiveImageIndex(i)}
+                    aria-label={`View product image ${i + 1}`}
+                    aria-pressed={i === activeImageIndex}
+                  >
                     <img src={url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }} />
-                  </div>
+                  </button>
                 ))}
               </div>
             )}
@@ -145,21 +157,18 @@ export default function ShopProductDetailPage() {
               <button className={`shop-tab-btn ${activeTab === 'incl' ? 'active' : ''}`} onClick={() => setActiveTab('incl')}>What's included</button>
               <button className={`shop-tab-btn ${activeTab === 'rev' ? 'active' : ''}`} onClick={() => setActiveTab('rev')}>Reviews ({reviewCount})</button>
             </div>
-            
+
             <div className={`shop-tab-panel ${activeTab === 'desc' ? 'active' : ''}`}>
               {product.description ? (
-                <div dangerouslySetInnerHTML={{ __html: product.description.replace(/\n/g, '<br />') }} />
+                <p style={{ whiteSpace: 'pre-wrap' }}>{product.description}</p>
               ) : (
                 <p>No detailed description provided for this resource.</p>
               )}
             </div>
             <div className={`shop-tab-panel ${activeTab === 'incl' ? 'active' : ''}`}>
-              <p>Everything you need to get started:</p>
-              <ul>
-                <li>Instant access after payment</li>
-                <li>Lifetime updates for digital products</li>
-                <li>Verified seller guarantee</li>
-              </ul>
+              {product.listingType === 'digital' && <p>Download access is provided from your Orders page after payment is confirmed.</p>}
+              {product.listingType === 'physical' && <p>The seller coordinates fulfillment and delivery after payment. Any delivery charge is agreed separately.</p>}
+              {product.listingType === 'service' && <p>The seller contacts you through the order flow to arrange the service after payment.</p>}
             </div>
             <div className={`shop-tab-panel ${activeTab === 'rev' ? 'active' : ''}`}>
               {!product.reviews || product.reviews.length === 0 ? (
@@ -184,7 +193,7 @@ export default function ShopProductDetailPage() {
 
             <div className="shop-section-heading">Frequently bought together</div>
             <div className="shop-related-scroll">
-               <div style={{ color: 'var(--text-secondary)' }}>More items from this category will appear here.</div>
+              <div style={{ color: 'var(--text-secondary)' }}>More items from this category will appear here.</div>
             </div>
           </div>
 
@@ -192,10 +201,14 @@ export default function ShopProductDetailPage() {
             <div className="shop-pd-cat">{product.category || 'Category'} · {typeInfo.label}</div>
             <h1 className="shop-pd-title">{product.title}</h1>
             <div className="shop-pd-meta">
-              <span className="shop-rating"><span className="shop-stars">{starString(rating)}</span> {rating.toFixed(1)} ({reviewCount})</span>
-              <span className="shop-verified"><CheckCircle2 size={13} /> Verified creator</span>
+              {reviewCount > 0 ? (
+                <span className="shop-rating"><span className="shop-stars">{starString(rating)}</span> {rating.toFixed(1)} ({reviewCount})</span>
+              ) : (
+                <span className="shop-rating">No reviews yet</span>
+              )}
+              <span className="shop-verified"><CheckCircle2 size={13} /> Tutaly seller</span>
             </div>
-            
+
             <div className="shop-price-row">
               <span className="shop-price">
                 {product.pricingType === 'per_unit' ? formatPrice(product.price, product.currency) : 'Custom Quote'}
@@ -204,33 +217,43 @@ export default function ShopProductDetailPage() {
 
             {isPhysical ? (
               <div className="shop-delivery-line">
-                <Truck size={16} /> Delivery in 3–5 business days, nationwide
+                <Truck size={16} /> Delivery timing and fees are arranged with the seller
               </div>
-            ) : (
+            ) : product.listingType === 'digital' ? (
               <div className="shop-delivery-line">
                 <Download size={16} /> Instant digital download after payment
               </div>
+            ) : (
+              <div className="shop-delivery-line">
+                <Briefcase size={16} /> Service scheduling is arranged with the seller after payment
+              </div>
             )}
 
-            {product.pricingType === 'per_unit' && (
+            {canPurchase && (
               <div className="shop-qty-row">
                 <span className="shop-qty-label">Quantity</span>
                 <div className="shop-qty-stepper">
-                  <button onClick={() => setQty(Math.max(1, qty - 1))}>−</button>
+                  <button type="button" onClick={() => setQty(Math.max(1, qty - 1))} aria-label="Decrease quantity">−</button>
                   <span>{qty}</span>
-                  <button onClick={() => setQty(qty + 1)}>+</button>
+                  <button type="button" onClick={() => setQty(qty + 1)} aria-label="Increase quantity">+</button>
                 </div>
               </div>
             )}
 
             <div className="shop-buybox-actions">
-              <button className="shop-btn shop-btn-primary shop-btn-block" onClick={handleAddToCart} disabled={addingToCart}>
-                {addingToCart ? <Loader2 size={14} className="animate-spin" /> : added ? 'Added ✓' : 'Add to cart'}
-              </button>
-              {product.pricingType === 'per_unit' && (
-                <button className="shop-btn shop-btn-gold shop-btn-block" onClick={handleBuyNow} disabled={addingToCart}>
-                  Buy now
-                </button>
+              {canPurchase ? (
+                <>
+                  <button className="shop-btn shop-btn-primary shop-btn-block" onClick={handleAddToCart} disabled={addingToCart}>
+                    {addingToCart ? <Loader2 size={14} className="animate-spin" /> : added ? 'Added to cart' : 'Add to cart'}
+                  </button>
+                  <button className="shop-btn shop-btn-gold shop-btn-block" onClick={handleBuyNow} disabled={addingToCart}>
+                    Buy now
+                  </button>
+                </>
+              ) : (
+                <Link className="shop-btn shop-btn-primary shop-btn-block" href="/contact">
+                  Request a quote
+                </Link>
               )}
             </div>
 
@@ -238,7 +261,7 @@ export default function ShopProductDetailPage() {
               <div className="shop-seller-avatar">{sellerName.charAt(0).toUpperCase()}</div>
               <div>
                 <div className="shop-seller-name">{sellerName}</div>
-                <div className="shop-seller-sub">Verified Tutaly Seller</div>
+                <div className="shop-seller-sub">Seller on Tutaly</div>
               </div>
             </div>
           </div>

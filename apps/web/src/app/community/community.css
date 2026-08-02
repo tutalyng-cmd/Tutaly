@@ -879,6 +879,82 @@
 }
 
 /* ===== NOTIFICATIONS ===== */
+.notif-page-header {
+  align-items: flex-end;
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.notif-page-header .eyebrow {
+  margin-bottom: 8px;
+}
+
+.notif-page-header h1 {
+  color: var(--text-100, #F2F5F8);
+  font-family: var(--font-display, 'Space Grotesk', sans-serif);
+  font-size: clamp(28px, 4vw, 38px);
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.notif-page-header p {
+  color: var(--text-400, #9AA4B2);
+  font-size: 14px;
+  margin-top: 8px;
+  max-width: 58ch;
+}
+
+.notif-mark-read {
+  align-items: center;
+  background: transparent;
+  border: 1px solid var(--line-600, #343E4A);
+  border-radius: 9px;
+  color: var(--teal, #2FD9A8);
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-size: 12.5px;
+  font-weight: 700;
+  gap: 7px;
+  padding: 9px 13px;
+}
+
+.notif-mark-read:hover {
+  background: rgba(47, 217, 168, 0.08);
+  border-color: var(--teal, #2FD9A8);
+}
+
+.notif-mark-read:focus-visible {
+  outline: 2px solid var(--teal, #2FD9A8);
+  outline-offset: 3px;
+}
+
+.notif-mark-read:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.notif-mark-read svg {
+  animation: spin 1s linear infinite;
+}
+
+.notif-alert {
+  align-items: flex-start;
+  background: rgba(255, 107, 107, 0.08);
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  border-radius: 12px;
+  color: #ffb0b0;
+  display: flex;
+  font-size: 13px;
+  gap: 9px;
+  padding: 12px 14px;
+}
+
+.notif-alert svg {
+  flex: 0 0 auto;
+}
+
 .notif-group-label {
   font-size: 11px;
   text-transform: uppercase;
@@ -946,6 +1022,35 @@
   font-size: 11.5px;
   color: var(--text-500, #75818F);
   margin-top: 3px;
+}
+
+.notif-empty {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.notif-empty svg {
+  color: var(--text-500, #75818F);
+  margin-bottom: 5px;
+}
+
+.notif-empty strong {
+  color: var(--text-100, #F2F5F8);
+  font-size: 15px;
+}
+
+.notif-empty span {
+  color: var(--text-500, #75818F);
+  font-size: 13px;
+}
+
+@media (max-width: 620px) {
+  .notif-page-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
 }
 
 /* ===== NETWORK ===== */
@@ -1038,8 +1143,13 @@
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .comm-empty {

@@ -1,5 +1,6 @@
-import { toast } from 'react-hot-toast';
 'use client';
+
+import { toast } from 'react-hot-toast';
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
@@ -106,7 +107,7 @@ if (err.response?.status === 401 || err.response?.status === 403) {
        
       const err = e as { response?: { data?: { message?: string }; status?: number }; message?: string };
        
-toast.error(err.response?.data?.message || err.message);
+toast.error(err.response?.data?.message || err.message || 'Something went wrong. Please try again.');
     }
   };
 
@@ -127,7 +128,7 @@ toast.error(err.response?.data?.message || err.message);
        
       const err = e as { response?: { data?: { message?: string }; status?: number }; message?: string };
        
-toast.error(err.response?.data?.message || err.message);
+toast.error(err.response?.data?.message || err.message || 'Something went wrong. Please try again.');
     }
   };
 

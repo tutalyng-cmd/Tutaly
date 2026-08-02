@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Loader2, CheckCircle2 } from 'lucide-react';
+import Image from 'next/image';
+import { AlertCircle, BriefcaseBusiness, Building2, CheckCircle2, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { api } from '@/lib/api';
 
 type Role = 'seeker' | 'employer';
@@ -66,13 +67,14 @@ export default function SignUp() {
   const strength = getPasswordStrength();
   const strengthClass = strength === 0 ? '' : strength < 3 ? 'filled-weak' : strength === 3 ? 'filled-mid' : 'filled-strong';
   const strengthLabel = strength === 0 ? '' : strength < 3 ? 'Weak password' : strength === 3 ? 'Good password' : 'Strong password';
+  const maxDateOfBirth = new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split('T')[0];
 
   if (isSuccess) {
     return (
       <div className="auth-centered-shell">
-        {/* <Link href="/" className="auth-centered-logo">
-          <img src="/logo.png" alt="Tutaly" />
-        </Link> */}
+        <Link href="/" className="auth-centered-logo" aria-label="Tutaly home">
+          <Image src="/logo.png" alt="Tutaly" width={140} height={40} />
+        </Link>
         <div className="auth-centered-wrap text-center">
           <div className="auth-success-icon mx-auto">
             <CheckCircle2 style={{ width: '28px', height: '28px', color: 'var(--green)' }} />
@@ -90,108 +92,103 @@ export default function SignUp() {
   return (
     <div className="auth-shell">
 
-      {/* LEFT BRANDED PANEL */}
       <aside className="auth-panel">
-        <Link href="/" className="auth-panel__logo">
-          <img src="/logo.png" alt="Tutaly" />
+        <Link href="/" className="auth-panel__logo" aria-label="Tutaly home">
+          <Image src="/logo.png" alt="Tutaly" width={140} height={40} />
         </Link>
 
         <div className="auth-panel__content">
-          <div className="auth-panel__quote">
-            &quot;We filled our senior engineering roles 40% faster using Tutaly&apos;s verified talent pool. It&apos;s the only platform we trust.&quot;
-          </div>
-          <div className="auth-panel__author">
-            <div className="auth-panel__avatar" style={{ background: 'var(--green)' }}>AJ</div>
-            <div>
-              <div className="auth-panel__name">Amira Johnson</div>
-              <div className="auth-panel__title">Head of Talent, FinTech Africa</div>
-            </div>
-          </div>
+          <div className="auth-panel__eyebrow">Built for work in Nigeria</div>
+          <div className="auth-panel__quote">Create one account for career discovery, hiring, salary intelligence, trusted reviews, and professional commerce.</div>
+          <p className="auth-panel__support">Choose the workspace that matches what you need today. You can still access Tutaly&apos;s public tools and marketplace.</p>
         </div>
 
         <div className="auth-panel__stats">
           <div className="auth-panel__stat">
-            <div className="auth-panel__stat-num">50k+</div>
-            <div className="auth-panel__stat-label">Active Professionals</div>
+            <div className="auth-panel__stat-num">Seeker</div>
+            <div className="auth-panel__stat-label">Build your career</div>
           </div>
           <div className="auth-panel__stat">
-            <div className="auth-panel__stat-num">98%</div>
-            <div className="auth-panel__stat-label">Response Rate</div>
+            <div className="auth-panel__stat-num">Employer</div>
+            <div className="auth-panel__stat-label">Build your team</div>
           </div>
         </div>
       </aside>
 
-      {/* RIGHT FORM PANEL */}
       <main className="auth-form-side reveal visible">
         <div className="auth-form-wrap">
 
-          {/* <Link href="/" className="auth-mobile-logo">
-            <img src="/logo.png" alt="Tutaly" />
-          </Link> */}
+          <Link href="/" className="auth-mobile-logo" aria-label="Tutaly home">
+            <Image src="/logo.png" alt="Tutaly" width={140} height={40} />
+          </Link>
 
           <h1 className="auth-heading">Create an account</h1>
           <p className="auth-subheading">
             Already have an account? <Link href="/auth/signin">Sign in here</Link>
           </p>
 
-          <div className="role-toggle">
-            <div
+          <div className="role-toggle" role="radiogroup" aria-label="Account type">
+            <button
+              type="button"
               className={`role-option ${role === 'seeker' ? 'selected' : ''}`}
               onClick={() => setRole('seeker')}
-              tabIndex={0}
+              role="radio"
+              aria-checked={role === 'seeker'}
             >
-              <span className="role-option__icon">👩‍💻</span>
+              <BriefcaseBusiness className="role-option__icon" aria-hidden="true" />
               <div className="role-option__title">Professional</div>
-              <div className="role-option__desc">Share salaries, leave reviews.</div>
-            </div>
-            <div
+              <div className="role-option__desc">Find work and grow your career.</div>
+            </button>
+            <button
+              type="button"
               className={`role-option ${role === 'employer' ? 'selected' : ''}`}
               onClick={() => setRole('employer')}
-              tabIndex={0}
+              role="radio"
+              aria-checked={role === 'employer'}
             >
-              <span className="role-option__icon">🏢</span>
+              <Building2 className="role-option__icon" aria-hidden="true" />
               <div className="role-option__title">Employer</div>
-              <div className="role-option__desc">Post jobs, build brand.</div>
-            </div>
+              <div className="role-option__desc">Hire talent and manage your company.</div>
+            </button>
           </div>
 
           <form onSubmit={handleSubmit}>
             {error && (
-              <div className="field-error" style={{ marginBottom: '16px' }}>
-                {error}
+              <div className="auth-alert" role="alert">
+                <AlertCircle size={16} /> <span>{error}</span>
               </div>
             )}
 
             {role === 'seeker' ? (
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '18px' }}>
                 <div className="form-field" style={{ marginBottom: 0 }}>
-                  <label className="form-label">First Name <span className="required">*</span></label>
-                  <input type="text" className="input" required value={firstName} onChange={e => setFirstName(e.target.value)} />
+                  <label className="form-label" htmlFor="first-name">First name <span className="required">*</span></label>
+                  <input id="first-name" type="text" className="input" required autoComplete="given-name" value={firstName} onChange={e => setFirstName(e.target.value)} />
                 </div>
                 <div className="form-field" style={{ marginBottom: 0 }}>
-                  <label className="form-label">Last Name <span className="required">*</span></label>
-                  <input type="text" className="input" required value={lastName} onChange={e => setLastName(e.target.value)} />
+                  <label className="form-label" htmlFor="last-name">Last name <span className="required">*</span></label>
+                  <input id="last-name" type="text" className="input" required autoComplete="family-name" value={lastName} onChange={e => setLastName(e.target.value)} />
                 </div>
               </div>
             ) : (
               <div className="form-field">
-                <label className="form-label">Company Name <span className="required">*</span></label>
-                <input type="text" className="input" required value={companyName} onChange={e => setCompanyName(e.target.value)} />
+                <label className="form-label" htmlFor="company-name">Company name <span className="required">*</span></label>
+                <input id="company-name" type="text" className="input" required autoComplete="organization" value={companyName} onChange={e => setCompanyName(e.target.value)} />
               </div>
             )}
 
             <div className="form-field">
-              <label className="form-label">Work Email <span className="required">*</span></label>
+              <label className="form-label" htmlFor="signup-email">Email address <span className="required">*</span></label>
               <div className="input-wrap">
-                <input type="email" className="input" placeholder="you@company.com" required value={email} onChange={e => setEmail(e.target.value)} />
+                <input id="signup-email" type="email" className="input" placeholder="you@example.com" required autoComplete="email" value={email} onChange={e => setEmail(e.target.value)} />
               </div>
             </div>
 
             <div className="form-field">
-              <label className="form-label">Password <span className="required">*</span></label>
+              <label className="form-label" htmlFor="signup-password">Password <span className="required">*</span></label>
               <div className="input-wrap">
-                <input type={showPassword ? 'text' : 'password'} className="input" placeholder="••••••••" required value={password} onChange={e => setPassword(e.target.value)} />
-                <button type="button" className="input-toggle" onClick={() => setShowPassword(!showPassword)}>{showPassword ? 'HIDE' : 'SHOW'}</button>
+                <input id="signup-password" type={showPassword ? 'text' : 'password'} className="input" placeholder="At least 8 characters" required autoComplete="new-password" value={password} onChange={e => setPassword(e.target.value)} />
+                <button type="button" className="input-toggle" onClick={() => setShowPassword(!showPassword)} aria-label={showPassword ? 'Hide password' : 'Show password'} aria-pressed={showPassword}>{showPassword ? <EyeOff size={17} /> : <Eye size={17} />}</button>
               </div>
               <div className="pw-strength">
                 <div className={`pw-strength-bar ${strength >= 1 ? strengthClass : ''}`}></div>
@@ -200,16 +197,17 @@ export default function SignUp() {
                 <div className={`pw-strength-bar ${strength >= 4 ? strengthClass : ''}`}></div>
               </div>
               {strength > 0 && <div className="pw-strength-label">{strengthLabel}</div>}
+              <p className="field-hint">Use uppercase, lowercase, a number, and a special character.</p>
             </div>
 
             <div className="form-field">
-              <label className="form-label">Date of Birth <span className="required">*</span></label>
-              <input type="date" className="input" required value={dateOfBirth} onChange={e => setDateOfBirth(e.target.value)} />
+              <label className="form-label" htmlFor="date-of-birth">Date of birth <span className="required">*</span></label>
+              <input id="date-of-birth" type="date" className="input" required max={maxDateOfBirth} autoComplete="bday" value={dateOfBirth} onChange={e => setDateOfBirth(e.target.value)} />
             </div>
 
             <div className="check-row" style={{ marginTop: '24px' }}>
               <input type="checkbox" id="terms" className="filter-checkbox" required checked={termsAgreed} onChange={e => setTermsAgreed(e.target.checked)} />
-              <label htmlFor="terms">I agree to Tutaly&apos;s <Link href="/terms">Terms of Service</Link> and <Link href="/privacy">Privacy Policy</Link>.</label>
+              <label htmlFor="terms">I agree to Tutaly&apos;s <Link href="/legal/terms-of-service">Terms of Service</Link> and <Link href="/legal/privacy-policy">Privacy Policy</Link>.</label>
             </div>
 
             <button type="submit" disabled={isLoading} className="btn btn--primary btn--full flex justify-center items-center gap-2">

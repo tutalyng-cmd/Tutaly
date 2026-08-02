@@ -1,4 +1,4 @@
-import { SelectQueryBuilder } from 'typeorm';
+import { SelectQueryBuilder, ObjectLiteral } from 'typeorm';
 
 /**
  * Excludes test accounts from the given query builder.
@@ -6,7 +6,7 @@ import { SelectQueryBuilder } from 'typeorm';
  * @param userAlias The alias of the User entity joined in the query.
  * @returns The modified SelectQueryBuilder.
  */
-export function excludeTestAccounts<T>(
+export function excludeTestAccounts<T extends ObjectLiteral>(
   qb: SelectQueryBuilder<T>,
   userAlias: string,
 ): SelectQueryBuilder<T> {

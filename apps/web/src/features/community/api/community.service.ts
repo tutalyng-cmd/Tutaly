@@ -32,7 +32,7 @@ export const communityService = {
   uploadMedia: async (files: File[]) => {
     const formData = new FormData();
     files.forEach((file) => formData.append('files', file));
-    
+
     // Explicitly set Content-Type to multipart/form-data logic handled by axios automatically when given FormData
     const res = await api.post('/community/threads/upload', formData, {
       headers: {
@@ -87,6 +87,11 @@ export const communityService = {
 
   getNotifications: async () => {
     const res = await api.get('/support/notifications');
+    return res.data;
+  },
+
+  markAllNotificationsAsRead: async () => {
+    const res = await api.patch('/support/notifications/read-all');
     return res.data;
   },
 };

@@ -10,6 +10,7 @@ interface AdData {
   image_url: string;
   target_url: string;
   type: string;
+  title?: string;
 }
 
 export default function AdBanner({ placement }: { placement: string }) {
@@ -17,37 +18,15 @@ export default function AdBanner({ placement }: { placement: string }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // In a real scenario, this would call GET /api/ads/active?placement=...
-    // Currently, mocking the fetch call:
     const fetchAd = async () => {
       try {
         const res = await api.get(`/ads/active?placement=${placement}`);
         if (res.data && res.data.length > 0) {
-          // Select random ad for this placement
           const randomAd = res.data[Math.floor(Math.random() * res.data.length)];
           setAd(randomAd);
-        } else {
-          // Fallback to mock data for presentation purposes if backend route isn't returning correctly
-          setTimeout(() => {
-            setAd({
-              id: 'mock-1',
-              image_url: 'https://placehold.co/1200x90/1B4F9E/FFFFFF?text=Promote+Your+Business+Here',
-              target_url: '/advertise',
-              type: 'banner'
-            });
-          }, 500);
         }
       } catch (e) {
-        console.error("Error fetching ad", e);
-        // Fallback to mock data on error
-        setTimeout(() => {
-          setAd({
-            id: 'mock-1',
-            image_url: 'https://placehold.co/1200x90/1B4F9E/FFFFFF?text=Promote+Your+Business+Here',
-            target_url: '/advertise',
-            type: 'banner'
-          });
-        }, 500);
+        console.error('Error fetching ad', e);
       } finally {
         setIsLoading(false);
       }
@@ -59,26 +38,25 @@ export default function AdBanner({ placement }: { placement: string }) {
   if (isLoading) {
     return (
       <div className="w-full h-24 bg-c900 animate-pulse rounded-xl mb-8 flex items-center justify-center">
-        <span className="text-c700 text-sm">Loading advertisement...</span>
+        <span className="sr-only">Loading sponsored content</span>
       </div>
     );
   }
 
-  if (!ad) return null; // Collapse if no ad exists
+  if (!ad) return null;
 
   return (
     <div className="relative w-full max-w-6xl mx-auto mb-10 overflow-hidden rounded-xl border border-c800 group shadow-lg">
-      <Link href={ad.target_url} target="_blank" rel="noopener noreferrer">
+      <Link href={ad.target_url} target="_blank" rel="noopener noreferrer sponsored" aria-label={`Sponsored: ${ad.title || ad.type}. Opens in a new tab.`}>
         <div className="absolute top-2 right-2 bg-c900/80 backdrop-blur-sm text-c300 text-xs uppercase font-bold tracking-widest px-2 py-1 rounded-sm z-10">
           Sponsored
         </div>
         <div className="w-full h-24 md:h-32 relative bg-c900">
-          <Image 
+          <Image
             src={ad.image_url}
-            alt="Advertisement"
+            alt={ad.title || `Sponsored ${ad.type} advertisement`}
             fill
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
-            unoptimized={ad.image_url.includes('placehold.co')} // allow placeholder images to render without next/image optimization issues
+            className="object-cover"
           />
         </div>
       </Link>

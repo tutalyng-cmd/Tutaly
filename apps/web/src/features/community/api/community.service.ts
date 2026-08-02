@@ -9,10 +9,10 @@ export const communityService = {
 
   getFeed: async (params: { bowlSlug?: string; tab: 'global' | 'following'; page: number; limit: number }) => {
     try {
-      const res = await api.get('/connect/feed', { params });
+      const res = await api.get('/community/feed', { params });
       return res.data;
     } catch {
-      const res = await api.get('/connect/feed', { params });
+      const res = await api.get('/community/feed', { params });
       return res.data;
     }
   },

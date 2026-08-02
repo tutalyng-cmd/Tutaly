@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, MoreThanOrEqual, Like } from 'typeorm';
 import * as crypto from 'crypto';
+import { writeFileSync } from 'fs';
 import { KeyValue } from './entities/key-value.entity';
 
 @Injectable()
@@ -49,8 +50,14 @@ export class TokenService {
     const key = `mfa_otp:${userId}`;
     await this.setKey(key, otp, 5 * 60);
     try {
-      require('fs').writeFileSync('C:\\Users\\successrenders\\.gemini\\antigravity-ide\\brain\\5db79467-75ea-4960-bbf1-21e7879ff985\\scratch\\last_otp.txt', otp);
-    } catch (e) {}
+      writeFileSync(
+        'C:\\Users\\successrenders\\.gemini\\antigravity-ide\\brain\\5db79467-75ea-4960-bbf1-21e7879ff985\\scratch\\last_otp.txt',
+        otp,
+      );
+    } catch (_e) {
+      // Intentionally ignore filesystem errors in CI or runtime.
+      void _e;
+    }
     return otp;
   }
 

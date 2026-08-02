@@ -9,7 +9,6 @@ import { ConfigService } from '@nestjs/config';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { v4 as uuidv4 } from 'uuid';
 import { Repository } from 'typeorm';
-import { User } from '../user/entities/user.entity';
 import { excludeTestAccounts } from '../../common/utils/query.utils';
 import { CommunityBowl } from './entities/community-bowl.entity';
 import {

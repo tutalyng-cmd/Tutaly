@@ -31,4 +31,7 @@ export class CommunityBowl extends BaseEntity {
 
   @Column({ default: 0 })
   member_count: number;
+
+  @Column({ default: 0 })
+  post_count: number;
 }

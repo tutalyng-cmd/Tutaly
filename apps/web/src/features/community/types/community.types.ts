@@ -29,3 +29,11 @@ export interface CommunityThread {
   author: ThreadAuthor;
   bowl: CommunityBowl;
 }
+
+export interface CommunityComment {
+  id: string;
+  content: string;
+  upvotes_count: number;
+  createdAt: string;
+  author: ThreadAuthor;
+}

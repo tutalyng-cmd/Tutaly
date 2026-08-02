@@ -97,4 +97,31 @@ export class CommunityController {
     // Basic upvote implementation for now
     return this.communityService.upvoteThread(threadId, req.user.id);
   }
+
+  @UseGuards(OptionalJwtAuthGuard)
+  @Get('threads/:id/comments')
+  async getComments(@Param('id') threadId: string) {
+    return this.communityService.getComments(threadId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('threads/:id/comments')
+  async addComment(
+    @Param('id') threadId: string,
+    @Request() req,
+    @Body()
+    dto: {
+      content: string;
+      anonymity_mode: AnonymityMode;
+      display_title_override?: string;
+    },
+  ) {
+    return this.communityService.addComment(
+      req.user.id,
+      threadId,
+      dto.content,
+      dto.anonymity_mode,
+      dto.display_title_override,
+    );
+  }
 }

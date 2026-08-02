@@ -265,4 +265,87 @@ export class CommunityService {
 
     return { success: true, data: { upvotes_count: thread.upvotes_count } };
   }
+
+  async addComment(
+    userId: string,
+    threadId: string,
+    content: string,
+    anonymityMode: AnonymityMode,
+    displayTitleOverride?: string,
+  ) {
+    const thread = await this.threadRepo.findOne({ where: { id: threadId } });
+    if (!thread) {
+      throw new NotFoundException('Thread not found');
+    }
+
+    const comment = this.commentRepo.create({
+      thread: { id: threadId },
+      user: { id: userId },
+      content,
+      anonymity_mode: anonymityMode,
+      display_title_override: displayTitleOverride,
+    });
+
+    const saved = await this.commentRepo.save(comment);
+
+    // Increment thread comment count
+    await this.threadRepo.increment({ id: threadId }, 'comments_count', 1);
+
+    return {
+      success: true,
+      data: saved,
+    };
+  }
+
+  async getComments(threadId: string) {
+    const qb = this.commentRepo
+      .createQueryBuilder('comment')
+      .leftJoin('comment.user', 'user')
+      .leftJoin('user.seekerProfile', 'seekerProfile')
+      .addSelect([
+        'user.id',
+        'user.username',
+        'seekerProfile.firstName',
+        'seekerProfile.lastName',
+      ])
+      .where('comment.thread_id = :threadId', { threadId })
+      .orderBy('comment.createdAt', 'ASC');
+
+    excludeTestAccounts(qb, 'user');
+
+    const comments = await qb.getMany();
+
+    const mappedComments = comments.map((c) => {
+      let authorName = 'Anonymous';
+      const authorTitle = 'Verified Professional';
+
+      if (c.anonymity_mode === AnonymityMode.FULL_NAME && c.user) {
+        if (c.user.seekerProfile?.firstName || c.user.seekerProfile?.lastName) {
+          authorName =
+            `${c.user.seekerProfile?.firstName || ''} ${c.user.seekerProfile?.lastName || ''}`.trim();
+        } else {
+          authorName = c.user.username || 'Anonymous';
+        }
+      } else if (c.anonymity_mode === AnonymityMode.JOB_TITLE_ONLY) {
+        authorName = c.display_title_override || 'Verified Professional';
+      } else if (c.anonymity_mode === AnonymityMode.ANONYMOUS_EMPLOYEE) {
+        authorName = c.display_title_override || 'Anonymous Employee';
+      }
+
+      return {
+        ...c,
+        author: {
+          name: authorName,
+          title: authorTitle,
+          isAnonymous: c.anonymity_mode !== AnonymityMode.FULL_NAME,
+        },
+        user: undefined, // Strip original user object
+      };
+    });
+
+    return {
+      success: true,
+      data: mappedComments,
+    };
+  }
 }

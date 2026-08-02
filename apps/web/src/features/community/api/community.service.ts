@@ -48,6 +48,19 @@ export const communityService = {
     return res.data;
   },
 
+  getComments: async (threadId: string) => {
+    const res = await api.get(`/community/threads/${threadId}/comments`);
+    return res.data;
+  },
+
+  addComment: async (
+    threadId: string,
+    data: { content: string; anonymity_mode: AnonymityMode; display_title_override?: string }
+  ) => {
+    const res = await api.post(`/community/threads/${threadId}/comments`, data);
+    return res.data;
+  },
+
   // ---- Connect Module Integration ----
 
   getNetwork: async () => {

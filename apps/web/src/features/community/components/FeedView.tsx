@@ -24,6 +24,7 @@ export default function FeedView() {
   const [userFullName, setUserFullName] = useState<string>('');
   const [userJobTitle, setUserJobTitle] = useState<string>('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAuthReady, setIsAuthReady] = useState(false);
 
   // Composer
   const [bowls, setBowls] = useState<CommunityBowl[]>([]);
@@ -45,6 +46,7 @@ export default function FeedView() {
           console.error('[FeedView] User fetch error:', err);
         }
       }
+      setIsAuthReady(true);
     };
     fetchUser();
     
@@ -78,8 +80,10 @@ export default function FeedView() {
   };
 
   useEffect(() => {
-    loadData();
-  }, [currentBowlSlug, activeTab]);
+    if (isAuthReady) {
+      loadData();
+    }
+  }, [currentBowlSlug, activeTab, isAuthReady]);
 
   return (
     <main className="layout">

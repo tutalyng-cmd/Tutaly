@@ -5,9 +5,5 @@ export const metadata = {
 };
 
 export default function AdCreatePage() {
-  return (
-    <div className="min-h-screen bg-brand-dark">
-      <AdCreationWizard />
-    </div>
-  );
+  return <AdCreationWizard />;
 }

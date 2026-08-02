@@ -3,10 +3,10 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { 
-  Building2, 
-  Briefcase, 
-  Settings, 
+import {
+  Building2,
+  Briefcase,
+  Settings,
   LogOut,
   User,
   Heart,
@@ -35,7 +35,7 @@ export default function DashboardLayout({
   const pathname = usePathname() || '';
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
-  
+
   if (pathname === '/dashboard') {
     return <main>{children}</main>;
   }
@@ -100,6 +100,7 @@ export default function DashboardLayout({
   const adminLinks = [
     { name: 'Overview', href: '/admin', icon: Building2 },
     { name: 'Approve Jobs', href: '/admin/jobs', icon: Briefcase },
+    { name: 'Review Ads', href: '/admin/ads', icon: Megaphone },
     { name: 'Approve Sellers', href: '/admin/sellers', icon: Store },
     { name: 'Shop Catalog', href: '/admin/products', icon: Package },
     { name: 'Shop Orders', href: '/admin/orders', icon: ShoppingBag },
@@ -217,9 +218,9 @@ export default function DashboardLayout({
             <div className="dash-topbar__crumb">Dashboard / {title}</div>
           </div>
           <div className="dash-topbar__actions flex items-center gap-2">
-            <button 
-              className="dash-icon-btn md:hidden" 
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} 
+            <button
+              className="dash-icon-btn md:hidden"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-label="Menu"
             >
               {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -233,7 +234,7 @@ export default function DashboardLayout({
             </button>
           </div>
         </div>
-        
+
         {isMobileMenuOpen && (
           <div className="md:hidden bg-c800 border-b border-c700 p-4 flex flex-col gap-2 absolute w-full z-50 shadow-lg left-0 overflow-y-auto" style={{ top: '60px', maxHeight: '80vh' }}>
             {isSeeker ? (

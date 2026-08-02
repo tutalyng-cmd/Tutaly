@@ -32,11 +32,11 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    
+
     // If 401 and we haven't retried yet and not hitting refresh itself
     if (error.response?.status === 401 && !originalRequest._retry && originalRequest.url !== '/auth/refresh') {
       originalRequest._retry = true;
-      
+
       try {
         if (!refreshPromise) {
           refreshPromise = axios.post(
@@ -54,9 +54,9 @@ api.interceptors.response.use(
             refreshPromise = null;
           });
         }
-        
+
         const newToken = await refreshPromise;
-        
+
         // Update the failed request with the new token and retry
         originalRequest.headers.Authorization = `Bearer ${newToken}`;
         return api(originalRequest);
@@ -67,16 +67,17 @@ api.interceptors.response.use(
           localStorage.removeItem('access_token');
           localStorage.removeItem('user');
           window.dispatchEvent(new Event('auth-logout'));
-          
+
           const path = window.location.pathname;
           // Only redirect forcefully if on a protected route
-          const isProtectedRoute = path.startsWith('/admin') || 
-                                   path.startsWith('/employer') || 
-                                   path.startsWith('/seeker') || 
-                                   path.startsWith('/seller') || 
-                                   path.startsWith('/dashboard') ||
-                                   path.startsWith('/community');
-                                   
+          const isProtectedRoute = path.startsWith('/admin') ||
+            path.startsWith('/employer') ||
+            path.startsWith('/seeker') ||
+            path.startsWith('/seller') ||
+            path.startsWith('/dashboard') ||
+            path.startsWith('/community') ||
+            path.startsWith('/advertise');
+
           if (isProtectedRoute) {
             window.location.href = '/auth/signin';
           }
@@ -84,7 +85,7 @@ api.interceptors.response.use(
         return Promise.reject(refreshError);
       }
     }
-    
+
     return Promise.reject(error);
   }
 );

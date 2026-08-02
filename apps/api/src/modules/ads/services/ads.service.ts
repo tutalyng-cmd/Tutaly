@@ -2,6 +2,7 @@ import {
   Injectable,
   BadRequestException,
   NotFoundException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -85,7 +86,7 @@ export class AdsService {
       currency: campaign.currency as Currency,
       customerEmail,
       customerName,
-      redirectUrl: `${process.env.FRONTEND_URL || 'http://localhost:3001'}/employer/ads/payment-success?reference=${reference}`,
+      redirectUrl: `${process.env.WEB_URL || process.env.FRONTEND_URL || 'http://localhost:3001'}/advertise?payment=success&reference=${reference}`,
       metadata: {
         campaign_id: campaign.id,
         payment_type: 'ad_campaign',
@@ -101,6 +102,22 @@ export class AdsService {
     });
   }
 
+  async initializeOwnedAdPayment(
+    advertiserId: string,
+    campaignId: string,
+    gatewayName: string,
+    customerEmail: string,
+    customerName: string,
+  ) {
+    await this.findOwnedCampaign(advertiserId, campaignId);
+    return this.initializeAdPayment(
+      campaignId,
+      gatewayName,
+      customerEmail,
+      customerName,
+    );
+  }
+
   // Basic Weighted Random Selection
   private weightedRandom(campaigns: AdCampaign[]): AdCampaign {
     const totalWeight = campaigns.reduce(
@@ -113,6 +130,21 @@ export class AdsService {
       if (random <= 0) return campaign;
     }
     return campaigns[0];
+  }
+
+  private async withSignedCreativeUrl(campaign: AdCampaign) {
+    if (!campaign.image_url || /^https?:\/\//.test(campaign.image_url)) {
+      return campaign;
+    }
+
+    const { data } = await this.supabase.storage
+      .from('ad-creatives')
+      .createSignedUrl(campaign.image_url, 3600);
+
+    return {
+      ...campaign,
+      image_url: data?.signedUrl || campaign.image_url,
+    } as AdCampaign;
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await
@@ -161,6 +193,12 @@ export class AdsService {
           { state: JSON.stringify([user.state]) },
         );
       }
+      if (user.area) {
+        query = query.andWhere(
+          '(c.target_areas IS NULL OR c.target_areas @> :area)',
+          { area: JSON.stringify([user.area]) },
+        );
+      }
       if (user.industry) {
         query = query.andWhere(
           '(c.target_industries IS NULL OR c.target_industries @> :industry)',
@@ -186,7 +224,7 @@ export class AdsService {
       if (!selected) return null;
     }
 
-    return selected;
+    return this.withSignedCreativeUrl(selected);
   }
 
   estimateReach(params: {
@@ -266,6 +304,74 @@ export class AdsService {
     advertiserId: string,
     data: Partial<AdCampaign>,
   ): Promise<AdCampaign> {
+    if (!data.goal || !data.format || !data.destination_url) {
+      throw new BadRequestException(
+        'Choose a campaign objective, ad format, and destination.',
+      );
+    }
+
+    if (data.goal === 'promote_job' && !data.job_id) {
+      throw new BadRequestException('Choose an active job post to promote.');
+    }
+
+    if (data.goal === 'promote_product' && !data.product_id) {
+      throw new BadRequestException(
+        'Choose an active marketplace listing to promote.',
+      );
+    }
+
+    if (Number(data.daily_budget) < 1000) {
+      throw new BadRequestException('Minimum daily budget is ₦1,000.');
+    }
+
+    if (Number(data.total_budget) < Number(data.daily_budget)) {
+      throw new BadRequestException(
+        'Total budget must cover at least one day of delivery.',
+      );
+    }
+
+    if (
+      data.starts_at &&
+      data.ends_at &&
+      new Date(data.ends_at) <= new Date(data.starts_at)
+    ) {
+      throw new BadRequestException('End date must be after the start date.');
+    }
+
+    if (data.headline && data.headline.length > 80) {
+      throw new BadRequestException('Headline must be 80 characters or fewer.');
+    }
+
+    if (data.body_text && data.body_text.length > 200) {
+      throw new BadRequestException(
+        'Body text must be 200 characters or fewer.',
+      );
+    }
+
+    if (data.job_id) {
+      const ownedJob = await this.entityManager.query(
+        `SELECT "id" FROM "jobs" WHERE "id" = $1 AND "employerId" = $2 AND "status" = 'active' LIMIT 1`,
+        [data.job_id, advertiserId],
+      );
+      if (!ownedJob.length) {
+        throw new ForbiddenException(
+          'Choose an active job post belonging to your company.',
+        );
+      }
+    }
+
+    if (data.product_id) {
+      const ownedProduct = await this.entityManager.query(
+        `SELECT "id" FROM "shop_products" WHERE "id" = $1 AND "sellerId" = $2 AND "isActive" = true LIMIT 1`,
+        [data.product_id, advertiserId],
+      );
+      if (!ownedProduct.length) {
+        throw new ForbiddenException(
+          'Choose an active marketplace listing belonging to your account.',
+        );
+      }
+    }
+
     const campaignData = {
       ...data,
       advertiser_id: advertiserId,
@@ -364,14 +470,195 @@ export class AdsService {
   }
 
   async getMyCampaigns(advertiserId: string, page = 1, limit = 10) {
+    const safePage = Number.isFinite(page) && page > 0 ? page : 1;
+    const safeLimit = Number.isFinite(limit)
+      ? Math.min(Math.max(limit, 1), 50)
+      : 10;
     const [campaigns, total] = await this.campaignRepo.findAndCount({
       where: { advertiser_id: advertiserId },
       order: { createdAt: 'DESC' },
-      skip: (page - 1) * limit,
-      take: limit,
+      skip: (safePage - 1) * safeLimit,
+      take: safeLimit,
     });
     const data = await this.attachDetailsToCampaigns(campaigns);
-    return { data, meta: { total, page, limit } };
+    return { data, meta: { total, page: safePage, limit: safeLimit } };
+  }
+
+  private async findOwnedCampaign(advertiserId: string, id: string) {
+    const campaign = await this.campaignRepo.findOne({
+      where: { id, advertiser_id: advertiserId },
+    });
+    if (!campaign) throw new NotFoundException('Campaign not found.');
+    return campaign;
+  }
+
+  async getCampaignForAdvertiser(advertiserId: string, id: string) {
+    const campaign = await this.findOwnedCampaign(advertiserId, id);
+    const [data] = await this.attachDetailsToCampaigns([campaign]);
+    return data;
+  }
+
+  async updateCampaign(
+    advertiserId: string,
+    id: string,
+    data: Partial<AdCampaign>,
+  ) {
+    const campaign = await this.findOwnedCampaign(advertiserId, id);
+    if (
+      ![CampaignStatus.REJECTED, CampaignStatus.PENDING_PAYMENT].includes(
+        campaign.status,
+      )
+    ) {
+      throw new BadRequestException(
+        'Only campaigns awaiting payment or rejected by moderation can be edited.',
+      );
+    }
+
+    const editableFields: (keyof AdCampaign)[] = [
+      'goal',
+      'format',
+      'job_id',
+      'product_id',
+      'image_url',
+      'destination_url',
+      'alt_text',
+      'headline',
+      'body_text',
+      'target_countries',
+      'target_states',
+      'target_areas',
+      'target_industries',
+      'target_roles',
+      'target_user_types',
+      'placements',
+      'starts_at',
+      'ends_at',
+      'run_continuously',
+      'daily_budget',
+      'total_budget',
+    ];
+
+    for (const field of editableFields) {
+      if (data[field] !== undefined) {
+        Reflect.set(campaign, field, data[field]);
+      }
+    }
+
+    if (campaign.status === CampaignStatus.REJECTED) {
+      campaign.status = CampaignStatus.PENDING_PAYMENT;
+      campaign.rejection_reason = null;
+    }
+    return this.campaignRepo.save(campaign);
+  }
+
+  async pauseCampaign(advertiserId: string, id: string) {
+    const campaign = await this.findOwnedCampaign(advertiserId, id);
+    if (campaign.status !== CampaignStatus.ACTIVE) {
+      throw new BadRequestException('Only active campaigns can be paused.');
+    }
+    campaign.status = CampaignStatus.PAUSED;
+    return this.campaignRepo.save(campaign);
+  }
+
+  async resumeCampaign(advertiserId: string, id: string) {
+    const campaign = await this.findOwnedCampaign(advertiserId, id);
+    if (campaign.status !== CampaignStatus.PAUSED) {
+      throw new BadRequestException('Only paused campaigns can be resumed.');
+    }
+    if (Number(campaign.total_spent) >= Number(campaign.total_budget)) {
+      throw new BadRequestException('This campaign has spent its full budget.');
+    }
+    campaign.status = CampaignStatus.ACTIVE;
+    return this.campaignRepo.save(campaign);
+  }
+
+  async getCampaignAnalytics(advertiserId: string, id: string) {
+    const campaign = await this.findOwnedCampaign(advertiserId, id);
+    const [impressions, clicks] = await Promise.all([
+      this.impressionRepo
+        .createQueryBuilder('impression')
+        .select("DATE_TRUNC('day', impression.viewed_at)", 'date')
+        .addSelect('COUNT(impression.id)', 'count')
+        .where('impression.campaign_id = :id', { id })
+        .groupBy("DATE_TRUNC('day', impression.viewed_at)")
+        .orderBy('date', 'ASC')
+        .getRawMany<{ date: string; count: string }>(),
+      this.clickRepo
+        .createQueryBuilder('click')
+        .select("DATE_TRUNC('day', click.clicked_at)", 'date')
+        .addSelect('COUNT(click.id)', 'count')
+        .where('click.campaign_id = :id', { id })
+        .groupBy("DATE_TRUNC('day', click.clicked_at)")
+        .orderBy('date', 'ASC')
+        .getRawMany<{ date: string; count: string }>(),
+    ]);
+
+    const byDate = new Map<
+      string,
+      { date: string; impressions: number; clicks: number }
+    >();
+    for (const row of impressions) {
+      const date = new Date(row.date).toISOString().slice(0, 10);
+      byDate.set(date, { date, impressions: Number(row.count), clicks: 0 });
+    }
+    for (const row of clicks) {
+      const date = new Date(row.date).toISOString().slice(0, 10);
+      const current = byDate.get(date) || {
+        date,
+        impressions: 0,
+        clicks: 0,
+      };
+      current.clicks = Number(row.count);
+      byDate.set(date, current);
+    }
+
+    return {
+      campaignId: campaign.id,
+      data: [...byDate.values()],
+      totals: {
+        impressions: campaign.impression_count,
+        clicks: campaign.click_count,
+        ctr: campaign.impression_count
+          ? Number(
+              (
+                (campaign.click_count / campaign.impression_count) *
+                100
+              ).toFixed(2),
+            )
+          : 0,
+        spent: Number(campaign.total_spent),
+        remaining: Math.max(
+          0,
+          Number(campaign.total_budget) - Number(campaign.total_spent),
+        ),
+      },
+    };
+  }
+
+  async getBillingHistory(advertiserId: string, page = 1, limit = 10) {
+    const safePage = Number.isFinite(page) && page > 0 ? page : 1;
+    const safeLimit = Number.isFinite(limit)
+      ? Math.min(Math.max(limit, 1), 50)
+      : 10;
+    const [campaigns, total] = await this.campaignRepo.findAndCount({
+      where: { advertiser_id: advertiserId },
+      order: { createdAt: 'DESC' },
+      skip: (safePage - 1) * safeLimit,
+      take: safeLimit,
+    });
+    return {
+      data: campaigns.map((campaign) => ({
+        id: campaign.id,
+        createdAt: campaign.createdAt,
+        amount: Number(campaign.total_budget),
+        spent: Number(campaign.total_spent),
+        currency: campaign.currency,
+        paymentRef: campaign.payment_ref,
+        gateway: campaign.payment_gateway,
+        status: campaign.status,
+      })),
+      meta: { total, page: safePage, limit: safeLimit },
+    };
   }
 
   // ─── ADMIN ENDPOINTS ──────────────────────────────────────
@@ -398,11 +685,17 @@ export class AdsService {
         )
       : [];
 
-    return campaigns.map((c) => ({
-      ...c,
-      advertiser: users.find((u) => u.id === c.advertiser_id) || null,
-      job: jobs.find((j) => j.id === c.job_id) || null,
-    }));
+    return Promise.all(
+      campaigns.map(async (campaign) => {
+        const hydrated = await this.withSignedCreativeUrl(campaign);
+        return {
+          ...hydrated,
+          advertiser:
+            users.find((user) => user.id === campaign.advertiser_id) || null,
+          job: jobs.find((job) => job.id === campaign.job_id) || null,
+        };
+      }),
+    );
   }
 
   async getPendingQueue(page = 1, limit = 10) {

@@ -1,4 +1,13 @@
-import { Controller, Get, Patch, Param, UseGuards, Body, Query } from '@nestjs/common';
+import {
+  BadRequestException,
+  Controller,
+  Get,
+  Patch,
+  Param,
+  UseGuards,
+  Body,
+  Query,
+} from '@nestjs/common';
 import { JwtAuthGuard } from '../../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../../common/guards/roles.guard';
 import { Roles } from '../../../common/decorators/roles.decorator';
@@ -12,10 +21,7 @@ export class AdsAdminController {
   constructor(private readonly adsService: AdsService) {}
 
   @Get('queue')
-  async getQueue(
-    @Query('page') page?: string,
-    @Query('limit') limit?: string,
-  ) {
+  async getQueue(@Query('page') page?: string, @Query('limit') limit?: string) {
     const pageNum = page ? parseInt(page, 10) : 1;
     const limitNum = limit ? parseInt(limit, 10) : 10;
     return this.adsService.getPendingQueue(pageNum, limitNum);
@@ -31,6 +37,9 @@ export class AdsAdminController {
     @Param('id') id: string,
     @Body('reason') reason: string,
   ) {
+    if (!reason?.trim()) {
+      throw new BadRequestException('Provide a rejection reason.');
+    }
     return this.adsService.rejectCampaign(id, reason);
   }
 

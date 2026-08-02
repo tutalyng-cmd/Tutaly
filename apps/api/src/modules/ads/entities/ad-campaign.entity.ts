@@ -27,34 +27,43 @@ export class AdCampaign {
   format: AdFormat;
 
   @Column({ nullable: true })
-  job_id: string; // FK -> jobs.id
+  job_id: string | null; // FK -> jobs.id
 
   @Column({ nullable: true })
-  product_id: string; // FK -> shop_products.id
+  product_id: string | null; // FK -> shop_products.id
 
   @Column({ nullable: true })
-  image_url: string;
+  image_url: string | null;
 
   @Column()
   destination_url: string;
 
   @Column({ nullable: true })
-  alt_text: string;
+  alt_text: string | null;
+
+  @Column({ nullable: true })
+  headline: string | null;
+
+  @Column({ type: 'text', nullable: true })
+  body_text: string | null;
 
   @Column({ type: 'jsonb', nullable: true })
-  target_countries: string[];
+  target_countries: string[] | null;
 
   @Column({ type: 'jsonb', nullable: true })
-  target_states: string[];
+  target_states: string[] | null;
 
   @Column({ type: 'jsonb', nullable: true })
-  target_industries: string[];
+  target_areas: string[] | null;
 
   @Column({ type: 'jsonb', nullable: true })
-  target_roles: string[];
+  target_industries: string[] | null;
 
   @Column({ type: 'jsonb', nullable: true })
-  target_user_types: string[];
+  target_roles: string[] | null;
+
+  @Column({ type: 'jsonb', nullable: true })
+  target_user_types: string[] | null;
 
   @Column({ type: 'jsonb' })
   placements: string[];
@@ -63,7 +72,7 @@ export class AdCampaign {
   starts_at: Date;
 
   @Column({ nullable: true })
-  ends_at: Date;
+  ends_at: Date | null;
 
   @Column({ default: false })
   run_continuously: boolean;
@@ -91,19 +100,19 @@ export class AdCampaign {
   status: CampaignStatus;
 
   @Column({ nullable: true })
-  rejection_reason: string;
+  rejection_reason: string | null;
 
   @Column({ nullable: true })
-  reviewed_by: string; // FK -> users.id (admin)
+  reviewed_by: string | null; // FK -> users.id (admin)
 
   @Column({ nullable: true })
-  payment_ref: string;
+  payment_ref: string | null;
 
   @Column({ default: 'NGN' })
   currency: string;
 
   @Column({ type: 'enum', enum: PaymentGateway, nullable: true })
-  payment_gateway: PaymentGateway;
+  payment_gateway: PaymentGateway | null;
 
   @CreateDateColumn()
   createdAt: Date;

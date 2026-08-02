@@ -1,117 +1,136 @@
+'use client';
+
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import {
+  AlertCircle,
+  ArrowRight,
+  Eye,
+  Filter,
+  Megaphone,
+  MousePointerClick,
+  Plus,
+  RefreshCw,
+  Search,
+  Sparkles,
+  TrendingUp,
+  WalletCards,
+} from 'lucide-react';
+import toast from 'react-hot-toast';
+import { apiAuth } from '@/lib/api';
+import CampaignStatusBadge from '@/components/ads/CampaignStatusBadge';
+import { campaignTitle, formatCompactNumber, formatNaira, humanize } from '@/features/ads/format';
+import type { AdCampaign, PaginatedResponse } from '@/features/ads/types';
 
-export default function AdvertiseLandingPage() {
+const filters = ['all', 'active', 'pending_review', 'pending_payment', 'paused', 'rejected', 'completed'] as const;
+
+const statusHighlights = [
+  { status: 'pending_review', label: 'In review' },
+  { status: 'pending_payment', label: 'Payment needed' },
+  { status: 'paused', label: 'Paused' },
+] as const;
+
+export default function AdvertiseOverviewPage() {
+  const [campaigns, setCampaigns] = useState<AdCampaign[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [query, setQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<(typeof filters)[number]>('all');
+
+  const loadCampaigns = useCallback(async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const token = localStorage.getItem('access_token');
+      const response = await apiAuth.withToken(token || undefined).get<PaginatedResponse<AdCampaign>>('/ads/campaigns?page=1&limit=50');
+      setCampaigns(Array.isArray(response.data?.data) ? response.data.data : []);
+    } catch (requestError) {
+      const request = requestError as { response?: { data?: { message?: string } } };
+      setError(request.response?.data?.message || "We couldn't load your campaigns. Check your connection and try again.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadCampaigns();
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('payment') === 'success') {
+      toast.success('Payment received. Campaign sent for review.');
+      window.history.replaceState({}, '', '/advertise');
+    }
+  }, [loadCampaigns]);
+
+  const totals = useMemo(() => {
+    const spent = campaigns.reduce((sum, campaign) => sum + Number(campaign.total_spent || 0), 0);
+    const impressions = campaigns.reduce((sum, campaign) => sum + Number(campaign.impression_count || 0), 0);
+    const clicks = campaigns.reduce((sum, campaign) => sum + Number(campaign.click_count || 0), 0);
+    return { spent, impressions, clicks, ctr: impressions ? (clicks / impressions) * 100 : 0, active: campaigns.filter((campaign) => campaign.status === 'active').length };
+  }, [campaigns]);
+
+  const visibleCampaigns = useMemo(() => {
+    const normalizedQuery = query.trim().toLowerCase();
+    return campaigns.filter((campaign) => {
+      const matchesStatus = statusFilter === 'all' || campaign.status === statusFilter;
+      const matchesSearch = !normalizedQuery || [campaignTitle(campaign), campaign.format, campaign.goal, campaign.job?.title].some((value) => value?.toLowerCase().includes(normalizedQuery));
+      return matchesStatus && matchesSearch;
+    });
+  }, [campaigns, query, statusFilter]);
+
+  const statusCounts = useMemo(() => statusHighlights.map(({ status, label }) => ({
+    status,
+    label,
+    count: campaigns.filter((campaign) => campaign.status === status).length,
+  })), [campaigns]);
+
   return (
-    <div className="max-w-6xl mx-auto py-16 px-4">
-      {/* HERO SECTION */}
-      <div className="text-center mb-20">
-        <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight mb-6 text-c100">
-          Reach Nigeria&apos;s Most Ambitious Professionals
-        </h1>
-        <p className="text-xl text-c400 max-w-2xl mx-auto mb-10">
-          Advertise on Tutaly and connect with 50,000+ job seekers, employers, and professionals actively growing their careers.
-        </p>
-        <Link 
-          href="/advertise/create" 
-          className="btn btn--primary px-8 py-4 text-lg"
-        >
-          Create Your First Ad &rarr;
-        </Link>
-      </div>
-
-      {/* VALUE PROPS */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
-        <div className="dcard">
-          <div className="text-4xl mb-6">🎯</div>
-          <h3 className="text-xl font-bold mb-3 text-c100">Targeted Audience</h3>
-          <p className="text-c400">Reach professionals by industry, role, location, and behavior to maximize your campaign&apos;s impact.</p>
+    <div className="ads-page">
+      <header className="ads-page-header">
+        <div>
+          <p className="ads-eyebrow"><Sparkles aria-hidden="true" /> Advertising workspace</p>
+          <h1>Campaign overview</h1>
+          <p>Track delivery, review status, and spend across every Tutaly campaign.</p>
         </div>
-        <div className="dcard">
-          <div className="text-4xl mb-6">📊</div>
-          <h3 className="text-xl font-bold mb-3 text-c100">Real-time Analytics</h3>
-          <p className="text-c400">Track impressions, clicks, conversions, and ROI as they happen with our detailed dashboard.</p>
-        </div>
-        <div className="dcard">
-          <div className="text-4xl mb-6">💰</div>
-          <h3 className="text-xl font-bold mb-3 text-c100">Flexible Budgets</h3>
-          <p className="text-c400">Start from as low as ₦2,000 per day. No minimum commitment, pause or cancel anytime.</p>
-        </div>
-      </div>
+        <Link href="/advertise/create" className="btn btn--primary"><Plus aria-hidden="true" /> Create campaign</Link>
+      </header>
 
-      {/* AD FORMATS */}
-      <div className="mb-24">
-        <h2 className="text-3xl font-bold text-center mb-12 text-c100">Choose the Right Format for Your Goal</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="dcard hover:border-blue transition-colors group">
-            <div className="h-32 bg-c800 rounded-lg mb-6 flex items-center justify-center relative overflow-hidden">
-              <div className="w-11/12 h-12 bg-c700 rounded flex items-center justify-center">
-                <span className="text-xs text-c500 font-mono">1200 x 90</span>
-              </div>
-            </div>
-            <h3 className="text-lg font-bold mb-2 text-c100">Banner Ad</h3>
-            <p className="text-sm text-c400 mb-4 h-16">High visibility full-width banners placed at the top of the homepage, jobs, or shop pages.</p>
-            <div className="text-gold font-mono text-sm font-bold">From ₦5,000 / day</div>
-          </div>
-          
-          <div className="dcard hover:border-green transition-colors group">
-            <div className="h-32 bg-c800 rounded-lg mb-6 flex p-4 space-x-3 items-center">
-              <div className="w-12 h-12 bg-c700 rounded-md shrink-0"></div>
-              <div className="space-y-2 flex-grow">
-                <div className="h-3 w-3/4 bg-c700 rounded"></div>
-                <div className="h-2 w-1/2 bg-c700 rounded"></div>
-              </div>
-              <div className="absolute top-6 right-6 text-gold text-xl">⭐</div>
-            </div>
-            <h3 className="text-lg font-bold mb-2 text-c100">Sponsored Job</h3>
-            <p className="text-sm text-c400 mb-4 h-16">Promote your active job listings to appear at the very top of search results.</p>
-            <div className="text-green font-mono text-sm font-bold">From ₦3,000 / day</div>
-          </div>
+      {error && <div className="ads-feedback ads-feedback--error" role="alert"><AlertCircle aria-hidden="true" /><div><strong>Campaigns did not load</strong><span>{error}</span></div><button type="button" onClick={loadCampaigns}>Try again</button></div>}
 
-          <div className="dcard hover:border-gold transition-colors group">
-            <div className="h-32 bg-c800 rounded-lg mb-6 flex flex-col items-center justify-center p-4">
-              <div className="w-16 h-16 bg-c700 rounded-lg mb-2"></div>
-              <div className="h-2 w-20 bg-c700 rounded"></div>
-            </div>
-            <h3 className="text-lg font-bold mb-2 text-c100">Sponsored Product</h3>
-            <p className="text-sm text-c400 mb-4 h-16">Boost your shop listings to the top of their category and homepage highlights.</p>
-            <div className="text-gold font-mono text-sm font-bold">From ₦2,500 / day</div>
-          </div>
+      <section className="ads-metric-grid" aria-label="Campaign performance summary">
+        {loading ? Array.from({ length: 5 }).map((_, index) => <div className="ads-metric-card" key={index} aria-hidden="true"><div className="ads-skeleton ads-skeleton--label" /><div className="ads-skeleton ads-skeleton--value" /></div>) : (
+          <>
+            <article className="ads-metric-card ads-metric-card--gold"><div className="ads-metric-card__top"><span>Active campaigns</span><Megaphone aria-hidden="true" /></div><strong>{totals.active}</strong><small>{campaigns.length} total campaigns</small></article>
+            <article className="ads-metric-card"><div className="ads-metric-card__top"><span>Amount spent</span><WalletCards aria-hidden="true" /></div><strong>{formatNaira(totals.spent)}</strong><small>Across all campaigns</small></article>
+            <article className="ads-metric-card"><div className="ads-metric-card__top"><span>Impressions</span><Eye aria-hidden="true" /></div><strong>{formatCompactNumber(totals.impressions)}</strong><small>Ads shown to your audience</small></article>
+            <article className="ads-metric-card"><div className="ads-metric-card__top"><span>Clicks</span><MousePointerClick aria-hidden="true" /></div><strong>{formatCompactNumber(totals.clicks)}</strong><small>Visits from your campaigns</small></article>
+            <article className="ads-metric-card"><div className="ads-metric-card__top"><span>Average CTR</span><TrendingUp aria-hidden="true" /></div><strong>{totals.ctr.toFixed(2)}%</strong><small>Clicks divided by impressions</small></article>
+          </>
+        )}
+      </section>
 
-          <div className="dcard hover:border-blue transition-colors group">
-            <div className="h-32 bg-c800 rounded-lg mb-6 flex items-center justify-center p-4">
-               <div className="w-full h-full bg-c700 rounded flex items-center justify-center">
-                 <span className="text-xs text-c500 font-mono">300 x 250</span>
-               </div>
-            </div>
-            <h3 className="text-lg font-bold mb-2 text-c100">Sidebar Ad</h3>
-            <p className="text-sm text-c400 mb-4 h-16">Box advertisements consistently visible on the sidebars of the Community feed and jobs page.</p>
-            <div className="text-blue font-mono text-sm font-bold">From ₦2,000 / day</div>
-          </div>
+      {!loading && campaigns.length > 0 && <section className="ads-status-strip" aria-label="Campaign workflow summary">
+        <div className="ads-status-strip__intro"><span className="ads-status-strip__marker" aria-hidden="true" /><div><strong>Campaign workflow</strong><span>Keep an eye on campaigns that need your next step.</span></div></div>
+        <div className="ads-status-strip__items">
+          {statusCounts.map(({ status, label, count }) => <button type="button" className={`ads-status-link ads-status-link--${status}`} key={status} onClick={() => setStatusFilter(status)}><strong>{count}</strong><span>{label}</span></button>)}
         </div>
-      </div>
+      </section>}
 
-      {/* AUDIENCE STATS */}
-      <div className="bg-blue/10 border border-blue/30 rounded-3xl p-12 text-center">
-        <h2 className="text-3xl font-bold mb-10 text-c100">Join the platform where Nigeria&apos;s talent gathers</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-          <div>
-            <div className="text-4xl font-mono font-bold text-blue mb-2">50k+</div>
-            <div className="text-sm text-c400 uppercase tracking-wide">Monthly Active Users</div>
+      <section className="ads-panel">
+        <div className="ads-panel__header"><div><p className="ads-panel__kicker">Campaigns</p><h2>Delivery and review status</h2><p>{loading ? 'Loading your latest campaign activity…' : `${visibleCampaigns.length} of ${campaigns.length} campaigns shown`}</p></div><button type="button" className="ads-icon-button" onClick={loadCampaigns} disabled={loading} aria-label="Refresh campaigns"><RefreshCw className={loading ? 'is-spinning' : ''} aria-hidden="true" /></button></div>
+        {!loading && campaigns.length > 0 && <div className="ads-toolbar"><label className="ads-search-field"><Search aria-hidden="true" /><span className="sr-only">Search campaigns</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search campaign or job" /></label><label className="ads-filter-field"><Filter aria-hidden="true" /><span className="sr-only">Filter by status</span><select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value as (typeof filters)[number])}>{filters.map((filter) => <option value={filter} key={filter}>{filter === 'all' ? 'All statuses' : humanize(filter)}</option>)}</select></label></div>}
+
+        {loading ? <div className="ads-campaign-list" aria-busy="true">{Array.from({ length: 4 }).map((_, index) => <div className="ads-campaign-row ads-campaign-row--skeleton" key={index} />)}</div> : campaigns.length === 0 ? <div className="ads-empty-state"><div className="ads-empty-state__visual"><Megaphone aria-hidden="true" /></div><h3>Run your first campaign</h3><p>Promote an active job, your company profile, or a marketplace listing to the people most likely to act.</p><Link href="/advertise/create" className="btn btn--primary">Create campaign <ArrowRight aria-hidden="true" /></Link></div> : visibleCampaigns.length === 0 ? <div className="ads-empty-state ads-empty-state--compact"><Search aria-hidden="true" /><h3>No campaigns match these filters</h3><p>Clear your search or choose a different campaign status.</p><button type="button" className="btn btn--ghost" onClick={() => { setQuery(''); setStatusFilter('all'); }}>Clear filters</button></div> : (
+          <div className="ads-campaign-list" role="list" aria-label="Your campaigns">
+            {visibleCampaigns.map((campaign) => {
+              const budget = Number(campaign.total_budget || 0);
+              const spent = Number(campaign.total_spent || 0);
+              const budgetProgress = budget ? Math.min(100, (spent / budget) * 100) : 0;
+              const ctr = campaign.impression_count ? (campaign.click_count / campaign.impression_count) * 100 : 0;
+              return <Link className="ads-campaign-row" href={`/advertise/${campaign.id}`} key={campaign.id} role="listitem"><div className="ads-campaign-row__identity"><span className="ads-campaign-row__icon"><Megaphone aria-hidden="true" /></span><span><strong title={campaignTitle(campaign)}>{campaignTitle(campaign)}</strong><small>{humanize(campaign.goal)} · {humanize(campaign.format)}</small></span></div><CampaignStatusBadge status={campaign.status} /><div className="ads-campaign-row__budget"><span><strong>{formatNaira(spent)}</strong> of {formatNaira(budget)}</span><span className="ads-progress" role="progressbar" aria-label={`${campaignTitle(campaign)} budget spent`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(budgetProgress)}><span aria-hidden="true" style={{ transform: `scaleX(${budgetProgress / 100})` }} /></span></div><div className="ads-campaign-row__metric"><strong>{formatCompactNumber(campaign.impression_count)}</strong><small>Impressions</small></div><div className="ads-campaign-row__metric"><strong>{ctr.toFixed(2)}%</strong><small>CTR</small></div><ArrowRight className="ads-campaign-row__arrow" aria-hidden="true" /></Link>;
+            })}
           </div>
-          <div>
-            <div className="text-4xl font-mono font-bold text-green mb-2">120+</div>
-            <div className="text-sm text-c400 uppercase tracking-wide">Industries Represented</div>
-          </div>
-          <div>
-            <div className="text-4xl font-mono font-bold text-gold mb-2">35</div>
-            <div className="text-sm text-c400 uppercase tracking-wide">Nigerian States</div>
-          </div>
-          <div>
-            <div className="text-4xl font-mono font-bold text-red mb-2">10k+</div>
-            <div className="text-sm text-c400 uppercase tracking-wide">Daily Searches</div>
-          </div>
-        </div>
-      </div>
+        )}
+      </section>
     </div>
   );
 }

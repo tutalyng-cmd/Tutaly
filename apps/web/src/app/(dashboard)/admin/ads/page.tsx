@@ -1,461 +1,179 @@
 'use client';
 
-import { toast } from 'react-hot-toast';
-
-import React, { useEffect, useState, useCallback } from 'react';
+import { type FormEvent, useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  Megaphone,
-  CheckCircle,
-  XCircle,
-  TrendingUp,
-  Clock,
-  AlertCircle,
-  MousePointerClick,
-  Eye,
-  LinkIcon,
-  Loader2
+    AlertCircle,
+    CheckCircle2,
+    ChevronLeft,
+    ChevronRight,
+    Clock3,
+    Eye,
+    Loader2,
+    Megaphone,
+    MousePointerClick,
+    RefreshCw,
+    WalletCards,
+    X,
+    XCircle,
 } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { apiAuth } from '@/lib/api';
+import CampaignStatusBadge from '@/components/ads/CampaignStatusBadge';
+import { campaignTitle, formatCompactNumber, formatNaira, humanize } from '@/features/ads/format';
+import type { AdCampaign, PaginatedResponse } from '@/features/ads/types';
 
-interface Advertiser {
-  id: string;
-  name: string;
-  email: string;
-}
+type View = 'queue' | 'all';
 
-interface JobDetails {
-  id: string;
-  title: string;
-}
-
-interface AdCampaign {
-  id: string;
-  advertiser_id: string;
-  job_id: string | null;
-  product_id: string | null;
-  goal: string;
-  format: string;
-  status: string;
-  total_budget: string | number;
-  total_spent: string | number;
-  impression_count: number;
-  click_count: number;
-  starts_at: string;
-  ends_at: string | null;
-  createdAt: string;
-  advertiser?: Advertiser | null;
-  job?: JobDetails | null;
-}
+const rejectionReasons = [
+    'Creative does not meet platform policy',
+    'Campaign contains misleading information',
+    'Image quality is too low',
+    'Destination does not match the campaign',
+] as const;
 
 export default function AdminAdsModerationPage() {
-  const router = useRouter();
+    const router = useRouter();
+    const [campaigns, setCampaigns] = useState<AdCampaign[]>([]);
+    const [view, setView] = useState<View>('queue');
+    const [page, setPage] = useState(1);
+    const [total, setTotal] = useState(0);
+    const [limit, setLimit] = useState(10);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+    const [approvalCandidate, setApprovalCandidate] = useState<AdCampaign | null>(null);
+    const [rejectionCandidate, setRejectionCandidate] = useState<AdCampaign | null>(null);
+    const [predefinedReason, setPredefinedReason] = useState('');
+    const [rejectionDetail, setRejectionDetail] = useState('');
+    const [workingAction, setWorkingAction] = useState<'approve' | 'reject' | null>(null);
 
-  const [campaigns, setCampaigns] = useState<AdCampaign[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [tab, setTab] = useState<'queue' | 'all'>('queue');
+    const loadCampaigns = useCallback(async () => {
+        setLoading(true);
+        setError('');
+        try {
+            const token = localStorage.getItem('access_token');
+            const endpoint = view === 'queue' ? '/admin/ads/queue' : '/admin/ads/all';
+            const response = await apiAuth.withToken(token || undefined).get<PaginatedResponse<AdCampaign>>(endpoint, { params: { page, limit: 10 } });
+            setCampaigns(Array.isArray(response.data?.data) ? response.data.data : []);
+            setTotal(response.data?.meta?.total || 0);
+            setLimit(response.data?.meta?.limit || 10);
+        } catch (requestError) {
+            const request = requestError as { response?: { status?: number; data?: { message?: string } } };
+            if (request.response?.status === 401 || request.response?.status === 403) {
+                router.push('/auth/signin');
+                return;
+            }
+            setError(request.response?.data?.message || "We couldn't load the ad moderation queue. Try again.");
+        } finally {
+            setLoading(false);
+        }
+    }, [limit, page, router, view]);
 
-  // Modal State
-  const [rejectModalOpen, setRejectModalOpen] = useState(false);
-  const [rejectingCampaignId, setRejectingCampaignId] = useState<string | null>(null);
-  const [rejectReason, setRejectReason] = useState('');
-  const [predefinedReason, setPredefinedReason] = useState('');
-  const [approvingCampaignId, setApprovingCampaignId] = useState<string | null>(null);
-  const [approvalCandidateId, setApprovalCandidateId] = useState<string | null>(null);
-  const [rejecting, setRejecting] = useState(false);
+    useEffect(() => { loadCampaigns(); }, [loadCampaigns]);
 
-  const PREDEFINED_REASONS = [
-    'Violates Platform Policy',
-    'Inappropriate Content',
-    'Misleading or False Information',
-    'Low Quality Media',
-    'Irrelevant to Audience'
-  ];
+    const switchView = (nextView: View) => {
+        setView(nextView);
+        setPage(1);
+    };
 
-  const fetchCampaigns = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError('');
-      const token = localStorage.getItem('access_token');
+    const approveCampaign = async () => {
+        if (!approvalCandidate) return;
+        setWorkingAction('approve');
+        try {
+            const token = localStorage.getItem('access_token');
+            await apiAuth.withToken(token || undefined).patch(`/admin/ads/${approvalCandidate.id}/approve`);
+            toast.success('Campaign approved and activated.');
+            setApprovalCandidate(null);
+            await loadCampaigns();
+        } catch (requestError) {
+            const request = requestError as { response?: { data?: { message?: string } } };
+            toast.error(request.response?.data?.message || 'Campaign was not approved. Try again.');
+        } finally {
+            setWorkingAction(null);
+        }
+    };
 
-      const endpoint = tab === 'queue' ? '/admin/ads/queue' : '/admin/ads/all';
-      const res = await apiAuth.withToken(token || undefined).get(endpoint);
+    const rejectCampaign = async (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        if (!rejectionCandidate) return;
+        const reason = [predefinedReason, rejectionDetail.trim()].filter(Boolean).join(' — ');
+        if (!reason) {
+            toast.error('Add a clear rejection reason.');
+            return;
+        }
+        setWorkingAction('reject');
+        try {
+            const token = localStorage.getItem('access_token');
+            await apiAuth.withToken(token || undefined).patch(`/admin/ads/${rejectionCandidate.id}/reject`, { reason });
+            toast.success('Campaign rejected with feedback.');
+            setRejectionCandidate(null);
+            setPredefinedReason('');
+            setRejectionDetail('');
+            await loadCampaigns();
+        } catch (requestError) {
+            const request = requestError as { response?: { data?: { message?: string } } };
+            toast.error(request.response?.data?.message || 'Campaign was not rejected. Try again.');
+        } finally {
+            setWorkingAction(null);
+        }
+    };
 
-      setCampaigns(res.data || []);
-    } catch (e) {
-      const error = e as { response?: { data?: { message?: string }; status?: number }; message?: string };
+    const openRejectionDialog = (campaign: AdCampaign) => {
+        setRejectionCandidate(campaign);
+        setPredefinedReason('');
+        setRejectionDetail('');
+    };
 
-      if (error.response?.status === 401 || error.response?.status === 403) {
-        router.push('/auth/signin');
-        return;
-      }
-      setError(error.response?.data?.message || error.message || 'Error loading campaigns');
-    } finally {
-      setLoading(false);
-    }
-  }, [tab, router]);
+    const closeRejectionDialog = () => {
+        if (workingAction) return;
+        setRejectionCandidate(null);
+        setPredefinedReason('');
+        setRejectionDetail('');
+    };
 
-  useEffect(() => {
-    fetchCampaigns();
-  }, [fetchCampaigns]);
+    const totalPages = Math.max(1, Math.ceil(total / limit));
 
-  const handleApprove = async (id: string) => {
-    setApprovingCampaignId(id);
-    try {
-      const token = localStorage.getItem('access_token');
-      await apiAuth.withToken(token || undefined).patch(`/admin/ads/${id}/approve`);
-      setApprovalCandidateId(null);
-      toast.success('Campaign approved');
-      await fetchCampaigns();
-    } catch (e) {
-      const err = e as { response?: { data?: { message?: string }; status?: number }; message?: string };
-      toast.error(err.response?.data?.message || err.message || 'Failed to approve campaign');
-    } finally {
-      setApprovingCampaignId(null);
-    }
-  };
+    return (
+        <div className="ads-admin-page">
+            <header className="ads-admin-header">
+                <div>
+                    <p className="ads-eyebrow"><Megaphone aria-hidden="true" /> Platform moderation</p>
+                    <h1>Ad campaign review</h1>
+                    <p>Review paid campaigns before they begin delivery across Tutaly.</p>
+                </div>
+                <button type="button" className="btn btn--ghost" onClick={loadCampaigns} disabled={loading}><RefreshCw className={loading ? 'is-spinning' : ''} aria-hidden="true" /> Refresh queue</button>
+            </header>
 
-  const openRejectModal = (id: string) => {
-    setRejectingCampaignId(id);
-    setRejectReason('');
-    setPredefinedReason('');
-    setRejectModalOpen(true);
-  };
+            <div className="ads-admin-tabs" role="tablist" aria-label="Campaign moderation views">
+                <button type="button" role="tab" aria-selected={view === 'queue'} className={view === 'queue' ? 'is-active' : ''} onClick={() => switchView('queue')}><Clock3 aria-hidden="true" /> Pending review</button>
+                <button type="button" role="tab" aria-selected={view === 'all'} className={view === 'all' ? 'is-active' : ''} onClick={() => switchView('all')}><Megaphone aria-hidden="true" /> All campaigns</button>
+                {!loading && <span className="ads-admin-tabs__count">{total} {view === 'queue' ? 'awaiting a decision' : 'campaigns total'}</span>}
+            </div>
 
-  const handleReject = async () => {
-    if (!rejectingCampaignId) return;
+            {error && <div className="ads-feedback ads-feedback--error" role="alert"><AlertCircle aria-hidden="true" /><div><strong>Moderation queue did not load</strong><span>{error}</span></div><button type="button" onClick={loadCampaigns}>Try again</button></div>}
 
-    const finalReason = predefinedReason
-      ? (rejectReason ? `${predefinedReason} - ${rejectReason}` : predefinedReason)
-      : rejectReason;
+            <section className="ads-admin-panel" aria-label={view === 'queue' ? 'Campaigns pending review' : 'All ad campaigns'}>
+                {loading ? <div className="ads-admin-list" aria-busy="true" aria-label="Loading campaigns">{Array.from({ length: 5 }).map((_, index) => <div className="ads-admin-row ads-admin-row--skeleton" key={index} aria-hidden="true" />)}</div> : campaigns.length === 0 ? <div className="ads-empty-state"><div className="ads-empty-state__visual"><CheckCircle2 aria-hidden="true" /></div><h3>{view === 'queue' ? 'The review queue is clear' : 'No campaigns have been created'}</h3><p>{view === 'queue' ? 'New paid campaigns that need a decision will appear here.' : 'Created campaigns will appear here with their delivery and moderation status.'}</p></div> : <div className="ads-admin-list" role="list">
+                    {campaigns.map((campaign) => {
+                        const budget = Number(campaign.total_budget || 0);
+                        const spent = Number(campaign.total_spent || 0);
+                        const progress = budget ? Math.min(100, (spent / budget) * 100) : 0;
+                        return <article className="ads-admin-row" key={campaign.id} role="listitem">
+                            <div className="ads-admin-row__identity"><span className="ads-campaign-row__icon"><Megaphone aria-hidden="true" /></span><div><strong title={campaignTitle(campaign)}>{campaignTitle(campaign)}</strong><span>{campaign.advertiser?.name || campaign.advertiser?.email || `Advertiser ${campaign.advertiser_id.slice(0, 8)}`}</span><small>{humanize(campaign.goal)} · {humanize(campaign.format)} · {new Date(campaign.createdAt).toLocaleDateString('en-NG', { dateStyle: 'medium' })}</small></div></div>
+                            <div className="ads-admin-row__stat"><span><WalletCards aria-hidden="true" /> Budget</span><strong>{formatNaira(budget)}</strong><small>{formatNaira(spent)} delivered</small><span className="ads-progress" role="progressbar" aria-label={`${campaignTitle(campaign)} budget spent`} aria-valuenow={Math.round(progress)} aria-valuemin={0} aria-valuemax={100}><span aria-hidden="true" style={{ transform: `scaleX(${progress / 100})` }} /></span></div>
+                            <div className="ads-admin-row__performance"><span><Eye aria-hidden="true" /><strong>{formatCompactNumber(campaign.impression_count)}</strong><small>impressions</small></span><span><MousePointerClick aria-hidden="true" /><strong>{formatCompactNumber(campaign.click_count)}</strong><small>clicks</small></span></div>
+                            <CampaignStatusBadge status={campaign.status} />
+                            <div className="ads-admin-row__actions">{campaign.status === 'pending_review' ? <><button type="button" className="btn btn--primary btn--sm" onClick={() => setApprovalCandidate(campaign)}><CheckCircle2 aria-hidden="true" /> Approve</button><button type="button" className="btn btn--ghost btn--sm ads-admin-reject" onClick={() => openRejectionDialog(campaign)}><XCircle aria-hidden="true" /> Reject</button></> : <span>No moderation action</span>}</div>
+                        </article>;
+                    })}
+                </div>}
+            </section>
 
-    if (!finalReason.trim()) {
-      toast.error('Please provide a rejection reason.');
-      return;
-    }
+            {!loading && totalPages > 1 && <nav className="ads-admin-pagination" aria-label="Campaign queue pages"><button type="button" className="ads-icon-button" onClick={() => setPage((current) => Math.max(1, current - 1))} disabled={page === 1} aria-label="Previous page"><ChevronLeft aria-hidden="true" /></button><span>Page <strong>{page}</strong> of {totalPages}</span><button type="button" className="ads-icon-button" onClick={() => setPage((current) => Math.min(totalPages, current + 1))} disabled={page === totalPages} aria-label="Next page"><ChevronRight aria-hidden="true" /></button></nav>}
 
-    setRejecting(true);
-    try {
-      const token = localStorage.getItem('access_token');
-      await apiAuth.withToken(token || undefined).patch(`/admin/ads/${rejectingCampaignId}/reject`, {
-        reason: finalReason
-      });
-      setRejectModalOpen(false);
-      toast.success('Campaign rejected');
-      await fetchCampaigns();
-    } catch (e) {
-      const err = e as { response?: { data?: { message?: string }; status?: number }; message?: string };
-      toast.error(err.response?.data?.message || err.message || 'Failed to reject campaign');
-    } finally {
-      setRejecting(false);
-    }
-  };
+            {approvalCandidate && <div className="ads-dialog-layer"><button type="button" className="ads-dialog-backdrop" onClick={() => !workingAction && setApprovalCandidate(null)} aria-label="Close approval dialog" /><section className="ads-dialog" role="dialog" aria-modal="true" aria-labelledby="ads-approve-title" aria-describedby="ads-approve-description"><span className="ads-dialog__icon ads-dialog__icon--success"><CheckCircle2 aria-hidden="true" /></span><h2 id="ads-approve-title">Approve this campaign?</h2><p id="ads-approve-description"><strong>{campaignTitle(approvalCandidate)}</strong> will become active and may begin spending its approved budget immediately.</p><div className="ads-dialog__actions"><button type="button" className="btn btn--ghost" onClick={() => setApprovalCandidate(null)} disabled={workingAction !== null}>Cancel</button><button type="button" className="btn btn--primary" onClick={approveCampaign} disabled={workingAction !== null} autoFocus>{workingAction === 'approve' ? <Loader2 className="is-spinning" aria-hidden="true" /> : <CheckCircle2 aria-hidden="true" />} {workingAction === 'approve' ? 'Approving…' : 'Approve campaign'}</button></div></section></div>}
 
-  const formatCurrency = (amount: string | number) => {
-    return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(Number(amount));
-  };
-
-  const statusBadge = (status: string) => {
-    switch (status) {
-      case 'pending_payment':
-        return <span className="px-3 py-1 text-xs font-bold rounded-full bg-c100 text-c600 border border-c200 shadow-sm">Awaiting Payment</span>;
-      case 'pending_review':
-        return <span className="px-3 py-1 text-xs font-bold rounded-full bg-c100 text-blue border border-blueL shadow-sm">In review</span>;
-      case 'active':
-        return <span className="px-3 py-1 text-xs font-bold rounded-full bg-c100 text-green border border-green shadow-sm">Active</span>;
-      case 'completed':
-        return <span className="px-3 py-1 text-xs font-bold rounded-full bg-c100 text-c600 border border-c300 shadow-sm">Completed</span>;
-      case 'paused':
-        return <span className="px-3 py-1 text-xs font-bold rounded-full bg-c100 text-gold border border-gold shadow-sm">Paused</span>;
-      case 'rejected':
-        return <span className="px-3 py-1 text-xs font-bold rounded-full bg-c100 text-red border border-red shadow-sm">Rejected</span>;
-      default:
-        return <span className="px-3 py-1 text-xs font-bold rounded-full bg-c100 text-c600 uppercase shadow-sm">{status.replace('_', ' ')}</span>;
-    }
-  };
-
-  return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-black text-c100 flex items-center gap-3">
-            <Megaphone className="w-8 h-8 text-green" />
-            Ads moderation
-          </h1>
-          <p className="text-c400 mt-2 font-medium">Review, approve, and monitor advertiser campaigns across the platform.</p>
+            {rejectionCandidate && <div className="ads-dialog-layer"><button type="button" className="ads-dialog-backdrop" onClick={closeRejectionDialog} aria-label="Close rejection dialog" /><form className="ads-dialog ads-dialog--form" role="dialog" aria-modal="true" aria-labelledby="ads-reject-title" onSubmit={rejectCampaign}><button type="button" className="ads-dialog__close ads-icon-button" onClick={closeRejectionDialog} disabled={workingAction !== null} aria-label="Close rejection dialog"><X aria-hidden="true" /></button><span className="ads-dialog__icon ads-dialog__icon--danger"><XCircle aria-hidden="true" /></span><h2 id="ads-reject-title">Reject campaign with feedback</h2><p>Give the advertiser a specific reason they can act on before submitting again.</p><label className="ads-field"><span className="ads-field__label">Common reason</span><select className="ads-input" value={predefinedReason} onChange={(event) => setPredefinedReason(event.target.value)} autoFocus><option value="">Choose a reason</option>{rejectionReasons.map((reason) => <option value={reason} key={reason}>{reason}</option>)}</select></label><label className="ads-field"><span className="ads-field__label">Additional detail</span><textarea className="ads-input ads-input--textarea" value={rejectionDetail} onChange={(event) => setRejectionDetail(event.target.value)} placeholder="Explain what needs to change." maxLength={500} /><small>{rejectionDetail.length}/500</small></label><div className="ads-dialog__actions"><button type="button" className="btn btn--ghost" onClick={closeRejectionDialog} disabled={workingAction !== null}>Cancel</button><button type="submit" className="btn btn--primary ads-admin-reject-button" disabled={workingAction !== null || (!predefinedReason && !rejectionDetail.trim())}>{workingAction === 'reject' ? <Loader2 className="is-spinning" aria-hidden="true" /> : <XCircle aria-hidden="true" />} {workingAction === 'reject' ? 'Rejecting…' : 'Reject campaign'}</button></div></form></div>}
         </div>
-      </div>
-
-      {/* Tabs */}
-      <div className="flex gap-3 border-b border-c200 pb-3 overflow-x-auto scrollbar-hide">
-        <button
-          onClick={() => setTab('queue')}
-          className={`px-5 py-2.5 rounded-xl text-sm font-bold capitalize whitespace-nowrap transition-all ${tab === 'queue'
-            ? 'bg-green text-white shadow-md'
-            : 'bg-white text-c600 border border-c200 hover:border-c300 hover:bg-c100'
-            }`}
-        >
-          Pending Review
-        </button>
-        <button
-          onClick={() => setTab('all')}
-          className={`px-5 py-2.5 rounded-xl text-sm font-bold capitalize whitespace-nowrap transition-all ${tab === 'all'
-            ? 'bg-c700 text-white shadow-md'
-            : 'bg-white text-c600 border border-c200 hover:border-c300 hover:bg-c100'
-            }`}
-        >
-          All Campaigns
-        </button>
-      </div>
-
-      {error && (
-        <div className="flex items-center gap-3 text-white bg-red border border-red p-4 rounded-xl text-sm font-medium shadow-sm" role="alert">
-          <AlertCircle className="w-5 h-5 flex-shrink-0" />
-          {error}
-        </div>
-      )}
-
-      {/* Campaigns Table / List */}
-      <div className="bg-white/80 backdrop-blur-xl shadow-xl shadow-gray-200/50 border border-c100 rounded-3xl overflow-hidden relative">
-        {loading ? (
-          <div className="flex flex-col justify-center items-center h-64 gap-4">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-t-2 border-green"></div>
-            <p className="text-c500 font-medium">Loading campaigns...</p>
-          </div>
-        ) : campaigns.length === 0 ? (
-          <div className="p-20 text-center flex flex-col items-center">
-            <div className="w-20 h-20 bg-c100 rounded-2xl flex items-center justify-center mb-5 border border-c100 shadow-inner">
-              <Megaphone className="w-10 h-10 text-c300" />
-            </div>
-            <h3 className="text-2xl font-black text-c900 mb-2">{tab === 'queue' ? 'Queue is empty' : 'No campaigns yet'}</h3>
-            <p className="text-c500 font-medium max-w-sm">
-              {tab === 'queue'
-                ? 'There are no campaigns waiting for review.'
-                : 'No campaigns have been created on the platform yet.'}
-            </p>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-c100">
-              <thead className="bg-c100/80 backdrop-blur-sm border-b border-c100">
-                <tr>
-                  <th scope="col" className="px-6 py-5 text-left text-xs font-black text-c500 uppercase tracking-widest">Advertiser / Target</th>
-                  <th scope="col" className="px-6 py-5 text-left text-xs font-black text-c500 uppercase tracking-widest">Budget & Spent</th>
-                  <th scope="col" className="px-6 py-5 text-left text-xs font-black text-c500 uppercase tracking-widest">Metrics</th>
-                  <th scope="col" className="px-6 py-5 text-left text-xs font-black text-c500 uppercase tracking-widest">Status</th>
-                  <th scope="col" className="px-6 py-5 text-right text-xs font-black text-c500 uppercase tracking-widest">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-c100">
-                {campaigns.map((campaign) => (
-                  <tr key={campaign.id} className="hover:bg-c100/80 transition-colors group">
-
-                    {/* Advertiser / Target Column */}
-                    <td className="px-6 py-5">
-                      <div className="flex flex-col gap-1">
-                        <div className="font-bold text-c900 text-sm">
-                          {campaign.advertiser ? campaign.advertiser.name : (campaign.advertiser_id || '').substring(0, 8)}
-                        </div>
-                        {campaign.advertiser && (
-                          <div className="text-xs text-c500">{campaign.advertiser.email}</div>
-                        )}
-                        <div className="mt-3 flex items-start gap-2 bg-c100 p-2 rounded-lg border border-c100">
-                          {campaign.job ? (
-                            <LinkIcon className="w-4 h-4 text-green mt-0.5" />
-                          ) : (
-                            <Megaphone className="w-4 h-4 text-blue mt-0.5" />
-                          )}
-                          <div>
-                            <div className="text-xs font-bold text-c700 capitalize">
-                              {campaign.format.replace('_', ' ')}
-                            </div>
-                            <div className="text-xs text-c500 truncate max-w-layout-sm" title={campaign.job ? campaign.job.title : 'General Ad'}>
-                              {campaign.job ? campaign.job.title : 'General Placement'}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-
-                    {/* Budget & Spent Column */}
-                    <td className="px-6 py-5">
-                      <div className="flex flex-col gap-2">
-                        <div>
-                          <div className="text-xs text-c500 font-medium uppercase tracking-wider mb-1">Total Budget</div>
-                          <div className="text-sm font-black text-c900">{formatCurrency(campaign.total_budget)}</div>
-                        </div>
-                        <div>
-                          <div className="text-xs text-c500 font-medium uppercase tracking-wider mb-1">Total Spent</div>
-                          <div className="text-sm font-bold text-c700 flex items-center gap-2">
-                            {formatCurrency(campaign.total_spent)}
-                            <span className="text-xs text-c400 font-medium">
-                              ({Math.round((Number(campaign.total_spent) / Number(campaign.total_budget)) * 100)}%)
-                            </span>
-                          </div>
-                          {/* Progress Bar */}
-                          <div className="w-full bg-c100 rounded-full h-1.5 mt-1.5 overflow-hidden">
-                            <div
-                              className={`h-1.5 rounded-full ${Number(campaign.total_spent) >= Number(campaign.total_budget) ? 'bg-gold' : 'bg-green'}`}
-                              style={{ width: `${Math.min(100, (Number(campaign.total_spent) / Number(campaign.total_budget)) * 100)}%` }}
-                            ></div>
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-
-                    {/* Metrics Column */}
-                    <td className="px-6 py-5">
-                      <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-2">
-                          <Eye className="w-4 h-4 text-blue" />
-                          <span className="text-sm font-bold text-c900">{campaign.impression_count}</span>
-                          <span className="text-xs text-c500">Impressions</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <MousePointerClick className="w-4 h-4 text-green" />
-                          <span className="text-sm font-bold text-c900">{campaign.click_count}</span>
-                          <span className="text-xs text-c500">Clicks</span>
-                        </div>
-                        <div className="flex items-center gap-2 mt-1">
-                          <TrendingUp className="w-4 h-4 text-c400" />
-                          <span className="text-xs font-bold text-c600">
-                            {campaign.impression_count > 0
-                              ? ((campaign.click_count / campaign.impression_count) * 100).toFixed(2)
-                              : '0.00'}% CTR
-                          </span>
-                        </div>
-                      </div>
-                    </td>
-
-                    {/* Status Column */}
-                    <td className="px-6 py-5 whitespace-nowrap">
-                      <div className="flex flex-col gap-2 items-start">
-                        {statusBadge(campaign.status)}
-                        <div className="text-xs text-c500 flex items-center gap-1 mt-1 font-medium">
-                          <Clock className="w-3 h-3" />
-                          {new Date(campaign.createdAt).toLocaleDateString()}
-                        </div>
-                      </div>
-                    </td>
-
-                    {/* Actions Column */}
-                    <td className="px-6 py-5 whitespace-nowrap text-right">
-                      {campaign.status === 'pending_review' ? (
-                        <div className="flex flex-col gap-2 items-end">
-                          <button
-                            type="button"
-                            onClick={() => setApprovalCandidateId(campaign.id)}
-                            disabled={approvingCampaignId === campaign.id}
-                            className="bg-green text-white px-4 py-2 rounded-xl text-sm font-bold transition-opacity flex items-center gap-2 shadow-sm border border-green hover:opacity-90 disabled:opacity-60"
-                          >
-                            {approvingCampaignId === campaign.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />} Approve
-                          </button>
-                          <button
-                            onClick={() => openRejectModal(campaign.id)}
-                            className="bg-c100 text-red px-4 py-2 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 shadow-sm border border-red hover:bg-white"
-                          >
-                            <XCircle className="w-4 h-4" /> Reject
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="text-xs font-medium text-c400 italic">No actions available</div>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-
-      {approvalCandidateId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="presentation">
-          <div className="absolute inset-0 bg-c900/70 backdrop-blur-sm" onClick={() => setApprovalCandidateId(null)}></div>
-          <section className="bg-white rounded-2xl shadow-2xl w-full max-w-md relative z-10 p-6" role="dialog" aria-modal="true" aria-labelledby="approve-campaign-title" aria-describedby="approve-campaign-description">
-            <h2 id="approve-campaign-title" className="text-xl font-black text-c900 flex items-center gap-2">
-              <CheckCircle className="w-6 h-6 text-green" aria-hidden="true" />
-              Approve campaign?
-            </h2>
-            <p id="approve-campaign-description" className="text-sm text-c500 mt-3 leading-6">
-              This campaign will become active immediately and may begin spending its budget.
-            </p>
-            <div className="flex justify-end gap-3 mt-6">
-              <button type="button" className="px-5 py-2.5 rounded-xl font-bold text-c600 hover:bg-c100 transition-colors" onClick={() => setApprovalCandidateId(null)} disabled={approvingCampaignId === approvalCandidateId}>
-                Cancel
-              </button>
-              <button type="button" className="px-5 py-2.5 rounded-xl font-bold bg-green text-white transition-colors flex items-center gap-2 disabled:opacity-60" onClick={() => handleApprove(approvalCandidateId)} disabled={approvingCampaignId === approvalCandidateId} autoFocus>
-                {approvingCampaignId === approvalCandidateId ? <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" /> : <CheckCircle className="w-5 h-5" aria-hidden="true" />}
-                {approvingCampaignId === approvalCandidateId ? 'Approving…' : 'Approve campaign'}
-              </button>
-            </div>
-          </section>
-        </div>
-      )}
-
-      {/* Reject Modal */}
-      {rejectModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-c900/70 backdrop-blur-sm" onClick={() => setRejectModalOpen(false)}></div>
-          <section className="bg-white rounded-3xl shadow-2xl w-full max-w-lg relative z-10 overflow-hidden animate-in fade-in zoom-in-95 duration-200" role="dialog" aria-modal="true" aria-labelledby="reject-campaign-title" aria-describedby="reject-campaign-description">
-            <div className="p-6 border-b border-c100">
-              <h2 id="reject-campaign-title" className="text-2xl font-black text-c900 flex items-center gap-2">
-                <AlertCircle className="w-6 h-6 text-red" />
-                Reject campaign
-              </h2>
-              <p id="reject-campaign-description" className="text-sm text-c500 mt-1 font-medium">Provide a clear reason the advertiser can act on.</p>
-            </div>
-
-            <div className="p-6 space-y-5">
-              <div>
-                <label className="block text-sm font-bold text-c700 mb-2" htmlFor="reject-reason">Common reason</label>
-                <select
-                  id="reject-reason"
-                  className="w-full bg-c100 border border-c200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red focus:border-transparent transition-all"
-                  value={predefinedReason}
-                  onChange={(e) => setPredefinedReason(e.target.value)}
-                >
-                  <option value="">Select a reason (optional)</option>
-                  {PREDEFINED_REASONS.map(reason => (
-                    <option key={reason} value={reason}>{reason}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-bold text-c700 mb-2" htmlFor="reject-comments">Additional comments</label>
-                <textarea
-                  id="reject-comments"
-                  className="w-full bg-c100 border border-c200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red focus:border-transparent transition-all min-h-24 resize-y"
-                  placeholder="Provide specific details about why this campaign was rejected..."
-                  value={rejectReason}
-                  onChange={(e) => setRejectReason(e.target.value)}
-                />
-              </div>
-            </div>
-
-            <div className="p-6 bg-c100/80 border-t border-c100 flex justify-end gap-3">
-              <button
-                onClick={() => setRejectModalOpen(false)}
-                disabled={rejecting}
-                className="px-5 py-2.5 rounded-xl font-bold text-c600 hover:bg-c200 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleReject}
-                disabled={rejecting}
-                className="px-5 py-2.5 rounded-xl font-bold bg-red text-white shadow-lg hover:opacity-90 transition-opacity flex items-center gap-2 disabled:opacity-60"
-              >
-                {rejecting ? <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" /> : <XCircle className="w-5 h-5" aria-hidden="true" />}
-                {rejecting ? 'Rejecting…' : 'Reject campaign'}
-              </button>
-            </div>
-          </section>
-        </div>
-      )}
-    </div>
-  );
+    );
 }

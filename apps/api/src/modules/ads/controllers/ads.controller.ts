@@ -2,6 +2,7 @@ import {
   Controller,
   Post,
   Get,
+  Patch,
   Body,
   Req,
   UseGuards,
@@ -9,6 +10,7 @@ import {
   UploadedFile,
   BadRequestException,
   Query,
+  Param,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AdsService } from '../services/ads.service';
@@ -75,7 +77,7 @@ export class AdsController {
 
     // Create the campaign
     const campaign = await this.adsService.createCampaign(
-      req.user.id,
+      req.user.sub,
       campaignData,
     );
 
@@ -116,6 +118,25 @@ export class AdsController {
     );
   }
 
+  @Post(':id/payment')
+  @Roles(UserRole.EMPLOYER, UserRole.ADMIN)
+  async initializePayment(
+    @Req() req: AuthRequest,
+    @Param('id') id: string,
+    @Body('paymentGateway') paymentGateway: string,
+  ) {
+    if (!paymentGateway) {
+      throw new BadRequestException('Choose a payment method.');
+    }
+    return this.adsService.initializeOwnedAdPayment(
+      req.user.sub,
+      id,
+      paymentGateway,
+      req.user.email || 'employer@tutaly.com',
+      req.user.name || 'Tutaly employer',
+    );
+  }
+
   @Get()
   @Roles(UserRole.EMPLOYER, UserRole.ADMIN)
   async getMyCampaigns(
@@ -153,5 +174,53 @@ export class AdsController {
     ];
     const adAlerts = data.filter((n) => adTypes.includes(n.type) && !n.isRead);
     return { alerts: adAlerts };
+  }
+
+  @Get('billing')
+  @Roles(UserRole.EMPLOYER, UserRole.ADMIN)
+  async getBilling(
+    @Req() req: AuthRequest,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
+    return this.adsService.getBillingHistory(
+      req.user.sub,
+      page ? parseInt(page, 10) : 1,
+      limit ? parseInt(limit, 10) : 10,
+    );
+  }
+
+  @Get(':id')
+  @Roles(UserRole.EMPLOYER, UserRole.ADMIN)
+  async getCampaign(@Req() req: AuthRequest, @Param('id') id: string) {
+    return this.adsService.getCampaignForAdvertiser(req.user.sub, id);
+  }
+
+  @Get(':id/analytics')
+  @Roles(UserRole.EMPLOYER, UserRole.ADMIN)
+  async getCampaignAnalytics(@Req() req: AuthRequest, @Param('id') id: string) {
+    return this.adsService.getCampaignAnalytics(req.user.sub, id);
+  }
+
+  @Patch(':id')
+  @Roles(UserRole.EMPLOYER, UserRole.ADMIN)
+  async updateCampaign(
+    @Req() req: AuthRequest,
+    @Param('id') id: string,
+    @Body() body: CreateCampaignDto,
+  ) {
+    return this.adsService.updateCampaign(req.user.sub, id, body);
+  }
+
+  @Patch(':id/pause')
+  @Roles(UserRole.EMPLOYER, UserRole.ADMIN)
+  async pauseCampaign(@Req() req: AuthRequest, @Param('id') id: string) {
+    return this.adsService.pauseCampaign(req.user.sub, id);
+  }
+
+  @Patch(':id/resume')
+  @Roles(UserRole.EMPLOYER, UserRole.ADMIN)
+  async resumeCampaign(@Req() req: AuthRequest, @Param('id') id: string) {
+    return this.adsService.resumeCampaign(req.user.sub, id);
   }
 }

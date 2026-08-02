@@ -125,7 +125,8 @@ export class CommunityService {
   async createThread(
     userId: string,
     dto: {
-      bowl_slug: string;
+      bowl_slug?: string;
+      bowl_name?: string;
       title: string;
       content: string;
       anonymity_mode: AnonymityMode;
@@ -133,10 +134,35 @@ export class CommunityService {
       media_urls?: string[];
     },
   ) {
-    const bowl = await this.bowlRepo.findOne({
-      where: { slug: dto.bowl_slug },
-    });
-    if (!bowl) throw new NotFoundException('Community bowl not found');
+    if (!dto.bowl_slug && !dto.bowl_name) {
+      throw new BadRequestException('Either bowl_slug or bowl_name is required');
+    }
+
+    let bowl: CommunityBowl | null = null;
+
+    if (dto.bowl_slug) {
+      bowl = await this.bowlRepo.findOne({
+        where: { slug: dto.bowl_slug },
+      });
+    } else if (dto.bowl_name) {
+      const generatedSlug = dto.bowl_name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      bowl = await this.bowlRepo.findOne({
+        where: { slug: generatedSlug },
+      });
+
+      if (!bowl && generatedSlug) {
+        // Create it on the fly
+        const newBowl = this.bowlRepo.create({
+          name: dto.bowl_name,
+          slug: generatedSlug,
+          // Assuming BowlCategory.TOPIC is the default for dynamic bowls
+          category: 'topic' as any, 
+        });
+        bowl = await this.bowlRepo.save(newBowl);
+      }
+    }
+
+    if (!bowl) throw new NotFoundException('Community bowl not found or could not be created');
 
     const thread = this.threadRepo.create({
       bowl: { id: bowl.id },

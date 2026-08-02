@@ -23,7 +23,7 @@ export default function InlinePostComposer({ onSuccess, bowls, defaultBowlSlug, 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [anonymityMode, setAnonymityMode] = useState<AnonymityMode>('job_title_only');
-  const [selectedBowlSlug, setSelectedBowlSlug] = useState(defaultBowlSlug || '');
+  const [topicName, setTopicName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
@@ -33,12 +33,13 @@ export default function InlinePostComposer({ onSuccess, bowls, defaultBowlSlug, 
     setIsMounted(true);
   }, []);
 
-  // Set default bowl when bowls load
+  // Set default topic when bowls load
   useEffect(() => {
-    if (bowls.length > 0 && !selectedBowlSlug) {
-      setSelectedBowlSlug(defaultBowlSlug || bowls[0].slug);
+    if (bowls.length > 0 && !topicName) {
+      const defaultBowl = defaultBowlSlug ? bowls.find(b => b.slug === defaultBowlSlug) : null;
+      setTopicName(defaultBowl ? defaultBowl.name : bowls[0].name);
     }
-  }, [bowls, defaultBowlSlug, selectedBowlSlug]);
+  }, [bowls, defaultBowlSlug, topicName]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -70,7 +71,7 @@ export default function InlinePostComposer({ onSuccess, bowls, defaultBowlSlug, 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim() || !content.trim() || !selectedBowlSlug) return;
+    if (!title.trim() || !content.trim() || !topicName.trim()) return;
     
     setIsSubmitting(true);
     let mediaUrls: string[] = [];
@@ -100,7 +101,7 @@ export default function InlinePostComposer({ onSuccess, bowls, defaultBowlSlug, 
       }
 
       await communityService.createThread({
-        bowl_slug: selectedBowlSlug,
+        bowl_name: topicName,
         title,
         content,
         anonymity_mode: anonymityMode,
@@ -213,18 +214,15 @@ export default function InlinePostComposer({ onSuccess, bowls, defaultBowlSlug, 
         </div>
 
         <div className="cp-section">
-            <div className="cp-label-row"><span className="cp-label">Bowl</span></div>
-            <select 
-              className="cp-bowl-select"
-              value={selectedBowlSlug}
-              onChange={(e) => setSelectedBowlSlug(e.target.value)}
+            <div className="cp-label-row"><span className="cp-label">Topic / Bowl</span></div>
+            <input 
+              type="text"
+              className="cp-topic-input"
+              value={topicName}
+              onChange={(e) => setTopicName(e.target.value)}
+              placeholder="e.g. Engineering, Salary Negotiation..."
               required
-            >
-                <option value="" disabled>Select a topic…</option>
-                {bowls.map((bowl) => (
-                  <option key={bowl.id} value={bowl.slug}>{bowl.name}</option>
-                ))}
-            </select>
+            />
         </div>
 
         <div className="cp-section">
@@ -284,7 +282,7 @@ export default function InlinePostComposer({ onSuccess, bowls, defaultBowlSlug, 
             <button 
               type="submit"
               className="cp-post-btn" 
-              disabled={isSubmitting || !title.trim() || !content.trim() || !selectedBowlSlug}
+              disabled={isSubmitting || !title.trim() || !content.trim() || !topicName.trim()}
             >
               {isSubmitting ? 'Posting...' : 'Post to bowl'}
             </button>

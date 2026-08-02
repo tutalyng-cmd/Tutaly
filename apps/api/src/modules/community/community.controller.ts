@@ -79,7 +79,8 @@ export class CommunityController {
     @Request() req,
     @Body()
     dto: {
-      bowl_slug: string;
+      bowl_slug?: string;
+      bowl_name?: string;
       title: string;
       content: string;
       anonymity_mode: AnonymityMode;

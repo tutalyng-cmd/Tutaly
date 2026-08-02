@@ -151,13 +151,13 @@ export default function InlinePostComposer({ onSuccess, bowls, defaultBowlSlug, 
 
   const modalContent = (
     <div className="cp-overlay">
-      <div className="cp-modal" role="dialog" aria-label="Create post">
+      <form className="cp-modal" role="dialog" aria-label="Create post" onSubmit={handleSubmit}>
         <div className="cp-modal-header">
             <div>
                 <span className="cp-eyebrow">Tutaly Community</span>
                 <h1>Share with the room</h1>
             </div>
-            <button className="cp-close-btn" aria-label="Close" onClick={() => setIsExpanded(false)}>
+            <button type="button" className="cp-close-btn" aria-label="Close" onClick={() => setIsExpanded(false)}>
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6">
                     <path d="M3 3l10 10M13 3L3 13" />
                 </svg>
@@ -282,14 +282,14 @@ export default function InlinePostComposer({ onSuccess, bowls, defaultBowlSlug, 
                 Add photos
             </label>
             <button 
+              type="submit"
               className="cp-post-btn" 
-              onClick={handleSubmit}
               disabled={isSubmitting || !title.trim() || !content.trim() || !selectedBowlSlug}
             >
               {isSubmitting ? 'Posting...' : 'Post to bowl'}
             </button>
         </div>
-      </div>
+      </form>
     </div>
   );
 

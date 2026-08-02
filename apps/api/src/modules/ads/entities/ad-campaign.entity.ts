@@ -26,22 +26,22 @@ export class AdCampaign {
   @Column({ type: 'enum', enum: AdFormat })
   format: AdFormat;
 
-  @Column({ nullable: true })
+  @Column({ type: 'uuid', nullable: true })
   job_id: string | null; // FK -> jobs.id
 
-  @Column({ nullable: true })
+  @Column({ type: 'uuid', nullable: true })
   product_id: string | null; // FK -> shop_products.id
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   image_url: string | null;
 
   @Column()
   destination_url: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   alt_text: string | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   headline: string | null;
 
   @Column({ type: 'text', nullable: true })
@@ -71,7 +71,7 @@ export class AdCampaign {
   @Column()
   starts_at: Date;
 
-  @Column({ nullable: true })
+  @Column({ type: 'timestamp', nullable: true })
   ends_at: Date | null;
 
   @Column({ default: false })
@@ -99,13 +99,13 @@ export class AdCampaign {
   })
   status: CampaignStatus;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   rejection_reason: string | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'uuid', nullable: true })
   reviewed_by: string | null; // FK -> users.id (admin)
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   payment_ref: string | null;
 
   @Column({ default: 'NGN' })

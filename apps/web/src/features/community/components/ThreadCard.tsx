@@ -197,39 +197,51 @@ export default function ThreadCard({ thread }: Props) {
 
       {/* Comments Section */}
       {showComments && (
-        <div className="border-t border-c700 bg-c800/30 p-4">
+        <div style={{ borderTop: '1px solid var(--line-700)', padding: '20px', background: 'var(--surface-900)', borderBottomLeftRadius: '12px', borderBottomRightRadius: '12px' }}>
           
           {/* Composer */}
-          <div className="flex gap-3 mb-6">
-            <div className="w-8 h-8 rounded-full bg-c700 flex items-center justify-center text-xs font-medium text-white flex-shrink-0">
-              U
+          <div className="composer" style={{ padding: 0, marginBottom: '24px', border: 'none', background: 'transparent' }}>
+            <div className="composer-top">
+              <div className="mini-avatar">U</div>
+              <div className="composer-input">
+                <textarea
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
+                  placeholder="Write a reply..."
+                  rows={2}
+                  style={{ minHeight: '60px' }}
+                />
+              </div>
             </div>
-            <div className="flex-1 flex flex-col gap-2">
-              <textarea
-                value={commentText}
-                onChange={(e) => setCommentText(e.target.value)}
-                placeholder="Add a comment..."
-                className="w-full bg-c800 border border-c700 rounded-lg px-3 py-2 text-sm text-white placeholder-c400 focus:outline-none focus:border-c600 resize-none min-h-[60px]"
-              />
-              <div className="flex items-center justify-between">
+            <div className="composer-tools" style={{ paddingLeft: '46px', paddingTop: '8px' }}>
+              <div className="tool-icons">
                 <select
                   value={anonymityMode}
                   onChange={(e) => setAnonymityMode(e.target.value as AnonymityMode)}
-                  className="bg-transparent text-xs text-c300 border-none focus:outline-none cursor-pointer"
+                  style={{
+                    background: 'transparent',
+                    color: 'var(--text-400)',
+                    border: 'none',
+                    fontSize: '12px',
+                    fontWeight: 500,
+                    outline: 'none',
+                    cursor: 'pointer'
+                  }}
                 >
                   <option value="full_name">Post as Full Profile</option>
                   <option value="job_title_only">Post as Job Title</option>
                   <option value="anonymous_employee">Post Anonymously</option>
                 </select>
-                <button
-                  onClick={handlePostComment}
-                  disabled={!commentText.trim() || isPostingComment}
-                  className="flex items-center gap-2 bg-white text-black px-4 py-1.5 rounded-full text-xs font-medium hover:bg-c100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  {isPostingComment ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />}
-                  Reply
-                </button>
               </div>
+              <button
+                onClick={handlePostComment}
+                disabled={!commentText.trim() || isPostingComment}
+                className="btn-solid"
+                style={{ padding: '6px 16px', fontSize: '13px' }}
+              >
+                {isPostingComment ? <Loader2 size={12} className="animate-spin inline mr-1" /> : null}
+                Reply
+              </button>
             </div>
           </div>
 
@@ -239,32 +251,32 @@ export default function ThreadCard({ thread }: Props) {
               <Loader2 size={16} className="animate-spin" />
             </div>
           ) : comments.length > 0 ? (
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-5">
               {comments.map((comment) => (
-                <div key={comment.id} className="flex gap-3">
-                  <div className="w-8 h-8 rounded-full bg-c700 flex items-center justify-center text-xs font-medium text-white flex-shrink-0">
-                    {comment.author?.name === 'Anonymous' ? 'AN' : (comment.author?.name || 'U').substring(0, 2).toUpperCase()}
-                  </div>
-                  <div className="flex-1">
-                    <div className="bg-c800 border border-c700 rounded-lg p-3">
-                      <div className="flex items-center justify-between mb-1">
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-sm font-medium text-white">{comment.author?.name}</span>
-                          {!comment.author?.isAnonymous && <CheckCircle size={12} className="text-white" />}
-                          <span className="text-xs text-c300 ml-1">{comment.author?.title}</span>
-                        </div>
-                        <span className="text-xs text-c400">
-                          {(() => {
-                            try {
-                              return formatDistanceToNow(new Date(comment.createdAt), { addSuffix: false })
-                                .replace('about ', '').replace(' hours', 'h').replace(' hour', 'h').replace(' minutes', 'm').replace(' minute', 'm').replace(' days', 'd').replace(' day', 'd').replace(' months', 'mo').replace(' month', 'mo').replace('less than a m', '1m');
-                            } catch { return ''; }
-                          })()}
-                        </span>
+                <div key={comment.id}>
+                  <div className="post-head" style={{ marginBottom: '8px' }}>
+                    <div className="post-avatar" style={{ width: '32px', height: '32px', fontSize: '11px' }}>
+                      {comment.author?.name === 'Anonymous' ? 'AN' : (comment.author?.name || 'U').substring(0, 2).toUpperCase()}
+                    </div>
+                    <div className="post-meta">
+                      <div className="post-name-row">
+                        <span className="post-name" style={{ fontSize: '13px' }}>{comment.author?.name}</span>
+                        {!comment.author?.isAnonymous && <span className="verified"><CheckCircle size={12} /></span>}
                       </div>
-                      <p className="text-sm text-c200 whitespace-pre-wrap">{comment.content}</p>
+                      <div className="post-sub" style={{ fontSize: '11px' }}>{comment.author?.title}</div>
+                    </div>
+                    <div className="post-time" style={{ fontSize: '11px' }}>
+                      {(() => {
+                        try {
+                          return formatDistanceToNow(new Date(comment.createdAt), { addSuffix: false })
+                            .replace('about ', '').replace(' hours', 'h').replace(' hour', 'h').replace(' minutes', 'm').replace(' minute', 'm').replace(' days', 'd').replace(' day', 'd').replace(' months', 'mo').replace(' month', 'mo').replace('less than a m', '1m');
+                        } catch { return ''; }
+                      })()}
                     </div>
                   </div>
+                  <p className="post-body" style={{ marginLeft: '44px', fontSize: '14px', marginTop: 0 }}>
+                    {comment.content}
+                  </p>
                 </div>
               ))}
             </div>

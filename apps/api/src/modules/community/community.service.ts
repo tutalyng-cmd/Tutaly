@@ -116,6 +116,7 @@ export class CommunityService {
     });
 
     if (_userId) {
+      console.log(`[getFeed] user ${_userId} requested feed`);
       const threadIds = mappedThreads.map(t => t.id);
       if (threadIds.length > 0) {
         const upvotes = await this.upvoteRepo.find({
@@ -124,6 +125,7 @@ export class CommunityService {
           },
           relations: ['thread'],
         });
+        console.log(`[getFeed] found ${upvotes.length} upvotes for user`);
         const upvotedThreadIds = new Set(
           upvotes
             .filter(u => threadIds.includes(u.thread?.id))

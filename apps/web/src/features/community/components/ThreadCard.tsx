@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CommunityThread, CommunityComment, AnonymityMode } from '../types/community.types';
 import { communityService } from '../api/community.service';
 import { formatDistanceToNow } from 'date-fns';
@@ -23,6 +23,12 @@ export default function ThreadCard({ thread }: Props) {
   const [isPostingComment, setIsPostingComment] = useState(false);
   const [anonymityMode, setAnonymityMode] = useState<AnonymityMode>('job_title_only');
   const [localCommentsCount, setLocalCommentsCount] = useState(thread.comments_count || 0);
+
+  useEffect(() => {
+    setUpvotes(thread.upvotes_count || 0);
+    setHasVoted(thread.hasVoted || false);
+    setLocalCommentsCount(thread.comments_count || 0);
+  }, [thread.upvotes_count, thread.hasVoted, thread.comments_count]);
 
   const toggleComments = async () => {
     if (!showComments) {

@@ -10,8 +10,6 @@ export default function CommunityTabs() {
 
   const tabs = [
     { label: 'Feed', href: '/community', icon: Home, isExact: true },
-    { label: 'Discover', href: '/community/discover', icon: Search },
-    { label: 'Messages', href: '/community/messages', icon: MessageSquare },
     { label: 'Notifications', href: '/community/notifications', icon: Bell, hasDot: true },
     { label: 'Network', href: '/community/network', icon: Users },
   ];

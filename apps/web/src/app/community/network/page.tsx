@@ -97,20 +97,22 @@ export default function NetworkPage() {
           <div className="card">
             {connections.length === 0 ? (
               <div className="comm-empty">
-                You aren&apos;t following anyone yet. Head over to{' '}
-                <Link href="/community/discover" style={{ color: 'var(--teal)' }}>Discover</Link>{' '}
-                to find professionals to connect with.
+                You aren&apos;t following anyone yet. Head over to the{' '}
+                <button onClick={() => setActiveTab('suggested')} style={{ color: 'var(--teal)', background: 'none', border: 'none', padding: 0, cursor: 'pointer', font: 'inherit' }}>Suggested</button>{' '}
+                tab to find professionals to connect with.
               </div>
             ) : (
               <div className="net-grid">
                 {connections.map((person: any, i: number) => (
-                  <div key={i} className="net-card">
-                    <div className="net-avatar">{getInitials(person)}</div>
-                    <div className="net-name">{getName(person)}</div>
-                    <div className="net-role">{getHeadline(person)}</div>
+                  <div key={i} className="net-card group">
+                    <Link href={`/community/profile/${person.id}`} className="no-underline text-inherit block">
+                      <div className="net-avatar group-hover:border-c500 transition-colors">{getInitials(person)}</div>
+                      <div className="net-name group-hover:text-white transition-colors">{getName(person)}</div>
+                      <div className="net-role">{getHeadline(person)}</div>
+                    </Link>
                     <div className="net-actions">
-                      <Link href={`/community/messages?to=${person.id}`} style={{ flex: 1 }}>
-                        <button className="connect" style={{ width: '100%' }}>Message</button>
+                      <Link href={`/community/profile/${person.id}`} style={{ flex: 1 }}>
+                        <button className="connect" style={{ width: '100%' }}>View Profile</button>
                       </Link>
                     </div>
                   </div>
@@ -135,12 +137,14 @@ export default function NetworkPage() {
             ) : (
               <div className="net-grid">
                 {suggestions.map((person: any) => (
-                  <div key={person.id} className="net-card">
-                    <div className="net-avatar">{getInitials(person)}</div>
-                    <div className="net-name">{getName(person)}</div>
-                    <div className="net-role">{getHeadline(person)}</div>
+                  <div key={person.id} className="net-card group">
+                    <Link href={`/community/profile/${person.id}`} className="no-underline text-inherit block">
+                      <div className="net-avatar group-hover:border-c500 transition-colors">{getInitials(person)}</div>
+                      <div className="net-name group-hover:text-white transition-colors">{getName(person)}</div>
+                      <div className="net-role">{getHeadline(person)}</div>
+                    </Link>
                     <div className="net-actions">
-                      <button className="connect" onClick={() => handleFollow(person.id)}>Connect</button>
+                      <button className="connect" onClick={() => handleFollow(person.id)}>Follow</button>
                     </div>
                   </div>
                 ))}

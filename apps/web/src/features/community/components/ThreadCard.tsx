@@ -12,7 +12,7 @@ interface Props {
 
 export default function ThreadCard({ thread }: Props) {
   const [upvotes, setUpvotes] = useState(thread.upvotes_count || 0);
-  const [hasVoted, setHasVoted] = useState(false);
+  const [hasVoted, setHasVoted] = useState(thread.hasVoted || false);
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
   // Comments State
@@ -72,14 +72,21 @@ export default function ThreadCard({ thread }: Props) {
   };
 
   const handleUpvote = async () => {
-    if (hasVoted) return;
-    setUpvotes(prev => prev + 1);
-    setHasVoted(true);
+    // Optimistic UI update
+    const wasVoted = hasVoted;
+    setHasVoted(!wasVoted);
+    setUpvotes(prev => prev + (wasVoted ? -1 : 1));
+    
     try {
-      await communityService.upvoteThread(thread.id);
+      const res = await communityService.upvoteThread(thread.id);
+      if (res.success && res.data) {
+        setUpvotes(res.data.upvotes_count);
+        setHasVoted(res.data.hasVoted);
+      }
     } catch (err) {
-      setUpvotes(prev => prev - 1);
-      setHasVoted(false);
+      // Revert on failure
+      setUpvotes(prev => prev + (wasVoted ? 1 : -1));
+      setHasVoted(wasVoted);
       console.error('Vote failed', err);
     }
   };

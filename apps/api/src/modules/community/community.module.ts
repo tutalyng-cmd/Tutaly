@@ -5,6 +5,7 @@ import { CommunityService } from './community.service';
 import { CommunityBowl } from './entities/community-bowl.entity';
 import { CommunityThread } from './entities/community-thread.entity';
 import { CommunityComment } from './entities/community-comment.entity';
+import { CommunityUpvote } from './entities/community-upvote.entity';
 import { UserModule } from '../user/user.module';
 import { AuthModule } from '../auth/auth.module';
 
@@ -14,6 +15,7 @@ import { AuthModule } from '../auth/auth.module';
       CommunityBowl,
       CommunityThread,
       CommunityComment,
+      CommunityUpvote,
     ]),
     UserModule,
     AuthModule,

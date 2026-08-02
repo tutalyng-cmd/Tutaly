@@ -16,6 +16,7 @@ import {
   AnonymityMode,
 } from './entities/community-thread.entity';
 import { CommunityComment } from './entities/community-comment.entity';
+import { CommunityUpvote } from './entities/community-upvote.entity';
 
 @Injectable()
 export class CommunityService {
@@ -26,6 +27,8 @@ export class CommunityService {
     private readonly threadRepo: Repository<CommunityThread>,
     @InjectRepository(CommunityComment)
     private readonly commentRepo: Repository<CommunityComment>,
+    @InjectRepository(CommunityUpvote)
+    private readonly upvoteRepo: Repository<CommunityUpvote>,
     private readonly configService: ConfigService,
   ) {
     const supabaseUrl = this.configService.get<string>('SUPABASE_URL');
@@ -108,8 +111,31 @@ export class CommunityService {
           isAnonymous: t.anonymity_mode !== AnonymityMode.FULL_NAME,
         },
         user: undefined, // Strip original user object
+        hasVoted: false, // Default to false, will be overridden below if voted
       };
     });
+
+    if (_userId) {
+      const threadIds = mappedThreads.map(t => t.id);
+      if (threadIds.length > 0) {
+        const upvotes = await this.upvoteRepo.find({
+          where: {
+            user: { id: _userId },
+          },
+          relations: ['thread'],
+        });
+        const upvotedThreadIds = new Set(
+          upvotes
+            .filter(u => threadIds.includes(u.thread?.id))
+            .map(u => u.thread.id)
+        );
+        for (const t of mappedThreads) {
+          if (upvotedThreadIds.has(t.id)) {
+            t.hasVoted = true;
+          }
+        }
+      }
+    }
 
     return {
       success: true,
@@ -259,11 +285,30 @@ export class CommunityService {
       throw new NotFoundException('Thread not found');
     }
 
-    // Increment vote count (in a real system, track vote via relation to prevent duplicate votes)
-    thread.upvotes_count += 1;
-    await this.threadRepo.save(thread);
+    const existingUpvote = await this.upvoteRepo.findOne({
+      where: {
+        user: { id: _userId },
+        thread: { id: threadId },
+      },
+    });
 
-    return { success: true, data: { upvotes_count: thread.upvotes_count } };
+    if (existingUpvote) {
+      // Toggle off
+      await this.upvoteRepo.remove(existingUpvote);
+      thread.upvotes_count = Math.max(0, thread.upvotes_count - 1);
+      await this.threadRepo.save(thread);
+      return { success: true, data: { upvotes_count: thread.upvotes_count, hasVoted: false } };
+    } else {
+      // Toggle on
+      const upvote = this.upvoteRepo.create({
+        user: { id: _userId },
+        thread: { id: threadId },
+      });
+      await this.upvoteRepo.save(upvote);
+      thread.upvotes_count += 1;
+      await this.threadRepo.save(thread);
+      return { success: true, data: { upvotes_count: thread.upvotes_count, hasVoted: true } };
+    }
   }
 
   async addComment(

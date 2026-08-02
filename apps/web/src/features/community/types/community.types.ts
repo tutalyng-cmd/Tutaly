@@ -26,6 +26,7 @@ export interface CommunityThread {
   comments_count: number;
   status: string;
   createdAt: string;
+  hasVoted?: boolean;
   author: ThreadAuthor;
   bowl: CommunityBowl;
 }

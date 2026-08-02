@@ -70,7 +70,7 @@ export class CommunityController {
       }
     }
 
-    return this.communityService.uploadThreadMedia(req.user.id, files);
+    return this.communityService.uploadThreadMedia(req.user.sub, files);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -88,14 +88,14 @@ export class CommunityController {
       media_urls?: string[];
     },
   ) {
-    return this.communityService.createThread(req.user.id, dto);
+    return this.communityService.createThread(req.user.sub, dto);
   }
 
   @UseGuards(JwtAuthGuard)
   @Post('threads/:id/vote')
   async voteThread(@Param('id') threadId: string, @Request() req) {
     // Basic upvote implementation for now
-    return this.communityService.upvoteThread(threadId, req.user.id);
+    return this.communityService.upvoteThread(threadId, req.user.sub);
   }
 
   @UseGuards(OptionalJwtAuthGuard)
@@ -117,7 +117,7 @@ export class CommunityController {
     },
   ) {
     return this.communityService.addComment(
-      req.user.id,
+      req.user.sub,
       threadId,
       dto.content,
       dto.anonymity_mode,

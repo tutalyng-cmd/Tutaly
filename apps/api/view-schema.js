@@ -1,0 +1,31 @@
+const { Client } = require('pg');
+
+async function run() {
+  const client = new Client({ connectionString: 'postgresql://postgres.upwykoazsikszvcblwgh:swJRB%21%3Fqn43h57u@aws-1-us-east-1.pooler.supabase.com:6543/postgres' });
+  await client.connect();
+  
+  const res = await client.query(`
+    SELECT
+      tc.table_schema, 
+      tc.constraint_name, 
+      tc.table_name, 
+      kcu.column_name, 
+      ccu.table_schema AS foreign_table_schema,
+      ccu.table_name AS foreign_table_name,
+      ccu.column_name AS foreign_column_name,
+      tc.constraint_type
+    FROM 
+      information_schema.table_constraints AS tc 
+      JOIN information_schema.key_column_usage AS kcu
+        ON tc.constraint_name = kcu.constraint_name
+        AND tc.table_schema = kcu.table_schema
+      LEFT JOIN information_schema.constraint_column_usage AS ccu
+        ON ccu.constraint_name = tc.constraint_name
+        AND ccu.table_schema = tc.table_schema
+    WHERE tc.table_name = 'community_upvotes';
+  `);
+  
+  console.log(JSON.stringify(res.rows, null, 2));
+  await client.end();
+}
+run().catch(console.error);

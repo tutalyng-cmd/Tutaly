@@ -83,6 +83,16 @@ export class CommunityService {
       qb.andWhere('bowl.slug = :slug', { slug: filters.bowlSlug });
     }
 
+    if (_userId) {
+      qb.leftJoinAndMapOne(
+        'thread.userUpvote',
+        'community_upvotes',
+        'vote',
+        'vote.thread_id = thread.id AND vote.user_id = :userId',
+        { userId: _userId }
+      );
+    }
+
     const [threads, total] = await qb.getManyAndCount();
 
     // Map threads to apply anonymity rules before sending to frontend
@@ -111,32 +121,12 @@ export class CommunityService {
           isAnonymous: t.anonymity_mode !== AnonymityMode.FULL_NAME,
         },
         user: undefined, // Strip original user object
-        hasVoted: false, // Default to false, will be overridden below if voted
+        hasVoted: !!(t as any).userUpvote,
       };
     });
 
     if (_userId) {
       console.log(`[getFeed] user ${_userId} requested feed`);
-      const threadIds = mappedThreads.map(t => t.id);
-      if (threadIds.length > 0) {
-        const upvotes = await this.upvoteRepo.find({
-          where: {
-            user: { id: _userId },
-          },
-          relations: ['thread'],
-        });
-        console.log(`[getFeed] found ${upvotes.length} upvotes for user`);
-        const upvotedThreadIds = new Set(
-          upvotes
-            .filter(u => threadIds.includes(u.thread?.id))
-            .map(u => u.thread.id)
-        );
-        for (const t of mappedThreads) {
-          if (upvotedThreadIds.has(t.id)) {
-            t.hasVoted = true;
-          }
-        }
-      }
     }
 
     return {

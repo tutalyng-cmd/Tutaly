@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { communityService } from '../api/community.service';
 
 export default function FeedSidebarRight() {
@@ -43,11 +44,13 @@ export default function FeedSidebarRight() {
 
             return (
               <div key={user.id} className="suggest-row">
-                <div className="suggest-avatar">{initials}</div>
-                <div className="suggest-info">
-                  <div className="suggest-name">{first} {last}</div>
-                  <div className="suggest-role">{headline}</div>
-                </div>
+                <Link href={`/community/profile/${user.id}`} className="flex items-center gap-[10px] flex-1 no-underline text-inherit group">
+                  <div className="suggest-avatar group-hover:border-c500 transition-colors">{initials}</div>
+                  <div className="suggest-info">
+                    <div className="suggest-name group-hover:text-white transition-colors">{first} {last}</div>
+                    <div className="suggest-role">{headline}</div>
+                  </div>
+                </Link>
                 <button className="follow-btn" onClick={() => handleFollow(user.id)}>Follow</button>
               </div>
             );

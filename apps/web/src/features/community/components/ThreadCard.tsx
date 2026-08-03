@@ -15,6 +15,8 @@ export default function ThreadCard({ thread }: Props) {
   const [hasVoted, setHasVoted] = useState(thread.hasVoted || false);
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
+  const [isLiking, setIsLiking] = useState(false);
+
   // Comments State
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState<CommunityComment[]>([]);
@@ -59,14 +61,9 @@ export default function ThreadCard({ thread }: Props) {
         // Optimistically add to list
         const newComment: CommunityComment = {
           ...res.data,
-          // Since the backend 'addComment' just returns the raw entity, it doesn't have the mapped 'author' immediately
-          // but we can fake it optimistically for the UI until next reload, or just re-fetch. Let's re-fetch for safety.
+          author_name: anonymityMode === 'anonymous_employee' ? 'Anonymous Employee' : res.data.author_name
         };
-        
-        // Actually, just refetch
-        const fetchRes = await communityService.getComments(thread.id);
-        setComments(fetchRes.data || []);
-        
+        setComments(prev => [newComment, ...prev]);
         setCommentText('');
         setLocalCommentsCount(prev => prev + 1);
       }
@@ -78,6 +75,9 @@ export default function ThreadCard({ thread }: Props) {
   };
 
   const handleUpvote = async () => {
+    if (isLiking) return;
+    setIsLiking(true);
+
     // Optimistic UI update
     const wasVoted = hasVoted;
     setHasVoted(!wasVoted);
@@ -94,6 +94,8 @@ export default function ThreadCard({ thread }: Props) {
       setUpvotes(prev => prev + (wasVoted ? 1 : -1));
       setHasVoted(wasVoted);
       console.error('Vote failed', err);
+    } finally {
+      setIsLiking(false);
     }
   };
 
@@ -192,7 +194,7 @@ export default function ThreadCard({ thread }: Props) {
         )}
 
         <div className="post-actions">
-          <button className={`pa-btn like ${hasVoted ? 'voted' : ''}`} onClick={handleUpvote}>
+          <button className={`pa-btn like ${hasVoted ? 'voted' : ''}`} onClick={handleUpvote} disabled={isLiking}>
             <Heart size={14} fill={hasVoted ? 'currentColor' : 'none'} /> {upvotes}
           </button>
           <button className={`pa-btn ${showComments ? 'text-white' : ''}`} onClick={toggleComments}>

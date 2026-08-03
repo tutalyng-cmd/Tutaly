@@ -279,8 +279,8 @@ export class CommunityService {
 
     const existingUpvote = await this.upvoteRepo.findOne({
       where: {
-        user: { id: _userId },
-        thread: { id: threadId },
+        user_id: _userId,
+        thread_id: threadId,
       },
     });
 
@@ -292,11 +292,10 @@ export class CommunityService {
       return { success: true, data: { upvotes_count: thread.upvotes_count, hasVoted: false } };
     } else {
       // Toggle on
-      const upvote = this.upvoteRepo.create({
-        user: { id: _userId },
-        thread: { id: threadId },
+      await this.upvoteRepo.insert({
+        user_id: _userId,
+        thread_id: threadId,
       });
-      await this.upvoteRepo.save(upvote);
       thread.upvotes_count += 1;
       await this.threadRepo.save(thread);
       return { success: true, data: { upvotes_count: thread.upvotes_count, hasVoted: true } };

@@ -33,8 +33,15 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // If 401 and we haven't retried yet and not hitting refresh itself
-    if (error.response?.status === 401 && !originalRequest._retry && originalRequest.url !== '/auth/refresh') {
+    // Do not attempt to refresh if the original request was for sign-in or other auth routes
+    const isAuthRoute = originalRequest.url?.includes('/auth/signin') || 
+                        originalRequest.url?.includes('/auth/register') ||
+                        originalRequest.url?.includes('/auth/forgot-password') ||
+                        originalRequest.url?.includes('/auth/reset-password') ||
+                        originalRequest.url?.includes('/auth/refresh');
+
+    // If 401 and we haven't retried yet and not hitting auth endpoints that shouldn't refresh
+    if (error.response?.status === 401 && !originalRequest._retry && !isAuthRoute) {
       originalRequest._retry = true;
 
       try {

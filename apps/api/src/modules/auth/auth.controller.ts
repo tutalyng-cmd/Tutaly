@@ -60,10 +60,11 @@ export class AuthController {
 
     // Only set refresh token cookie if it was issued (non-MFA flow)
     if (result.refreshToken) {
+      const isProd = process.env.NODE_ENV === 'production';
       res.cookie('refreshToken', result.refreshToken, {
         httpOnly: true,
-        secure: true,
-        sameSite: 'none' as const,
+        secure: isProd,
+        sameSite: isProd ? 'none' : 'lax',
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         path: '/',
       });
@@ -87,10 +88,11 @@ export class AuthController {
     const result = await this.authService.verifyMfa(dto);
 
     // Set refresh token as HttpOnly cookie (7 days)
+    const isProd = process.env.NODE_ENV === 'production';
     res.cookie('refreshToken', result.refreshToken, {
       httpOnly: true,
-      secure: true,
-      sameSite: 'none' as const,
+      secure: isProd,
+      sameSite: isProd ? 'none' : 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000,
       path: '/',
     });
@@ -114,10 +116,11 @@ export class AuthController {
     const result = await this.authService.refreshAccessToken(refreshToken);
 
     // Rotate refresh token cookie
+    const isProd = process.env.NODE_ENV === 'production';
     res.cookie('refreshToken', result.refreshToken, {
       httpOnly: true,
-      secure: true,
-      sameSite: 'none' as const,
+      secure: isProd,
+      sameSite: isProd ? 'none' : 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000,
       path: '/',
     });
@@ -165,10 +168,11 @@ export class AuthController {
     if (req.user?.sub) {
       await this.authService.logout(req.user.sub);
     }
+    const isProd = process.env.NODE_ENV === 'production';
     res.clearCookie('refreshToken', {
       path: '/',
-      secure: true,
-      sameSite: 'none' as const,
+      secure: isProd,
+      sameSite: isProd ? 'none' : 'lax',
     });
     return { message: 'Logged out successfully.' };
   }
@@ -192,10 +196,11 @@ export class AuthController {
     const result = await this.authService.deleteAccount(req.user.sub, dto);
 
     // Clear cookies upon deletion
+    const isProd = process.env.NODE_ENV === 'production';
     res.clearCookie('refreshToken', {
       path: '/',
-      secure: true,
-      sameSite: 'none' as const,
+      secure: isProd,
+      sameSite: isProd ? 'none' : 'lax',
     });
 
     return result;
@@ -224,10 +229,11 @@ export class AuthController {
       refreshToken,
     );
 
+    const isProd = process.env.NODE_ENV === 'production';
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: true,
-      sameSite: 'strict',
+      secure: isProd,
+      sameSite: isProd ? 'none' : 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000,
       path: '/',
     });
@@ -257,10 +263,11 @@ export class AuthController {
       refreshToken,
     );
 
+    const isProd = process.env.NODE_ENV === 'production';
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: true,
-      sameSite: 'strict',
+      secure: isProd,
+      sameSite: isProd ? 'none' : 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000,
       path: '/',
     });
